@@ -1,0 +1,59 @@
+Particle Storm Control Deluxe Extended Ultra Award Edition
+PSCDEUAE
+
+Musik + Lizenzen
+Soundeffekte + Lizenzen
+
+Win8 (UI) Port
+
+UI Menüs usw.
+Best Practices für Controllersteuerung
+
+Singleplayer - nur gegen ki
+Items + Gameplay (Hindernisse)
+
+Widescreen?
+
+Particle Percentage Bar (PPB)
+
+Coop? (2vs2)
+
+Gameplay Zeugs:
+
+- Mögliche Items:
+* Plus und Minus; Sammelbar; Einsatz über eine Base (Fadenkreuz); Erhöhen/Verringern der Spawnrate der Partikel
+* Graviton; Sammelbar; Einsatz an beliebiger Stelle auf der Karte; Partikel im Einzugsbereich werden zum Graviton gezogen
+* Force-Field; Sammelbar; Einsatz an beliebiger Stelle auf der Karte; Partikel im Einzugsbereich werden weg gestoßen
+* Stop; aktiviert automatisch; Fadenkreuze im Einzugsbereich können sich nicht mehr Bewegen
+* Teleport; Sammelbar; Einsatz an beliebiger Stelle auf der Karte; Partikel im Einzugsbereich werden aufgesammelt und auf zweite Aktivierung an der Stelle des Fadenkreuzes wieder freigelassen.
+* Sprengsatz; Sammelbar; Einsatz an beliebiger Stelle auf der Karte; Nach X Sekunden werden alle Partikel im Einzugsgebiet zerstört
+
+- Mögliche Hindernisse:
+* Wände; Partikel können die Wände nicht durchdringen
+* Löcher; Partikel werden verschluckt
+
+- Mögliche Fähigkeiten:
+* Impuls; Alle Partikel um das Fadenkreuz werden zurückgestoßen
+* Umkehrung; Alle eigenen Partikel fliegen nicht mehr zum Fadenkreuz, sondern entfernen sich von ihm
+* Ankerpunkt; Alle Partikel bewegen sich zuerst zum Ankerpunkt und danach zum Fadenkreuz (Ankerpunkt hält nur eine begrenzte Zeit)
+
+- Mögliche Gameplay Elemente:
+* Eroberungspunkte; Es müssen X solcher Punkte gehalten werden, um das Spiel zu gewinnen; Eroberungspunkte müssen kontinuierlich mit Partikeln "gefüttert" werden, sonst werden sie wieder neutral
+* Schalter: Können Wände einfärben --> Passierbar für den entsprechenden Spieler; Wände ein und ausschalten --> Änderung der Kartentopologie
+* Switch Schalter; Löst automatisch einen Switch aus
+
+- Mögliche Globale Effekte:
+* Wipeout; Alle Partikel auf dem Spielfeld verschwinden
+* Force-Quake; Alle Partikel werden an den Rand oder in die Mitte des Spielfeldes gedrückt (ja nachdem ob die Welle von außen oder innen kommt)
+
+Statistiken:
+- Gesamt produzierte Partikel
+- Höchste Anzahl an gleichzeitigen Partikeln
+- Durchschnittliche Partikelanzahl
+- Bevorzugte Partikelkonfiguration (von Partikel Pad)
+- Anzahl eroberte Basen
+- Anzahl verlorene Basen
+- Spielfelddominanz
+- Anzahl der Siege/Platzierungen
+- Gesammelte/Aktivierte Items
+- Ausgeschaltete Gegner (letzte Base / letzte Partikel)

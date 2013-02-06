@@ -1,0 +1,28 @@
+Bugs:
+- "zufällige" Abstürze auf der Box?
+- Fenster-Resize ändert Partikelverhalten
+- Fenster von Bildschirm zu Bildschirm wechseln führt zum Absturz
+
+Fixed?
+- Nach neuer Runde Cursor nicht sichtbar
+- Fehlerhafte Switches
+
+Optimierungsmöglichkeiten:
+- 3 halffloat2 targets: position, health&speed, movement
+-> nur 32bit health&speed müssen ausgelesen werden, rendering muss ebenfalls weniger daten einlesen
+-> insgesamt weniger speicher und speichertransfer
+
+Features:
+- keine gleiche steuerung / farbe zulassen
+- optionen für pause
+- optionen für spielende
+- optionsmenu
+- credits
+
+- zufallswerte bei Bewegung einstreuen (noise-textur samplen!)
+- spiel pausieren wenn pad fehlt fixen
+- highscore
+- tutoriallevel (oder wenigtens beschreibung)
+- spielmodi
+- anderer schatten
+- AI
