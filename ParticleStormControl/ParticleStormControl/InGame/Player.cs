@@ -109,6 +109,18 @@ namespace ParticleStormControl
 
         #endregion
 
+        #region hold move
+        // variables to control the hold move, it is just test
+        /// <summary>
+        /// Position for the hold move
+        /// </summary>
+        private Vector2 holdTargedPosition = Vector2.Zero;
+        /// <summary>
+        /// is the hold move actice?
+        /// </summary>
+        private bool holdTargetPositionSet = false;
+        #endregion
+
         #region cursor
         /// <summary>
         /// position of the particle cursor
@@ -281,7 +293,11 @@ namespace ParticleStormControl
             particleProcessing.Parameters["Movements"].SetValue(MovementTexture);
             particleProcessing.Parameters["Infos"].SetValue(InfoTexture);
 
-            particleProcessing.Parameters["CursorPosition"].SetValue(cursorPosition);
+            // hold move
+            if (holdTargetPositionSet)
+                particleProcessing.Parameters["CursorPosition"].SetValue(holdTargedPosition);
+            else
+                particleProcessing.Parameters["CursorPosition"].SetValue(cursorPosition);
             particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant*timeInterval);
             particleProcessing.Parameters["TimeInterval"].SetValue(timeInterval);
             particleProcessing.Parameters["DamageMap"].SetValue(damageMapTexture);
@@ -443,6 +459,19 @@ namespace ParticleStormControl
                             padMove = keyboardMove;
                         else
                             cursorMove = keyboardMove;
+                        // Some simple Test for a new movment technique (hold move)
+                        if (InputManager.Instance.IsButtonDown(Keys.Space))
+                        {
+                            if (!holdTargetPositionSet)
+                            {
+                                holdTargedPosition = cursorPosition;
+                                holdTargetPositionSet = true;
+                            }
+                        }
+                        else
+                        {
+                            holdTargetPositionSet = false;
+                        }
                         break;
                     }
                 
