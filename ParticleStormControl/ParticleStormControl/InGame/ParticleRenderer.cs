@@ -29,10 +29,21 @@ namespace ParticleStormControl
                                     (new VertexElement(0, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 1));
         };
 
+        /// <summary>
+        /// static vertexbuffer containing a single quad, used for all particles
+        /// </summary>
         private VertexBuffer particleVertexBuffer;
-        private IndexBuffer particleIndexBuffer;    // silly, but needed for instancing
-        private VertexBuffer[] instanceVertexBuffer;
+        /// <summary>
+        /// instanced primitives need an indexbuffer
+        /// containing only 0,1,2,3 - silly, but needed for instancing
+        /// </summary>
+        private IndexBuffer particleIndexBuffer;    
+        /// <summary>
+        /// dynamic vertexbuffer with instance data, one per player
+        /// </summary>
+        private DynamicVertexBuffer[] instanceVertexBuffer;
 
+        // bindings
         private VertexBufferBinding particleVertexBufferBinding;
         private VertexBufferBinding[] instanceVertexBufferBinding;
 
@@ -44,7 +55,7 @@ namespace ParticleStormControl
         public ParticleRenderer(GraphicsDevice device, ContentManager content, int numPlayers)
         {
             instanceVertexBufferBinding = new VertexBufferBinding[numPlayers];
-            instanceVertexBuffer = new VertexBuffer[numPlayers];
+            instanceVertexBuffer = new DynamicVertexBuffer[numPlayers];
 
             particleEffect = content.Load<Effect>("shader/particleRendering");
             particleEffect.Parameters["TextureSize"].SetValue(Player.maxParticlesSqrt);
@@ -66,7 +77,7 @@ namespace ParticleStormControl
 
             for (int i = 0; i < numPlayers; ++i)
             {
-                instanceVertexBuffer[i] = new VertexBuffer(device, vertex2dInstance.VertexDeclaration, Player.maxParticles, BufferUsage.WriteOnly);
+                instanceVertexBuffer[i] = new DynamicVertexBuffer(device, vertex2dInstance.VertexDeclaration, Player.maxParticles, BufferUsage.WriteOnly);
                 instanceVertexBufferBinding[i] = new VertexBufferBinding(instanceVertexBuffer[i], 0, 1);
             }
 

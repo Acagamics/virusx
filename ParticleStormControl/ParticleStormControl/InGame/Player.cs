@@ -38,13 +38,48 @@ namespace ParticleStormControl
 
         private HalfVector2[] particleInfos = new HalfVector2[maxParticlesSqrt * maxParticlesSqrt];
 
-        private const int maxSpawnsPerFrame = 15;
+
+        #region spawning
+        private const int maxSpawnsPerFrame = 32;
+        private int numSpawns = 0;
 
         public int CurrentSpawnNumber
         { get { return numSpawns; } }
-        private int numSpawns = 0;
-        private Vector4[] spawnsAt_Positions = new Vector4[maxSpawnsPerFrame];
-        private Vector4[] spawnInfos = new Vector4[maxSpawnsPerFrame];
+
+        /// <summary>
+        /// vertex for a particle spawn
+        /// </summary>
+        public struct SpawnVertex : IVertexType
+        {
+            public Vector2 texturePosition;
+            public Vector2 particlePosition;
+            public Vector2 movement;
+            public Vector2 damageSpeed;
+
+            private static readonly VertexDeclaration vertexDeclaration = new VertexDeclaration(
+                        new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0),
+                        new VertexElement(8, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
+                        new VertexElement(16, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 1),
+                        new VertexElement(24, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 2));
+
+            static public VertexDeclaration VertexDeclaration
+            { get { return vertexDeclaration; } }
+            VertexDeclaration IVertexType.VertexDeclaration
+            { get { return vertexDeclaration; } }
+        }
+        /// <summary>
+        /// vertexbuffer that holds all current spawn vertices - per spawn are 2 needed since they are rendered als tiny lines (pixels are not allowed in xna)
+        /// </summary>
+        private DynamicVertexBuffer spawnVertexBuffer;
+
+        /// <summary>
+        /// Buffer for accumulating new vertices
+        /// after finished updating all new particles will be writtten to the spawnVertexBuffer
+        /// </summary>
+        private SpawnVertex[] spawnVerticesRAMBuffer = new SpawnVertex[maxSpawnsPerFrame];
+
+        #endregion
+
 
         Effect particleProcessing;
 
@@ -55,6 +90,7 @@ namespace ParticleStormControl
         { get; private set; }
 
         #endregion
+
 
         #region Colors
 
@@ -274,52 +310,65 @@ namespace ParticleStormControl
             renderTargetBindings = new RenderTargetBinding[][] { new RenderTargetBinding[] { positionTargets[0], movementTexture[0], infoTargets[0] }, 
                                                                 new RenderTargetBinding[] { positionTargets[1], movementTexture[1], infoTargets[1] } };
             particleProcessing = content.Load<Effect>("shader/particleProcessing");
+            particleProcessing.Parameters["halfPixelCorrection"].SetValue(new Vector2(-0.5f / maxParticlesSqrt, 0.5f / maxParticlesSqrt));
 
-
+            // reset data
             InfoTexture.SetData<HalfVector2>(particleInfos);
+
+            // spawn vb
+            spawnVertexBuffer = new DynamicVertexBuffer(device, SpawnVertex.VertexDeclaration, maxSpawnsPerFrame * 2, BufferUsage.WriteOnly);
         }
 
         public void UpdateGPUPart(GraphicsDevice device, float timeInterval, Texture2D damageMapTexture)
         {
+            // update spawn vb if necessary
+            if(numSpawns > 0)
+                spawnVertexBuffer.SetData<SpawnVertex>(spawnVerticesRAMBuffer, 0, numSpawns*2);
+
             device.Textures[0] = null;
             device.Textures[1] = null;
             device.Textures[2] = null;
             device.Textures[3] = null;
 
-            // render
-            particleProcessing.Parameters["halfPixelCorrection"].SetValue(new Vector2(-0.5f / maxParticlesSqrt, 0.5f / maxParticlesSqrt));
+            device.SetRenderTargets(renderTargetBindings[currentTargetIndex]);
+
+            #region PROCESS
 
             particleProcessing.Parameters["Positions"].SetValue(PositionTexture);
             particleProcessing.Parameters["Movements"].SetValue(MovementTexture);
             particleProcessing.Parameters["Infos"].SetValue(InfoTexture);
 
-            // hold move
-            if (holdTargetPositionSet)
-                particleProcessing.Parameters["CursorPosition"].SetValue(holdTargedPosition);
-            else
-                particleProcessing.Parameters["CursorPosition"].SetValue(cursorPosition);
-            particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant*timeInterval);
+            particleProcessing.Parameters["CursorPosition"].SetValue(cursorPosition);
+            particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant * timeInterval);
             particleProcessing.Parameters["TimeInterval"].SetValue(timeInterval);
             particleProcessing.Parameters["DamageMap"].SetValue(damageMapTexture);
             particleProcessing.Parameters["DamageFactor"].SetValue(DamageMapMask[playerIndex] * (attackingPerSecond * timeInterval * 255));
-
-            particleProcessing.Parameters["NumSpawns"].SetValue(numSpawns);
-            particleProcessing.Parameters["SpawnsAt_Positions"].SetValue(spawnsAt_Positions);
-            particleProcessing.Parameters["SpawnInfos"].SetValue(spawnInfos);
 
             particleProcessing.Parameters["NoiseToMovementFactor"].SetValue(timeInterval * NoiseToMovementFactor);
             particleProcessing.Parameters["NoiseTexture"].SetValue(noiseTexture);
 
 
             device.BlendState = BlendState.Opaque;
-            device.SetRenderTargets(renderTargetBindings[currentTargetIndex]);
+            particleProcessing.CurrentTechnique = particleProcessing.Techniques[0];
             particleProcessing.CurrentTechnique.Passes[0].Apply();
             ScreenTriangleRenderer.instance.DrawScreenAlignedTriangle(device);
+            #endregion
 
+            #region spawn
 
-            int i = currentTargetIndex;
+            if(numSpawns > 0)
+            {
+                particleProcessing.CurrentTechnique = particleProcessing.Techniques[1];
+                particleProcessing.CurrentTechnique.Passes[0].Apply();
+                device.SetVertexBuffer(spawnVertexBuffer);
+                device.DrawPrimitives(PrimitiveType.LineList, 0, numSpawns);
+            }
+
+            #endregion
+
+            int target = currentTargetIndex;
             currentTargetIndex = currentTextureIndex;
-            currentTextureIndex = i;
+            currentTextureIndex = target;
         }
 
         public void ReadGPUResults()
@@ -331,12 +380,6 @@ namespace ParticleStormControl
         {
             float health = ((mass_health * 0.5f) + 1.5f) * healthConstant;
             float speed = speedConstant + speedSettingFactor * disciplin_speed;
-
-            for (int i = 0; i < maxSpawnsPerFrame; ++i)
-            {
-                spawnsAt_Positions[i] = new Vector4(-1.0f);
-                spawnInfos[i] = new Vector4(-1.0f);
-            }
 
             // compute spawnings
             numSpawns = 0;
@@ -362,10 +405,12 @@ namespace ParticleStormControl
                             Vector2 movement = new Vector2((float)random.NextDouble() - 0.5f, (float)random.NextDouble() - 0.5f);
                             movement.Normalize();
 
-                            // add
-                            spawnsAt_Positions[numSpawns].Z = spawn.Position.X;
-                            spawnsAt_Positions[numSpawns].W = spawn.Position.Y;
-                            spawnInfos[numSpawns] = new Vector4(movement.X, movement.Y, health, speed);
+                            // add only the first vertex, second is copied later!
+                            int vertexIndex = numSpawns * 2;
+                            spawnVerticesRAMBuffer[vertexIndex].particlePosition = spawn.Position;
+                            spawnVerticesRAMBuffer[vertexIndex].movement = movement;
+                            spawnVerticesRAMBuffer[vertexIndex].damageSpeed.X = health;
+                            spawnVerticesRAMBuffer[vertexIndex].damageSpeed.Y = speed;
                             ++numSpawns;
                         }
                     }
@@ -374,6 +419,7 @@ namespace ParticleStormControl
             }
 
             // find places for spawning and check if there are any particles
+            // seperate loop for faster iterating!
             int biggestAliveIndex = 0;
             NumParticlesAlive = 0;
             int currentSpawn = 0;
@@ -387,13 +433,21 @@ namespace ParticleStormControl
                 }
                 else if (currentSpawn < numSpawns)
                 {
-                    spawnsAt_Positions[currentSpawn].X = (float)(i % maxParticlesSqrt) / maxParticlesSqrt;
-                    spawnsAt_Positions[currentSpawn].Y = (float)(i / maxParticlesSqrt) / maxParticlesSqrt;
+                    float x = (float)(i % maxParticlesSqrt) / maxParticlesSqrt;
+                    float y = (float)(i / maxParticlesSqrt) / maxParticlesSqrt;
+                    spawnVerticesRAMBuffer[currentSpawn*2].texturePosition = new Vector2(x * 2.0f - 1.0f, (1.0f - y) * 2.0f - 1.0f);
+                    spawnVerticesRAMBuffer[currentSpawn * 2 + 1] = spawnVerticesRAMBuffer[currentSpawn * 2]; // copytime!
+                    spawnVerticesRAMBuffer[currentSpawn * 2 + 1].texturePosition.X += 0.5f / maxParticlesSqrt;
+
                     ++currentSpawn;
 
                     ++NumParticlesAlive;
                     biggestAliveIndex = i;
                 }
+             /*   else
+                {
+                    break;
+                } */
             }
             if (currentSpawn == 0 && alive)
                 alive = NumParticlesAlive > 0 || cantDie; // still alive *sing*
@@ -437,6 +491,17 @@ namespace ParticleStormControl
             disciplin_speed = MathHelper.Clamp(disciplin_speed, -1.0f, 1.0f);
             cursorPosition.X = MathHelper.Clamp(cursorPosition.X, 0.0f, 1.0f);
             cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, 1.0f);
+
+            // save particle textures on pressing space
+            if (InputManager.Instance.PressedButton(Keys.Tab))
+            {
+                using (var file = new System.IO.FileStream("position target " + playerIndex + ".png", System.IO.FileMode.Create))
+                    positionTargets[currentTargetIndex].SaveAsPng(file, maxParticlesSqrt, maxParticlesSqrt);
+                using (var file = new System.IO.FileStream("info target " + playerIndex + ".png", System.IO.FileMode.Create))
+                    infoTargets[currentTargetIndex].SaveAsPng(file, maxParticlesSqrt, maxParticlesSqrt);
+                using (var file = new System.IO.FileStream("movement target " + playerIndex + ".png", System.IO.FileMode.Create))
+                    movementTexture[currentTargetIndex].SaveAsPng(file, maxParticlesSqrt, maxParticlesSqrt);
+            }
         }
 
         private void MovementsFromControls(out Vector2 cursorMove, out Vector2 padMove)

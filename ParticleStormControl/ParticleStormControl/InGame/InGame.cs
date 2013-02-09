@@ -224,7 +224,7 @@ namespace ParticleStormControl
                 else
                     damageMap.UpdateGPU_Particles(graphicsDevice, particleRenderer, players);
                 levelDamageFrame = !levelDamageFrame;
-                graphicsDevice.SetRenderTarget(null);
+             //   graphicsDevice.SetRenderTarget(null);
 
                 // update player gpu
                 for (int i = 0; i < players.Length; ++i)

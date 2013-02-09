@@ -55,13 +55,6 @@ float TimeInterval;
 float4 DamageFactor;
 float NoiseToMovementFactor;
 
-// Spawning
-#define MAX_NUM_SPAWNS 15
-int NumSpawns;
-float4 SpawnsAt_Positions[MAX_NUM_SPAWNS];	// xy texcoord for the spawn, zw  position for the new Particle
-float4 SpawnInfos[MAX_NUM_SPAWNS];			// the usual 4 info components
-float TexcoordDelta = 0.8f / 128.0f;
-
 struct VertexShaderInput
 {
     float2 Position : POSITION;
@@ -89,7 +82,7 @@ struct PixelShaderOutput
 	float4 movement : COLOR1;
 	float4 infos : COLOR2;
 };
-PixelShaderOutput PixelShaderFunction(VertexShaderOutput input)
+PixelShaderOutput Process(VertexShaderOutput input)
 {
 	PixelShaderOutput output;
 	output.position = tex2D(sampPositions, input.Texcoord);
@@ -115,26 +108,62 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input)
 	float damage = dot(damageMapMasked, 1.0f); 
 	output.infos.x -= damage;
 
-	// spawn
-	for(int i=0; i<NumSpawns; ++i)
-	{
-		float2 d = abs(SpawnsAt_Positions[i].xy - input.Texcoord.xy);
-		[flatten] if(d.x + d.y < TexcoordDelta)
-		{
-			output.position.xy = SpawnsAt_Positions[i].zw;
-			output.movement.xy = SpawnInfos[i].xy;
-			output.infos.xy = SpawnInfos[i].zw;
-		}
-	}
-
     return output;
 }
 
-technique Technique1
+
+
+struct VertexShaderInput_Spawn
+{
+    float2 Position : POSITION;
+    float2 ParticlePosition : TEXCOORD0;
+	float2 Movement : TEXCOORD1;
+    float2 DamageSpeed : TEXCOORD2;
+};
+
+struct VertexShaderOutput_Spawn
+{
+    float4 Position : POSITION0;
+    float2 ParticlePosition : TEXCOORD0;
+	float2 Movement : TEXCOORD1;
+    float2 DamageSpeed : TEXCOORD2;
+};
+
+VertexShaderOutput_Spawn SpawnVS(VertexShaderInput_Spawn input)
+{
+    VertexShaderOutput_Spawn output;
+	output.Position.xy = input.Position - halfPixelCorrection;	// yep subtract
+	output.Position.zw = float2(0.0f, 1.0f);
+	output.ParticlePosition = input.ParticlePosition;
+	output.Movement = input.Movement;
+	output.DamageSpeed = input.DamageSpeed;
+    return output;
+}
+
+PixelShaderOutput SpawnPS(VertexShaderOutput_Spawn input)
+{
+	PixelShaderOutput output = (PixelShaderOutput)0;
+	output.position.xy = input.ParticlePosition;
+	output.movement.xy = input.Movement;
+	output.infos.xy = input.DamageSpeed;
+    return output;
+}
+
+technique ProcessTechnique
 {
     pass Pass1
     {
         VertexShader = compile vs_3_0 ScreenAlignedTriangle();
-        PixelShader = compile ps_3_0 PixelShaderFunction();
+        PixelShader = compile ps_3_0 Process();
     }
 }
+
+technique SpawnTechnique
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_3_0 SpawnVS();
+        PixelShader = compile ps_3_0 SpawnPS();
+    }
+}
+
