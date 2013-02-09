@@ -1,0 +1,10 @@
+/ParticleStormControl/ParticleStormControl/bin
+/ParticleStormControl/ParticleStormControl/ParticleStormControl.csproj.Release.cachefile
+/ParticleStormControl/ParticleStormControl/obj
+/ParticleStormControl/ParticleStormControlContent/obj
+/ParticleStormControl/ParticleStormControlContent/bin
+/*.psess
+/*.suo
+/*.vspx
+
+/ParticleStormControl/ParticleStormControl/*.cachefile
