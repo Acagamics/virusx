@@ -17,7 +17,7 @@ namespace ParticleStormControl
         /// <summary>
         /// size of particle-data rendertargets and textures
         /// </summary>
-        public const int maxParticlesSqrt = 128;
+        public const int maxParticlesSqrt = 256;
         public const int maxParticles = maxParticlesSqrt * maxParticlesSqrt;
 
         // info texture:
@@ -40,6 +40,7 @@ namespace ParticleStormControl
 
 
         #region spawning
+
         private const int maxSpawnsPerFrame = 32;
         private int numSpawns = 0;
 
@@ -76,7 +77,7 @@ namespace ParticleStormControl
         /// Buffer for accumulating new vertices
         /// after finished updating all new particles will be writtten to the spawnVertexBuffer
         /// </summary>
-        private SpawnVertex[] spawnVerticesRAMBuffer = new SpawnVertex[maxSpawnsPerFrame];
+        private SpawnVertex[] spawnVerticesRAMBuffer = new SpawnVertex[maxSpawnsPerFrame*2];
 
         #endregion
 
@@ -316,7 +317,8 @@ namespace ParticleStormControl
             InfoTexture.SetData<HalfVector2>(particleInfos);
 
             // spawn vb
-            spawnVertexBuffer = new DynamicVertexBuffer(device, SpawnVertex.VertexDeclaration, maxSpawnsPerFrame * 2, BufferUsage.WriteOnly);
+            spawnVertexBuffer = new DynamicVertexBuffer(device, SpawnVertex.VertexDeclaration, 
+                                                            maxSpawnsPerFrame * 2, BufferUsage.WriteOnly);
         }
 
         public void UpdateGPUPart(GraphicsDevice device, float timeInterval, Texture2D damageMapTexture)
