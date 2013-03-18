@@ -29,6 +29,9 @@ namespace ParticleStormControl.Menu
 
         public SpriteFont FontSmall { get { return fontSmall; } }
         private SpriteFont fontSmall;
+
+        public SpriteFont FontBold { get { return fontBold; } }
+        private SpriteFont fontBold;
         #endregion
 
         public int ScreenWidth { get { return game.GraphicsDevice.Viewport.Width; } }
@@ -64,6 +67,7 @@ namespace ParticleStormControl.Menu
         {
             font = content.Load<SpriteFont>("font");
             fontSmall = content.Load<SpriteFont>("fontSmall");
+            fontBold = content.Load<SpriteFont>("fontBold");
             pixelTexture = content.Load<Texture2D>("pix");
             foreach (MenuPage page in pages)
             {

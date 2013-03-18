@@ -15,13 +15,6 @@ namespace ParticleStormControl
         private static readonly Settings instance = new Settings();
         static public Settings Instance { get { return instance; } }
         private Settings() { }
-        
-        private Vector2 resolution;
-        public Vector2 Resolution
-        {
-            get { return resolution; }
-            private set { resolution = value; }
-        }
 
         #region Graphics
         public const int MINIMUM_SCREEN_WIDTH = 1024;
@@ -38,8 +31,11 @@ namespace ParticleStormControl
         public InputManager.ControlType[] PlayerControls { get { return playerControls; } }
         private int numPlayers;
         public int NumPlayers { get { return numPlayers; } set { numPlayers = value; } }
-        private int[] playerColorIndices = new int[]{ 0, 1, 2, 3 };
+        private int[] playerColorIndices = new int[]{ -1, -1, -1, -1 };
         public int[] PlayerColorIndices { get { return playerColorIndices; } }
+        private int[] playerVirusIndices = new int[] { 0, 0, 0, 0 };
+        public int[] PlayerVirusIndices { get { return playerVirusIndices; } }
+        
         #endregion
 
         public Color GetPlayerColor(int playerIndex)
@@ -60,11 +56,14 @@ namespace ParticleStormControl
 
             playerControls = new InputManager.ControlType[] { InputManager.ControlType.GAMEPAD0, InputManager.ControlType.GAMEPAD1, InputManager.ControlType.GAMEPAD2, InputManager.ControlType.GAMEPAD3 };
 #else
-            numPlayers = 2;
-            playerControls = new InputManager.ControlType[] { InputManager.ControlType.KEYBOARD0, InputManager.ControlType.KEYBOARD1, InputManager.ControlType.GAMEPAD0, InputManager.ControlType.GAMEPAD1 };
+            numPlayers = 0;
+            playerControls = new InputManager.ControlType[] { InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE };
 #endif
             for(int i=0; i<playerColorIndices.Length; ++i)
-                playerColorIndices[i] = i;
+                playerColorIndices[i] = -1;
+
+            for (int i = 0; i < playerVirusIndices.Length; ++i)
+                playerVirusIndices[i] = 0;
         }
 
         /// <summary>
@@ -102,15 +101,18 @@ namespace ParticleStormControl
                                 resolutionY = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionY"));
                                 break;
 
+                                /* we don't need you anymore
                             case "player":
                                 numPlayers = Convert.ToInt32(xmlConfigReader.GetAttribute("numPlayers"));
                                 for (int i = 0; i < 4; ++i)
                                 {
                                     Enum.TryParse(xmlConfigReader.GetAttribute("controls" + i.ToString()), out playerControls[i]);
                                     playerColorIndices[i] = Convert.ToInt32(xmlConfigReader.GetAttribute("color" + i.ToString()));
+                                    playerVirusIndices[i] = Convert.ToInt32(xmlConfigReader.GetAttribute("virus" + i.ToString()));
                                 }
 
                                 break;
+                                 */
                         }
                     }
                 }
@@ -128,8 +130,8 @@ namespace ParticleStormControl
                 }
             }
 
-            if (numPlayers < 2)
-                numPlayers = 2;
+            if (numPlayers < 0)
+                numPlayers = 0;
             else if (numPlayers > 4)
                 numPlayers = 4;
 #endif
@@ -161,6 +163,8 @@ namespace ParticleStormControl
                 settingsXML.WriteValue(playerControls[i].ToString());
                 settingsXML.WriteStartAttribute("color" + i);
                 settingsXML.WriteValue(playerColorIndices[i].ToString());
+                settingsXML.WriteStartAttribute("virus" + i);
+                settingsXML.WriteValue(playerVirusIndices[i].ToString());
             }
 
             settingsXML.WriteEndElement();

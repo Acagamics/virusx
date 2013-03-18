@@ -39,7 +39,7 @@ namespace ParticleStormControl.Menu
             // loopin
             int selectionInt = (int)selectedButton;
             if (InputManager.Instance.AnyDownButtonPressed())
-                selectionInt = selectionInt == (int)Button.NUM_BUTTONS-1 ? 0 : selectionInt+1;
+                selectionInt = selectionInt == (int)Button.NUM_BUTTONS-1 ? 0 : selectionInt + 1;
             else if (InputManager.Instance.AnyUpButtonPressed())
                 selectionInt = selectionInt == 0 ? (int)Button.NUM_BUTTONS - 1 : selectionInt - 1;
             selectedButton = (Button)(selectionInt);

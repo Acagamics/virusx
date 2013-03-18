@@ -123,7 +123,7 @@ namespace ParticleStormControl
             // backgroundmusic
             song = content.Load<Song>("paniq_Godshatter");
             MediaPlayer.Volume = 0.5f;
-            MediaPlayer.Play(song);
+            //MediaPlayer.Play(song);
             MediaPlayer.IsRepeating = true;
         }
 

@@ -12,6 +12,23 @@ namespace ParticleStormControl
     {
         public const int MaxNumPlayers = 4;
 
+        #region Virus
+        
+        public enum VirusType
+	    {
+            H1N1,
+            HEPATITISB,
+            HIV,
+            NORO,
+
+            NUM_VIRUSES
+	    }
+
+        public readonly static VirusType[] Viruses = { VirusType.H1N1, VirusType.HEPATITISB, VirusType.HIV, VirusType.NORO };
+        public readonly static string[] VirusNames = { "Influenza A virus", "Hepatitis B virus", "Human immunodeficiency virus", "Norovirus" };
+
+        #endregion
+
         #region Particles
 
         /// <summary>
@@ -92,12 +109,11 @@ namespace ParticleStormControl
 
         #endregion
 
-
         #region Colors
 
         public readonly static Color[] Colors = { Color.Red, Color.Blue, Color.Yellow, Color.Green, Color.Black, Color.Pink, Color.Orange  };
         public readonly static Color[] ParticleColors = { new Color(240, 80, 70), new Color(75, 95, 220), new Color(250, 216, 50), new Color(80, 200, 80), Color.DarkSlateGray, Color.HotPink, new Color(250, 120, 20) };
-        public readonly static string[] Names = { "Red", "Blue", "Yellow", "Green", "Black", "Pink", "Orange" };
+        public readonly static string[] ColorNames = { "Red", "Blue", "Yellow", "Green", "Black", "Pink", "Orange" };
 
 #if XBOX
         public readonly static Color[] TextureDamageValue = {  new Color(0, 0, 0, 1),
@@ -134,7 +150,8 @@ namespace ParticleStormControl
         };*/
         static public readonly String[] ControlNames = new String[]
         {
-            "Arrow Keys + STRG", "WASD + SHIFT",
+            "Arrow Keys + CTRL",
+            "WASD + SHIFT",
             "Gamepad 1",
             "Gamepad 2",
             "Gamepad 3",
@@ -240,7 +257,14 @@ namespace ParticleStormControl
         public Color ParticleColor
         { get { return ParticleColors[colorIndex]; } }
 
-
+        private int virusIndex;
+        public int VirusIndex
+        {
+            get { return virusIndex; }
+            set { virusIndex = value; }
+        }
+        public VirusType Virus
+        { get { return Viruses[virusIndex]; } }
 
         public float RemainingTimeAlive
         {
@@ -487,7 +511,7 @@ namespace ParticleStormControl
             //len = cursorMove.Length();
             //if (len > 1.0f) cursorMove /= len;
 
-            cursorMove = InputManager.Instance.Movement(playerIndex);
+            cursorMove = InputManager.Instance.GetMovement(playerIndex);
             cursorMove *= frameTimeInterval * 0.5f;
             //padMove *= frameTimeInterval * 2.0f;
 
@@ -504,7 +528,7 @@ namespace ParticleStormControl
             cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, 1.0f);
 
             // (hold move)
-            if (InputManager.Instance.Hold(playerIndex))
+            if (InputManager.Instance.HoldButtonPressed(playerIndex))
             {
                 if (!holdTargetPositionSet)
                 {
@@ -519,7 +543,7 @@ namespace ParticleStormControl
 
             // Action
             // TODO actual gamplay implementaion
-            if (InputManager.Instance.Action(playerIndex))
+            if (InputManager.Instance.ActionButtonPressed(playerIndex))
             {
                 Console.Out.WriteLine(playerIndex.ToString() + "pressed action key");
             }

@@ -33,7 +33,7 @@ namespace ParticleStormControl.Menu
         public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)
         {
             spriteBatch.Draw(logo, new Vector2(0, menu.ScreenHeight - logo.Height + 200), Color.White);
-            string text = Player.Names[ShownWinnerColorIndex] + " wins!";
+            string text = Player.ColorNames[ShownWinnerColorIndex] + " wins!";
             Vector2 stringSize = menu.Font.MeasureString(text);
             spriteBatch.DrawString(menu.Font, text, (new Vector2(menu.ScreenWidth, menu.ScreenHeight) - menu.Font.MeasureString(text)) *0.5f, Player.Colors[ShownWinnerColorIndex]);
         }

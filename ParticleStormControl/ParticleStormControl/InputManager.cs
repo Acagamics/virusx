@@ -59,7 +59,7 @@ namespace ParticleStormControl
         /// <summary>
         /// Matching of player to used controls of the player.
         /// </summary>
-        private ControlType[] playerToControl = { ControlType.KEYBOARD0, ControlType.KEYBOARD1, ControlType.GAMEPAD0, ControlType.GAMEPAD1 };
+        private ControlType[] getControlTypeForPlayer = { ControlType.KEYBOARD0, ControlType.KEYBOARD1, ControlType.GAMEPAD0, ControlType.GAMEPAD1 };
 
         #endregion
 
@@ -68,8 +68,8 @@ namespace ParticleStormControl
         /// </summary>
         public void resetAllControlTypes()
         {
-            for (int i = 0; i < playerToControl.Length; ++i)
-                playerToControl[i] = ControlType.NONE;
+            for (int i = 0; i < getControlTypeForPlayer.Length; ++i)
+                getControlTypeForPlayer[i] = ControlType.NONE;
         }
 
         /// <summary>
@@ -83,13 +83,13 @@ namespace ParticleStormControl
         {
             //foreach (ControlType ct in playerToControl)
             //    if (ct == controlType) return false;
-            playerToControl[(int)index] = controlType;
+            getControlTypeForPlayer[(int)index] = controlType;
             return true;
         }
 
         public ControlType getControlType(PlayerIndex index)
         {
-            return playerToControl[(int)index];
+            return getControlTypeForPlayer[(int)index];
         }
 
         /// <summary>
@@ -172,7 +172,11 @@ namespace ParticleStormControl
                    PressedButton(Keys.Enter) ||
                     PressedButton(Buttons.A) ||
                     PressedButton(Buttons.Start);
+        }
 
+        public bool ExitButton()
+        {
+            return PressedButton(Keys.Escape) || PressedButton(Buttons.Back);
         }
 
         private const float THUMBSTICK_DIRECTION_TRESHHOLD = 0.7f;
@@ -347,11 +351,11 @@ namespace ParticleStormControl
 
         #region get specific actions
 
-        public Vector2 Movement(PlayerIndex index)
+        public Vector2 GetMovement(PlayerIndex index)
         {
             Vector2 result = Vector2.Zero;
             if (Settings.Instance.NumPlayers <= (int)index) return result;
-            switch(playerToControl[(int)index])
+            switch(getControlTypeForPlayer[(int)index])
             {
                 case ControlType.GAMEPAD0: result = currentGamePadStates[0].ThumbSticks.Left; break;
                 case ControlType.GAMEPAD1: result = currentGamePadStates[1].ThumbSticks.Left; break;
@@ -383,10 +387,10 @@ namespace ParticleStormControl
             return result;
         }
 
-        public bool Action(PlayerIndex index)
+        public bool ActionButtonPressed(PlayerIndex index)
         {
             if (Settings.Instance.NumPlayers <= (int)index) return false;
-            switch (playerToControl[(int)index])
+            switch (getControlTypeForPlayer[(int)index])
             {
                 case ControlType.GAMEPAD0: return (currentGamePadStates[0].IsButtonDown(Buttons.A) && oldGamePadStates[0].IsButtonUp(Buttons.A));
                 case ControlType.GAMEPAD1: return (currentGamePadStates[1].IsButtonDown(Buttons.A) && oldGamePadStates[1].IsButtonUp(Buttons.A));
@@ -398,10 +402,24 @@ namespace ParticleStormControl
             }
         }
 
-        public bool Hold(PlayerIndex index)
+        public List<ControlType> ContinueButtonsPressed()
+        {
+            List<ControlType> result = new List<ControlType>();
+
+            if (PressedButton(Buttons.A, 0)) { result.Add(ControlType.GAMEPAD0); }
+            if (PressedButton(Buttons.A, 1)) { result.Add(ControlType.GAMEPAD1); }
+            if (PressedButton(Buttons.A, 2)) { result.Add(ControlType.GAMEPAD2); }
+            if (PressedButton(Buttons.A, 3)) { result.Add(ControlType.GAMEPAD3); }
+            if (PressedButton(Keys.Space)) { result.Add(ControlType.KEYBOARD0); }
+            if (PressedButton(Keys.Enter)) { result.Add(ControlType.KEYBOARD1); }
+
+            return result;
+        }
+
+        public bool HoldButtonPressed(PlayerIndex index)
         {
             if (Settings.Instance.NumPlayers <= (int)index) return false;
-            switch (playerToControl[(int)index])
+            switch (getControlTypeForPlayer[(int)index])
             {
                 case ControlType.GAMEPAD0: return (currentGamePadStates[0].IsButtonDown(Buttons.B));
                 case ControlType.GAMEPAD1: return (currentGamePadStates[1].IsButtonDown(Buttons.B));
@@ -411,6 +429,93 @@ namespace ParticleStormControl
                 case ControlType.KEYBOARD1: return (currentKeyboardState.IsKeyDown(Keys.RightShift));
                 default: return false;
             }
+        }
+
+        public bool DirectionButtonPressed(ControlActions action, ControlType type)
+        {
+            switch (type)
+            {
+                case ControlType.KEYBOARD0:
+                    switch (action)
+	                {
+                        case ControlActions.UP:
+                            return PressedButton(Keys.W);
+                        case ControlActions.DOWN:
+                            return PressedButton(Keys.S);
+                        case ControlActions.LEFT:
+                            return PressedButton(Keys.A);
+                        case ControlActions.RIGHT:
+                            return PressedButton(Keys.D);
+	                }
+                    break;
+                case ControlType.KEYBOARD1:
+                    switch (action)
+                    {
+                        case ControlActions.UP:
+                            return PressedButton(Keys.Up);
+                        case ControlActions.DOWN:
+                            return PressedButton(Keys.Down);
+                        case ControlActions.LEFT:
+                            return PressedButton(Keys.Left);
+                        case ControlActions.RIGHT:
+                            return PressedButton(Keys.Right);
+                    }
+                    break;
+                case ControlType.GAMEPAD0:
+                    switch (action)
+	                {
+                        case ControlActions.UP:
+                            return PressedButton(Buttons.DPadUp, 0);
+                        case ControlActions.DOWN:
+                            return PressedButton(Buttons.DPadDown, 0);
+                        case ControlActions.LEFT:
+                            return PressedButton(Buttons.DPadLeft, 0);
+                        case ControlActions.RIGHT:
+                            return PressedButton(Buttons.DPadRight, 0);
+	                }
+                    break;
+                case ControlType.GAMEPAD1:
+                    switch (action)
+                    {
+                        case ControlActions.UP:
+                            return PressedButton(Buttons.DPadUp, 1);
+                        case ControlActions.DOWN:
+                            return PressedButton(Buttons.DPadDown, 1);
+                        case ControlActions.LEFT:
+                            return PressedButton(Buttons.DPadLeft, 1);
+                        case ControlActions.RIGHT:
+                            return PressedButton(Buttons.DPadRight, 1);
+                    }
+                    break;
+                case ControlType.GAMEPAD2:
+                    switch (action)
+                    {
+                        case ControlActions.UP:
+                            return PressedButton(Buttons.DPadUp, 2);
+                        case ControlActions.DOWN:
+                            return PressedButton(Buttons.DPadDown, 2);
+                        case ControlActions.LEFT:
+                            return PressedButton(Buttons.DPadLeft, 2);
+                        case ControlActions.RIGHT:
+                            return PressedButton(Buttons.DPadRight, 2);
+                    }
+                    break;
+                case ControlType.GAMEPAD3:
+                    switch (action)
+                    {
+                        case ControlActions.UP:
+                            return PressedButton(Buttons.DPadUp, 3);
+                        case ControlActions.DOWN:
+                            return PressedButton(Buttons.DPadDown, 3);
+                        case ControlActions.LEFT:
+                            return PressedButton(Buttons.DPadLeft, 3);
+                        case ControlActions.RIGHT:
+                            return PressedButton(Buttons.DPadRight, 3);
+                    }
+                    break;
+            }
+
+            return false;
         }
 
         #endregion
