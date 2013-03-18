@@ -28,7 +28,7 @@ namespace ParticleStormControl
     /// </summary>
     public class ParticleStormControl : Microsoft.Xna.Framework.Game
     {
-        public const string VERSION = "pscd 02.02.2013";
+        public const string VERSION = "pscd XX.04.2013";
      
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;

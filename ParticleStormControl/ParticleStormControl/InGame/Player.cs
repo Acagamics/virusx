@@ -152,20 +152,22 @@ namespace ParticleStormControl
         #endregion
 
         #region hold move
-        // variables to control the hold move, it is just test
         /// <summary>
-        /// Position for the hold move
+        /// Position to wich the particles are attracted
         /// </summary>
-        private Vector2 holdTargedPosition = Vector2.Zero;
+        public Vector2 ParticleAttractionPosition
+        {
+            get { return particleAttractionPosition; }
+        }
+        private Vector2 particleAttractionPosition = Vector2.Zero;
+
         /// <summary>
         /// is the hold move actice?
         /// </summary>
         private bool holdTargetPositionSet = false;
-        #endregion
 
-        #region cursor
         /// <summary>
-        /// position of the particle cursor
+        /// position of the particle cursor (under direct player control)
         /// </summary>
         public Vector2 CursorPosition
         {
@@ -352,9 +354,9 @@ namespace ParticleStormControl
             particleProcessing.Parameters["Infos"].SetValue(InfoTexture);
 
             if(holdTargetPositionSet)
-                particleProcessing.Parameters["CursorPosition"].SetValue(holdTargedPosition);
+                particleProcessing.Parameters["particleAttractionPosition"].SetValue(ParticleAttractionPosition);
             else
-                particleProcessing.Parameters["CursorPosition"].SetValue(cursorPosition);
+                particleProcessing.Parameters["particleAttractionPosition"].SetValue(particleAttractionPosition);
             particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant * timeInterval);
             particleProcessing.Parameters["TimeInterval"].SetValue(timeInterval);
             particleProcessing.Parameters["DamageMap"].SetValue(damageMapTexture);
@@ -508,23 +510,15 @@ namespace ParticleStormControl
 
             //mass_health = MathHelper.Clamp(mass_health, -1.0f, 1.0f);
             //disciplin_speed = MathHelper.Clamp(disciplin_speed, -1.0f, 1.0f);
-            // TODO clamp to new coordinates
             cursorPosition.X = MathHelper.Clamp(cursorPosition.X, 0.0f, Level.RELATIVE_MAX.X);
             cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, Level.RELATIVE_MAX.Y);
-            // (hold move)
-            if (InputManager.Instance.Hold(playerIndex))
-            {
-                if (!holdTargetPositionSet)
-                {
-                    holdTargedPosition = cursorPosition;
-                    holdTargetPositionSet = true;
-                }
-            }
-            else
-            {
-                holdTargetPositionSet = false;
-            }
 
+            // hold move
+            holdTargetPositionSet = InputManager.Instance.Hold(playerIndex);
+
+            if(!holdTargetPositionSet)
+                particleAttractionPosition = cursorPosition;
+            
             // Action
             // TODO actual gamplay implementaion
             if (InputManager.Instance.Action(playerIndex))
@@ -534,7 +528,7 @@ namespace ParticleStormControl
                 {
                     if (item is DangerZone)
                     {
-                        (item as DangerZone).Position = cursorPosition;
+                        (item as DangerZone).Position = particleAttractionPosition;
                         (item as DangerZone).Activate();
                     }
                 }
@@ -553,84 +547,6 @@ namespace ParticleStormControl
             }
 #endif
         }
-
-        /*private void MovementsFromControls(out Vector2 cursorMove, out Vector2 padMove)
-        {
-            padMove = Vector2.Zero;
-            cursorMove = Vector2.Zero;
-
-            switch(Controls)
-            {
-
-#if !XBOX
-
-                case ControlType.KEYBOARD0:
-                    {
-                        Vector2 keyboardMove = new Vector2(InputManager.Instance.IsButtonDown(Keys.Right) ? 1 : 0 - (InputManager.Instance.IsButtonDown(Keys.Left) ? 1 : 0),
-                                                            InputManager.Instance.IsButtonDown(Keys.Down) ? -1 : 0 + (InputManager.Instance.IsButtonDown(Keys.Up) ? 1 : 0));
-                        float l = keyboardMove.Length();
-                        if (l > 1) keyboardMove /= l;
-                        if (InputManager.Instance.IsButtonDown(Keys.RightControl))
-                            padMove = keyboardMove;
-                        else
-                            cursorMove = keyboardMove;
-                        // Some simple Test for a new movment technique (hold move)
-                        if (InputManager.Instance.IsButtonDown(Keys.Space))
-                        {
-                            if (!holdTargetPositionSet)
-                            {
-                                holdTargedPosition = cursorPosition;
-                                holdTargetPositionSet = true;
-                            }
-                        }
-                        else
-                        {
-                            holdTargetPositionSet = false;
-                        }
-                        break;
-                    }
-                
-                case ControlType.KEYBOARD1:
-                    {
-                        Vector2 keyboardMove = new Vector2(InputManager.Instance.IsButtonDown(Keys.D) ? 1 : 0 - (InputManager.Instance.IsButtonDown(Keys.A) ? 1 : 0),
-                                                            InputManager.Instance.IsButtonDown(Keys.S) ? -1 : 0 + (InputManager.Instance.IsButtonDown(Keys.W) ? 1 : 0));
-                        float l = keyboardMove.Length();
-                        if (l > 1) keyboardMove /= l;
-                        if (InputManager.Instance.IsButtonDown(Keys.LeftControl))
-                            padMove = keyboardMove;
-                        else
-                            cursorMove = keyboardMove;
-                        break;
-                    }
-
-               
-#endif
-                case ControlType.GAMEPAD0:
-                    padMove = InputManager.Instance.GetRightStickMovement(0);
-                    cursorMove = InputManager.Instance.GetLeftStickMovement(0);
-                    break;
-
-                case ControlType.GAMEPAD1:
-                    padMove = InputManager.Instance.GetRightStickMovement(1);
-                    cursorMove = InputManager.Instance.GetLeftStickMovement(1);
-                    break;
-
-                case ControlType.GAMEPAD2:
-                    padMove = InputManager.Instance.GetRightStickMovement(2);
-                    cursorMove = InputManager.Instance.GetLeftStickMovement(2);
-                    break;
-
-                case ControlType.GAMEPAD3:
-                    padMove = InputManager.Instance.GetRightStickMovement(3);
-                    cursorMove = InputManager.Instance.GetLeftStickMovement(3);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            padMove.Y = -padMove.Y;
-            cursorMove.Y = -cursorMove.Y;
-        }*/
 
         /// <summary>
         /// still alive?

@@ -407,8 +407,8 @@ namespace ParticleStormControl
                 case ControlType.GAMEPAD1: return (currentGamePadStates[1].IsButtonDown(Buttons.B));
                 case ControlType.GAMEPAD2: return (currentGamePadStates[2].IsButtonDown(Buttons.B));
                 case ControlType.GAMEPAD3: return (currentGamePadStates[3].IsButtonDown(Buttons.B));
-                case ControlType.KEYBOARD0: return (currentKeyboardState.IsKeyDown(Keys.Space));
-                case ControlType.KEYBOARD1: return (currentKeyboardState.IsKeyDown(Keys.RightShift));
+                case ControlType.KEYBOARD0: return (currentKeyboardState.IsKeyDown(Keys.LeftShift));
+                case ControlType.KEYBOARD1: return (currentKeyboardState.IsKeyDown(Keys.RightControl));
                 default: return false;
             }
         }

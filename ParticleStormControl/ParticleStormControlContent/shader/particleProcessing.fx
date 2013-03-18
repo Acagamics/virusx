@@ -49,7 +49,7 @@ sampler2D sampNoise = sampler_state
 
 
 
-float2 CursorPosition;
+float2 particleAttractionPosition;
 float MovementChangeFactor;
 float TimeInterval;
 float4 DamageFactor;
@@ -93,7 +93,7 @@ PixelShaderOutput Process(VertexShaderOutput input)
 	output.infos = tex2D(sampInfos, input.Texcoord);
 
 	// movement
-	float2 aimed = normalize(CursorPosition - output.position.xy);
+	float2 aimed = normalize(particleAttractionPosition - output.position.xy);
 	output.movement.xy = normalize(lerp(output.movement.xy, aimed, MovementChangeFactor / output.infos.y));
 	output.movement.xy += tex2D(sampNoise, input.Texcoord + TimeInterval/2).xy * NoiseToMovementFactor * output.infos.y; // add noise
     output.position.xy += output.movement.xy * (output.infos.y * TimeInterval);
@@ -103,10 +103,10 @@ PixelShaderOutput Process(VertexShaderOutput input)
 
 	// borders
 	float2 posSgn = sign(output.position.xy);
-    float2 posInv = output.position.xy - 0.999f;
+    float2 posInv = output.position.xy - 0.99f;
     float2 posInvSgn = -sign(posInv);
     float2 combSigns = posInvSgn * posSgn;
-    output.position.xy = posInv * combSigns + 0.999f * posSgn;
+    output.position.xy = posInv * combSigns + 0.99f * posSgn;
     output.movement.xy *= combSigns;
 	
 	// damage

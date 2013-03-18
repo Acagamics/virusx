@@ -273,8 +273,9 @@ namespace ParticleStormControl
                 Crosshair crosshair = mapObject as Crosshair;
                 if (crosshair != null)
                 {
-                    mapObject.Position = players[crosshair.PlayerIndex].CursorPosition;
-                    mapObject.Alive = players[crosshair.PlayerIndex].Alive;
+                    crosshair.Position = players[crosshair.PlayerIndex].CursorPosition;
+                    crosshair.ParticleAttractionPosition = players[crosshair.PlayerIndex].ParticleAttractionPosition;
+                    crosshair.Alive = players[crosshair.PlayerIndex].Alive;
                 }
             }
 
