@@ -24,6 +24,8 @@ namespace ParticleStormControl
 
         private SpriteBatch spriteBatch;
 
+        private ContentManager contentManager;
+
         #region debuff ressources
         private SoundEffect debuffExplosionSound;
         private Texture2D debuffItemTexture;
@@ -32,7 +34,6 @@ namespace ParticleStormControl
 
         #region dangerzone ressources
         private SoundEffect dangerZoneSound;
-        private Texture2D dangerZoneItem;
         private Texture2D dangerZoneInnerTexture;
         private Texture2D dangerZoneOuterTexture;
         #endregion
@@ -102,6 +103,8 @@ namespace ParticleStormControl
 
         public Level(GraphicsDevice device, ContentManager content, int numPlayers)
         {
+            this.contentManager = content; 
+
             pickuptimer = new Stopwatch();
             pickuptimer.Start();
 
@@ -119,7 +122,6 @@ namespace ParticleStormControl
 
             // dangerzone
             dangerZoneSound = content.Load<SoundEffect>("sound/danger_zone");
-            dangerZoneItem = content.Load<Texture2D>("buff");
             dangerZoneInnerTexture = content.Load<Texture2D>("danger_zone_inner");
             dangerZoneOuterTexture = content.Load<Texture2D>("danger_zone_outer");
 
@@ -252,14 +254,14 @@ namespace ParticleStormControl
             foreach (MapObject interest in mapObjects)
             {
                 interest.ApplyDamage(damageMap, timeInterval);
-                if (interest is CapturableObject)
+               /* if (interest is CapturableObject)
                 {
                     if ((interest as CapturableObject).PossessingPercentage >= 1f)
                     {
                         if((interest as CapturableObject).PossessingPlayer != -1)
                             playerList[(interest as CapturableObject).PossessingPlayer].Item = (interest as CapturableObject);
                     }
-                }
+                } */
             }
         }
 
@@ -284,6 +286,11 @@ namespace ParticleStormControl
             {
                 if (!mapObjects[i].Alive)
                 {
+                    // if its a item, give it to a player if its 100% his
+                    Item item = mapObjects[i] as Item;
+                    if (item != null && item.PossessingPlayer != -1 && item.PossessingPercentage == 1.0f)
+                        players[item.PossessingPlayer].ItemSlot = item.Type;
+
                     mapObjects.RemoveAt(i);
                     --i;
                 }
@@ -300,8 +307,8 @@ namespace ParticleStormControl
                     mapObjects.Add(new Debuff(position, debuffExplosionSound, debuffItemTexture, debuffExplosionTexture));
                 else if ((rand < 0.6) && (rand > 0.2))
                 {
-                    DangerZone dz = new DangerZone(position, dangerZoneSound, dangerZoneItem, dangerZoneInnerTexture, dangerZoneOuterTexture);
-                    mapObjects.Add(dz);
+                    Item item = new Item(position, Item.ItemType.DANGER_ZONE, contentManager);
+                    mapObjects.Add(item);
                 }
                 else if (rand < 0.065 && !switchCountdownActive)
                 {
@@ -313,9 +320,6 @@ namespace ParticleStormControl
                 pickuptimer.Reset();
                 pickuptimer.Start();
             }
-
-
-            
         }
 
         public void UpdateSwitching(float frameTimeSeconds, Player[] players)
@@ -576,6 +580,16 @@ namespace ParticleStormControl
         {
             foreach (MapObject point in mapObjects)
                 point.DrawToDamageMap(damageSpriteBatch);
+        }
+
+        public void PlayerUseItem(Player player)
+        {
+            switch (player.ItemSlot)
+            {
+                case Item.ItemType.DANGER_ZONE:
+                    mapObjects.Add(new DangerZone(player.CursorPosition, dangerZoneSound, dangerZoneInnerTexture, dangerZoneOuterTexture, player.Index));
+                    break;
+            }
         }
     }
 }

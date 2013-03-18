@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ParticleStormControl
 {
-    public class DangerZone : CapturableObject
+    public class DangerZone : MapObject
     {
         /// <summary>
         /// max explosion size
@@ -23,48 +23,33 @@ namespace ParticleStormControl
         private float alpha = 1.0f;
 
         private SoundEffect explosionSound;
-        private Texture2D itemTexture;
         private Texture2D dangerZoneTextureOuter;
         private Texture2D dangerZoneTextureInner;
 
-        private readonly Vector2 textureCenterItem;
         private readonly Vector2 textureCenterZone;
 
-        public DangerZone(Vector2 Position, SoundEffect explosionSound, Texture2D itemTexture, Texture2D dangerZoneTextureInner, Texture2D dangerZoneTextureOuter)
-            : base(Position, -1, 0.1f, 10.0f, 3)
+        private readonly int possessingPlayer;
+
+        public DangerZone(Vector2 Position, SoundEffect explosionSound, Texture2D dangerZoneTextureInner, Texture2D dangerZoneTextureOuter, int possessingPlayer)
+            : base(Position, 0.05f)
         {
             this.explosionSound = explosionSound;
-            this.itemTexture = itemTexture;
             this.dangerZoneTextureOuter = dangerZoneTextureOuter;
             this.dangerZoneTextureInner = dangerZoneTextureInner;
+            this.possessingPlayer = possessingPlayer;
 
             explosionTimer = new Stopwatch();
 
             Size = 0.05f;
-            textureCenterItem = new Vector2(itemTexture.Width / 2, itemTexture.Height / 2);
             textureCenterZone = new Vector2(dangerZoneTextureOuter.Width / 2, dangerZoneTextureOuter.Height / 2);
+
+            Activate();
         }
 
-        protected override void OnPossessingChanged()
-        {
-            if (PossessingPlayer != -1)
-            {
-                //explosionSound.Play();
-                //explosionTimer.Start();
-            }
-        }
-
-        public void Activate()
+        private void Activate()
         {
             explosionSound.Play();
             explosionTimer.Start();
-        }
-
-
-        public override void ApplyDamage(DamageMap damageMap, float timeInterval)
-        {
-            if(PossessingPlayer == -1)
-                base.ApplyDamage(damageMap, timeInterval);
         }
 
         public override void Update(float frameTimeSeconds, float totalTimeSeconds)
@@ -85,29 +70,16 @@ namespace ParticleStormControl
 
         public override void DrawToDamageMap(SpriteBatch spriteBatch)
         {
-            if (explosionTimer.IsRunning)
-            {
-                Color damage = Player.TextureDamageValue[PossessingPlayer] * explosionDamage * alpha;
-                spriteBatch.Draw(dangerZoneTextureInner, DamageMap.ComputePixelRect(Position, currentExplosionSize), null, damage, currentRotation, textureCenterZone, SpriteEffects.None, 0);
-            }
+            Color damage = Player.TextureDamageValue[possessingPlayer] * explosionDamage * alpha;
+            spriteBatch.Draw(dangerZoneTextureInner, DamageMap.ComputePixelRect(Position, currentExplosionSize), null, damage, currentRotation, textureCenterZone, SpriteEffects.None, 0);
         }
 
         public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, float totalTimeSeconds)
         {
             // explosion
-            if (explosionTimer.IsRunning)
-            {
-                Rectangle rect = level.ComputePixelRect(Position, currentExplosionSize);
-                spriteBatch.Draw(dangerZoneTextureOuter, rect, null, Settings.Instance.GetPlayerColor(PossessingPlayer) * alpha, 0.0f, textureCenterZone, SpriteEffects.None, 0);
-                spriteBatch.Draw(dangerZoneTextureInner, rect, null, Settings.Instance.GetPlayerColor(PossessingPlayer) * alpha, currentRotation, textureCenterZone, SpriteEffects.None, 0);
-            }
-                    
-            // item
-            else
-            {
-                spriteBatch.Draw(itemTexture, level.ComputePixelRect(Position, Size), null, Color.Lerp(Color.White, Color.Black, PossessingPercentage),
-                                    totalTimeSeconds, textureCenterItem, SpriteEffects.None, 1.0f);
-            }
+            Rectangle rect = level.ComputePixelRect(Position, currentExplosionSize);
+            spriteBatch.Draw(dangerZoneTextureOuter, rect, null, Settings.Instance.GetPlayerColor(possessingPlayer) * alpha, 0.0f, textureCenterZone, SpriteEffects.None, 0);
+            spriteBatch.Draw(dangerZoneTextureInner, rect, null, Settings.Instance.GetPlayerColor(possessingPlayer) * alpha, currentRotation, textureCenterZone, SpriteEffects.None, 0);
         }
     }
 }

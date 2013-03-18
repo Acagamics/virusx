@@ -184,9 +184,9 @@ namespace ParticleStormControl
         #endregion
 
         #region item
-        CapturableObject item = null;
 
-        public CapturableObject Item { set { item = value; } }
+        public Item.ItemType ItemSlot { get; set; }
+
         #endregion
         // who is who (blue etc.)
         public readonly PlayerIndex playerIndex;
@@ -300,6 +300,10 @@ namespace ParticleStormControl
             i = player1.HighestUsedParticleIndex;
             player1.HighestUsedParticleIndex = player2.HighestUsedParticleIndex;
             player2.HighestUsedParticleIndex = i;
+
+            Item.ItemType item = player1.ItemSlot;
+            player1.ItemSlot = player2.ItemSlot;
+            player2.ItemSlot = item;
         }
 
         public Player(int playerIndex, GraphicsDevice device, ContentManager content, Texture2D noiseTexture, int colorIndex)
@@ -307,6 +311,8 @@ namespace ParticleStormControl
             this.playerIndex = (PlayerIndex)playerIndex;
             this.noiseTexture = noiseTexture;
             this.colorIndex = colorIndex;
+
+            this.ItemSlot = global::ParticleStormControl.Item.ItemType.NONE;
 
             cursorPosition = cursorStartPositions[(int)playerIndex];
 
@@ -487,7 +493,7 @@ namespace ParticleStormControl
         /// <summary>
         /// controll through a gamepad or 
         /// </summary>
-        public void UserControl(float frameTimeInterval)
+        public void UserControl(float frameTimeInterval, Level level)
         {
             Vector2 cursorMove;
             //Vector2 padMove;
@@ -519,19 +525,13 @@ namespace ParticleStormControl
             if(!holdTargetPositionSet)
                 particleAttractionPosition = cursorPosition;
             
-            // Action
-            // TODO actual gamplay implementaion
+            // action
             if (InputManager.Instance.Action(playerIndex))
             {
-                Console.Out.WriteLine(playerIndex.ToString() + " pressed action key");
-                if (item != null)
+                if (ItemSlot != Item.ItemType.NONE)
                 {
-                    if (item is DangerZone)
-                    {
-                        (item as DangerZone).Position = particleAttractionPosition;
-                        (item as DangerZone).Activate();
-                    }
-                    item = null;
+                    level.PlayerUseItem(this);
+                    ItemSlot = Item.ItemType.NONE;
                 }
             }
             

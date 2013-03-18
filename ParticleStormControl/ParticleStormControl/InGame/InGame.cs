@@ -141,7 +141,7 @@ namespace ParticleStormControl
             {
                 // do controlling
                 foreach (Player player in players)
-                    player.UserControl(passedFrameTime);
+                    player.UserControl(passedFrameTime, level);
 
                 // switching - wrong placed this leads player errors
                 level.UpdateSwitching(passedFrameTime, players);
