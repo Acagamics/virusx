@@ -27,8 +27,8 @@ namespace ParticleStormControl
         #endregion
 
         #region Game
-        private Player.ControlType[] playerControls;
-        public Player.ControlType[] PlayerControls { get { return playerControls; } }
+        private InputManager.ControlType[] playerControls;
+        public InputManager.ControlType[] PlayerControls { get { return playerControls; } }
         private int numPlayers;
         public int NumPlayers { get { return numPlayers; } set { numPlayers = value; } }
         private int[] playerColorIndices = new int[]{ 0, 1, 2, 3 };
@@ -51,10 +51,10 @@ namespace ParticleStormControl
             for (int i = 0; i < 4; ++i)
                 numPlayers += GamePad.GetState((PlayerIndex)i).IsConnected ? 1 : 0;
 
-            playerControls = new Player.ControlType[] { Player.ControlType.GAMEPAD0, Player.ControlType.GAMEPAD1, Player.ControlType.GAMEPAD2, Player.ControlType.GAMEPAD3 };
+            playerControls = new InputManager.ControlType[] { InputManager.ControlType.GAMEPAD0, InputManager.ControlType.GAMEPAD1, InputManager.ControlType.GAMEPAD2, InputManager.ControlType.GAMEPAD3 };
 #else
             numPlayers = 2;
-            playerControls = new Player.ControlType[] { Player.ControlType.KEYBOARD0, Player.ControlType.KEYBOARD1, Player.ControlType.GAMEPAD0, Player.ControlType.GAMEPAD1 };
+            playerControls = new InputManager.ControlType[] { InputManager.ControlType.KEYBOARD0, InputManager.ControlType.KEYBOARD1, InputManager.ControlType.GAMEPAD0, InputManager.ControlType.GAMEPAD1 };
 #endif
             for(int i=0; i<playerColorIndices.Length; ++i)
                 playerColorIndices[i] = i;

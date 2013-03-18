@@ -136,7 +136,7 @@ namespace ParticleStormControl
             particleEffect.Parameters["InfoTexture"].SetValue(player.InfoTexture);
 
             if (damage)
-                particleEffect.Parameters["Color"].SetValue(Player.TextureDamageValue[player.playerIndex].ToVector4());
+                particleEffect.Parameters["Color"].SetValue(Player.TextureDamageValue[(int)player.playerIndex].ToVector4());
             else
                 particleEffect.Parameters["Color"].SetValue(player.ParticleColor.ToVector4());
 
@@ -150,7 +150,7 @@ namespace ParticleStormControl
             }
 
 
-            device.SetVertexBuffers(particleVertexBufferBinding, instanceVertexBufferBinding[player.playerIndex]);
+            device.SetVertexBuffers(particleVertexBufferBinding, instanceVertexBufferBinding[(int)player.playerIndex]);
             device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 4, 0, 2, player.HighestUsedParticleIndex + 1);
 
 
