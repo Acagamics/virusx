@@ -15,13 +15,6 @@ namespace ParticleStormControl
         private static readonly Settings instance = new Settings();
         static public Settings Instance { get { return instance; } }
         private Settings() { }
-        
-        private Vector2 resolution;
-        public Vector2 Resolution
-        {
-            get { return resolution; }
-            private set { resolution = value; }
-        }
 
         #region Graphics
         public const int MINIMUM_SCREEN_WIDTH = 1024;

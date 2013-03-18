@@ -42,12 +42,12 @@ namespace ParticleStormControl
             CapturingPlayer = -1;
             this.damageFactor = damageFactor;
 
-            int xOnDamageMap = (int)(Position.X * DamageMap.attackingMapSize);
-            int yOnDamageMap = (int)(Position.Y * DamageMap.attackingMapSize);
+            int xOnDamageMap = (int)(Position.X / Level.RELATIVE_MAX.X * DamageMap.attackingMapSizeX);
+            int yOnDamageMap = (int)(Position.Y / Level.RELATIVE_MAX.Y * DamageMap.attackingMapSizeY);
             damageMap_MinX = Math.Max(0, xOnDamageMap - damageMapPixelHalfRange);
             damageMap_MinY = Math.Max(0, yOnDamageMap - damageMapPixelHalfRange);
-            damageMap_MaxX = Math.Min(DamageMap.attackingMapSize - 1, xOnDamageMap + damageMapPixelHalfRange);
-            damageMap_MaxY = Math.Min(DamageMap.attackingMapSize - 1, yOnDamageMap + damageMapPixelHalfRange);
+            damageMap_MaxX = Math.Min(DamageMap.attackingMapSizeX - 1, xOnDamageMap + damageMapPixelHalfRange);
+            damageMap_MaxY = Math.Min(DamageMap.attackingMapSizeY - 1, yOnDamageMap + damageMapPixelHalfRange);
 
             lifeTimer.Start();
         }

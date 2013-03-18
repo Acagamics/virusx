@@ -55,6 +55,9 @@ float TimeInterval;
 float4 DamageFactor;
 float NoiseToMovementFactor;
 
+// maximum of the relative cordinates
+float2 RelativeCorMax;
+
 struct VertexShaderInput
 {
     float2 Position : POSITION;
@@ -95,6 +98,9 @@ PixelShaderOutput Process(VertexShaderOutput input)
 	output.movement.xy += tex2D(sampNoise, input.Texcoord + TimeInterval/2).xy * NoiseToMovementFactor * output.infos.y; // add noise
     output.position.xy += output.movement.xy * (output.infos.y * TimeInterval);
 	
+	// texcoord position!
+	output.position.xy /= RelativeCorMax;
+
 	// borders
 	float2 posSgn = sign(output.position.xy);
     float2 posInv = output.position.xy - 0.999f;
@@ -108,10 +114,12 @@ PixelShaderOutput Process(VertexShaderOutput input)
 	float damage = dot(damageMapMasked, 1.0f); 
 	output.infos.x -= damage;
 
+
+	// game position!
+	output.position.xy *= RelativeCorMax;
+
     return output;
 }
-
-
 
 struct VertexShaderInput_Spawn
 {

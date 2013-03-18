@@ -18,9 +18,9 @@ namespace ParticleStormControl
 
         private Texture2D pixelTexture;
         
-        private Texture2D controlPadTexture;
+       /* private Texture2D controlPadTexture;
         private Texture2D controlIcon;
-        private const float controlPadFadeTime = 0.5f;
+        private const float controlPadFadeTime = 0.5f; */
 
         private SpriteBatch spriteBatch;
 
@@ -44,20 +44,34 @@ namespace ParticleStormControl
                                                        ColorBlendFunction = BlendFunction.Add
                                                    };
 
-        #region field dimension
-        public Vector2 FieldPixelSize
+        #region field dimension & cordinates
+
+        /// <summary>
+        /// all relative coordinates are from 0 to RELATIVE_MAX
+        /// </summary>
+        static public readonly Vector2 RELATIVE_MAX = new Vector2(2, 1);
+
+        static public readonly float RELATIVECOR_ASPECT_RATIO = (float)RELATIVE_MAX.X / RELATIVE_MAX.Y;
+
+        /// <summary>
+        /// size of the playing area in pixel
+        /// </summary>
+        public Point FieldPixelSize
         {
-            get { return new Vector2(fieldSize_pixel, fieldSize_pixel); }
+            get { return fieldSize_pixel; }
         }
-        private int fieldSize_pixel;
+        private Point fieldSize_pixel;
 
 
-        public Vector2 FieldPixelOffset
+        /// <summary>
+        /// offset in x and y of the playing area in pixel
+        /// </summary>
+        public Point FieldPixelOffset
         {
-            get { return new Vector2(fieldOffsetX_pixel, fieldOffsetY_pixel); }
+            get { return fieldOffset_pixel; }
         }
-        private int fieldOffsetX_pixel;
-        private const int fieldOffsetY_pixel = 0;
+        private Point fieldOffset_pixel;
+
         #endregion
 
         #region switch
@@ -95,8 +109,8 @@ namespace ParticleStormControl
             pixelTexture = content.Load<Texture2D>("pix");
 
             // pad
-            controlPadTexture = content.Load<Texture2D>("netzdiagramm");
-            controlIcon = content.Load<Texture2D>("cursor_net");
+        //    controlPadTexture = content.Load<Texture2D>("netzdiagramm");
+        //   controlIcon = content.Load<Texture2D>("cursor_net");
 
             // debuff
             debuffExplosionSound = content.Load<SoundEffect>("sound/explosion");
@@ -140,13 +154,13 @@ namespace ParticleStormControl
 
 
 
-            newCapturePoints.Add(new SpawnPoint(new Vector2(0.1f, 0.9f), 1000.0f, 0, capture, captureExplosion,
+            newCapturePoints.Add(new SpawnPoint(new Vector2(0.1f, RELATIVE_MAX.Y - 0.1f), 1000.0f, 0, capture, captureExplosion,
                                                     glowTexture, captureGlow, hqInner, hqOuter));
-            newCapturePoints.Add(new SpawnPoint(new Vector2(0.9f, 0.1f), 1000.0f, 1, capture, captureExplosion,
+            newCapturePoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - 0.1f, 0.1f), 1000.0f, 1, capture, captureExplosion,
                                                     glowTexture, captureGlow, hqInner, hqOuter));
             if(numPlayers >= 3)
             {
-                newCapturePoints.Add(new SpawnPoint(new Vector2(0.9f, 0.9f), 1000.0f, 2, capture, captureExplosion,
+                newCapturePoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - 0.1f, RELATIVE_MAX.Y - 0.1f), 1000.0f, 2, capture, captureExplosion,
                                     glowTexture, captureGlow, hqInner, hqOuter));
             }
             if (numPlayers == 4)
@@ -159,8 +173,8 @@ namespace ParticleStormControl
             int tooCloseCounter = 0;
             for (int i = 0; i < pointcount; i++)
             {
-                Vector2 randomposition = new Vector2((float) (((random.NextDouble()*0.8)/2) + 0.5),
-                                                     (float) (random.NextDouble()*0.8 + 0.1));
+                Vector2 randomposition = new Vector2((float)(((random.NextDouble() * RELATIVE_MAX.X) / 2) + 0.5),
+                                                     (float)(random.NextDouble() * RELATIVE_MAX.Y + 0.1));
 
                 bool tooclose = false;
                 foreach (SpawnPoint currenCP in newCapturePoints)
@@ -169,14 +183,14 @@ namespace ParticleStormControl
                         tooclose = true;
                 }
 
-                if ((new Vector2(0.9f, 0.1f) - randomposition).Length() < (0.3f * (3.0f / (float)pointcount)))
+                if ((new Vector2(RELATIVE_MAX.X - 0.1f, 0.1f) - randomposition).Length() < (0.3f * (3.0f / (float)pointcount)))
                     tooclose = true;
 
                 if (!tooclose)
                 {
                     float capturesize = 100.0f + ((float)random.NextDouble() * 500);
                     newCapturePoints.Add(new SpawnPoint(randomposition, capturesize, -1, capture, captureExplosion, glowTexture, captureGlow, hqInner, hqOuter));
-                    newCapturePoints.Add(new SpawnPoint(new Vector2(1.0f, 1.0f) - randomposition, capturesize, -1, capture, captureExplosion, glowTexture, captureGlow, hqInner, hqOuter));
+                    newCapturePoints.Add(new SpawnPoint(RELATIVE_MAX - randomposition, capturesize, -1, capture, captureExplosion, glowTexture, captureGlow, hqInner, hqOuter));
                 }
                 else
                 {
@@ -190,24 +204,47 @@ namespace ParticleStormControl
             mapObjects.AddRange(newCapturePoints);
         }
 
-        public Rectangle ComputePixelRect(Vector2 position, float size)
+        /// <summary>
+        /// computes pixelrect on damage map from relative cordinates
+        /// </summary>
+        /// <param name="relativePosition">position in relative game cor</param>
+        /// <param name="uniformSize">uniform size in relative game cord</param>
+        public Rectangle ComputePixelRect(Vector2 position, float uniformSize)
         {
-            int rectSize = (int)(size * fieldSize_pixel);
-            int rectx = (int)(position.X * FieldPixelSize.X + FieldPixelOffset.X);
-            int recty = (int)(position.Y * FieldPixelSize.Y + FieldPixelOffset.Y);
-
-            return new Rectangle(rectx, recty, rectSize, rectSize);
+            return ComputePixelRect(position, new Vector2(uniformSize / RELATIVECOR_ASPECT_RATIO, uniformSize));
         }
 
-        public Rectangle ComputePixelRect_Centered(Vector2 position, float size)
+        public Rectangle ComputePixelRect(Vector2 position, Vector2 size)
         {
-            int rectSize = (int)(size * fieldSize_pixel);
-            int halfSize = rectSize / 2;
+            int rectSizeX = (int)(size.X * fieldSize_pixel.X + 0.5f);
+            int rectSizeY = (int)(size.Y * fieldSize_pixel.Y + 0.5f);
+            int rectx = (int)(position.X / RELATIVE_MAX.X * FieldPixelSize.X + FieldPixelOffset.X);
+            int recty = (int)(position.Y / RELATIVE_MAX.Y * FieldPixelSize.Y + FieldPixelOffset.Y);
 
-            int rectx = (int)(position.X * FieldPixelSize.X + FieldPixelOffset.X);
-            int recty = (int)(position.Y * FieldPixelSize.Y + FieldPixelOffset.Y);
+            return new Rectangle(rectx, recty, rectSizeX, rectSizeY);
+        }
+
+        /// <summary>
+        /// computes centered pixelrect on damage map from relative cordinates
+        /// </summary>
+        /// <param name="relativePosition">position in relative game cor</param>
+        /// <param name="uniformSize">uniform size in relative game cord</param>
+        public Rectangle ComputePixelRect_Centered(Vector2 position, float uniformSize)
+        {
+            return ComputePixelRect_Centered(position, new Vector2(uniformSize / RELATIVECOR_ASPECT_RATIO, uniformSize));
+        }
+
+        public Rectangle ComputePixelRect_Centered(Vector2 position, Vector2 size)
+        {
+            int rectSizeX = (int)(size.X * fieldSize_pixel.X + 0.5f);
+            int halfSizeX = rectSizeX / 2;
+            int rectSizeY = (int)(size.Y * fieldSize_pixel.Y + 0.5f);
+            int halfSizeY = rectSizeY / 2;
+
+            int rectx = (int)(position.X / RELATIVE_MAX.X * FieldPixelSize.X + FieldPixelOffset.X);
+            int recty = (int)(position.Y / RELATIVE_MAX.Y * FieldPixelSize.Y + FieldPixelOffset.Y);
             
-            return new Rectangle(rectx - halfSize, recty - halfSize, rectSize, rectSize);
+            return new Rectangle(rectx - halfSizeX, recty - halfSizeY, rectSizeX, rectSizeY);
         }
 
         public void ApplyDamage(DamageMap damageMap, float timeInterval)
@@ -372,8 +409,6 @@ namespace ParticleStormControl
 
         public void Draw(float totalTimeSeconds, GraphicsDevice device, Player[] players)
         {
-            DrawMap(device);
-
             // screenblend stuff
             spriteBatch.Begin(SpriteSortMode.BackToFront, ScreenBlend);
             foreach (MapObject mapObject in mapObjects)
@@ -403,38 +438,16 @@ namespace ParticleStormControl
 
         private void DrawParticles(GraphicsDevice device)
         {
-          /*  spriteBatch.Begin(SpriteSortMode.Deferred, ShadowBlend, SamplerState.LinearClamp, DepthStencilState.None,
-                              RasterizerState.CullNone);
-            spriteBatch.Draw(particleTexture,
-                             new Rectangle((int)FieldPixelOffset.X - 1, (int)FieldPixelOffset.Y - 1, 2 + particleTexture.Width, 2 + particleTexture.Height), new Color(255, 255, 255, 150));
-            spriteBatch.End();
-            */
             spriteBatch.Begin(SpriteSortMode.Deferred, ShadowBlend, SamplerState.LinearClamp,
                               DepthStencilState.None, RasterizerState.CullNone);
-            spriteBatch.Draw(particleTexture,
-                             new Rectangle((int)FieldPixelOffset.X, (int)FieldPixelOffset.Y, particleTexture.Width, particleTexture.Height),
-                             Color.White);
+            spriteBatch.Draw(particleTexture, new Rectangle(FieldPixelOffset.X, FieldPixelOffset.Y, particleTexture.Width, particleTexture.Height),
+                                    Color.White);
             spriteBatch.End(); 
-        }
-
-        private void DrawMap(GraphicsDevice device)
-        {
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
-                              DepthStencilState.Default, RasterizerState.CullNone);
-
-            // lines
-            spriteBatch.Draw(pixelTexture, new Rectangle(fieldOffsetX_pixel - 4, fieldOffsetY_pixel, 1, fieldSize_pixel), Color.Black);
-            spriteBatch.Draw(pixelTexture, new Rectangle(fieldOffsetX_pixel - 2, fieldOffsetY_pixel, 2, fieldSize_pixel), Color.Black);
-            spriteBatch.Draw(pixelTexture, new Rectangle(fieldOffsetX_pixel + fieldSize_pixel, fieldOffsetY_pixel, 2, fieldSize_pixel),
-                             Color.Black);
-            spriteBatch.Draw(pixelTexture, new Rectangle(fieldOffsetX_pixel + fieldSize_pixel + 3, fieldOffsetY_pixel, 1, fieldSize_pixel),
-                             Color.Black);
-            spriteBatch.End();
         }
 
         private void DrawControls(Player[] players, GraphicsDevice device)
         {
-            int sizePad = fieldSize_pixel/4;
+           /*int sizePad = fieldSize_pixel/4;
             int sizeIcon = sizePad/4;
 
             int halfViewPortHeight = (int) (device.Viewport.Height*0.5f);
@@ -458,12 +471,12 @@ namespace ParticleStormControl
                 DrawParticleControlPad(players[1], leftPadsX, halfViewPortHeight - sizePad - 10, sizePad, sizeIcon);
                 DrawParticleControlPad(players[2], leftPadsX, halfViewPortHeight + 10,           sizePad, sizeIcon);
                 DrawParticleControlPad(players[3], 20,        halfViewPortHeight - sizePad - 10, sizePad, sizeIcon);
-            }
+            }*/
         }
 
         private void DrawParticleControlPad(Player player, int positionX, int positionY, int sizePad, int sizeIcon)
         {
-            if (player.TimeDead < controlPadFadeTime)
+          /*  if (player.TimeDead < controlPadFadeTime)
             {
                 Rectangle rect = new Rectangle(positionX, positionY, sizePad, sizePad);
 
@@ -492,7 +505,7 @@ namespace ParticleStormControl
                                            new Vector2(padMidX - size.X / 2, padMidY - size.Y / 2),
                                            new Color(0, 0, 0, 160), 0.0f, Vector2.Zero, 0.25f, SpriteEffects.None, 0.0f);
                 }
-            }
+            }*/
         }
 
       /*  private void DrawBar(Player[] players, GraphicsDevice device)
@@ -523,8 +536,14 @@ namespace ParticleStormControl
 
         public void Resize(GraphicsDevice device)
         {
-            fieldSize_pixel = device.Viewport.Height - fieldOffsetY_pixel;
-            fieldOffsetX_pixel = (int)((device.Viewport.Width - device.Viewport.Height)*0.5f);
+            // letterboxing
+            float sizeY = device.Viewport.Width / RELATIVECOR_ASPECT_RATIO + 0.5f;
+            if (sizeY > device.Viewport.Height)
+                fieldSize_pixel = new Point((int)(device.Viewport.Width * RELATIVECOR_ASPECT_RATIO+0.5f), device.Viewport.Height);
+            else
+                fieldSize_pixel = new Point(device.Viewport.Width, (int)sizeY);
+            fieldOffset_pixel = new Point(device.Viewport.Width - fieldSize_pixel.X, device.Viewport.Height - fieldSize_pixel.Y);
+            fieldOffset_pixel.X /= 2; fieldOffset_pixel.Y /= 2;
 
             CreateParticleTarget(device);
         }
@@ -536,8 +555,7 @@ namespace ParticleStormControl
 
             particleTexture = new RenderTarget2D(device, (int)(FieldPixelSize.X),
                                                          (int)(FieldPixelSize.Y),
-                                                    false, SurfaceFormat.Color, DepthFormat.None, 0,
-                                                    RenderTargetUsage.PreserveContents);
+                                                    false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PlatformContents);
         }
 
         public void DrawToDamageMap(SpriteBatch damageSpriteBatch)
