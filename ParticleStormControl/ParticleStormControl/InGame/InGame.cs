@@ -17,6 +17,7 @@ using System.Threading;
 
 using System.Threading.Tasks;
 using ParticleStormControl;
+using System.Diagnostics;
 
 #endif
 
@@ -167,7 +168,18 @@ namespace ParticleStormControl
                 WaitHandle.WaitAll(waitHandles);
 #else
                 Task[] playerTaskList = new Task[players.Length];
-                var func = new Action<object>((index) => { players[(int)index].UpdateCPUPart(passedFrameTime, level.mapObjects, playerCantDie); });
+                var func = new Action<object>((index) =>
+                {
+                    try
+                    {
+                        players[(int)index].UpdateCPUPart(passedFrameTime, level.mapObjects, playerCantDie);
+                    }
+                    catch(Exception exp)
+                    {
+                        Console.WriteLine(exp);
+                        Debugger.Break();
+                    }
+                });
                 for (int i = 0; i < players.Length; ++i)
                     playerTaskList[i] = Task.Factory.StartNew(func, i);
                 Task.WaitAll(playerTaskList);

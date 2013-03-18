@@ -295,7 +295,7 @@ namespace ParticleStormControl
                 if (reducedPlayerList.Length == 2)
                 {
                     Player.SwitchPlayer(reducedPlayerList[0], reducedPlayerList[1]);
-                    SwapInts(playerIndices, reducedPlayerList[0].playerIndex, reducedPlayerList[1].playerIndex);
+                    SwapInts(playerIndices, reducedPlayerList[0].Index, reducedPlayerList[1].Index);
                 }
                 else if (reducedPlayerList.Length == 3)
                 {
@@ -303,16 +303,16 @@ namespace ParticleStormControl
                     if (rotateLeft)
                     {
                         Player.SwitchPlayer(reducedPlayerList[0], reducedPlayerList[1]);
-                        SwapInts(playerIndices, reducedPlayerList[0].playerIndex, reducedPlayerList[1].playerIndex);
+                        SwapInts(playerIndices, reducedPlayerList[0].Index, reducedPlayerList[1].Index);
                         Player.SwitchPlayer(reducedPlayerList[1], reducedPlayerList[2]);
-                        SwapInts(playerIndices, reducedPlayerList[1].playerIndex, reducedPlayerList[2].playerIndex);
+                        SwapInts(playerIndices, reducedPlayerList[1].Index, reducedPlayerList[2].Index);
                     }
                     else
                     {
                         Player.SwitchPlayer(reducedPlayerList[0], reducedPlayerList[1]);
-                        SwapInts(playerIndices, reducedPlayerList[0].playerIndex, reducedPlayerList[1].playerIndex);
+                        SwapInts(playerIndices, reducedPlayerList[0].Index, reducedPlayerList[1].Index);
                         Player.SwitchPlayer(reducedPlayerList[0], reducedPlayerList[2]);
-                        SwapInts(playerIndices, reducedPlayerList[0].playerIndex, reducedPlayerList[2].playerIndex);
+                        SwapInts(playerIndices, reducedPlayerList[0].Index, reducedPlayerList[2].Index);
                     }
                 }
                 else if (reducedPlayerList.Length == 4)
@@ -320,7 +320,7 @@ namespace ParticleStormControl
                     int first = random.Next(0, 4);
                     int second = (first + random.Next(1, 4)) % 4;
                     Player.SwitchPlayer(players[first], players[second]);
-                    SwapInts(playerIndices, reducedPlayerList[first].playerIndex, reducedPlayerList[second].playerIndex);
+                    SwapInts(playerIndices, reducedPlayerList[first].Index, reducedPlayerList[second].Index);
 
                     int third = -1;
                     int fourth = -1;
@@ -335,7 +335,7 @@ namespace ParticleStormControl
                         }
                     }
                     Player.SwitchPlayer(players[third], players[fourth]);
-                    SwapInts(playerIndices, reducedPlayerList[third].playerIndex, reducedPlayerList[fourth].playerIndex);
+                    SwapInts(playerIndices, reducedPlayerList[third].Index, reducedPlayerList[fourth].Index);
 
                     playerIndices[first] = second;
                     playerIndices[second] = first;
