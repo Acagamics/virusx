@@ -131,8 +131,8 @@ namespace ParticleStormControl.Menu
                     case Button.CONTROLS2:
                     case Button.CONTROLS3:
                         index = (int)selectedButton - (int)Button.CONTROLS0;
-                        Player.ControlType newControllerType = Settings.Instance.PlayerControls[index] + 1;
-                        newControllerType = (Player.ControlType)((int)newControllerType % Player.ControlNames.Length);
+                        InputManager.ControlType newControllerType = Settings.Instance.PlayerControls[index] + 1;
+                        newControllerType = (InputManager.ControlType)((int)newControllerType % Player.ControlNames.Length);
                         // swap with the one who already owns this!
                        /* for (int i = 0; i < Settings.Instance.PlayerControls.Length; ++i)
                         {

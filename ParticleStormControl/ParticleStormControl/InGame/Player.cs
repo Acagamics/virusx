@@ -123,14 +123,14 @@ namespace ParticleStormControl
 
         #region Control
 
-        public enum ControlType
+        /*public enum ControlType
         {
             KEYBOARD0,KEYBOARD1,
             GAMEPAD0,
             GAMEPAD1,
             GAMEPAD2,
             GAMEPAD3
-        };
+        };*/
         static public readonly String[] ControlNames = new String[]
         {
             "Arrow Keys + STRG", "WASD + SHIFT",
@@ -138,10 +138,15 @@ namespace ParticleStormControl
             "Gamepad 2",
             "Gamepad 3",
             "Gamepad 4",
+            "No Control"
         };
 
 
-        public ControlType Controls { get; set; }
+        public InputManager.ControlType Controls
+        {
+            get { return InputManager.Instance.getControlType(playerIndex); }
+            set { InputManager.Instance.setControlType(playerIndex, value); }
+        }
 
         #endregion
 
@@ -176,8 +181,8 @@ namespace ParticleStormControl
         #endregion
 
         // who is who (blue etc.)
-        public readonly int playerIndex;
-        public int Index { get { return playerIndex; } }
+        public readonly PlayerIndex playerIndex;
+        public int Index { get { return (int)playerIndex; } }
 
         // spawn stuff!
         private const float spawnConstant = 12.0f;  // higher means LESS!
@@ -291,11 +296,11 @@ namespace ParticleStormControl
 
         public Player(int playerIndex, GraphicsDevice device, ContentManager content, Texture2D noiseTexture, int colorIndex)
         {
-            this.playerIndex = playerIndex;
+            this.playerIndex = (PlayerIndex)playerIndex;
             this.noiseTexture = noiseTexture;
             this.colorIndex = colorIndex;
 
-            cursorPosition = cursorStartPositions[playerIndex];
+            cursorPosition = cursorStartPositions[(int)playerIndex];
 
             for (int i = 0; i < maxParticles; ++i)
                 particleInfos[i] = new HalfVector2(-1.0f, -1.0f);
@@ -342,7 +347,7 @@ namespace ParticleStormControl
             particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant * timeInterval);
             particleProcessing.Parameters["TimeInterval"].SetValue(timeInterval);
             particleProcessing.Parameters["DamageMap"].SetValue(damageMapTexture);
-            particleProcessing.Parameters["DamageFactor"].SetValue(DamageMapMask[playerIndex] * (attackingPerSecond * timeInterval * 255));
+            particleProcessing.Parameters["DamageFactor"].SetValue(DamageMapMask[Index] * (attackingPerSecond * timeInterval * 255));
 
             particleProcessing.Parameters["NoiseToMovementFactor"].SetValue(timeInterval * NoiseToMovementFactor);
             particleProcessing.Parameters["NoiseTexture"].SetValue(noiseTexture);
@@ -387,7 +392,7 @@ namespace ParticleStormControl
             foreach (MapObject interest in mapObjects)
             {
                 SpawnPoint spawn = interest as SpawnPoint;
-                if (spawn != null && spawn.PossessingPlayer == playerIndex)
+                if (spawn != null && spawn.PossessingPlayer == (int)playerIndex)
                 {
                     spawn.SpawnTimeAccum += timeInterval;
                     float f = spawn.SpawnSize / (spawnConstant + spawnSettingFactor * mass_health);
@@ -472,26 +477,50 @@ namespace ParticleStormControl
         public void UserControl(float frameTimeInterval)
         {
             Vector2 cursorMove;
-            Vector2 padMove;
-            MovementsFromControls(out cursorMove, out padMove);
+            //Vector2 padMove;
+            //MovementsFromControls(out cursorMove, out padMove);
 
-            float len = padMove.Length();
-            if (len > 1.0f) padMove /= len;
-            len = cursorMove.Length();
-            if (len > 1.0f) cursorMove /= len;
+            //float len = padMove.Length();
+            //if (len > 1.0f) padMove /= len;
+            //len = cursorMove.Length();
+            //if (len > 1.0f) cursorMove /= len;
 
+            cursorMove = InputManager.Instance.Movement(playerIndex);
             cursorMove *= frameTimeInterval * 0.5f;
-            padMove *= frameTimeInterval * 2.0f;
+            //padMove *= frameTimeInterval * 2.0f;
 
-            mass_health += padMove.Y;
-            disciplin_speed -= padMove.X;
+            //mass_health += padMove.Y;
+            //disciplin_speed -= padMove.X;
             cursorPosition += cursorMove;
 
-            mass_health = MathHelper.Clamp(mass_health, -1.0f, 1.0f);
-            disciplin_speed = MathHelper.Clamp(disciplin_speed, -1.0f, 1.0f);
+            //mass_health = MathHelper.Clamp(mass_health, -1.0f, 1.0f);
+            //disciplin_speed = MathHelper.Clamp(disciplin_speed, -1.0f, 1.0f);
+            // TODO clamp to new coordinates
             cursorPosition.X = MathHelper.Clamp(cursorPosition.X, 0.0f, 1.0f);
             cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, 1.0f);
 
+            // (hold move)
+            if (InputManager.Instance.Hold(playerIndex))
+            {
+                if (!holdTargetPositionSet)
+                {
+                    holdTargedPosition = cursorPosition;
+                    holdTargetPositionSet = true;
+                }
+            }
+            else
+            {
+                holdTargetPositionSet = false;
+            }
+
+            // Action
+            // TODO actual gamplay implementaion
+            if (InputManager.Instance.Action(playerIndex))
+            {
+                Console.Out.WriteLine(playerIndex.ToString() + "pressed action key");
+            }
+            
+#if DEBUG
             // save particle textures on pressing space
             if (InputManager.Instance.PressedButton(Keys.Tab))
             {
@@ -502,9 +531,10 @@ namespace ParticleStormControl
                 using (var file = new System.IO.FileStream("movement target " + playerIndex + ".png", System.IO.FileMode.Create))
                     movementTexture[currentTargetIndex].SaveAsPng(file, maxParticlesSqrt, maxParticlesSqrt);
             }
+#endif
         }
 
-        private void MovementsFromControls(out Vector2 cursorMove, out Vector2 padMove)
+        /*private void MovementsFromControls(out Vector2 cursorMove, out Vector2 padMove)
         {
             padMove = Vector2.Zero;
             cursorMove = Vector2.Zero;
@@ -580,7 +610,7 @@ namespace ParticleStormControl
             }
             padMove.Y = -padMove.Y;
             cursorMove.Y = -cursorMove.Y;
-        }
+        }*/
 
         /// <summary>
         /// still alive?
