@@ -123,7 +123,7 @@
     <Compile Include="InGame\ScreenTriangleRenderer.cs" />
     <Compile Include="InGame\Level\SpawnPoint.cs" />
     <Compile Include="InGame\Level\Crosshair.cs" />
-    <Compile Include="DamageMap.cs" />
+    <Compile Include="InGame\DamageMap.cs" />
     <Compile Include="InGame\Level\Items\Debuff.cs">
       <SubType>Code</SubType>
     </Compile>

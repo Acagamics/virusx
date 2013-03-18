@@ -174,9 +174,9 @@ namespace ParticleStormControl
         private Vector2 cursorPosition;
         private readonly static Vector2[] cursorStartPositions =
             {
-                new Vector2(0.2f, 0.8f),
-                new Vector2(0.8f, 0.2f),
-                new Vector2(0.8f, 0.8f),
+                new Vector2(0.2f, Level.RELATIVE_MAX.Y-0.2f),
+                new Vector2(Level.RELATIVE_MAX.X-0.2f, 0.2f),
+                new Vector2(Level.RELATIVE_MAX.X-0.2f, Level.RELATIVE_MAX.Y-0.2f),
                 new Vector2(0.2f, 0.2f)
             };
         #endregion
@@ -322,6 +322,7 @@ namespace ParticleStormControl
                                                                 new RenderTargetBinding[] { positionTargets[1], movementTexture[1], infoTargets[1] } };
             particleProcessing = content.Load<Effect>("shader/particleProcessing");
             particleProcessing.Parameters["halfPixelCorrection"].SetValue(new Vector2(-0.5f / maxParticlesSqrt, 0.5f / maxParticlesSqrt));
+            particleProcessing.Parameters["RelativeCorMax"].SetValue(Level.RELATIVE_MAX);
 
             // reset data
             InfoTexture.SetData<HalfVector2>(particleInfos);
@@ -508,8 +509,8 @@ namespace ParticleStormControl
             //mass_health = MathHelper.Clamp(mass_health, -1.0f, 1.0f);
             //disciplin_speed = MathHelper.Clamp(disciplin_speed, -1.0f, 1.0f);
             // TODO clamp to new coordinates
-            cursorPosition.X = MathHelper.Clamp(cursorPosition.X, 0.0f, 1.0f);
-            cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, 1.0f);
+            cursorPosition.X = MathHelper.Clamp(cursorPosition.X, 0.0f, Level.RELATIVE_MAX.X);
+            cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, Level.RELATIVE_MAX.Y);
             // (hold move)
             if (InputManager.Instance.Hold(playerIndex))
             {

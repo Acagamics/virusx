@@ -18,8 +18,10 @@ sampler2D sampInfos = sampler_state
 
 float4 Color;
 float TextureSize;
-float HealthToSizeScale;
+float2 HealthToSizeScale;
 float MinHealth;
+
+float2 RelativeMax;
 
 struct VertexShaderInput
 {
@@ -51,9 +53,9 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 	{
 		health += MinHealth;
 		float2 instancePosition = tex2Dlod(sampPositions, vertexTexcoord).xy;	
-		output.Position.xy = (input.Position * (health * HealthToSizeScale) + instancePosition) * float2(2, -2) + float2(-1, 1);
+		output.Position.xy = (input.Position * health * HealthToSizeScale + instancePosition / RelativeMax) * float2(2, -2) + float2(-1, 1);
 		output.Position.zw = float2(0.5f, 1.0f);
-	} 
+	}
 	else
 		output.Position = 100;
 		
