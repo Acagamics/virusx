@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{d847776c-b29a-4965-ab38-2eb29a5535c2}</ProjectGuid>
+    <ProjectGuid>{D847776C-B29A-4965-AB38-2EB29A5535C2}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">Xbox 360</Platform>
@@ -65,7 +65,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InGame\DamageMap.cs" />
     <Compile Include="InGame\InGame.cs" />
+    <Compile Include="InGame\Level\DangerZone.cs" />
+    <Compile Include="InGame\Level\Debuff.cs" />
+    <Compile Include="InGame\Level\Item.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="InGame\Level\CapturableObject.cs" />
     <Compile Include="Menu\Credits.cs" />
@@ -81,14 +85,9 @@
     <Compile Include="InGame\ScreenTriangleRenderer.cs" />
     <Compile Include="InGame\Level\SpawnPoint.cs" />
     <Compile Include="InGame\Level\Crosshair.cs" />
-    <Compile Include="DamageMap.cs" />
-    <Compile Include="InGame\Level\Items\Debuff.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="InGame\Level\MapObject.cs" />
     <Compile Include="InGame\Level\Level.cs" />
     <Compile Include="InGame\ParticleRenderer.cs" />
-    <Compile Include="InGame\Level\Items\DangerZone.cs" />
     <Compile Include="InGame\Player.cs" />
     <Compile Include="Menu\Win.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -51,11 +51,11 @@ namespace ParticleStormControl
         private const float instantDeathProtectingDuration = 1.0f;
         private float instantDeathProtectingTime = 0.0f;
 
+
         Song song;
 
         // damaging is only every second frame - switch every frame to be xbox friendly (preserve content stuff)
         bool levelDamageFrame = false;
-
 
         public Level Level
         {
@@ -72,7 +72,6 @@ namespace ParticleStormControl
         public InGame(Menu.Menu menu)
         {
             this.menu = menu;
-
             State = GameState.Inactive;
         }
 
@@ -142,7 +141,7 @@ namespace ParticleStormControl
             {
                 // do controlling
                 foreach (Player player in players)
-                    player.UserControl(passedFrameTime);
+                    player.UserControl(passedFrameTime, level);
 
                 // switching - wrong placed this leads player errors
                 level.UpdateSwitching(passedFrameTime, players);
@@ -192,7 +191,7 @@ namespace ParticleStormControl
                 if (levelDamageFrame)
                 {
                     damageMap.UpdateCPUData();
-                    level.ApplyDamage(damageMap, passedFrameTime);
+                    level.ApplyDamage(damageMap, passedFrameTime, players);
                 }
 
                 // level update
@@ -264,7 +263,7 @@ namespace ParticleStormControl
                     // debug draw damagemap
 #if DAMAGEMAP_DEBUGGING
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.Opaque);
-            spriteBatch.Draw(damageMap.DamageTexture, new Vector2(graphicsDevice.Viewport.Width - DamageMap.attackingMapSize, 0), Color.White);
+            spriteBatch.Draw(damageMap.DamageTexture, new Vector2(Settings.Instance.ResolutionX - DamageMap.attackingMapSizeX, 0), Color.White);
             spriteBatch.End();  
 #endif
 

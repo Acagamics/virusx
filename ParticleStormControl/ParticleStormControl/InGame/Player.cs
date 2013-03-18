@@ -169,20 +169,17 @@ namespace ParticleStormControl
         #endregion
 
         #region hold move
-        // variables to control the hold move, it is just test
         /// <summary>
-        /// Position for the hold move
+        /// Position to wich the particles are attracted
         /// </summary>
-        private Vector2 holdTargedPosition = Vector2.Zero;
-        /// <summary>
-        /// is the hold move actice?
-        /// </summary>
-        private bool holdTargetPositionSet = false;
-        #endregion
+        public Vector2 ParticleAttractionPosition
+        {
+            get { return particleAttractionPosition; }
+        }
+        private Vector2 particleAttractionPosition = Vector2.Zero;
 
-        #region cursor
         /// <summary>
-        /// position of the particle cursor
+        /// position of the particle cursor (under direct player control)
         /// </summary>
         public Vector2 CursorPosition
         {
@@ -191,13 +188,18 @@ namespace ParticleStormControl
         private Vector2 cursorPosition;
         private readonly static Vector2[] cursorStartPositions =
             {
-                new Vector2(0.2f, 0.8f),
-                new Vector2(0.8f, 0.2f),
-                new Vector2(0.8f, 0.8f),
+                new Vector2(0.2f, Level.RELATIVE_MAX.Y-0.2f),
+                new Vector2(Level.RELATIVE_MAX.X-0.2f, 0.2f),
+                new Vector2(Level.RELATIVE_MAX.X-0.2f, Level.RELATIVE_MAX.Y-0.2f),
                 new Vector2(0.2f, 0.2f)
             };
         #endregion
 
+        #region item
+
+        public Item.ItemType ItemSlot { get; set; }
+
+        #endregion
         // who is who (blue etc.)
         public readonly PlayerIndex playerIndex;
         public int Index { get { return (int)playerIndex; } }
@@ -317,6 +319,10 @@ namespace ParticleStormControl
             i = player1.HighestUsedParticleIndex;
             player1.HighestUsedParticleIndex = player2.HighestUsedParticleIndex;
             player2.HighestUsedParticleIndex = i;
+
+            Item.ItemType item = player1.ItemSlot;
+            player1.ItemSlot = player2.ItemSlot;
+            player2.ItemSlot = item;
         }
 
         public Player(int playerIndex, GraphicsDevice device, ContentManager content, Texture2D noiseTexture, int colorIndex)
@@ -324,6 +330,8 @@ namespace ParticleStormControl
             this.playerIndex = (PlayerIndex)playerIndex;
             this.noiseTexture = noiseTexture;
             this.colorIndex = colorIndex;
+
+            this.ItemSlot = global::ParticleStormControl.Item.ItemType.NONE;
 
             cursorPosition = cursorStartPositions[(int)playerIndex];
 
@@ -341,6 +349,7 @@ namespace ParticleStormControl
                                                                 new RenderTargetBinding[] { positionTargets[1], movementTexture[1], infoTargets[1] } };
             particleProcessing = content.Load<Effect>("shader/particleProcessing");
             particleProcessing.Parameters["halfPixelCorrection"].SetValue(new Vector2(-0.5f / maxParticlesSqrt, 0.5f / maxParticlesSqrt));
+            particleProcessing.Parameters["RelativeCorMax"].SetValue(Level.RELATIVE_MAX);
 
             // reset data
             InfoTexture.SetData<HalfVector2>(particleInfos);
@@ -369,7 +378,7 @@ namespace ParticleStormControl
             particleProcessing.Parameters["Movements"].SetValue(MovementTexture);
             particleProcessing.Parameters["Infos"].SetValue(InfoTexture);
 
-            particleProcessing.Parameters["CursorPosition"].SetValue(cursorPosition);
+            particleProcessing.Parameters["particleAttractionPosition"].SetValue(particleAttractionPosition);
             particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant * timeInterval);
             particleProcessing.Parameters["TimeInterval"].SetValue(timeInterval);
             particleProcessing.Parameters["DamageMap"].SetValue(damageMapTexture);
@@ -500,7 +509,7 @@ namespace ParticleStormControl
         /// <summary>
         /// controll through a gamepad or 
         /// </summary>
-        public void UserControl(float frameTimeInterval)
+        public void UserControl(float frameTimeInterval, Level level)
         {
             Vector2 cursorMove;
             //Vector2 padMove;
@@ -523,29 +532,18 @@ namespace ParticleStormControl
 
             //mass_health = MathHelper.Clamp(mass_health, -1.0f, 1.0f);
             //disciplin_speed = MathHelper.Clamp(disciplin_speed, -1.0f, 1.0f);
-            // TODO clamp to new coordinates
-            cursorPosition.X = MathHelper.Clamp(cursorPosition.X, 0.0f, 1.0f);
-            cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, 1.0f);
+            cursorPosition.X = MathHelper.Clamp(cursorPosition.X, 0.0f, Level.RELATIVE_MAX.X);
+            cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, Level.RELATIVE_MAX.Y);
 
-            // (hold move)
-            if (InputManager.Instance.HoldButtonPressed(playerIndex))
+            // hold move
+            if(!InputManager.Instance.HoldButtonPressed(playerIndex))
+                particleAttractionPosition = cursorPosition;
+            
+            // action
+            if (InputManager.Instance.ActionButtonPressed(playerIndex) && ItemSlot != Item.ItemType.NONE)
             {
-                if (!holdTargetPositionSet)
-                {
-                    holdTargedPosition = cursorPosition;
-                    holdTargetPositionSet = true;
-                }
-            }
-            else
-            {
-                holdTargetPositionSet = false;
-            }
-
-            // Action
-            // TODO actual gamplay implementaion
-            if (InputManager.Instance.ActionButtonPressed(playerIndex))
-            {
-                Console.Out.WriteLine(playerIndex.ToString() + "pressed action key");
+                level.PlayerUseItem(this);
+                ItemSlot = Item.ItemType.NONE;
             }
             
 #if DEBUG
@@ -561,84 +559,6 @@ namespace ParticleStormControl
             }
 #endif
         }
-
-        /*private void MovementsFromControls(out Vector2 cursorMove, out Vector2 padMove)
-        {
-            padMove = Vector2.Zero;
-            cursorMove = Vector2.Zero;
-
-            switch(Controls)
-            {
-
-#if !XBOX
-
-                case ControlType.KEYBOARD0:
-                    {
-                        Vector2 keyboardMove = new Vector2(InputManager.Instance.IsButtonDown(Keys.Right) ? 1 : 0 - (InputManager.Instance.IsButtonDown(Keys.Left) ? 1 : 0),
-                                                            InputManager.Instance.IsButtonDown(Keys.Down) ? -1 : 0 + (InputManager.Instance.IsButtonDown(Keys.Up) ? 1 : 0));
-                        float l = keyboardMove.Length();
-                        if (l > 1) keyboardMove /= l;
-                        if (InputManager.Instance.IsButtonDown(Keys.RightControl))
-                            padMove = keyboardMove;
-                        else
-                            cursorMove = keyboardMove;
-                        // Some simple Test for a new movment technique (hold move)
-                        if (InputManager.Instance.IsButtonDown(Keys.Space))
-                        {
-                            if (!holdTargetPositionSet)
-                            {
-                                holdTargedPosition = cursorPosition;
-                                holdTargetPositionSet = true;
-                            }
-                        }
-                        else
-                        {
-                            holdTargetPositionSet = false;
-                        }
-                        break;
-                    }
-                
-                case ControlType.KEYBOARD1:
-                    {
-                        Vector2 keyboardMove = new Vector2(InputManager.Instance.IsButtonDown(Keys.D) ? 1 : 0 - (InputManager.Instance.IsButtonDown(Keys.A) ? 1 : 0),
-                                                            InputManager.Instance.IsButtonDown(Keys.S) ? -1 : 0 + (InputManager.Instance.IsButtonDown(Keys.W) ? 1 : 0));
-                        float l = keyboardMove.Length();
-                        if (l > 1) keyboardMove /= l;
-                        if (InputManager.Instance.IsButtonDown(Keys.LeftControl))
-                            padMove = keyboardMove;
-                        else
-                            cursorMove = keyboardMove;
-                        break;
-                    }
-
-               
-#endif
-                case ControlType.GAMEPAD0:
-                    padMove = InputManager.Instance.GetRightStickMovement(0);
-                    cursorMove = InputManager.Instance.GetLeftStickMovement(0);
-                    break;
-
-                case ControlType.GAMEPAD1:
-                    padMove = InputManager.Instance.GetRightStickMovement(1);
-                    cursorMove = InputManager.Instance.GetLeftStickMovement(1);
-                    break;
-
-                case ControlType.GAMEPAD2:
-                    padMove = InputManager.Instance.GetRightStickMovement(2);
-                    cursorMove = InputManager.Instance.GetLeftStickMovement(2);
-                    break;
-
-                case ControlType.GAMEPAD3:
-                    padMove = InputManager.Instance.GetRightStickMovement(3);
-                    cursorMove = InputManager.Instance.GetLeftStickMovement(3);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            padMove.Y = -padMove.Y;
-            cursorMove.Y = -cursorMove.Y;
-        }*/
 
         /// <summary>
         /// still alive?

@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InGame\InGame.cs" />
+    <Compile Include="InGame\Level\Item.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="InGame\Level\CapturableObject.cs" />
     <Compile Include="Menu\Credits.cs" />
@@ -123,14 +124,14 @@
     <Compile Include="InGame\ScreenTriangleRenderer.cs" />
     <Compile Include="InGame\Level\SpawnPoint.cs" />
     <Compile Include="InGame\Level\Crosshair.cs" />
-    <Compile Include="DamageMap.cs" />
-    <Compile Include="InGame\Level\Items\Debuff.cs">
+    <Compile Include="InGame\DamageMap.cs" />
+    <Compile Include="InGame\Level\Debuff.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="InGame\Level\MapObject.cs" />
     <Compile Include="InGame\Level\Level.cs" />
     <Compile Include="InGame\ParticleRenderer.cs" />
-    <Compile Include="InGame\Level\Items\DangerZone.cs" />
+    <Compile Include="InGame\Level\DangerZone.cs" />
     <Compile Include="InGame\Player.cs" />
     <Compile Include="Menu\Win.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -49,7 +49,7 @@ namespace ParticleStormControl
 
         private Effect particleEffect;
 
-        private const float renderingSizeConstant = 0.0075f / Player.healthConstant;
+        private static readonly Vector2 RENDERING_SIZE_CONSTANT = new Vector2(0.0075f / Level.RELATIVECOR_ASPECT_RATIO, 0.0075f) / Player.healthConstant;
         private const float minimumHealth = 5.0f;  // added to the health in rendering shader
 
         public ParticleRenderer(GraphicsDevice device, ContentManager content, int numPlayers)
@@ -59,8 +59,9 @@ namespace ParticleStormControl
 
             particleEffect = content.Load<Effect>("shader/particleRendering");
             particleEffect.Parameters["TextureSize"].SetValue(Player.maxParticlesSqrt);
-            particleEffect.Parameters["HealthToSizeScale"].SetValue(renderingSizeConstant);
+            particleEffect.Parameters["HealthToSizeScale"].SetValue(RENDERING_SIZE_CONSTANT);
             particleEffect.Parameters["MinHealth"].SetValue(minimumHealth);
+            particleEffect.Parameters["RelativeMax"].SetValue(Level.RELATIVE_MAX);
 
             particleVertexBuffer = new VertexBuffer(device, vertex2dPosition.VertexDeclaration, 4, BufferUsage.WriteOnly);
             var vertices = new vertex2dPosition[4];
@@ -135,7 +136,7 @@ namespace ParticleStormControl
             particleEffect.Parameters["InfoTexture"].SetValue(player.InfoTexture);
 
             if (damage)
-                particleEffect.Parameters["Color"].SetValue(Player.TextureDamageValue[(int)player.playerIndex].ToVector4());
+                particleEffect.Parameters["Color"].SetValue(Player.TextureDamageValue[player.Index].ToVector4());
             else
                 particleEffect.Parameters["Color"].SetValue(player.ParticleColor.ToVector4());
 
@@ -149,7 +150,7 @@ namespace ParticleStormControl
             }
 
 
-            device.SetVertexBuffers(particleVertexBufferBinding, instanceVertexBufferBinding[(int)player.playerIndex]);
+            device.SetVertexBuffers(particleVertexBufferBinding, instanceVertexBufferBinding[player.Index]);
             device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 4, 0, 2, player.HighestUsedParticleIndex + 1);
 
 

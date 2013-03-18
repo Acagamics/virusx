@@ -29,7 +29,7 @@ namespace ParticleStormControl
         private readonly Vector2 textureCenter;
 
         public Debuff(Vector2 Position, SoundEffect explosionSound, Texture2D itemTexture, Texture2D explosionTexture)
-            : base(Position, -1, 0.1f, 10.0f, 3)
+            : base(Position, -1, 0.01f, 20.0f, 3)
         {
             this.explosionSound = explosionSound;
             this.itemTexture = itemTexture;
@@ -62,10 +62,11 @@ namespace ParticleStormControl
 
         public override void ApplyDamage(DamageMap damageMap, float timeInterval)
         {
+            // does NOT use the damage function of CapturableObject since its agnostic of the capturing player
+
             if (!explosionTimer.IsRunning)
             {
                 float damage = 0.0f;
-
                 for (int y = damageMap_MinY; y <= damageMap_MaxY; ++y)
                 {
                     for (int x = damageMap_MinX; x <= damageMap_MaxX; ++x)
@@ -81,7 +82,7 @@ namespace ParticleStormControl
             }
         }
 
-        public override void  DrawToDamageMap(SpriteBatch spriteBatch)
+        public override void DrawToDamageMap(SpriteBatch spriteBatch)
         {
             if (explosionTimer.IsRunning)
             {

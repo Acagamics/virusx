@@ -9,6 +9,12 @@ namespace ParticleStormControl
     {
         public int PlayerIndex { get; private set; }
 
+        /// <summary>
+        /// position of the cursor the particles are attracted to
+        /// MapObject.Position stands for the moving cursor position
+        /// </summary>
+        public Vector2 ParticleAttractionPosition { get; set; }
+
         private Texture2D crossHairTexture;
 
         public Crosshair (int playerindex, Texture2D crossHairTexture) :
@@ -16,6 +22,7 @@ namespace ParticleStormControl
         {
             PlayerIndex = playerindex;
             this.crossHairTexture = crossHairTexture;
+
         }
 
         public override void SwitchPlayer(int[] playerSwitchedTo)
@@ -26,9 +33,18 @@ namespace ParticleStormControl
 
         public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, float totalTimeSeconds)
         {
-            spriteBatch.Draw(crossHairTexture, level.ComputePixelRect(Position, Size), null, Settings.Instance.GetPlayerColor(PlayerIndex),
+            Color color = Settings.Instance.GetPlayerColor(PlayerIndex);
+            spriteBatch.Draw(crossHairTexture, level.ComputePixelRect(ParticleAttractionPosition, Size), null, color,
                                 -totalTimeSeconds, new Vector2(crossHairTexture.Width * 0.5f, crossHairTexture.Height * 0.5f),
                                 SpriteEffects.None, 0.0f);
+
+            if (ParticleAttractionPosition != Position)
+            {
+                color.A = 150;
+                spriteBatch.Draw(crossHairTexture, level.ComputePixelRect(Position, Size), null, color,
+                    -totalTimeSeconds, new Vector2(crossHairTexture.Width * 0.5f, crossHairTexture.Height * 0.5f),
+                    SpriteEffects.None, 0.0f);
+            }
         }
     }
 }
