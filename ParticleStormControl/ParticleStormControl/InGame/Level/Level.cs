@@ -173,8 +173,8 @@ namespace ParticleStormControl
             int tooCloseCounter = 0;
             for (int i = 0; i < pointcount; i++)
             {
-                Vector2 randomposition = new Vector2((float)(((random.NextDouble() * RELATIVE_MAX.X) / 2) + 0.5),
-                                                     (float)(random.NextDouble() * RELATIVE_MAX.Y + 0.1));
+                Vector2 randomposition = new Vector2((float)(random.NextDouble() * RELATIVE_MAX.X * 0.8 + 0.1),
+                                                     (float)(random.NextDouble() * RELATIVE_MAX.Y * 0.9 + 0.05));
 
                 bool tooclose = false;
                 foreach (SpawnPoint currenCP in newCapturePoints)
