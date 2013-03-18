@@ -493,6 +493,8 @@ namespace ParticleStormControl
 
             //mass_health += padMove.Y;
             //disciplin_speed -= padMove.X;
+            float len = cursorMove.Length();
+            if (len > 1.0f) cursorMove /= len;
             cursorPosition += cursorMove;
 
             //mass_health = MathHelper.Clamp(mass_health, -1.0f, 1.0f);

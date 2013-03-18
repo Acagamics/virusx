@@ -57,11 +57,6 @@ namespace ParticleStormControl
         private bool[] waitingForReconnect = { false, false, false, false };
 
         /// <summary>
-        /// The number of active currently active players. There will be only
-        /// checks for players which are active.
-        /// </summary>
-        private int activePlayers = 2;
-        /// <summary>
         /// Matching of player to used controls of the player.
         /// </summary>
         private ControlType[] playerToControl = { ControlType.KEYBOARD0, ControlType.KEYBOARD1, ControlType.GAMEPAD0, ControlType.GAMEPAD1 };
@@ -86,8 +81,8 @@ namespace ParticleStormControl
         /// <returns>true if the control scheme changed, false otherwise</returns>
         public bool setControlType(PlayerIndex index, ControlType controlType)
         {
-            foreach (ControlType ct in playerToControl)
-                if (ct == controlType) return false;
+            //foreach (ControlType ct in playerToControl)
+            //    if (ct == controlType) return false;
             playerToControl[(int)index] = controlType;
             return true;
         }
@@ -355,7 +350,7 @@ namespace ParticleStormControl
         public Vector2 Movement(PlayerIndex index)
         {
             Vector2 result = Vector2.Zero;
-            if (activePlayers >= (int)index) return result;
+            if (Settings.Instance.NumPlayers <= (int)index) return result;
             switch(playerToControl[(int)index])
             {
                 case ControlType.GAMEPAD0: result = currentGamePadStates[0].ThumbSticks.Left; break;
@@ -364,9 +359,9 @@ namespace ParticleStormControl
                 case ControlType.GAMEPAD3: result = currentGamePadStates[3].ThumbSticks.Left; break;
                 case ControlType.KEYBOARD0:
                     if (currentKeyboardState.IsKeyDown(Keys.W))
-                        result.Y -= 1f;
-                    if (currentKeyboardState.IsKeyDown(Keys.S))
                         result.Y += 1f;
+                    if (currentKeyboardState.IsKeyDown(Keys.S))
+                        result.Y -= 1f;
                     if (currentKeyboardState.IsKeyDown(Keys.A))
                         result.X -= 1f;
                     if (currentKeyboardState.IsKeyDown(Keys.D))
@@ -374,9 +369,9 @@ namespace ParticleStormControl
                     break;
                 case ControlType.KEYBOARD1:
                     if (currentKeyboardState.IsKeyDown(Keys.Up))
-                        result.Y -= 1f;
-                    if (currentKeyboardState.IsKeyDown(Keys.Down))
                         result.Y += 1f;
+                    if (currentKeyboardState.IsKeyDown(Keys.Down))
+                        result.Y -= 1f;
                     if (currentKeyboardState.IsKeyDown(Keys.Left))
                         result.X -= 1f;
                     if (currentKeyboardState.IsKeyDown(Keys.Right))
@@ -384,13 +379,13 @@ namespace ParticleStormControl
                     break;
                 default: return result;
             }
-            result.Normalize();
+            result.Y = -result.Y;
             return result;
         }
 
         public bool Action(PlayerIndex index)
         {
-            if (activePlayers >= (int)index) return false;
+            if (Settings.Instance.NumPlayers <= (int)index) return false;
             switch (playerToControl[(int)index])
             {
                 case ControlType.GAMEPAD0: return (currentGamePadStates[0].IsButtonDown(Buttons.A) && oldGamePadStates[0].IsButtonUp(Buttons.A));
@@ -405,7 +400,7 @@ namespace ParticleStormControl
 
         public bool Hold(PlayerIndex index)
         {
-            if (activePlayers >= (int)index) return false;
+            if (Settings.Instance.NumPlayers <= (int)index) return false;
             switch (playerToControl[(int)index])
             {
                 case ControlType.GAMEPAD0: return (currentGamePadStates[0].IsButtonDown(Buttons.B));

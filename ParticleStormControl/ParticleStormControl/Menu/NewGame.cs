@@ -46,7 +46,7 @@ namespace ParticleStormControl.Menu
         public NewGame(Menu menu)
             : base(menu)
         {
-
+            //InputManager.Instance.resetAllControlTypes();
         }
 
         public override void LoadContent(ContentManager content)
