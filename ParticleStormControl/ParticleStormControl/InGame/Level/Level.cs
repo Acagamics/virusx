@@ -289,7 +289,16 @@ namespace ParticleStormControl
                     // if its a item, give it to a player if its 100% his
                     Item item = mapObjects[i] as Item;
                     if (item != null && item.PossessingPlayer != -1 && item.PossessingPercentage == 1.0f)
+                    {
+                        // reject if player allready owns a item
+                        if (players[item.PossessingPlayer].ItemSlot != Item.ItemType.NONE)
+                        {
+                            item.Alive = true;
+                            continue;
+                        }
+
                         players[item.PossessingPlayer].ItemSlot = item.Type;
+                    }
 
                     mapObjects.RemoveAt(i);
                     --i;

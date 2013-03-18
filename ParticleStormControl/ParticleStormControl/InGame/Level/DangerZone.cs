@@ -14,7 +14,7 @@ namespace ParticleStormControl
         /// </summary>
         public const float explosionMaxSize = 0.22f;
 
-        private const float explosionDamage = 15;
+        private const float explosionDamage = 8;
         private const float explosionDuration = 7.0f;
         private float currentExplosionSize;
         private float currentRotation;

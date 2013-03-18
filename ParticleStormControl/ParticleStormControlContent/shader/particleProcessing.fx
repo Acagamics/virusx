@@ -102,13 +102,15 @@ PixelShaderOutput Process(VertexShaderOutput input)
 	output.position.xy /= RelativeCorMax;
 
 	// borders
+	output.position.xy -= float2(0.005f, 0.005f); // earlier bounce
 	float2 posSgn = sign(output.position.xy);
     float2 posInv = output.position.xy - 0.99f;
     float2 posInvSgn = -sign(posInv);
     float2 combSigns = posInvSgn * posSgn;
     output.position.xy = posInv * combSigns + 0.99f * posSgn;
     output.movement.xy *= combSigns;
-	
+	output.position.xy += float2(0.005f, 0.005f);	// undo earlier bounce displacement
+
 	// damage
 	float4 damageMapMasked = tex2D(sampDamageMap, output.position.xy) * DamageFactor;
 	float damage = dot(damageMapMasked, 1.0f); 

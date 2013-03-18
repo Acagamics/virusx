@@ -39,13 +39,18 @@ namespace ParticleStormControl
         public override void Update(float frameTimeSeconds, float totalTimeSeconds)
         {
             base.Update(frameTimeSeconds, totalTimeSeconds);
+
+            // gathered?
+            if (PossessingPercentage == 1.0f && PossessingPlayer != -1)
+                Alive = false;
         }
 
         protected override void OnPossessingChanged()
         {
             // TODO insert gather sound here 
 
-            Alive = false;
+            // doesn't work because Level can reject Alive=false
+            // apparently a bad solution, but otherwise this item had to know about the player :/
         }
 
         public override void Draw_AlphaBlended(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Level level, float totalTimeSeconds)
