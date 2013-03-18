@@ -531,6 +531,7 @@ namespace ParticleStormControl
                         (item as DangerZone).Position = particleAttractionPosition;
                         (item as DangerZone).Activate();
                     }
+                    item = null;
                 }
             }
             
