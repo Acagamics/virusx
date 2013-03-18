@@ -465,65 +465,7 @@ namespace ParticleStormControl
 
         private void DrawControls(Player[] players, GraphicsDevice device)
         {
-           /*int sizePad = fieldSize_pixel/4;
-            int sizeIcon = sizePad/4;
-
-            int halfViewPortHeight = (int) (device.Viewport.Height*0.5f);
-            int leftPadsX = device.Viewport.Width - sizePad - 20;
-            int halfSize = sizePad/2;
-
-            if (players.Length == 2)
-            {
-                DrawParticleControlPad(players[0], 20,        halfViewPortHeight - halfSize, sizePad, sizeIcon);
-                DrawParticleControlPad(players[1], leftPadsX, halfViewPortHeight - halfSize, sizePad, sizeIcon);
-            }
-            else if (players.Length == 3)
-            {
-                DrawParticleControlPad(players[0], 20,        halfViewPortHeight - halfSize, sizePad, sizeIcon);
-                DrawParticleControlPad(players[1], leftPadsX, halfViewPortHeight - sizePad - 10, sizePad, sizeIcon);
-                DrawParticleControlPad(players[2], leftPadsX, halfViewPortHeight + 10, sizePad, sizeIcon);
-            }
-            else
-            {
-                DrawParticleControlPad(players[0], 20,        halfViewPortHeight + 10,           sizePad, sizeIcon);
-                DrawParticleControlPad(players[1], leftPadsX, halfViewPortHeight - sizePad - 10, sizePad, sizeIcon);
-                DrawParticleControlPad(players[2], leftPadsX, halfViewPortHeight + 10,           sizePad, sizeIcon);
-                DrawParticleControlPad(players[3], 20,        halfViewPortHeight - sizePad - 10, sizePad, sizeIcon);
-            }*/
-        }
-
-        private void DrawParticleControlPad(Player player, int positionX, int positionY, int sizePad, int sizeIcon)
-        {
-          /*  if (player.TimeDead < controlPadFadeTime)
-            {
-                Rectangle rect = new Rectangle(positionX, positionY, sizePad, sizePad);
-
-                float alpha = 1.0f - player.TimeDead / controlPadFadeTime;
-                Color color = player.Color * alpha;
-
-                spriteBatch.Draw(controlPadTexture, rect, color);
-
-                int padMidX = positionX + sizePad / 2;
-                int padMidY = positionY + sizePad / 2; 
-
-                rect = new Rectangle(
-                    (int)(padMidX - 0.5f * sizeIcon - player.Disciplin_speed * sizePad * 0.5f * 0.75f),
-                    (int)(padMidY - 0.5f * sizeIcon + player.Mass_health * sizePad * 0.5f * 0.75f),
-                    sizeIcon, sizeIcon);
-
-                spriteBatch.Draw(controlIcon, rect, color);
-
-                // resting time alive
-                float remainingTimeAlive = player.RemainingTimeAlive;
-                if(remainingTimeAlive < 10.0f)
-                {
-                    string countdown = ((int)remainingTimeAlive).ToString();
-                    Vector2 size = fontCountdownLarge.MeasureString(countdown) * 0.25f;
-                    spriteBatch.DrawString(fontCountdownLarge, countdown,
-                                           new Vector2(padMidX - size.X / 2, padMidY - size.Y / 2),
-                                           new Color(0, 0, 0, 160), 0.0f, Vector2.Zero, 0.25f, SpriteEffects.None, 0.0f);
-                }
-            }*/
+           /// todo item possessions
         }
 
       /*  private void DrawBar(Player[] players, GraphicsDevice device)

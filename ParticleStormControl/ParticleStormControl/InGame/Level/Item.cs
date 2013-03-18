@@ -23,7 +23,7 @@ namespace ParticleStormControl
         private Texture2D itemTexture;
 
         public Item(Vector2 position, ItemType type, ContentManager content) :
-            base(position, -1, 0.1f, 10.0f, 3)
+            base(position, -1, 0.01f, 15.0f, 3)
         {
             this.Type = type;
             switch(Type)
@@ -38,8 +38,7 @@ namespace ParticleStormControl
 
         public override void Update(float frameTimeSeconds, float totalTimeSeconds)
         {
-            if(!Alive)
-                base.Update(frameTimeSeconds, totalTimeSeconds);
+            base.Update(frameTimeSeconds, totalTimeSeconds);
         }
 
         protected override void OnPossessingChanged()
@@ -51,7 +50,7 @@ namespace ParticleStormControl
 
         public override void Draw_AlphaBlended(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Level level, float totalTimeSeconds)
         {
-            spriteBatch.Draw(itemTexture, level.ComputePixelRect(Position, Size), null, Color.Lerp(Color.White, Color.Black, PossessingPercentage),
+            spriteBatch.Draw(itemTexture, level.ComputePixelRect(Position, Size), null, ComputeColor(),
                                    totalTimeSeconds, new Vector2(itemTexture.Width, itemTexture.Height) / 2, SpriteEffects.None, 1.0f);
         }
     }
