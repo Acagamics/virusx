@@ -345,7 +345,10 @@ namespace ParticleStormControl
             particleProcessing.Parameters["Movements"].SetValue(MovementTexture);
             particleProcessing.Parameters["Infos"].SetValue(InfoTexture);
 
-            particleProcessing.Parameters["CursorPosition"].SetValue(cursorPosition);
+            if(holdTargetPositionSet)
+                particleProcessing.Parameters["CursorPosition"].SetValue(holdTargedPosition);
+            else
+                particleProcessing.Parameters["CursorPosition"].SetValue(cursorPosition);
             particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant * timeInterval);
             particleProcessing.Parameters["TimeInterval"].SetValue(timeInterval);
             particleProcessing.Parameters["DamageMap"].SetValue(damageMapTexture);
@@ -502,7 +505,6 @@ namespace ParticleStormControl
             // TODO clamp to new coordinates
             cursorPosition.X = MathHelper.Clamp(cursorPosition.X, 0.0f, 1.0f);
             cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, 1.0f);
-
             // (hold move)
             if (InputManager.Instance.Hold(playerIndex))
             {
