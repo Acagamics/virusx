@@ -181,6 +181,11 @@ namespace ParticleStormControl
             };
         #endregion
 
+        #region item
+        CapturableObject item = null;
+
+        public CapturableObject Item { set { item = value; } }
+        #endregion
         // who is who (blue etc.)
         public readonly PlayerIndex playerIndex;
         public int Index { get { return (int)playerIndex; } }
@@ -523,7 +528,15 @@ namespace ParticleStormControl
             // TODO actual gamplay implementaion
             if (InputManager.Instance.Action(playerIndex))
             {
-                Console.Out.WriteLine(playerIndex.ToString() + "pressed action key");
+                Console.Out.WriteLine(playerIndex.ToString() + " pressed action key");
+                if (item != null)
+                {
+                    if (item is DangerZone)
+                    {
+                        (item as DangerZone).Position = cursorPosition;
+                        (item as DangerZone).Activate();
+                    }
+                }
             }
             
 #if DEBUG

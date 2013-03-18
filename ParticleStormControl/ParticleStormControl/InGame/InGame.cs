@@ -192,7 +192,7 @@ namespace ParticleStormControl
                 if (levelDamageFrame)
                 {
                     damageMap.UpdateCPUData();
-                    level.ApplyDamage(damageMap, passedFrameTime);
+                    level.ApplyDamage(damageMap, passedFrameTime, players);
                 }
 
                 // level update

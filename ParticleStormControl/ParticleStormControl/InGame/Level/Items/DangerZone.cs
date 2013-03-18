@@ -49,10 +49,17 @@ namespace ParticleStormControl
         {
             if (PossessingPlayer != -1)
             {
-                explosionSound.Play();
-                explosionTimer.Start();
+                //explosionSound.Play();
+                //explosionTimer.Start();
             }
         }
+
+        public void Activate()
+        {
+            explosionSound.Play();
+            explosionTimer.Start();
+        }
+
 
         public override void ApplyDamage(DamageMap damageMap, float timeInterval)
         {

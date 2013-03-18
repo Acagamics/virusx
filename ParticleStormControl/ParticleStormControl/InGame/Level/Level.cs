@@ -210,10 +210,20 @@ namespace ParticleStormControl
             return new Rectangle(rectx - halfSize, recty - halfSize, rectSize, rectSize);
         }
 
-        public void ApplyDamage(DamageMap damageMap, float timeInterval)
+        public void ApplyDamage(DamageMap damageMap, float timeInterval, Player[] playerList)
         {
             foreach (MapObject interest in mapObjects)
+            {
                 interest.ApplyDamage(damageMap, timeInterval);
+                if (interest is CapturableObject)
+                {
+                    if ((interest as CapturableObject).PossessingPercentage >= 1f)
+                    {
+                        if((interest as CapturableObject).PossessingPlayer != -1)
+                            playerList[(interest as CapturableObject).PossessingPlayer].Item = (interest as CapturableObject);
+                    }
+                }
+            }
         }
 
         public void Update(float frameTimeSeconds, float totalTimeSeconds, Player[] players)
@@ -251,7 +261,10 @@ namespace ParticleStormControl
                 if (rand > 0.6)
                     mapObjects.Add(new Debuff(position, debuffExplosionSound, debuffItemTexture, debuffExplosionTexture));
                 else if ((rand < 0.6) && (rand > 0.2))
-                    mapObjects.Add(new DangerZone(position, dangerZoneSound, dangerZoneItem, dangerZoneInnerTexture, dangerZoneOuterTexture));
+                {
+                    DangerZone dz = new DangerZone(position, dangerZoneSound, dangerZoneItem, dangerZoneInnerTexture, dangerZoneOuterTexture);
+                    mapObjects.Add(dz);
+                }
                 else if (rand < 0.065 && !switchCountdownActive)
                 {
                     switchCountdownTimer = switchCountdownLength;
