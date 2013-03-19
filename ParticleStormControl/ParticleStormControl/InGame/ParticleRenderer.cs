@@ -35,7 +35,7 @@ namespace ParticleStormControl
         private VertexBuffer particleVertexBuffer;
         /// <summary>
         /// instanced primitives need an indexbuffer
-        /// containing only 0,1,2,3 - silly, but needed for instancing
+        /// containing only 0,1,2,3 - <b>silly</b>, but needed for instancing
         /// </summary>
         private IndexBuffer particleIndexBuffer;    
         /// <summary>
