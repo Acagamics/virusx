@@ -193,6 +193,12 @@ namespace ParticleStormControl
                 new Vector2(Level.RELATIVE_MAX.X-0.2f, Level.RELATIVE_MAX.Y-0.2f),
                 new Vector2(0.2f, 0.2f)
             };
+
+        /// <summary>
+        /// movementspeed of the cursor
+        /// </summary>
+        private const float CURSOR_SPEED = 1.0f;
+
         #endregion
 
         #region item
@@ -227,7 +233,7 @@ namespace ParticleStormControl
 
 
         // speed stuff
-        private const float speedConstant = 0.10f; 
+        private const float speedConstant = 0.13f; 
         private const float speedSettingFactor = 0.04f;
 
         // life stuff
@@ -521,7 +527,7 @@ namespace ParticleStormControl
             //if (len > 1.0f) cursorMove /= len;
 
             cursorMove = InputManager.Instance.GetMovement(playerIndex);
-            cursorMove *= frameTimeInterval * 0.5f;
+            cursorMove *= frameTimeInterval * CURSOR_SPEED;
             //padMove *= frameTimeInterval * 2.0f;
 
             //mass_health += padMove.Y;

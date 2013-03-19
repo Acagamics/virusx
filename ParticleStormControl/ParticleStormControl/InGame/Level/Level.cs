@@ -17,13 +17,9 @@ namespace ParticleStormControl
         public List<MapObject> mapObjects = new List<MapObject>();
 
         private Texture2D pixelTexture;
-        
-       /* private Texture2D controlPadTexture;
-        private Texture2D controlIcon;
-        private const float controlPadFadeTime = 0.5f; */
+        private Texture2D backgroundTexture;
 
         private SpriteBatch spriteBatch;
-
         private ContentManager contentManager;
 
         #region debuff ressources
@@ -110,6 +106,7 @@ namespace ParticleStormControl
 
             spriteBatch = new SpriteBatch(device);
             pixelTexture = content.Load<Texture2D>("pix");
+            backgroundTexture = content.Load<Texture2D>("tile");
 
             // pad
         //    controlPadTexture = content.Load<Texture2D>("netzdiagramm");
@@ -436,6 +433,12 @@ namespace ParticleStormControl
 
         public void Draw(float totalTimeSeconds, GraphicsDevice device, Player[] players)
         {
+            // background
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
+            spriteBatch.Draw(backgroundTexture, new Vector2(fieldOffset_pixel.X, fieldOffset_pixel.Y), new Rectangle(0, 0, fieldSize_pixel.X, fieldSize_pixel.Y), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            spriteBatch.End();
+
+
             // screenblend stuff
             spriteBatch.Begin(SpriteSortMode.BackToFront, ScreenBlend);
             foreach (MapObject mapObject in mapObjects)

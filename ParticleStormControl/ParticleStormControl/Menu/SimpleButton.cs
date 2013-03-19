@@ -10,7 +10,7 @@ namespace ParticleStormControl.Menu
     class SimpleButton
     {
         private static readonly Color selectedColor = Color.Red;
-        private static readonly Color normalColor = Color.Black;
+        private static readonly Color normalColor = Color.White;
 
         static public void Draw(SpriteBatch spriteBatch, SpriteFont font, string label, Vector2 midPos, Color color)
         {
