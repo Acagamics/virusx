@@ -83,7 +83,7 @@ namespace ParticleStormControl.Menu
         }
         public void Draw(float frameTimeInterval, SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
             if(pages[(int)activePage] != null)
                 pages[(int)activePage].Draw(spriteBatch, frameTimeInterval);
             spriteBatch.End();

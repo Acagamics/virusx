@@ -34,7 +34,7 @@ namespace ParticleStormControl
         /// <summary>
         /// size of particle-data rendertargets and textures
         /// </summary>
-        public const int maxParticlesSqrt = 256;
+        public const int maxParticlesSqrt = 128;
         public const int maxParticles = maxParticlesSqrt * maxParticlesSqrt;
 
         // info texture:

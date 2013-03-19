@@ -190,10 +190,10 @@ namespace ParticleStormControl
             GraphicsDevice.Clear(Color.White);
 
             // draw omnipresent background
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
+            /*spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
             spriteBatch.Draw(backgroundTexture, Vector2.Zero, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
             spriteBatch.End();
-
+            */
             inGame.Draw_Backbuffer(gameTime, spriteBatch);
             menu.Draw((float)gameTime.ElapsedGameTime.TotalSeconds, spriteBatch);
 
@@ -225,12 +225,7 @@ namespace ParticleStormControl
                 statistic += "\nTotalParticles: " + totalParticleCount;
             }
 
-            spriteBatch.Begin();
-            spriteBatch.DrawString(menu.FontSmall, statistic, new Vector2(5, 5), Color.Black);
-            spriteBatch.End();
-
-
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
             spriteBatch.DrawString(menu.FontSmall, statistic, new Vector2(5, 5), Color.Black);
             spriteBatch.End();
 #endif
