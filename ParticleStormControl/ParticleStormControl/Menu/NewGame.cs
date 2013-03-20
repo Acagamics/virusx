@@ -31,6 +31,10 @@ namespace ParticleStormControl.Menu
             icons = content.Load<Texture2D>("icons");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="frameTimeInterval"></param>
         public override void Update(float frameTimeInterval)
         {
             // must-haves
@@ -104,6 +108,11 @@ namespace ParticleStormControl.Menu
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="timeInterval"></param>
         public override void Draw(SpriteBatch spriteBatch, float timeInterval)
         {
             int boxWidth = (Settings.Instance.ResolutionX - 3 * padd) / 2;
@@ -112,12 +121,14 @@ namespace ParticleStormControl.Menu
             int x = padd * 2 + boxWidth;
             int y = padd * 2 + boxHeight;
 
+            // four boxes
             spriteBatch.Draw(menu.PixelTexture, new Rectangle(padd, padd, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
             spriteBatch.Draw(menu.PixelTexture, new Rectangle(x, padd, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
             spriteBatch.Draw(menu.PixelTexture, new Rectangle(padd, y, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
             spriteBatch.Draw(menu.PixelTexture, new Rectangle(x, y, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
 
-            for (int i = 0; i < Settings.Instance.NumPlayers; i++)
+            // for each player
+            for (int i = 0; i < 4; i++)
             {
                 Vector2 origin = new Vector2();
                 switch (i)
@@ -135,15 +146,26 @@ namespace ParticleStormControl.Menu
                         origin = new Vector2(x, y);
                         break;
                 }
-                
-                spriteBatch.DrawString(menu.Font, Player.VirusNames[Settings.Instance.PlayerVirusIndices[i]].ToString(), origin + new Vector2(20 + boxWidth / 2, 20), Color.Black);
-                spriteBatch.DrawString(menu.FontBold, Player.ColorNames[Settings.Instance.PlayerColorIndices[i]].ToString(), origin + new Vector2(20 + boxWidth / 2, 50), Player.Colors[Settings.Instance.PlayerColorIndices[i]]);
 
-                Rectangle destination = new Rectangle((int)origin.X + padd, (int)origin.Y + padd, boxWidth / 2 - padd, boxWidth / 2 - padd);
-                spriteBatch.Draw(viruses[Settings.Instance.PlayerVirusIndices[i]], destination, Color.White);
+                // player is connected
+                if (i < Settings.Instance.NumPlayers)
+                {
 
-                spriteBatch.Draw(icons, new Rectangle((int)origin.X + 16, (int)origin.Y + boxHeight / 2 - 8, 16, 16), new Rectangle(0, 0, 16, 16), Color.White);
-                spriteBatch.Draw(icons, new Rectangle((int)origin.X + boxWidth - 32, (int)origin.Y + boxHeight / 2 - 8, 16, 16), new Rectangle(16, 0, 16, 16), Color.White);
+                    spriteBatch.DrawString(menu.Font, Player.VirusNames[Settings.Instance.PlayerVirusIndices[i]].ToString(), origin + new Vector2(20 + boxWidth / 2, 20), Color.Black);
+                    spriteBatch.DrawString(menu.FontBold, Player.ColorNames[Settings.Instance.PlayerColorIndices[i]].ToString(), origin + new Vector2(20 + boxWidth / 2, 50), Player.Colors[Settings.Instance.PlayerColorIndices[i]]);
+
+                    Rectangle destination = new Rectangle((int)origin.X + padd, (int)origin.Y + padd, boxWidth / 2 - padd, boxWidth / 2 - padd);
+                    spriteBatch.Draw(viruses[Settings.Instance.PlayerVirusIndices[i]], destination, Color.White);
+
+                    spriteBatch.Draw(icons, new Rectangle((int)origin.X + 16, (int)origin.Y + boxHeight / 2 - 8, 16, 16), new Rectangle(0, 0, 16, 16), Color.White);
+                    spriteBatch.Draw(icons, new Rectangle((int)origin.X + boxWidth - 32, (int)origin.Y + boxHeight / 2 - 8, 16, 16), new Rectangle(16, 0, 16, 16), Color.White);
+                }
+                else
+                {
+                    string joinText = "press continue to join game";
+                    Vector2 stringSize = menu.Font.MeasureString(joinText);
+                    spriteBatch.DrawString(menu.FontSmall, joinText, origin + new Vector2((boxWidth - stringSize.X) / 2, (boxHeight - stringSize.Y) / 2), Color.Black);
+                }
             }
         }
 
