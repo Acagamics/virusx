@@ -15,6 +15,9 @@ namespace ParticleStormControl.Menu
         int padd = 40; // padding for boxes
         int offset = 5; // offset for arrows
 
+        int maxCountdown = 3;
+        int safeCountdown = 1;
+
         bool[] playerConnected = new bool[4];
         bool[] playerReady = new bool[4];
 
@@ -82,15 +85,7 @@ namespace ParticleStormControl.Menu
                     {
                         found = true;
 
-                        // toggle ready
-                        if (countdown.TotalSeconds > 2 || countdown.TotalSeconds <= 0)
-                            playerReady[i] = !playerReady[i];
-
-                        // countdown
-                        if (playerReady[i] && countdown.TotalSeconds <= 0)
-                            startCountdown();
-                        else if(countdown.TotalSeconds > 2)
-                            countdown = TimeSpan.FromSeconds(-1);
+                        toggleReady(i);
                     }
                 }
 
@@ -110,38 +105,45 @@ namespace ParticleStormControl.Menu
             // test various buttons
             for (int i = 0; i < 4; i++)
             {
-                if (playerConnected[i] && !playerReady[i])
+                if (playerConnected[i])
                 {
-                    if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.PlayerControls[i], false))
+                    if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
                     {
                         if (--Settings.Instance.PlayerVirusIndices[i] < 0)
                             Settings.Instance.PlayerVirusIndices[i] = Player.Viruses.Length - 1;
                     }
 
-                    if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.PlayerControls[i], false))
+                    if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
                     {
                         if (++Settings.Instance.PlayerVirusIndices[i] >= Player.Viruses.Length)
                             Settings.Instance.PlayerVirusIndices[i] = 0;
                     }
 
-                    if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.UP, Settings.Instance.PlayerControls[i], false))
+                    if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.UP, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
                     {
                         Settings.Instance.PlayerColorIndices[i] = getPreviousFreeColorIndex(Settings.Instance.PlayerColorIndices[i]);
                     }
 
-                    if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.DOWN, Settings.Instance.PlayerControls[i], false))
+                    if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.DOWN, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
                     {
                         Settings.Instance.PlayerColorIndices[i] = getNextFreeColorIndex(Settings.Instance.PlayerColorIndices[i]);
                     }
 
-                    // free slot
                     if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.HOLD, Settings.Instance.PlayerControls[i], false))
                     {
-                        Settings.Instance.ResetPlayerSettingsToDefault(i);
-                        Settings.Instance.NumPlayers--;
-                        playerConnected[i] = false;
-                        playerReady[i] = false;
-                        startCountdown();
+                        if (playerReady[i])
+                        {
+                            toggleReady(i);
+                        }
+                        else
+                        {
+                            // free slot
+                            Settings.Instance.ResetPlayerSettingsToDefault(i);
+                            Settings.Instance.NumPlayers--;
+                            playerConnected[i] = false;
+                            playerReady[i] = false;
+                            startCountdown();
+                        }
                     }
                 }
             }
@@ -220,7 +222,7 @@ namespace ParticleStormControl.Menu
 
             // countdown
             if (countdown.TotalSeconds > 0)
-                spriteBatch.DrawString(menu.Font, ((int)countdown.TotalSeconds + 1).ToString(), new Vector2(Settings.Instance.ResolutionX / 2 - 5, Settings.Instance.ResolutionY / 2 - 15), countdown.TotalSeconds > 2 ? Color.White : Color.Red);
+                spriteBatch.DrawString(menu.Font, ((int)countdown.TotalSeconds + 1).ToString(), new Vector2(Settings.Instance.ResolutionX / 2 - 5, Settings.Instance.ResolutionY / 2 - 15), countdown.TotalSeconds > safeCountdown ? Color.White : Color.Red);
         }
 
         /* Helper */
@@ -265,7 +267,20 @@ namespace ParticleStormControl.Menu
                     allReady = false;
             }
             if (allReady && Settings.Instance.NumPlayers > 0)
-                countdown = TimeSpan.FromSeconds(5);
+                countdown = TimeSpan.FromSeconds(maxCountdown);
+        }
+
+        private void toggleReady(int index)
+        {
+            // toggle ready
+            if (countdown.TotalSeconds > safeCountdown || countdown.TotalSeconds <= 0)
+                playerReady[index] = !playerReady[index];
+
+            // countdown
+            if (playerReady[index] && countdown.TotalSeconds <= 0)
+                startCountdown();
+            else if (countdown.TotalSeconds > safeCountdown)
+                countdown = TimeSpan.FromSeconds(-1);
         }
     }
 }
