@@ -14,6 +14,8 @@ namespace ParticleStormControl
         private readonly Stopwatch lifeTimer = new Stopwatch();
         protected readonly float lifeTime;  // -1 means infinite
 
+        public bool Timeouted { get { return lifeTime > 0 && lifeTimer.Elapsed.TotalSeconds > lifeTime; } }
+
         public int PossessingPlayer { get; protected set; }
         public float PossessingPercentage { get; protected set; }
         public int CapturingPlayer { get; protected set; }
@@ -30,8 +32,8 @@ namespace ParticleStormControl
 
         protected readonly float damageFactor;
 
-        public CapturableObject(Vector2 Position, int possessingPlayer, float damageFactor, float lifeTime/* = -1.0f*/, int damageMapPixelHalfRange /*= 4*/) :
-            base(Position, 0.05f)
+        public CapturableObject(Vector2 Position, int possessingPlayer, float damageFactor, float lifeTime/* = -1.0f*/, int damageMapPixelHalfRange /*= 4*/, float size = 0.05f) :
+            base(Position, size)
         {
             this.lifeTime = lifeTime;
             PossessingPlayer = possessingPlayer;

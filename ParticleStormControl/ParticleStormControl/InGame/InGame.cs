@@ -253,7 +253,7 @@ namespace ParticleStormControl
                 return;
 
             level.Draw((float)gameTime.TotalGameTime.TotalSeconds, spriteBatch.GraphicsDevice, players);
-            inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset);
+            inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, (float)gameTime.TotalGameTime.TotalSeconds);
 
             // debug draw damagemap
 #if DAMAGEMAP_DEBUGGING

@@ -12,13 +12,15 @@ namespace ParticleStormControl
     {
         private Texture2D itemBox;
         private Texture2D itemBuff;
+        private Texture2D itemMutate;
 
         private const float TRANSPARENCY = 0.6f;
 
         public InGameInterface(ContentManager content)
         {
             itemBox = content.Load<Texture2D>("itemBox");
-            itemBuff = content.Load<Texture2D>("buff");
+            itemBuff = content.Load<Texture2D>("items/buff");
+            itemMutate = content.Load<Texture2D>("items/mutate");
         }
 
         /// <summary>
@@ -26,7 +28,7 @@ namespace ParticleStormControl
         /// </summary>
         /// <param name="players">player array</param>
         /// <param name="spriteBatch">spritebatch that is NOT already started</param>
-        public void DrawInterface(Player[] players, SpriteBatch spriteBatch, Point levelPixelSize, Point levelPixelOffset)
+        public void DrawInterface(Player[] players, SpriteBatch spriteBatch, Point levelPixelSize, Point levelPixelOffset, float totalTimeSeconds)
         {
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
 
@@ -44,12 +46,12 @@ namespace ParticleStormControl
                 Vector2 halfBoxSize = new Vector2(itemBuff.Width, itemBuff.Height);
                 spriteBatch.Draw(itemBox, itemDisplayRectangles[i], null, color, 0.0f, Vector2.Zero, flips[i], 0);
 
-                DrawItem(spriteBatch, players[i].ItemSlot, itemDisplayRectangles[i], color);
+                DrawItem(spriteBatch, players[i].ItemSlot, itemDisplayRectangles[i], color, Item.ROTATION_SPEED * totalTimeSeconds);
             }
             spriteBatch.End();
         }
 
-        private void DrawItem(SpriteBatch spriteBatch, Item.ItemType type, Rectangle destination, Color color)
+        private void DrawItem(SpriteBatch spriteBatch, Item.ItemType type, Rectangle destination, Color color, float rotation)
         {
             const int SIZE_OFFSET = 20;
 
@@ -60,7 +62,14 @@ namespace ParticleStormControl
             switch (type)
             {
                 case Item.ItemType.DANGER_ZONE:
-                    spriteBatch.Draw(itemBuff, itemRect, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY)); // color);
+                    itemRect.Offset(itemBuff.Width / 2, itemBuff.Height / 2);
+                    spriteBatch.Draw(itemBuff, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
+                                                   new Vector2(itemBuff.Width, itemBuff.Height) / 2,SpriteEffects.None, 0); // color);
+                    break;
+                case Item.ItemType.MUTATION:
+                    itemRect.Offset(itemMutate.Width / 2, itemMutate.Height / 2);
+                    spriteBatch.Draw(itemMutate, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
+                                                   new Vector2(itemMutate.Width, itemMutate.Height) / 2, SpriteEffects.None, 0); // color);
                     break;
             }
         }

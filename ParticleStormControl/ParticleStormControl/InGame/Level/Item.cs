@@ -10,6 +10,8 @@ namespace ParticleStormControl
 {
     public class Item : CapturableObject
     {
+        public const float ROTATION_SPEED = 1.0f;
+
         public enum ItemType
         {
             DANGER_ZONE,
@@ -23,14 +25,18 @@ namespace ParticleStormControl
         private Texture2D itemTexture;
 
         public Item(Vector2 position, ItemType type, ContentManager content) :
-            base(position, -1, 0.01f, 15.0f, 3)
+            base(position, -1, 0.01f, 15.0f, 3, 0.04f)
         {
             this.Type = type;
             switch(Type)
             {
                 case ItemType.DANGER_ZONE:
-                    itemTexture = content.Load<Texture2D>("buff");
+                    itemTexture = content.Load<Texture2D>("items/buff");
                     break;
+                case ItemType.MUTATION:
+                    itemTexture = content.Load<Texture2D>("items/mutate");
+                    break;
+
                 default:
                     break;
             }
@@ -55,8 +61,8 @@ namespace ParticleStormControl
 
         public override void Draw_AlphaBlended(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Level level, float totalTimeSeconds)
         {
-            spriteBatch.Draw(itemTexture, level.ComputePixelRect(Position, Size), null, ComputeColor(),
-                                   totalTimeSeconds, new Vector2(itemTexture.Width, itemTexture.Height) / 2, SpriteEffects.None, 1.0f);
+            spriteBatch.Draw(itemTexture, level.ComputePixelRect_Centered(Position, Size), null, ComputeColor(),
+                                   ROTATION_SPEED * totalTimeSeconds, new Vector2(itemTexture.Width, itemTexture.Height) / 2, SpriteEffects.None, 1.0f);
         }
     }
 }

@@ -112,7 +112,7 @@ namespace ParticleStormControl
             // debuff
             debuffExplosionSound = content.Load<SoundEffect>("sound/explosion");
             debuffExplosionTexture = content.Load<Texture2D>("explosion");
-            debuffItemTexture = content.Load<Texture2D>("debuff");
+            debuffItemTexture = content.Load<Texture2D>("items/debuff");
 
             // dangerzone
             dangerZoneSound = content.Load<SoundEffect>("sound/danger_zone");
@@ -247,17 +247,7 @@ namespace ParticleStormControl
         public void ApplyDamage(DamageMap damageMap, float timeInterval, Player[] playerList)
         {
             foreach (MapObject interest in mapObjects)
-            {
                 interest.ApplyDamage(damageMap, timeInterval);
-               /* if (interest is CapturableObject)
-                {
-                    if ((interest as CapturableObject).PossessingPercentage >= 1f)
-                    {
-                        if((interest as CapturableObject).PossessingPlayer != -1)
-                            playerList[(interest as CapturableObject).PossessingPlayer].Item = (interest as CapturableObject);
-                    }
-                } */
-            }
         }
 
         public void Update(float frameTimeSeconds, float totalTimeSeconds, Player[] players)
@@ -283,7 +273,7 @@ namespace ParticleStormControl
                 {
                     // if its a item, give it to a player if its 100% his
                     Item item = mapObjects[i] as Item;
-                    if (item != null && item.PossessingPlayer != -1 && item.PossessingPercentage == 1.0f)
+                    if (item != null && !item.Timeouted && item.PossessingPlayer != -1 && item.PossessingPercentage == 1.0f)
                     {
                         // reject if player allready owns a item
                         if (players[item.PossessingPlayer].ItemSlot != Item.ItemType.NONE)
@@ -291,8 +281,8 @@ namespace ParticleStormControl
                             item.Alive = true;
                             continue;
                         }
-
-                        players[item.PossessingPlayer].ItemSlot = item.Type;
+                        else
+                           players[item.PossessingPlayer].ItemSlot = item.Type;
                     }
 
                     mapObjects.RemoveAt(i);
@@ -316,14 +306,20 @@ namespace ParticleStormControl
                 }
                 else if (rand < 0.065 && !switchCountdownActive)
                 {
-                    switchCountdownTimer = switchCountdownLength;
-                    switchCountdownActive = true;
+                    Item item = new Item(position, Item.ItemType.MUTATION, contentManager);
+                    mapObjects.Add(item);
                 }
 
                 // restart timer
                 pickuptimer.Reset();
                 pickuptimer.Start();
             }
+        }
+
+        private void TriggerSwitch()
+        {
+            switchCountdownTimer = switchCountdownLength;
+            switchCountdownActive = true;
         }
 
         public void UpdateSwitching(float frameTimeSeconds, Player[] players)
@@ -521,6 +517,10 @@ namespace ParticleStormControl
             {
                 case Item.ItemType.DANGER_ZONE:
                     mapObjects.Add(new DangerZone(player.CursorPosition, dangerZoneSound, dangerZoneInnerTexture, dangerZoneOuterTexture, player.Index));
+                    break;
+
+                case Item.ItemType.MUTATION:
+                    TriggerSwitch();
                     break;
             }
         }
