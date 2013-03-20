@@ -59,15 +59,14 @@ namespace ParticleStormControl
             itemRect.Offset(SIZE_OFFSET / 2, SIZE_OFFSET / 2);
             itemRect.Width -= SIZE_OFFSET;
             itemRect.Height -= SIZE_OFFSET;
+            itemRect.Offset(itemRect.Width / 2, itemRect.Height / 2);
             switch (type)
             {
                 case Item.ItemType.DANGER_ZONE:
-                    itemRect.Offset(itemBuff.Width / 2, itemBuff.Height / 2);
                     spriteBatch.Draw(itemBuff, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
                                                    new Vector2(itemBuff.Width, itemBuff.Height) / 2,SpriteEffects.None, 0); // color);
                     break;
                 case Item.ItemType.MUTATION:
-                    itemRect.Offset(itemMutate.Width / 2, itemMutate.Height / 2);
                     spriteBatch.Draw(itemMutate, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
                                                    new Vector2(itemMutate.Width, itemMutate.Height) / 2, SpriteEffects.None, 0); // color);
                     break;
