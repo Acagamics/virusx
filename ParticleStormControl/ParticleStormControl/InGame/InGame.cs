@@ -7,18 +7,11 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-
-
-#if XBOX
-
-using System.Threading;
-
-#else
-
 using System.Threading.Tasks;
-using ParticleStormControl;
 using System.Diagnostics;
 
+#if XBOX
+using System.Threading;
 #endif
 
 namespace ParticleStormControl
@@ -30,17 +23,18 @@ namespace ParticleStormControl
     {
         private Menu.Menu menu;
 
-        private Texture2D pixelTexture;
-        private Texture2D noiseWhite2D;
-
         private ParticleRenderer particleRenderer;
-
         private DamageMap damageMap;
 
-        private Player[] players;
         public Player[] Players { get { return players;  } }
+        private Player[] players;
+        /// <summary>
+        /// noise texture needed for players, generated only once!
+        /// </summary>
+        private Texture2D noiseWhite2D;
 
         Level level;
+        InGameInterface inGameInterface;
 
         public GameState State { get; private set; }
         private int winPlayerIndex = -1;
@@ -51,10 +45,9 @@ namespace ParticleStormControl
         private const float instantDeathProtectingDuration = 1.0f;
         private float instantDeathProtectingTime = 0.0f;
 
-
         Song song;
 
-        // damaging is only every second frame - switch every frame to be xbox friendly (preserve content stuff)
+        // damaging is only every second frame - switch every frame to be xbox friendly
         bool levelDamageFrame = false;
 
         public Level Level
@@ -117,7 +110,8 @@ namespace ParticleStormControl
 
             damageMap.LoadContent(graphicsDevice);
 
-            pixelTexture = content.Load<Texture2D>("pix");
+            // interface
+            inGameInterface = new InGameInterface(content);
 
             // backgroundmusic
             song = content.Load<Song>("paniq_Godshatter");
@@ -249,7 +243,7 @@ namespace ParticleStormControl
         }
 
         /// <summary>
-        /// This is called when the game should draw itself.
+        /// This is called when the game should draw itself to the backbuffer
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         /// <param name="spriteBatch">a unstarted spritebatch</param>
@@ -259,8 +253,9 @@ namespace ParticleStormControl
                 return;
 
             level.Draw((float)gameTime.TotalGameTime.TotalSeconds, spriteBatch.GraphicsDevice, players);
+            inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset);
 
-                    // debug draw damagemap
+            // debug draw damagemap
 #if DAMAGEMAP_DEBUGGING
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.Opaque);
             spriteBatch.Draw(damageMap.DamageTexture, new Vector2(Settings.Instance.ResolutionX - DamageMap.attackingMapSizeX, 0), Color.White);

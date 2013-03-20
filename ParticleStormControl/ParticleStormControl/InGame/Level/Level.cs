@@ -104,13 +104,10 @@ namespace ParticleStormControl
             pickuptimer = new Stopwatch();
             pickuptimer.Start();
 
-            spriteBatch = new SpriteBatch(device);
             pixelTexture = content.Load<Texture2D>("pix");
             backgroundTexture = content.Load<Texture2D>("tile");
 
-            // pad
-        //    controlPadTexture = content.Load<Texture2D>("netzdiagramm");
-        //   controlIcon = content.Load<Texture2D>("cursor_net");
+            spriteBatch = new SpriteBatch(device);
 
             // debuff
             debuffExplosionSound = content.Load<SoundEffect>("sound/explosion");
@@ -147,33 +144,34 @@ namespace ParticleStormControl
             // how many?
             int pointcount = random.Next(3) + 3;
 
-
             // player starts
             List<MapObject> newCapturePoints = new List<MapObject>();
 
 
+            const float LEVEL_BORDER = 0.2f;
 
-            newCapturePoints.Add(new SpawnPoint(new Vector2(0.1f, RELATIVE_MAX.Y - 0.1f), 1000.0f, 0, capture, captureExplosion,
+            newCapturePoints.Add(new SpawnPoint(new Vector2(LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER), 1000.0f, 0, capture, captureExplosion,
                                                     glowTexture, captureGlow, hqInner, hqOuter));
-            newCapturePoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - 0.1f, 0.1f), 1000.0f, 1, capture, captureExplosion,
+            newCapturePoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER), 1000.0f, 1, capture, captureExplosion,
                                                     glowTexture, captureGlow, hqInner, hqOuter));
             if(numPlayers >= 3)
             {
-                newCapturePoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - 0.1f, RELATIVE_MAX.Y - 0.1f), 1000.0f, 2, capture, captureExplosion,
+                newCapturePoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER), 1000.0f, 2, capture, captureExplosion,
                                     glowTexture, captureGlow, hqInner, hqOuter));
             }
             if (numPlayers == 4)
             {
-                newCapturePoints.Add(new SpawnPoint(new Vector2(0.1f, 0.1f), 1000.0f, 3, capture, captureExplosion,
+                newCapturePoints.Add(new SpawnPoint(new Vector2(LEVEL_BORDER, LEVEL_BORDER), 1000.0f, 3, capture, captureExplosion,
                                     glowTexture, captureGlow, hqInner, hqOuter));
             }
 
 
+           
             int tooCloseCounter = 0;
             for (int i = 0; i < pointcount; i++)
             {
-                Vector2 randomposition = new Vector2((float)(random.NextDouble() * RELATIVE_MAX.X * 0.8 + 0.1),
-                                                     (float)(random.NextDouble() * RELATIVE_MAX.Y * 0.9 + 0.05));
+                Vector2 randomposition = new Vector2((float)(random.NextDouble() * RELATIVE_MAX.X * (1.0 - LEVEL_BORDER*2) + LEVEL_BORDER),
+                                                     (float)(random.NextDouble() * RELATIVE_MAX.Y * (1.0 - LEVEL_BORDER) + LEVEL_BORDER * 0.5f));
 
                 bool tooclose = false;
                 foreach (SpawnPoint currenCP in newCapturePoints)
@@ -182,7 +180,7 @@ namespace ParticleStormControl
                         tooclose = true;
                 }
 
-                if ((new Vector2(RELATIVE_MAX.X - 0.1f, 0.1f) - randomposition).Length() < (0.3f * (3.0f / (float)pointcount)))
+                if ((new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER) - randomposition).Length() < (0.3f * (3.0f / (float)pointcount)))
                     tooclose = true;
 
                 if (!tooclose)
@@ -311,7 +309,7 @@ namespace ParticleStormControl
                 double rand = random.NextDouble();
                 if (rand > 0.6)
                     mapObjects.Add(new Debuff(position, debuffExplosionSound, debuffItemTexture, debuffExplosionTexture));
-                else if ((rand < 0.6) && (rand > 0.2))
+                else if ((rand < 0.6) && (rand > 0.1))
                 {
                     Item item = new Item(position, Item.ItemType.DANGER_ZONE, contentManager);
                     mapObjects.Add(item);
@@ -452,7 +450,7 @@ namespace ParticleStormControl
             DrawParticles(device);
 
             // alphablended stuff
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
 
             DrawCountdown(device);
             foreach (MapObject mapObject in mapObjects)
@@ -460,8 +458,6 @@ namespace ParticleStormControl
                 if (mapObject.Alive)
                     mapObject.Draw_AlphaBlended(spriteBatch, this, totalTimeSeconds);
             }
-            DrawControls(players, device);
-            //DrawBar(players, device);
 
             spriteBatch.End();
         }
@@ -474,23 +470,6 @@ namespace ParticleStormControl
                                     Color.White);
             spriteBatch.End(); 
         }
-
-        private void DrawControls(Player[] players, GraphicsDevice device)
-        {
-           /// todo item possessions
-        }
-
-      /*  private void DrawBar(Player[] players, GraphicsDevice device)
-        {
-            float width = players[0].OverallHealth/
-                          Math.Max(1, players[0].OverallHealth + players[1].OverallHealth);
-            spriteBatch.Draw(pixelTexture, new Rectangle(0, 0, (int)(width * device.Viewport.Width), 20), Color.Red);
-            spriteBatch.Draw(pixelTexture,
-                             new Rectangle((int) (width*device.Viewport.Width), 0,
-                                           (int)
-                                           (device.Viewport.Width -
-                                            width*device.Viewport.Width), 20), Color.Blue);
-        } */
 
         public void DrawCountdown(GraphicsDevice device)
         {

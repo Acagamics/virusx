@@ -84,6 +84,7 @@ namespace ParticleStormControl.Menu
 
         public void Draw(float frameTimeInterval, SpriteBatch spriteBatch)
         {
+            // alphablend! not nonpremulitplied since the font textures work this way
             spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
             if(pages[(int)activePage] != null)
                 pages[(int)activePage].Draw(spriteBatch, frameTimeInterval);
