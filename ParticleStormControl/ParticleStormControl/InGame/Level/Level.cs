@@ -71,7 +71,7 @@ namespace ParticleStormControl
 
         #endregion
 
-        #region switch
+        #region switch & wipeout
 
         private SoundEffect switchSound;
         private bool switchCountdownActive = false;
@@ -79,7 +79,15 @@ namespace ParticleStormControl
         private const float switchCountdownLength = 6.0f;
         private SpriteFont fontCountdownLarge;
 
+        private Texture2D wipeoutExplosionTexture;
+        private Texture2D wipeoutDamageTexture;
+        private const float WIPEOUT_SPEED = 1.0f;
+        private const float WIPEOUT_SIZEFACTOR = 1.5f;
+        private float wipeoutProgress = 0.0f;
+        private bool wipeoutActive;
+
         #endregion
+
 
         private Stopwatch pickuptimer;
 
@@ -129,6 +137,10 @@ namespace ParticleStormControl
             Texture2D crossHairTexture = content.Load<Texture2D>("basic_crosshair");
             for (int i = 0; i < numPlayers; ++i )
                 mapObjects.Add(new Crosshair(i, crossHairTexture));
+
+            // wipeout
+            wipeoutExplosionTexture = content.Load<Texture2D>("capture_glow");
+            wipeoutDamageTexture = content.Load<Texture2D>("capture_glow");
         }
 
         private void CreateLevel(ContentManager content, int numPlayers)
@@ -291,35 +303,32 @@ namespace ParticleStormControl
             }
 
             // random events
-            if ((pickuptimer.Elapsed.TotalSeconds > 5) && (random.NextDouble() > 0.75))
+            if (pickuptimer.Elapsed.TotalSeconds > 2)
             {
                 // random position within a certain range
                 Vector2 position = new Vector2((float)(random.NextDouble()) * 0.8f + 0.1f, (float)(random.NextDouble()) * 0.8f + 0.1f);
 
-                double rand = random.NextDouble();
-                if (rand > 0.6)
+                if (random.NextDouble() < 0.5)
+                    mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
+                else if (random.NextDouble() < 0.3)
                     mapObjects.Add(new Debuff(position, debuffExplosionSound, debuffItemTexture, debuffExplosionTexture));
-                else if ((rand < 0.6) && (rand > 0.1))
-                {
-                    Item item = new Item(position, Item.ItemType.DANGER_ZONE, contentManager);
-                    mapObjects.Add(item);
-                }
-                else if (rand < 0.065 && !switchCountdownActive)
-                {
-                    Item item = new Item(position, Item.ItemType.MUTATION, contentManager);
-                    mapObjects.Add(item);
-                }
+                else if (random.NextDouble() < 0.18)
+                    mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
+                else if (random.NextDouble() < 0.1)
+                    mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager));
 
                 // restart timer
                 pickuptimer.Reset();
                 pickuptimer.Start();
             }
-        }
 
-        private void TriggerSwitch()
-        {
-            switchCountdownTimer = switchCountdownLength;
-            switchCountdownActive = true;
+            // wipeout
+            if (wipeoutActive)
+            {
+                wipeoutProgress += frameTimeSeconds;
+                if (wipeoutProgress > 1.0f)
+                    wipeoutActive = false;
+            }
         }
 
         public void UpdateSwitching(float frameTimeSeconds, Player[] players)
@@ -432,7 +441,6 @@ namespace ParticleStormControl
             spriteBatch.Draw(backgroundTexture, new Vector2(fieldOffset_pixel.X, fieldOffset_pixel.Y), new Rectangle(0, 0, fieldSize_pixel.X, fieldSize_pixel.Y), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
             spriteBatch.End();
 
-
             // screenblend stuff
             spriteBatch.Begin(SpriteSortMode.BackToFront, ScreenBlend);
             foreach (MapObject mapObject in mapObjects)
@@ -455,6 +463,10 @@ namespace ParticleStormControl
                     mapObject.Draw_AlphaBlended(spriteBatch, this, totalTimeSeconds);
             }
 
+            if (wipeoutActive)
+                spriteBatch.Draw(wipeoutExplosionTexture, ComputePixelRect_Centered(Level.RELATIVE_MAX / 2, Level.RELATIVE_MAX.X * wipeoutProgress * WIPEOUT_SIZEFACTOR),
+                                    new Color(1.0f, 1.0f, 1.0f, 1.0f - wipeoutProgress));
+    
             spriteBatch.End();
         }
 
@@ -507,8 +519,12 @@ namespace ParticleStormControl
 
         public void DrawToDamageMap(SpriteBatch damageSpriteBatch)
         {
-            foreach (MapObject point in mapObjects)
-                point.DrawToDamageMap(damageSpriteBatch);
+            foreach (MapObject obj in mapObjects)
+                obj.DrawToDamageMap(damageSpriteBatch);
+
+            if(wipeoutActive)
+                damageSpriteBatch.Draw(wipeoutDamageTexture, 
+                    DamageMap.ComputePixelRect_Centred(Level.RELATIVE_MAX / 2, Level.RELATIVE_MAX.X * wipeoutProgress * WIPEOUT_SIZEFACTOR), Color.White);
         }
 
         public void PlayerUseItem(Player player)
@@ -520,7 +536,16 @@ namespace ParticleStormControl
                     break;
 
                 case Item.ItemType.MUTATION:
-                    TriggerSwitch();
+                    switchCountdownTimer = switchCountdownLength;
+                    switchCountdownActive = true;
+                    break;
+
+                case Item.ItemType.WIPEOUT:
+                    if (!wipeoutActive)
+                    {
+                        wipeoutActive = true;
+                        wipeoutProgress = 0.0f;
+                    }
                     break;
             }
         }

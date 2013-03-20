@@ -25,7 +25,7 @@ namespace ParticleStormControl
         private Texture2D itemTexture;
 
         public Item(Vector2 position, ItemType type, ContentManager content) :
-            base(position, -1, 0.01f, 15.0f, 3, 0.04f)
+            base(position, -1, 0.01f, 15.0f, 3, 0.05f)
         {
             this.Type = type;
             switch(Type)
@@ -35,6 +35,9 @@ namespace ParticleStormControl
                     break;
                 case ItemType.MUTATION:
                     itemTexture = content.Load<Texture2D>("items/mutate");
+                    break;
+                case ItemType.WIPEOUT:
+                    itemTexture = content.Load<Texture2D>("items/wipeout");
                     break;
 
                 default:

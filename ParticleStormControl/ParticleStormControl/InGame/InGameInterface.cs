@@ -13,6 +13,7 @@ namespace ParticleStormControl
         private Texture2D itemBox;
         private Texture2D itemBuff;
         private Texture2D itemMutate;
+        private Texture2D itemWipeout;
 
         private const float TRANSPARENCY = 0.6f;
 
@@ -21,6 +22,7 @@ namespace ParticleStormControl
             itemBox = content.Load<Texture2D>("itemBox");
             itemBuff = content.Load<Texture2D>("items/buff");
             itemMutate = content.Load<Texture2D>("items/mutate");
+            itemWipeout = content.Load<Texture2D>("items/wipeout");
         }
 
         /// <summary>
@@ -59,17 +61,20 @@ namespace ParticleStormControl
             itemRect.Offset(SIZE_OFFSET / 2, SIZE_OFFSET / 2);
             itemRect.Width -= SIZE_OFFSET;
             itemRect.Height -= SIZE_OFFSET;
+            itemRect.Offset(itemRect.Width / 2, itemRect.Height / 2);
             switch (type)
             {
                 case Item.ItemType.DANGER_ZONE:
-                    itemRect.Offset(itemBuff.Width / 2, itemBuff.Height / 2);
                     spriteBatch.Draw(itemBuff, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
                                                    new Vector2(itemBuff.Width, itemBuff.Height) / 2,SpriteEffects.None, 0); // color);
                     break;
                 case Item.ItemType.MUTATION:
-                    itemRect.Offset(itemMutate.Width / 2, itemMutate.Height / 2);
                     spriteBatch.Draw(itemMutate, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
                                                    new Vector2(itemMutate.Width, itemMutate.Height) / 2, SpriteEffects.None, 0); // color);
+                    break;
+                case Item.ItemType.WIPEOUT:
+                    spriteBatch.Draw(itemWipeout, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
+                                                   new Vector2(itemWipeout.Width, itemWipeout.Height) / 2, SpriteEffects.None, 0); // color);
                     break;
             }
         }
