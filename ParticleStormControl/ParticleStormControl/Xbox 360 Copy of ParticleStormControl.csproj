@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="InGame\DamageMap.cs" />
     <Compile Include="InGame\InGame.cs" />
+    <Compile Include="InGame\InGameInterface.cs" />
     <Compile Include="InGame\Level\DangerZone.cs" />
     <Compile Include="InGame\Level\Debuff.cs" />
     <Compile Include="InGame\Level\Item.cs" />

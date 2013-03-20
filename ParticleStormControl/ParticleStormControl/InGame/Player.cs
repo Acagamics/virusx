@@ -27,6 +27,15 @@ namespace ParticleStormControl
         public readonly static VirusType[] Viruses = { VirusType.H1N1, VirusType.HEPATITISB, VirusType.HIV, VirusType.NORO };
         public readonly static string[] VirusNames = { "Influenza A virus", "Hepatitis B virus", "Human immunodeficiency virus", "Norovirus" };
 
+        private int virusIndex;
+        public int VirusIndex
+        {
+            get { return virusIndex; }
+            set { virusIndex = value; }
+        }
+        public VirusType Virus
+        { get { return Viruses[virusIndex]; } }
+
         #endregion
 
         #region Particles
@@ -55,6 +64,13 @@ namespace ParticleStormControl
 
         private HalfVector2[] particleInfos = new HalfVector2[maxParticlesSqrt * maxParticlesSqrt];
 
+        Effect particleProcessing;
+
+        public int NumParticlesAlive
+        { get; private set; }
+
+        public int HighestUsedParticleIndex
+        { get; private set; }
 
         #region spawning
 
@@ -85,6 +101,11 @@ namespace ParticleStormControl
             VertexDeclaration IVertexType.VertexDeclaration
             { get { return vertexDeclaration; } }
         }
+
+        // spawn stuff!
+        private const float spawnConstant = 12.0f;  // higher means LESS!
+        private const float spawnSettingFactor = 5.0f;  // remeber that high mass means mass_health=-1.0f
+
         /// <summary>
         /// vertexbuffer that holds all current spawn vertices - per spawn are 2 needed since they are rendered als tiny lines (pixels are not allowed in xna)
         /// </summary>
@@ -97,15 +118,6 @@ namespace ParticleStormControl
         private SpawnVertex[] spawnVerticesRAMBuffer = new SpawnVertex[maxSpawnsPerFrame*2];
 
         #endregion
-
-
-        Effect particleProcessing;
-
-        public int NumParticlesAlive
-        { get; private set; }
-
-        public int HighestUsedParticleIndex
-        { get; private set; }
 
         #endregion
 
@@ -136,18 +148,16 @@ namespace ParticleStormControl
                                                             new Vector4(1, 1, 1, 0)  };
 #endif
 
+        private int colorIndex;
+        public Color Color
+        { get { return Colors[colorIndex]; } }
+        public Color ParticleColor
+        { get { return ParticleColors[colorIndex]; } }
+
         #endregion
 
         #region Control
 
-        /*public enum ControlType
-        {
-            KEYBOARD0,KEYBOARD1,
-            GAMEPAD0,
-            GAMEPAD1,
-            GAMEPAD2,
-            GAMEPAD3
-        };*/
         static public readonly String[] ControlNames = new String[]
         {
             "Arrow Keys + CTRL",
@@ -168,7 +178,7 @@ namespace ParticleStormControl
 
         #endregion
 
-        #region hold move
+        #region cursor
         /// <summary>
         /// Position to wich the particles are attracted
         /// </summary>
@@ -206,15 +216,16 @@ namespace ParticleStormControl
         public Item.ItemType ItemSlot { get; set; }
 
         #endregion
+
+        #region index/identifier
+
         // who is who (blue etc.)
         public readonly PlayerIndex playerIndex;
         public int Index { get { return (int)playerIndex; } }
 
-        // spawn stuff!
-        private const float spawnConstant = 12.0f;  // higher means LESS!
-        private const float spawnSettingFactor = 5.0f;  // remeber that high mass means mass_health=-1.0f
+        #endregion
 
-        #region pad properties
+        #region "pad"/particle properties
 
         // please all values from -1 to 1
         private float disciplin_speed = 0.0f;  // negative more disciplin, ...
@@ -242,37 +253,25 @@ namespace ParticleStormControl
 
         // discilplin constant - higher means that the player will move more straight in player's direction
         private const float disciplinConstant = 0.4f;
-        #endregion
-
+        // attacking constant
         private const float attackingPerSecond = 30.0f;
 
-        #region stuff about randomization
+        #endregion
+
+        #region random
 
         readonly Random random = new Random();
         private const float NoiseToMovementFactor = 15 * disciplinConstant;
 
         #endregion
 
+        #region life and lifetime
+
         public bool Alive
         { get { return alive; } }
         private bool alive = true;
         public float TimeDead
         { get; private set; }
-
-        private int colorIndex;
-        public Color Color
-        { get { return Colors[colorIndex]; } }
-        public Color ParticleColor
-        { get { return ParticleColors[colorIndex]; } }
-
-        private int virusIndex;
-        public int VirusIndex
-        {
-            get { return virusIndex; }
-            set { virusIndex = value; }
-        }
-        public VirusType Virus
-        { get { return Viruses[virusIndex]; } }
 
         public float RemainingTimeAlive
         {
@@ -287,6 +286,42 @@ namespace ParticleStormControl
 
         private float timeWithoutSpawnPoint = 0.0f;
         private const float maxTimeWithoutSpawnPoint = 15.0f;
+
+        #endregion
+
+        public Player(int playerIndex, GraphicsDevice device, ContentManager content, Texture2D noiseTexture, int colorIndex)
+        {
+            this.playerIndex = (PlayerIndex)playerIndex;
+            this.noiseTexture = noiseTexture;
+            this.colorIndex = colorIndex;
+
+            this.ItemSlot = global::ParticleStormControl.Item.ItemType.NONE;
+
+            cursorPosition = cursorStartPositions[(int)playerIndex];
+
+            for (int i = 0; i < maxParticles; ++i)
+                particleInfos[i] = new HalfVector2(-1.0f, -1.0f);
+
+            // create rendertargets (they are pingponging ;) )
+            positionTargets[0] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            positionTargets[1] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            infoTargets[0] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            infoTargets[1] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            movementTexture[0] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            movementTexture[1] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            renderTargetBindings = new RenderTargetBinding[][] { new RenderTargetBinding[] { positionTargets[0], movementTexture[0], infoTargets[0] }, 
+                                                                new RenderTargetBinding[] { positionTargets[1], movementTexture[1], infoTargets[1] } };
+            particleProcessing = content.Load<Effect>("shader/particleProcessing");
+            particleProcessing.Parameters["halfPixelCorrection"].SetValue(new Vector2(-0.5f / maxParticlesSqrt, 0.5f / maxParticlesSqrt));
+            particleProcessing.Parameters["RelativeCorMax"].SetValue(Level.RELATIVE_MAX);
+
+            // reset data
+            InfoTexture.SetData<HalfVector2>(particleInfos);
+
+            // spawn vb
+            spawnVertexBuffer = new DynamicVertexBuffer(device, SpawnVertex.VertexDeclaration, 
+                                                            maxSpawnsPerFrame * 2, BufferUsage.WriteOnly);
+        }
 
         /// <summary>
         /// performs a switch between 2 players
@@ -329,40 +364,6 @@ namespace ParticleStormControl
             Item.ItemType item = player1.ItemSlot;
             player1.ItemSlot = player2.ItemSlot;
             player2.ItemSlot = item;
-        }
-
-        public Player(int playerIndex, GraphicsDevice device, ContentManager content, Texture2D noiseTexture, int colorIndex)
-        {
-            this.playerIndex = (PlayerIndex)playerIndex;
-            this.noiseTexture = noiseTexture;
-            this.colorIndex = colorIndex;
-
-            this.ItemSlot = global::ParticleStormControl.Item.ItemType.NONE;
-
-            cursorPosition = cursorStartPositions[(int)playerIndex];
-
-            for (int i = 0; i < maxParticles; ++i)
-                particleInfos[i] = new HalfVector2(-1.0f, -1.0f);
-
-            // create rendertargets (they are pingponging ;) )
-            positionTargets[0] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            positionTargets[1] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            infoTargets[0] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            infoTargets[1] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            movementTexture[0] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            movementTexture[1] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            renderTargetBindings = new RenderTargetBinding[][] { new RenderTargetBinding[] { positionTargets[0], movementTexture[0], infoTargets[0] }, 
-                                                                new RenderTargetBinding[] { positionTargets[1], movementTexture[1], infoTargets[1] } };
-            particleProcessing = content.Load<Effect>("shader/particleProcessing");
-            particleProcessing.Parameters["halfPixelCorrection"].SetValue(new Vector2(-0.5f / maxParticlesSqrt, 0.5f / maxParticlesSqrt));
-            particleProcessing.Parameters["RelativeCorMax"].SetValue(Level.RELATIVE_MAX);
-
-            // reset data
-            InfoTexture.SetData<HalfVector2>(particleInfos);
-
-            // spawn vb
-            spawnVertexBuffer = new DynamicVertexBuffer(device, SpawnVertex.VertexDeclaration, 
-                                                            maxSpawnsPerFrame * 2, BufferUsage.WriteOnly);
         }
 
         public void UpdateGPUPart(GraphicsDevice device, float timeInterval, Texture2D damageMapTexture)
@@ -517,27 +518,13 @@ namespace ParticleStormControl
         /// </summary>
         public void UserControl(float frameTimeInterval, Level level)
         {
-            Vector2 cursorMove;
-            //Vector2 padMove;
-            //MovementsFromControls(out cursorMove, out padMove);
-
-            //float len = padMove.Length();
-            //if (len > 1.0f) padMove /= len;
-            //len = cursorMove.Length();
-            //if (len > 1.0f) cursorMove /= len;
-
-            cursorMove = InputManager.Instance.GetMovement(playerIndex);
+            Vector2 cursorMove = InputManager.Instance.GetMovement(playerIndex);
             cursorMove *= frameTimeInterval * CURSOR_SPEED;
-            //padMove *= frameTimeInterval * 2.0f;
 
-            //mass_health += padMove.Y;
-            //disciplin_speed -= padMove.X;
             float len = cursorMove.Length();
             if (len > 1.0f) cursorMove /= len;
             cursorPosition += cursorMove;
 
-            //mass_health = MathHelper.Clamp(mass_health, -1.0f, 1.0f);
-            //disciplin_speed = MathHelper.Clamp(disciplin_speed, -1.0f, 1.0f);
             cursorPosition.X = MathHelper.Clamp(cursorPosition.X, 0.0f, Level.RELATIVE_MAX.X);
             cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, Level.RELATIVE_MAX.Y);
 

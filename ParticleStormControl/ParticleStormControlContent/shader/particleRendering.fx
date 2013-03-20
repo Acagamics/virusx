@@ -28,13 +28,13 @@ struct VertexShaderInput
     float2 Position			: POSITION0;
 	float2 Texcoord			: TEXCOORD0;
 	float2 InstanceIndex	: TEXCOORD1;
-	float  InstanceSize		: TEXCOORD2;
 };
 
 struct VertexShaderOutput
 {
     float4 Position : POSITION0;
 	float2 Texcoord : TEXCOORD0;
+	float InstanceIndex : TEXCOORD1;
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
@@ -58,16 +58,35 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 	}
 	else
 		output.Position = 100;
-		
+	
+	output.InstanceIndex = input.InstanceIndex;
 	output.Texcoord = input.Texcoord;
     return output;
 }
 
+
+
 float4 PixelShaderFunction_Falloff(VertexShaderOutput input) : COLOR0
 {
+	const float rippling = 3.0f;
+
 	float2 v = (input.Texcoord - 0.5f)*2;
-	float alpha = 1.0f - dot(v,v);
-    return Color * alpha;
+
+	// compute polar cordinates
+	float radius = length(v);
+	float angle = atan2(v.x, v.y) + input.InstanceIndex;
+	
+	// disturb radius
+	float disturbedRadius = radius * ((sin(angle*rippling) + sin(angle*rippling*2.0f)) * 0.1f + 1.1f);
+	float circle = 1.0f - min(1.0f, lerp(radius, disturbedRadius, 0.8f + sin(input.InstanceIndex)*0.5));
+	clip(circle - 0.001f);
+
+	circle = smoothstep(0.0f, 0.3f, circle) - smoothstep(0.25f, 0.4f, circle)*0.5f;
+	
+    return Color * circle;
+
+//	float alpha = 1.0f - dot(v,v);
+//   return Color * alpha;
 }
 
 float4 PixelShaderFunction_NoFalloff(VertexShaderOutput input) : COLOR0
