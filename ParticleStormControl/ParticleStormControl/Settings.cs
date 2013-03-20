@@ -27,7 +27,7 @@ namespace ParticleStormControl
         #endregion
 
         #region Game
-        private InputManager.ControlType[] playerControls;
+        private InputManager.ControlType[] playerControls = new InputManager.ControlType[]{ InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE };
         public InputManager.ControlType[] PlayerControls { get { return playerControls; } }
         private int numPlayers;
         public int NumPlayers { get { return numPlayers; } set { numPlayers = value; } }
@@ -49,21 +49,26 @@ namespace ParticleStormControl
 
         public void ResetPlayerSettingsToDefault()
         {
-#if XBOX
             numPlayers = 0;
+#if XBOX
             for (int i = 0; i < 4; ++i)
                 numPlayers += GamePad.GetState((PlayerIndex)i).IsConnected ? 1 : 0;
 
             playerControls = new InputManager.ControlType[] { InputManager.ControlType.GAMEPAD0, InputManager.ControlType.GAMEPAD1, InputManager.ControlType.GAMEPAD2, InputManager.ControlType.GAMEPAD3 };
-#else
-            numPlayers = 0;
-            playerControls = new InputManager.ControlType[] { InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE };
+            
 #endif
-            for(int i=0; i<playerColorIndices.Length; ++i)
-                playerColorIndices[i] = -1;
 
-            for (int i = 0; i < playerVirusIndices.Length; ++i)
-                playerVirusIndices[i] = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                ResetPlayerSettingsToDefault(i);
+            }
+        }
+
+        public void ResetPlayerSettingsToDefault(int index)
+        {
+            playerControls[index] = InputManager.ControlType.NONE;
+            playerColorIndices[index] = -1;
+            playerVirusIndices[index] = 0;
         }
 
         /// <summary>

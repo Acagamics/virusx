@@ -431,7 +431,7 @@ namespace ParticleStormControl
             }
         }
 
-        public bool DirectionButtonPressed(ControlActions action, ControlType type)
+        public bool ButtonPressed(ControlActions action, ControlType type, bool down)
         {
             switch (type)
             {
@@ -439,78 +439,102 @@ namespace ParticleStormControl
                     switch (action)
 	                {
                         case ControlActions.UP:
-                            return PressedButton(Keys.W);
+                            return down ? IsButtonDown(Keys.W) : PressedButton(Keys.W);
                         case ControlActions.DOWN:
-                            return PressedButton(Keys.S);
+                            return down ? IsButtonDown(Keys.S) : PressedButton(Keys.S);
                         case ControlActions.LEFT:
-                            return PressedButton(Keys.A);
+                            return down ? IsButtonDown(Keys.A) : PressedButton(Keys.A);
                         case ControlActions.RIGHT:
-                            return PressedButton(Keys.D);
+                            return down ? IsButtonDown(Keys.D) : PressedButton(Keys.D);
+                        case ControlActions.HOLD:
+                            return down ? IsButtonDown(Keys.LeftShift) : PressedButton(Keys.LeftShift);
+                        case ControlActions.ACTION:
+                            return down ? IsButtonDown(Keys.Space) : PressedButton(Keys.Space);
 	                }
                     break;
                 case ControlType.KEYBOARD1:
                     switch (action)
                     {
                         case ControlActions.UP:
-                            return PressedButton(Keys.Up);
+                            return down ? IsButtonDown(Keys.Up) : PressedButton(Keys.Up);
                         case ControlActions.DOWN:
-                            return PressedButton(Keys.Down);
+                            return down ? IsButtonDown(Keys.Down) : PressedButton(Keys.Down);
                         case ControlActions.LEFT:
-                            return PressedButton(Keys.Left);
+                            return down ? IsButtonDown(Keys.Left) : PressedButton(Keys.Left);
                         case ControlActions.RIGHT:
-                            return PressedButton(Keys.Right);
+                            return down ? IsButtonDown(Keys.Right) : PressedButton(Keys.Right);
+                        case ControlActions.HOLD:
+                            return down ? IsButtonDown(Keys.RightControl) : PressedButton(Keys.RightControl);
+                        case ControlActions.ACTION:
+                            return down ? IsButtonDown(Keys.Enter) : PressedButton(Keys.Enter);
                     }
                     break;
                 case ControlType.GAMEPAD0:
                     switch (action)
 	                {
                         case ControlActions.UP:
-                            return PressedButton(Buttons.DPadUp, 0);
+                            return down ? IsButtonDown(Buttons.DPadUp, 0) : PressedButton(Buttons.DPadUp, 0);
                         case ControlActions.DOWN:
-                            return PressedButton(Buttons.DPadDown, 0);
+                            return down ? IsButtonDown(Buttons.DPadDown, 0) : PressedButton(Buttons.DPadDown, 0);
                         case ControlActions.LEFT:
-                            return PressedButton(Buttons.DPadLeft, 0);
+                            return down ? IsButtonDown(Buttons.DPadLeft, 0) : PressedButton(Buttons.DPadLeft, 0);
                         case ControlActions.RIGHT:
-                            return PressedButton(Buttons.DPadRight, 0);
+                            return down ? IsButtonDown(Buttons.DPadRight, 0) : PressedButton(Buttons.DPadRight, 0);
+                        case ControlActions.ACTION:
+                            return down ? IsButtonDown(Buttons.A, 0) : PressedButton(Buttons.A, 0);
+                        case ControlActions.HOLD:
+                            return down ? IsButtonDown(Buttons.B, 0) : PressedButton(Buttons.B, 0);
 	                }
                     break;
                 case ControlType.GAMEPAD1:
                     switch (action)
                     {
                         case ControlActions.UP:
-                            return PressedButton(Buttons.DPadUp, 1);
+                            return down ? IsButtonDown(Buttons.DPadUp, 1) : PressedButton(Buttons.DPadUp, 1);
                         case ControlActions.DOWN:
-                            return PressedButton(Buttons.DPadDown, 1);
+                            return down ? IsButtonDown(Buttons.DPadDown, 1) : PressedButton(Buttons.DPadDown, 1);
                         case ControlActions.LEFT:
-                            return PressedButton(Buttons.DPadLeft, 1);
+                            return down ? IsButtonDown(Buttons.DPadLeft, 1) : PressedButton(Buttons.DPadLeft, 1);
                         case ControlActions.RIGHT:
-                            return PressedButton(Buttons.DPadRight, 1);
+                            return down ? IsButtonDown(Buttons.DPadRight, 1) : PressedButton(Buttons.DPadRight, 1);
+                        case ControlActions.ACTION:
+                            return down ? IsButtonDown(Buttons.A, 1) : PressedButton(Buttons.A, 1);
+                        case ControlActions.HOLD:
+                            return down ? IsButtonDown(Buttons.B, 1) : PressedButton(Buttons.B, 1);
                     }
                     break;
                 case ControlType.GAMEPAD2:
                     switch (action)
                     {
                         case ControlActions.UP:
-                            return PressedButton(Buttons.DPadUp, 2);
+                            return down ? IsButtonDown(Buttons.DPadUp, 2) : PressedButton(Buttons.DPadUp, 2);
                         case ControlActions.DOWN:
-                            return PressedButton(Buttons.DPadDown, 2);
+                            return down ? IsButtonDown(Buttons.DPadDown, 2) : PressedButton(Buttons.DPadDown, 2);
                         case ControlActions.LEFT:
-                            return PressedButton(Buttons.DPadLeft, 2);
+                            return down ? IsButtonDown(Buttons.DPadLeft, 2) : PressedButton(Buttons.DPadLeft, 2);
                         case ControlActions.RIGHT:
-                            return PressedButton(Buttons.DPadRight, 2);
+                            return down ? IsButtonDown(Buttons.DPadRight, 2) : PressedButton(Buttons.DPadRight, 2);
+                        case ControlActions.ACTION:
+                            return down ? IsButtonDown(Buttons.A, 2) : PressedButton(Buttons.A, 2);
+                        case ControlActions.HOLD:
+                            return down ? IsButtonDown(Buttons.B, 2) : PressedButton(Buttons.B, 2);
                     }
                     break;
                 case ControlType.GAMEPAD3:
                     switch (action)
                     {
                         case ControlActions.UP:
-                            return PressedButton(Buttons.DPadUp, 3);
+                            return down ? IsButtonDown(Buttons.DPadUp, 3) : PressedButton(Buttons.DPadUp, 3);
                         case ControlActions.DOWN:
-                            return PressedButton(Buttons.DPadDown, 3);
+                            return down ? IsButtonDown(Buttons.DPadDown, 3) : PressedButton(Buttons.DPadDown, 3);
                         case ControlActions.LEFT:
-                            return PressedButton(Buttons.DPadLeft, 3);
+                            return down ? IsButtonDown(Buttons.DPadLeft, 3) : PressedButton(Buttons.DPadLeft, 3);
                         case ControlActions.RIGHT:
-                            return PressedButton(Buttons.DPadRight, 3);
+                            return down ? IsButtonDown(Buttons.DPadRight, 3) : PressedButton(Buttons.DPadRight, 3);
+                        case ControlActions.ACTION:
+                            return down ? IsButtonDown(Buttons.A, 3) : PressedButton(Buttons.A, 3);
+                        case ControlActions.HOLD:
+                            return down ? IsButtonDown(Buttons.B, 3) : PressedButton(Buttons.B, 3);
                     }
                     break;
             }

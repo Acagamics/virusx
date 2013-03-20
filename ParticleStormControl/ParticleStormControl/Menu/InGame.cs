@@ -10,6 +10,10 @@ namespace ParticleStormControl.Menu
         public InGame(Menu menu) : base(menu)
         { }
 
+        public override void Initialize()
+        {
+        }
+
         public override void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
         {
         }

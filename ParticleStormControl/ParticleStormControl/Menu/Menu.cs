@@ -85,7 +85,7 @@ namespace ParticleStormControl.Menu
         public void Draw(float frameTimeInterval, SpriteBatch spriteBatch)
         {
             // alphablend! not nonpremulitplied since the font textures work this way
-            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
             if(pages[(int)activePage] != null)
                 pages[(int)activePage].Draw(spriteBatch, frameTimeInterval);
             spriteBatch.End();
@@ -112,7 +112,6 @@ namespace ParticleStormControl.Menu
             return pages[(int)page];
         }
 
-
         #region controlling functions
 
         public delegate void PageChanging(Page newPage, Page oldPage);
@@ -123,6 +122,7 @@ namespace ParticleStormControl.Menu
             if(PageChangingEvent != null)
                 PageChangingEvent(newPage, activePage);
             activePage = newPage;
+            pages[(int)activePage].Initialize();
         }
 
         public void Shutdown()

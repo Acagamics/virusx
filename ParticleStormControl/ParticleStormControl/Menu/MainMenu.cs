@@ -28,6 +28,10 @@ namespace ParticleStormControl.Menu
         {
         }
 
+        public override void Initialize()
+        {
+        }
+
         public override void LoadContent(ContentManager content)
         {
             logo = content.Load<Texture2D>("logo");

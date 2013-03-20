@@ -12,7 +12,7 @@ namespace ParticleStormControl
     {
         public const int MaxNumPlayers = 4;
 
-        #region Virus
+        #region Viruses
         
         public enum VirusType
 	    {
@@ -26,6 +26,7 @@ namespace ParticleStormControl
 
         public readonly static VirusType[] Viruses = { VirusType.H1N1, VirusType.HEPATITISB, VirusType.HIV, VirusType.NORO };
         public readonly static string[] VirusNames = { "Influenza A virus", "Hepatitis B virus", "Human immunodeficiency virus", "Norovirus" };
+        public readonly static string[] VirusDescriptions = { "causes influenza in birds and some mammals, and is the only species of influenzavirus A.", "is a species of the genus Orthohepadnavirus, which is likewise a part of the Hepadnaviridae family of viruses.", "is a lentivirus (slowly replicating retrovirus) that causes acquired immunodeficiency syndrome (AIDS).", "are a genetically diverse group of single-stranded RNA, non-enveloped viruses in the Caliciviridae family." };
 
         private int virusIndex;
         public int VirusIndex
@@ -160,8 +161,8 @@ namespace ParticleStormControl
 
         static public readonly String[] ControlNames = new String[]
         {
-            "Arrow Keys + CTRL",
             "WASD + SHIFT",
+            "Arrow Keys + CTRL",
             "Gamepad 1",
             "Gamepad 2",
             "Gamepad 3",

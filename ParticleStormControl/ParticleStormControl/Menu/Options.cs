@@ -26,7 +26,10 @@ namespace ParticleStormControl.Menu
         public Options(Menu menu)
             : base(menu)
         {
-            
+        }
+
+        public override void Initialize()
+        {
         }
 
         public override void LoadContent(ContentManager content)

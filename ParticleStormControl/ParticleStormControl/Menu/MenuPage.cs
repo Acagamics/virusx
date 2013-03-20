@@ -14,5 +14,6 @@ namespace ParticleStormControl.Menu
         public abstract void LoadContent(ContentManager content);
         public abstract void Update(float frameTimeInterval);
         public abstract void Draw(SpriteBatch spriteBatch, float frameTimeInterval);
+        public abstract void Initialize();
     }
 }
