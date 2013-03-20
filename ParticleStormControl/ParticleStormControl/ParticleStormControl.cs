@@ -46,8 +46,6 @@ namespace ParticleStormControl
         private InGame inGame;
         private Menu.Menu menu;
 
-        private Texture2D backgroundTexture;
-
         public ParticleStormControl()
         {
             graphics = new GraphicsDeviceManager(this);
