@@ -10,7 +10,7 @@ using ParticleStormControl;
 
 namespace ParticleStormControl
 {
-    class SpawnPoint : CapturableObject
+    public class SpawnPoint : CapturableObject
     {
         public float SpawnSize { get; private set; }
         public float SpawnTimeAccum { get; set; }
@@ -129,13 +129,13 @@ namespace ParticleStormControl
         public override void Draw_ScreenBlended(SpriteBatch spriteBatch, Level level, float totalTimeSeconds)
         {
             // glow for possed ones
-            if (PossessingPlayer != -1)
+     /*       if (PossessingPlayer != -1)
             {
                 float currentsize = MathHelper.Clamp((float)glowtimer.Elapsed.TotalSeconds * 2.5f, 0.0f, 1.0f);
                 Color glowColor = Settings.Instance.GetPlayerColor(PossessingPlayer) * 0.75f;
                 if (currentsize > 0.0f)
                     spriteBatch.Draw(glowTexture, level.ComputePixelRect_Centered(Position, Size * 6 * currentsize), null, glowColor, 0.0f, Vector2.Zero, SpriteEffects.None, 1.0f);
-            }
+            }*/
         }
 
         public override void DrawToDamageMap(SpriteBatch spriteBatch)

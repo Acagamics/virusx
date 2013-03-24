@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define QUICK_TWO_PLAYER_DEBUG
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,6 +43,17 @@ namespace ParticleStormControl.Menu
             playerConnected = new bool[4];
             playerReady = new bool[4];
             countdown = new TimeSpan();
+
+            // :P
+#if QUICK_TWO_PLAYER_DEBUG
+            Settings.Instance.PlayerControls[0] = InputManager.ControlType.KEYBOARD0;
+            Settings.Instance.PlayerColorIndices[0] = 0;
+            Settings.Instance.PlayerControls[1] = InputManager.ControlType.KEYBOARD1;
+            Settings.Instance.PlayerColorIndices[1] = 1;
+            Settings.Instance.NumPlayers = 2;
+            playerReady[0] = playerReady[1] = playerConnected[0] = playerConnected[1] = true;
+            menu.ChangePage(Menu.Page.INGAME);
+#endif
         }
 
         /// <summary>

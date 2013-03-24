@@ -90,8 +90,8 @@ namespace ParticleStormControl
                 players[i].Controls = Settings.Instance.PlayerControls[i];
             }
 
-            // restart stuff... do it clean and safe ;) (and bloated...)
-            level = new Level(graphicsDevice, content, Settings.Instance.NumPlayers);
+            // restart stuff
+            level.NewGame(players);
             particleRenderer = new ParticleRenderer(graphicsDevice, content, players.Length);
 
             State = GameState.Playing;
@@ -110,6 +110,8 @@ namespace ParticleStormControl
 
             damageMap.LoadContent(graphicsDevice);
 
+            // level
+            level = new Level(graphicsDevice, content);
             // interface
             inGameInterface = new InGameInterface(content);
 
@@ -165,7 +167,7 @@ namespace ParticleStormControl
                 {
                     try
                     {
-                        players[(int)index].UpdateCPUPart(passedFrameTime, level.mapObjects, playerCantDie);
+                        players[(int)index].UpdateCPUPart(passedFrameTime, level.SpawnPoints, playerCantDie);
                     }
                     catch(Exception exp)
                     {

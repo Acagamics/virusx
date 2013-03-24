@@ -14,13 +14,17 @@ namespace ParticleStormControl
 {
     public class Level
     {
-        public List<MapObject> mapObjects = new List<MapObject>();
+        private List<MapObject> mapObjects = new List<MapObject>();
+        private List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
+        public List<SpawnPoint> SpawnPoints { get { return spawnPoints; } }
 
         private Texture2D pixelTexture;
-        private Texture2D backgroundTexture;
 
         private SpriteBatch spriteBatch;
         private ContentManager contentManager;
+
+        private VertexBuffer backgroundVertexBuffer;
+        private Effect backgroundShader;
 
         #region debuff ressources
         private SoundEffect debuffExplosionSound;
@@ -105,7 +109,7 @@ namespace ParticleStormControl
 
         private Random random = new Random();
 
-        public Level(GraphicsDevice device, ContentManager content, int numPlayers)
+        public Level(GraphicsDevice device, ContentManager content)
         {
             this.contentManager = content; 
 
@@ -113,8 +117,7 @@ namespace ParticleStormControl
             pickuptimer.Start();
 
             pixelTexture = content.Load<Texture2D>("pix");
-            backgroundTexture = content.Load<Texture2D>("tile");
-
+            
             spriteBatch = new SpriteBatch(device);
 
             // debuff
@@ -131,16 +134,30 @@ namespace ParticleStormControl
             switchSound = content.Load<SoundEffect>("sound/switch");
             fontCountdownLarge = content.Load<SpriteFont>("fontCountdown");
 
+            // background
+            backgroundVertexBuffer = new VertexBuffer(device, ScreenTriangleRenderer.ScreenAlignedTriangleVertex.VertexDeclaration, 4, BufferUsage.WriteOnly);
+            backgroundVertexBuffer.SetData(new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) });
+            backgroundShader = content.Load<Effect>("shader/background");
+
+            // setup size
             Resize(device);
-            CreateLevel(content, numPlayers);
-
-            Texture2D crossHairTexture = content.Load<Texture2D>("basic_crosshair");
-            for (int i = 0; i < numPlayers; ++i )
-                mapObjects.Add(new Crosshair(i, crossHairTexture));
-
+            
             // wipeout
             wipeoutExplosionTexture = content.Load<Texture2D>("capture_glow");
             wipeoutDamageTexture = content.Load<Texture2D>("capture_glow");
+        }
+
+        public void NewGame(Player[] players)
+        {
+            mapObjects.Clear();
+
+            // create level
+            CreateLevel(contentManager, players.Length);
+
+            // crosshairs for players
+            Texture2D crossHairTexture = contentManager.Load<Texture2D>("basic_crosshair");
+            for (int i = 0; i < players.Length; ++i)
+                mapObjects.Add(new Crosshair(i, crossHairTexture));
         }
 
         private void CreateLevel(ContentManager content, int numPlayers)
@@ -157,23 +174,20 @@ namespace ParticleStormControl
             int pointcount = random.Next(3) + 3;
 
             // player starts
-            List<MapObject> newCapturePoints = new List<MapObject>();
-
-
             const float LEVEL_BORDER = 0.2f;
 
-            newCapturePoints.Add(new SpawnPoint(new Vector2(LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER), 1000.0f, 0, capture, captureExplosion,
+            spawnPoints.Add(new SpawnPoint(new Vector2(LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER), 1000.0f, 0, capture, captureExplosion,
                                                     glowTexture, captureGlow, hqInner, hqOuter));
-            newCapturePoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER), 1000.0f, 1, capture, captureExplosion,
+            spawnPoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER), 1000.0f, 1, capture, captureExplosion,
                                                     glowTexture, captureGlow, hqInner, hqOuter));
             if(numPlayers >= 3)
             {
-                newCapturePoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER), 1000.0f, 2, capture, captureExplosion,
+                spawnPoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER), 1000.0f, 2, capture, captureExplosion,
                                     glowTexture, captureGlow, hqInner, hqOuter));
             }
             if (numPlayers == 4)
             {
-                newCapturePoints.Add(new SpawnPoint(new Vector2(LEVEL_BORDER, LEVEL_BORDER), 1000.0f, 3, capture, captureExplosion,
+                spawnPoints.Add(new SpawnPoint(new Vector2(LEVEL_BORDER, LEVEL_BORDER), 1000.0f, 3, capture, captureExplosion,
                                     glowTexture, captureGlow, hqInner, hqOuter));
             }
 
@@ -186,7 +200,7 @@ namespace ParticleStormControl
                                                      (float)(random.NextDouble() * RELATIVE_MAX.Y * (1.0 - LEVEL_BORDER) + LEVEL_BORDER * 0.5f));
 
                 bool tooclose = false;
-                foreach (SpawnPoint currenCP in newCapturePoints)
+                foreach (SpawnPoint currenCP in spawnPoints)
                 {
                     if ((currenCP.Position - randomposition).Length() < (0.3f*(3.0f/(float) pointcount)))
                         tooclose = true;
@@ -198,8 +212,8 @@ namespace ParticleStormControl
                 if (!tooclose)
                 {
                     float capturesize = 100.0f + ((float)random.NextDouble() * 500);
-                    newCapturePoints.Add(new SpawnPoint(randomposition, capturesize, -1, capture, captureExplosion, glowTexture, captureGlow, hqInner, hqOuter));
-                    newCapturePoints.Add(new SpawnPoint(RELATIVE_MAX - randomposition, capturesize, -1, capture, captureExplosion, glowTexture, captureGlow, hqInner, hqOuter));
+                    spawnPoints.Add(new SpawnPoint(randomposition, capturesize, -1, capture, captureExplosion, glowTexture, captureGlow, hqInner, hqOuter));
+                    spawnPoints.Add(new SpawnPoint(RELATIVE_MAX - randomposition, capturesize, -1, capture, captureExplosion, glowTexture, captureGlow, hqInner, hqOuter));
                 }
                 else
                 {
@@ -210,7 +224,10 @@ namespace ParticleStormControl
                 }
             }
 
-            mapObjects.AddRange(newCapturePoints);
+            mapObjects.AddRange(spawnPoints);
+
+            // numcells
+            backgroundShader.Parameters["NumCells"].SetValue(spawnPoints.Count);
         }
 
         /// <summary>
@@ -437,9 +454,20 @@ namespace ParticleStormControl
         public void Draw(float totalTimeSeconds, GraphicsDevice device, Player[] players)
         {
             // background
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
-            spriteBatch.Draw(backgroundTexture, new Vector2(fieldOffset_pixel.X, fieldOffset_pixel.Y), new Rectangle(0, 0, fieldSize_pixel.X, fieldSize_pixel.Y), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-            spriteBatch.End();
+            device.BlendState = BlendState.Opaque;
+            device.SetVertexBuffer(backgroundVertexBuffer);
+          /*  Vector2[] positions = new Vector2[spawnPoints.Count];
+            Vector3[] colors = new Vector3[spawnPoints.Count];
+            for(int i=0; i<positions.Length; ++i)
+            {
+                positions[i] = spawnPoints[i].Position / Level.RELATIVE_MAX;
+                colors[i] = spawnPoints[i].ComputeColor().ToVector3();
+            } */
+            backgroundShader.Parameters["Cells_Pos2D"].SetValue(spawnPoints.Select(x => x.Position / Level.RELATIVE_MAX).ToArray());
+            backgroundShader.Parameters["Cells_Color"].SetValue(spawnPoints.Select(x => x.ComputeColor().ToVector3()).ToArray());
+            backgroundShader.CurrentTechnique.Passes[0].Apply();
+            device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+
 
             // screenblend stuff
             spriteBatch.Begin(SpriteSortMode.BackToFront, ScreenBlend);
@@ -503,6 +531,13 @@ namespace ParticleStormControl
                 fieldSize_pixel = new Point(device.Viewport.Width, (int)sizeY);
             fieldOffset_pixel = new Point(device.Viewport.Width - fieldSize_pixel.X, device.Viewport.Height - fieldSize_pixel.Y);
             fieldOffset_pixel.X /= 2; fieldOffset_pixel.Y /= 2;
+
+
+            // setup background
+            backgroundShader.Parameters["PosScale"].SetValue(new Vector2(fieldSize_pixel.X, -fieldSize_pixel.Y) /
+                                                             new Vector2(device.Viewport.Width, device.Viewport.Height) * 2);
+            backgroundShader.Parameters["PosOffset"].SetValue(new Vector2(fieldOffset_pixel.X, -fieldOffset_pixel.Y) /
+                                                             new Vector2(device.Viewport.Width, device.Viewport.Height) * 2 - new Vector2(1, -1));
 
             CreateParticleTarget(device);
         }

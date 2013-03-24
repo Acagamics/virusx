@@ -424,7 +424,7 @@ namespace ParticleStormControl
             InfoTexture.GetData<HalfVector2>(particleInfos);
         }
 
-        public void UpdateCPUPart(float timeInterval, IList<MapObject> mapObjects, bool cantDie)
+        public void UpdateCPUPart(float timeInterval, IList<SpawnPoint> spawnPoints, bool cantDie)
         {
             float health = ((mass_health * 0.5f) + 1.5f) * healthConstant;
             float speed = speedConstant + speedSettingFactor * disciplin_speed;
@@ -432,10 +432,9 @@ namespace ParticleStormControl
             // compute spawnings
             numSpawns = 0;
             int numSpawnPoints = 0;
-            foreach (MapObject interest in mapObjects)
+            foreach (SpawnPoint spawn in spawnPoints)
             {
-                SpawnPoint spawn = interest as SpawnPoint;
-                if (spawn != null && spawn.PossessingPlayer == (int)playerIndex)
+                if (spawn.PossessingPlayer == (int)playerIndex)
                 {
                     spawn.SpawnTimeAccum += timeInterval;
                     float f = spawn.SpawnSize / (spawnConstant + spawnSettingFactor * mass_health);
