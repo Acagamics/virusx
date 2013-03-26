@@ -110,6 +110,8 @@
     <Compile Include="InGame\InGame.cs" />
     <Compile Include="InGame\InGameInterface.cs" />
     <Compile Include="InGame\Level\Item.cs" />
+    <Compile Include="InGame\PercentageBar.cs" />
+    <Compile Include="InGame\Statistics.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="InGame\Level\CapturableObject.cs" />
     <Compile Include="Menu\Credits.cs" />

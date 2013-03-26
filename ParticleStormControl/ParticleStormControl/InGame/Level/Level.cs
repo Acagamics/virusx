@@ -14,6 +14,9 @@ namespace ParticleStormControl
 {
     public class Level
     {
+        // statistics
+        public Statistics GameStatistics { get; set; }
+
         private List<MapObject> mapObjects = new List<MapObject>();
         private List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
         public List<SpawnPoint> SpawnPoints { get { return spawnPoints; } }
@@ -349,7 +352,11 @@ namespace ParticleStormControl
                             continue;
                         }
                         else
-                           players[item.PossessingPlayer].ItemSlot = item.Type;
+                        {
+                            players[item.PossessingPlayer].ItemSlot = item.Type;
+                            // statistics
+                            GameStatistics.addCollectedItems(item.PossessingPlayer);
+                        }
                     }
 
                     mapObjects.RemoveAt(i);
@@ -564,12 +571,13 @@ namespace ParticleStormControl
             // letterboxing
             float sizeY = device.Viewport.Width / RELATIVECOR_ASPECT_RATIO + 0.5f;
             if (sizeY > device.Viewport.Height)
-                fieldSize_pixel = new Point((int)(device.Viewport.Width * RELATIVECOR_ASPECT_RATIO+0.5f), device.Viewport.Height);
+                fieldSize_pixel = new Point((int)(device.Viewport.Height * RELATIVECOR_ASPECT_RATIO + 0.5f), device.Viewport.Height);
             else
-                fieldSize_pixel = new Point(device.Viewport.Width, (int)sizeY);
-            fieldOffset_pixel = new Point(device.Viewport.Width - fieldSize_pixel.X, device.Viewport.Height - fieldSize_pixel.Y);
-            fieldOffset_pixel.X /= 2; fieldOffset_pixel.Y /= 2;
+                fieldSize_pixel = new Point((int)(sizeY * RELATIVECOR_ASPECT_RATIO), (int)sizeY);
 
+            fieldOffset_pixel = new Point(device.Viewport.Width - fieldSize_pixel.X, device.Viewport.Height - fieldSize_pixel.Y + PercentageBar.HEIGHT);
+            fieldOffset_pixel.X /= 2;
+            fieldOffset_pixel.Y /= 2;
 
             // setup background
             backgroundShader.Parameters["PosScale"].SetValue(new Vector2(fieldSize_pixel.X, -fieldSize_pixel.Y) /
@@ -607,11 +615,15 @@ namespace ParticleStormControl
             {
                 case Item.ItemType.DANGER_ZONE:
                     mapObjects.Add(new DangerZone(player.CursorPosition, dangerZoneSound, dangerZoneInnerTexture, dangerZoneOuterTexture, player.Index));
+                    // statistic
+                    GameStatistics.addUsedItems(player.Index);
                     break;
 
                 case Item.ItemType.MUTATION:
                     switchCountdownTimer = switchCountdownLength;
                     switchCountdownActive = true;
+                    // statistic
+                    GameStatistics.addUsedItems(player.Index);
                     break;
 
                 case Item.ItemType.WIPEOUT:
@@ -620,6 +632,8 @@ namespace ParticleStormControl
                         wipeoutActive = true;
                         wipeoutProgress = 0.0f;
                     }
+                    // statistic
+                    GameStatistics.addUsedItems(player.Index);
                     break;
             }
         }

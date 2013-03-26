@@ -21,6 +21,11 @@ namespace ParticleStormControl
     /// </summary>
     public class InGame
     {
+        /// <summary>
+        /// Statistics
+        /// </summary>
+        public Statistics GameStatistics { get { if (level == null) return null; return level.GameStatistics; } }
+
         private Menu.Menu menu;
 
         private ParticleRenderer particleRenderer;
@@ -35,6 +40,7 @@ namespace ParticleStormControl
 
         Level level;
         InGameInterface inGameInterface;
+        PercentageBar percentageBar;
 
         public GameState State { get; private set; }
         private int winPlayerIndex = -1;
@@ -83,19 +89,25 @@ namespace ParticleStormControl
 
         public void StartNewGame(GraphicsDevice graphicsDevice, ContentManager content)
         {
-            State = GameState.Playing;
-            
+			State = GameState.Playing;
             players = new Player[Settings.Instance.NumPlayers];
-            for (int i = 0; i < players.Length; ++i)
+            int count = 0;
+            for (int i = 0; i < 3; ++i)
             {
-                players[i] = new Player(i, graphicsDevice, content, noiseWhite2D, Settings.Instance.PlayerColorIndices[i]);
-                players[i].Controls = Settings.Instance.PlayerControls[i];
+                if (Settings.Instance.PlayerConnected[i])
+                {
+                    players[count] = new Player(i, graphicsDevice, content, noiseWhite2D, Settings.Instance.PlayerColorIndices[i]);
+                    players[count].Controls = Settings.Instance.PlayerControls[i];
+                    count++;
+                }
             }
 
             // restart stuff
             level.NewGame(players);
             particleRenderer = new ParticleRenderer(graphicsDevice, content, players.Length);
-
+            // init statistics
+            level.GameStatistics = new Statistics(1f, Settings.Instance.NumPlayers);
+            
             System.GC.Collect();
         }
 
@@ -111,10 +123,9 @@ namespace ParticleStormControl
 
             damageMap.LoadContent(graphicsDevice);
 
-            // level
             level = new Level(graphicsDevice, content);
-            // interface
             inGameInterface = new InGameInterface(content);
+            percentageBar = new PercentageBar(content);
 
             // backgroundmusic
             song = content.Load<Song>("paniq_Godshatter");
@@ -215,6 +226,9 @@ namespace ParticleStormControl
             }
             if (winPlayerIndex != -1)
             {
+                // statistics
+                level.GameStatistics.addWonMatches(winPlayerIndex);
+
                 State = GameState.Inactive;
                 ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).ShownWinnerColorIndex = Settings.Instance.PlayerColorIndices[winPlayerIndex];
                 menu.ChangePage(Menu.Menu.Page.WIN);
@@ -268,6 +282,8 @@ namespace ParticleStormControl
             // reading player gpu results
             for (int i = 0; i < players.Length; ++i)
                 players[i].ReadGPUResults();
+
+            percentageBar.Draw(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, (float)gameTime.TotalGameTime.TotalSeconds);
         }
 
         public void Resize(GraphicsDevice graphicsDevice)
