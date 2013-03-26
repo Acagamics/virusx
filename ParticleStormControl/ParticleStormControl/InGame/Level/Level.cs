@@ -14,6 +14,9 @@ namespace ParticleStormControl
 {
     public class Level
     {
+        // statistics
+        public Statistics GameStatistics { get; set; }
+
         private List<MapObject> mapObjects = new List<MapObject>();
         private List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
         public List<SpawnPoint> SpawnPoints { get { return spawnPoints; } }
@@ -311,7 +314,11 @@ namespace ParticleStormControl
                             continue;
                         }
                         else
-                           players[item.PossessingPlayer].ItemSlot = item.Type;
+                        {
+                            players[item.PossessingPlayer].ItemSlot = item.Type;
+                            // statistics
+                            GameStatistics.addCollectedItems(item.PossessingPlayer);
+                        }
                     }
 
                     mapObjects.RemoveAt(i);
@@ -568,11 +575,15 @@ namespace ParticleStormControl
             {
                 case Item.ItemType.DANGER_ZONE:
                     mapObjects.Add(new DangerZone(player.CursorPosition, dangerZoneSound, dangerZoneInnerTexture, dangerZoneOuterTexture, player.Index));
+                    // statistic
+                    GameStatistics.addUsedItems(player.Index);
                     break;
 
                 case Item.ItemType.MUTATION:
                     switchCountdownTimer = switchCountdownLength;
                     switchCountdownActive = true;
+                    // statistic
+                    GameStatistics.addUsedItems(player.Index);
                     break;
 
                 case Item.ItemType.WIPEOUT:
@@ -581,6 +592,8 @@ namespace ParticleStormControl
                         wipeoutActive = true;
                         wipeoutProgress = 0.0f;
                     }
+                    // statistic
+                    GameStatistics.addUsedItems(player.Index);
                     break;
             }
         }

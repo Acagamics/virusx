@@ -21,6 +21,11 @@ namespace ParticleStormControl
     /// </summary>
     public class InGame
     {
+        /// <summary>
+        /// Statistics
+        /// </summary>
+        public Statistics GameStatistics { get { if (level == null) return null; return level.GameStatistics; } }
+
         private Menu.Menu menu;
 
         private ParticleRenderer particleRenderer;
@@ -93,6 +98,9 @@ namespace ParticleStormControl
             // restart stuff
             level.NewGame(players);
             particleRenderer = new ParticleRenderer(graphicsDevice, content, players.Length);
+
+            // init statistics
+            level.GameStatistics = new Statistics(1f, Settings.Instance.NumPlayers);
 
             State = GameState.Playing;
             System.GC.Collect();
@@ -214,6 +222,9 @@ namespace ParticleStormControl
             }
             if (winPlayerIndex != -1)
             {
+                // statistics
+                level.GameStatistics.addWonMatches(winPlayerIndex);
+
                 State = GameState.Inactive;
                 ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).ShownWinnerColorIndex = Settings.Instance.PlayerColorIndices[winPlayerIndex];
                 menu.ChangePage(Menu.Menu.Page.WIN);
