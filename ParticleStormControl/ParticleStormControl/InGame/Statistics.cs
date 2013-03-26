@@ -27,7 +27,7 @@ namespace ParticleStormControl
         private uint[] captueredBases;
         private uint[] lostBases;
         private uint[] wonMatches;
-        private uint[] lostMatches;
+        //private uint[] lostMatches;
         private uint[] collectedItems; // split for every item
         private uint[] usedItems; // split for every item
         private uint[] killedEnemies;
@@ -95,7 +95,7 @@ namespace ParticleStormControl
         public uint getAverageParticles(int playerIndex) { return playerIndex < playerCount ? averageParticles[playerIndex] : 0; }
         public uint getAverageHealth(int playerIndex) { return playerIndex < playerCount ? averageHealth[playerIndex] : 0; }
         public uint getParticlesInStep(int playerIndex, int step) { return step < steps ? particlesInStep[playerIndex][step] : 0; }
-        public uint getParticlesInStep(int playerIndex, int step) { return step < steps ? healthInStep[playerIndex][step] : 0; }
+        public uint getHealthInStep(int playerIndex, int step) { return step < steps ? healthInStep[playerIndex][step] : 0; }
 
         #endregion
 
