@@ -107,11 +107,13 @@ namespace ParticleStormControl
                                                  AlphaDestinationBlend = Blend.One
                                              };
 
-        private Random random = new Random();
+        private Random random;
 
         public Level(GraphicsDevice device, ContentManager content)
         {
-            this.contentManager = content; 
+            this.contentManager = content;
+
+            random = new Random(DateTime.Now.Millisecond);
 
             pickuptimer = new Stopwatch();
             pickuptimer.Start();
@@ -145,11 +147,14 @@ namespace ParticleStormControl
             // wipeout
             wipeoutExplosionTexture = content.Load<Texture2D>("capture_glow");
             wipeoutDamageTexture = content.Load<Texture2D>("capture_glow");
+
+            
         }
 
         public void NewGame(Player[] players)
         {
             mapObjects.Clear();
+            spawnPoints.Clear();
 
             // create level
             CreateLevel(contentManager, players.Length);
@@ -171,7 +176,9 @@ namespace ParticleStormControl
             Texture2D hqOuter = content.Load<Texture2D>("unit_hq_outer");
 
             // how many?
-            int pointcount = random.Next(3) + 3;
+            const int MIN_NUMPOINTS = 4;
+            const int MAX_NUMPOINTS = 12;
+            int pointcount = random.Next(MAX_NUMPOINTS - MIN_NUMPOINTS) + MIN_NUMPOINTS;
 
             // player starts
             const float LEVEL_BORDER = 0.2f;
@@ -192,37 +199,68 @@ namespace ParticleStormControl
             }
 
 
-           
+
+            /*const float MIN_NEAREST_DIST = 0.3f;
+            const float MAX_NEAREST_DIST = 0.4f;
+            const int NUM_TRIES = 30;
             int tooCloseCounter = 0;
             for (int i = 0; i < pointcount; i++)
             {
-                Vector2 randomposition = new Vector2((float)(random.NextDouble() * RELATIVE_MAX.X * (1.0 - LEVEL_BORDER*2) + LEVEL_BORDER),
-                                                     (float)(random.NextDouble() * RELATIVE_MAX.Y * (1.0 - LEVEL_BORDER) + LEVEL_BORDER * 0.5f));
+                Vector2 randomposition = new Vector2((float)(random.NextDouble() * RELATIVE_MAX.X), (float)(random.NextDouble() * RELATIVE_MAX.Y)) * 
+                                            (1.0f - LEVEL_BORDER*2.0f)  + new Vector2(LEVEL_BORDER);
 
-                bool tooclose = false;
-                foreach (SpawnPoint currenCP in spawnPoints)
-                {
-                    if ((currenCP.Position - randomposition).Length() < (0.3f*(3.0f/(float) pointcount)))
-                        tooclose = true;
-                }
-
-                if ((new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER) - randomposition).Length() < (0.3f * (3.0f / (float)pointcount)))
-                    tooclose = true;
-
-                if (!tooclose)
+                float nearestDist = spawnPoints.Min(spawn => { return (spawn.Position - randomposition).Length(); });
+                if (nearestDist > MIN_NEAREST_DIST)// && nearestDist < MAX_NEAREST_DIST)
                 {
                     float capturesize = 100.0f + ((float)random.NextDouble() * 500);
                     spawnPoints.Add(new SpawnPoint(randomposition, capturesize, -1, capture, captureExplosion, glowTexture, captureGlow, hqInner, hqOuter));
-                    spawnPoints.Add(new SpawnPoint(RELATIVE_MAX - randomposition, capturesize, -1, capture, captureExplosion, glowTexture, captureGlow, hqInner, hqOuter));
                 }
                 else
                 {
                     ++tooCloseCounter;
-                    if (tooCloseCounter > 50)
+                    if (tooCloseCounter > NUM_TRIES)
                         break;
                     i--; // try again
                 }
+            }*/
+
+            const int SPAWNS_GRID_X = 6;
+            const int SPAWNS_GRID_Y = 3;
+            const double SKIP_PROPABILITY = 0.0;
+            const double POSITION_JITTER = 0.03;
+            List<Vector2> spawnPositions = new List<Vector2>();
+            for (int x = 0; x < SPAWNS_GRID_X; ++x)
+            {
+                for (int y = 0; y < SPAWNS_GRID_Y; ++y)
+                {
+                    if ((x == SPAWNS_GRID_X-1 && y % 2 == 0) || 
+                      //  ((x == 0 || x == SPAWNS_GRID_X-1) && (y == 0 || y == SPAWNS_GRID_Y-1)) || 
+                        random.NextDouble() < SKIP_PROPABILITY)
+                        continue;
+
+                    Vector2 pos = new Vector2((float)x / (SPAWNS_GRID_X - 1), (float)y / (SPAWNS_GRID_Y - 1));
+                    if (y % 2 == 0)
+                        pos.X += 0.5f / (SPAWNS_GRID_X - 1);
+                    pos *= RELATIVE_MAX - new Vector2(LEVEL_BORDER) * 2.0f;
+                    pos += new Vector2(LEVEL_BORDER, LEVEL_BORDER);
+
+  
+
+                    double posJitter = (random.NextDouble() * 2.0 - 1.0) * POSITION_JITTER;
+                    double randomRadius = random.NextDouble() * MathHelper.TwoPi;
+                    pos += new Vector2((float)Math.Sin(randomRadius), (float)Math.Cos(randomRadius)) * (float)posJitter;
+
+                    spawnPositions.Add(pos);
+                }
             }
+            foreach(Vector2 pos in spawnPositions)
+            {
+                // brute force..
+                double nearestDist = spawnPositions.Min(x => { return x == pos ? 1 : (x - pos).LengthSquared(); });
+                float capturesize = (float)(100.0 + nearestDist * nearestDist * 50000);
+                spawnPoints.Add(new SpawnPoint(pos, capturesize, -1, capture, captureExplosion, glowTexture, captureGlow, hqInner, hqOuter));
+            }
+
 
             mapObjects.AddRange(spawnPoints);
 
@@ -463,7 +501,7 @@ namespace ParticleStormControl
                 positions[i] = spawnPoints[i].Position / Level.RELATIVE_MAX;
                 colors[i] = spawnPoints[i].ComputeColor().ToVector3();
             } */
-            backgroundShader.Parameters["Cells_Pos2D"].SetValue(spawnPoints.Select(x => x.Position / Level.RELATIVE_MAX).ToArray());
+            backgroundShader.Parameters["Cells_Pos2D"].SetValue(spawnPoints.Select(x => x.Position).ToArray());
             backgroundShader.Parameters["Cells_Color"].SetValue(spawnPoints.Select(x => x.ComputeColor().ToVector3()).ToArray());
             backgroundShader.CurrentTechnique.Passes[0].Apply();
             device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
@@ -538,6 +576,7 @@ namespace ParticleStormControl
                                                              new Vector2(device.Viewport.Width, device.Viewport.Height) * 2);
             backgroundShader.Parameters["PosOffset"].SetValue(new Vector2(fieldOffset_pixel.X, -fieldOffset_pixel.Y) /
                                                              new Vector2(device.Viewport.Width, device.Viewport.Height) * 2 - new Vector2(1, -1));
+            backgroundShader.Parameters["RelativeMax"].SetValue(Level.RELATIVE_MAX);
 
             CreateParticleTarget(device);
         }

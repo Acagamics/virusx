@@ -1,10 +1,11 @@
-#define MAX_NUM_CELLS 16
+#define MAX_NUM_CELLS 19
 float2 Cells_Pos2D[MAX_NUM_CELLS];
 float3 Cells_Color[MAX_NUM_CELLS];
 
 int NumCells;
 float2 PosOffset;
 float2 PosScale;
+float2 RelativeMax;
 
 struct VertexShaderInput
 {
@@ -28,47 +29,41 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-	float2 v = input.Texcoord;//(input.Texcoord - 0.5f)*2;
-	
-	float2 toVec = v-Cells_Pos2D[0].xy;
-	float dist0 = dot(toVec, toVec);
-	toVec = v-Cells_Pos2D[1].xy;
-	float dist1 = dot(toVec, toVec);
+	float2 v = input.Texcoord * RelativeMax;//(input.Texcoord - 0.5f)*2;
 
-	float minDist		= min(dist0, dist1);
-	float secondMinDist = max(dist0, dist1);
-	int cell = minDist == dist0 ? 0 : 1;
+	// determine first, second and thrid minDist and the color of the minDist
 
-	for(int i=2; i<NumCells; ++i)
+	const float FALLOFF = 60.0f;
+	const float FACTOR = -(1.0f/32.0f);
+	float cellFactor = 0.0f;
+	float cellFactorDx = 0.0f;
+	float minDist = 999999;
+	float3 color;
+	for(int i=0; i<NumCells; ++i)
 	{
-		float oldMinDist = minDist;
-		toVec = v-Cells_Pos2D[i];
-		float newDist = dot(toVec, toVec);
-		minDist = min(minDist, newDist);
-		[flatten] if(minDist < newDist)
-		{
-		//	float oldSecondMinDist = secondMinDist;
-			secondMinDist = min(secondMinDist, newDist);
-			//neighborCellPos = secondMinDist == oldSecondMinDist ? neighborCellPos : pos;
-		}
-		else
-		{
-			secondMinDist = oldMinDist;
-			cell = i;
-		}
-	}
+		float2 toVec = v - Cells_Pos2D[i];
+		float distSq = dot(toVec,toVec);
+		//float dist = distance(v, Cells_Pos2D[i]) * 2;
+		
+		//cellFactor += exp(-FALLOFF * dist);
+		cellFactor += 1.0/pow(distSq, 8.0);
 
-	// TODO: check asm for efficient lookup(s)
+		[flatten] if(distSq < minDist)
+		{
+			color = Cells_Color[i];
+			minDist = distSq;
+		}
+    }
+	cellFactor = pow( 1.0/cellFactor, 1.0/16.0 );
+	//cellFactor = FACTOR * log(cellFactor);
 
-	/*float2 toNeighbor = normalize(neighborCellPos - Cells_Pos2D[cell]);
-	float2 toPoint = normalize(v- Cells_Pos2D[cell]);
-	float angle = dot(toNeighbor, toPoint);*/
+
+
+	//cellFactor *= min(1.0f, (secondMinDist - minDist)); // borders
 
 	float4 outColor;
-	secondMinDist = sqrt(secondMinDist);
-	minDist = sqrt(minDist);
-
-	outColor.rgb = smoothstep(0, 1.0, saturate(secondMinDist-minDist)*10) *0.5* Cells_Color[cell];
+	float border = 1-min(1, pow(cellFactor-0.1,2));
+	outColor.rgb = 1-cellFactor *2;//border * lerp(float3(1,1,1), color, saturate(0.95-cellFactor*1.5)); //+ max(0, 1 - pow(border * 4, 2)) * color * 0.4;
 	outColor.a = 1;
 	return outColor;
 }
