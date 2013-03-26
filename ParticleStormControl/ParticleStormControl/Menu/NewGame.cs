@@ -51,7 +51,7 @@ namespace ParticleStormControl.Menu
             Settings.Instance.PlayerControls[1] = InputManager.ControlType.KEYBOARD1;
             Settings.Instance.PlayerColorIndices[1] = 1;
             Settings.Instance.NumPlayers = 2;
-            playerReady[0] = playerReady[1] = playerConnected[0] = playerConnected[1] = true;
+            playerReady[0] = playerReady[1] = playerConnected[0] = playerConnected[1] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = true;
             menu.ChangePage(Menu.Page.INGAME);
 #endif
         }
@@ -111,6 +111,7 @@ namespace ParticleStormControl.Menu
                     Settings.Instance.PlayerControls[index] = type;
                     Settings.Instance.PlayerColorIndices[index] = colorIndex;
                     Settings.Instance.NumPlayers++;
+                    Settings.Instance.PlayerConnected[index] = true;
                     countdown = TimeSpan.FromSeconds(-1);
                 }
             }
@@ -153,6 +154,7 @@ namespace ParticleStormControl.Menu
                             // free slot
                             Settings.Instance.ResetPlayerSettingsToDefault(i);
                             Settings.Instance.NumPlayers--;
+                            Settings.Instance.PlayerConnected[i] = false;
                             playerConnected[i] = false;
                             playerReady[i] = false;
                             startCountdown();
@@ -170,16 +172,29 @@ namespace ParticleStormControl.Menu
         public override void Draw(SpriteBatch spriteBatch, float timeInterval)
         {
             int boxWidth = (Settings.Instance.ResolutionX - 3 * padd) / 2;
-            int boxHeight = (Settings.Instance.ResolutionY - 3 * padd) / 2;
+            int boxHeight = (int)(Settings.Instance.ResolutionX * 0.5625f - 3 * padd) / 2;
+
+            int offX = 0;
+            int offY = (Settings.Instance.ResolutionY - 2 * boxHeight - 3 * padd) / 2;
+
+            if (boxHeight * 2 + 3 * padd > Settings.Instance.ResolutionY)
+            {
+                boxWidth = (int)(Settings.Instance.ResolutionY * 16 / 9 - 3 * padd) / 2;
+                boxHeight = (Settings.Instance.ResolutionY - 3 * padd) / 2;
+
+
+                offX = (Settings.Instance.ResolutionX - 2 * boxWidth - 3 * padd) / 2;
+                offY = 0;
+            }
 
             int x = padd * 2 + boxWidth;
             int y = padd * 2 + boxHeight;
 
             // four boxes
-            spriteBatch.Draw(menu.PixelTexture, new Rectangle(padd, padd, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
-            spriteBatch.Draw(menu.PixelTexture, new Rectangle(x, padd, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
-            spriteBatch.Draw(menu.PixelTexture, new Rectangle(padd, y, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
-            spriteBatch.Draw(menu.PixelTexture, new Rectangle(x, y, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
+            spriteBatch.Draw(menu.PixelTexture, new Rectangle(padd + offX, padd + offY, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
+            spriteBatch.Draw(menu.PixelTexture, new Rectangle(x + offX, padd + offY, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
+            spriteBatch.Draw(menu.PixelTexture, new Rectangle(padd + offX, y + offY, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
+            spriteBatch.Draw(menu.PixelTexture, new Rectangle(x + offX, y + offY, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
 
             // for each player
             for (int i = 0; i < 4; i++)
@@ -188,16 +203,16 @@ namespace ParticleStormControl.Menu
                 switch (i)
                 {
                     case 0:
-                        origin = new Vector2(padd, padd);
+                        origin = new Vector2(padd + offX, padd + offY);
                         break;
                     case 1:
-                        origin = new Vector2(x, padd);
+                        origin = new Vector2(x + offX, y + offY);
                         break;
                     case 2:
-                        origin = new Vector2(padd, y);
+                        origin = new Vector2(x + offX, padd + offY);
                         break;
                     case 3:
-                        origin = new Vector2(x, y);
+                        origin = new Vector2(padd + offX, y + offY);
                         break;
                 }
 

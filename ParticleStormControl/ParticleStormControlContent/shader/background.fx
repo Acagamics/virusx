@@ -1,4 +1,4 @@
-#define MAX_NUM_CELLS 16
+#define MAX_NUM_CELLS 8
 float2 Cells_Pos2D[MAX_NUM_CELLS];
 float3 Cells_Color[MAX_NUM_CELLS];
 
