@@ -31,10 +31,16 @@ namespace ParticleStormControl
         public InputManager.ControlType[] PlayerControls { get { return playerControls; } }
         private int numPlayers;
         public int NumPlayers { get { return numPlayers; } set { numPlayers = value; } }
-        private int[] playerColorIndices = new int[]{ -1, -1, -1, -1 };
+        private int[] playerColorIndices = new int[] { -1, -1, -1, -1 };
         public int[] PlayerColorIndices { get { return playerColorIndices; } }
         private int[] playerVirusIndices = new int[] { 0, 0, 0, 0 };
         public int[] PlayerVirusIndices { get { return playerVirusIndices; } }
+        private bool[] playerConnected = new bool[] { false, false, false, false };
+        public bool[] PlayerConnected
+        {
+            get { return playerConnected; }
+            set { playerConnected = value; }
+        }
         
         #endregion
 
