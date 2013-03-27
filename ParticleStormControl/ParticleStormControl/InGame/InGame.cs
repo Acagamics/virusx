@@ -254,7 +254,7 @@ namespace ParticleStormControl
                 graphicsDevice.SetRenderTarget(null);
 
                 level.BeginDrawInternParticleTarget(graphicsDevice);
-                particleRenderer.Draw(graphicsDevice, new Vector2(-1.0f, 1.0f), Vector2.One * 2, players, false);
+                particleRenderer.Draw(graphicsDevice, players, false);
                 level.EndDrawInternParticleTarget(graphicsDevice);
             }
         }

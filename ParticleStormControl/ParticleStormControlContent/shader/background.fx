@@ -72,9 +72,8 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 
 	float inner = saturate((0.8f - max(cellFactor, smoothBorder)) * (1 - hardBorder));
 	float4 outColor;
-	outColor.rgb = min(1, cellFactor*cellFactor) * 0.8f;
+	outColor = min(1, cellFactor*cellFactor) * 0.8f;
 		//(1-cellFactor)*(color+0.4f)*0.8f * (1-hardBorder) + hardBorder*hardBorder*hardBorder * 0.2;//lerp(float3(0.2f,0.2f,0.2f), color + 0.4f, inner) * 0.8f;
-	outColor.a = 1;
 	return outColor;
 }
 

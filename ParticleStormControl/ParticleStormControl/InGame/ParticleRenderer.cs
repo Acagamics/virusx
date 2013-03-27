@@ -98,7 +98,7 @@ namespace ParticleStormControl
 
         private bool renderingOrderX = true;
 
-        public void Draw(GraphicsDevice device, Vector2 topLeftScreen_normalizedScreenCor, Vector2 fieldSize_normalizedScreenCor, Player[] players, bool damage /*= false*/)
+        public void Draw(GraphicsDevice device, Player[] players, bool damage /*= false*/)
         {
             device.Indices = particleIndexBuffer;
 

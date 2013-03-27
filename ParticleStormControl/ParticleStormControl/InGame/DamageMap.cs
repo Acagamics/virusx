@@ -117,7 +117,7 @@ namespace ParticleStormControl
             device.Clear(ClearOptions.Target, clearColor, 0, 0);
             device.BlendState = damageAdditive;
 
-            particleRenderer.Draw(device, new Vector2(-1.0f, 1.0f), Vector2.One*2, players, true);
+            particleRenderer.Draw(device, players, true);
 
             device.BlendState = BlendState.Opaque;
             device.SetRenderTarget(null);

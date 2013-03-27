@@ -51,7 +51,7 @@ namespace ParticleStormControl
 
         public static int Next(int max)
         {
-            return (int)Next() % max;
+            return (int)(Next() % (uint)max);
         }
 
         public static int Next(int min, int max)

@@ -13,10 +13,8 @@ namespace ParticleStormControl
         struct ParticleVertex
         {
             public Vector2 Position;
-            public Vector2 Texcoord;
             public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration
-                        (new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0),
-                         new VertexElement(8, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0));
+                        (new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0));
         };
         struct ParticleInstance
         {
@@ -24,9 +22,9 @@ namespace ParticleStormControl
             public Vector2 InstanceDirection;
             public float Size;
             public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration
-                                    (new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 1),
-                                     new VertexElement(8, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 2),
-                                     new VertexElement(16, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 3));
+                                    (new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
+                                     new VertexElement(8, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 1),
+                                     new VertexElement(16, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 2));
         };
 
         /// <summary>
@@ -52,17 +50,22 @@ namespace ParticleStormControl
         /// </summary>
         private Effect particleEffect;
 
+        private int numParticles;
+
+        private const float PARTICLE_SPEED = 0.08f;
+
         public BackgroundParticles(GraphicsDevice device, ContentManager content, int numParticles)
         {
+            this.numParticles = numParticles;
             particleEffect = content.Load<Effect>("shader/backgroundParticles");
 
             // particle
             particleVertexBuffer = new VertexBuffer(device, ParticleVertex.VertexDeclaration, 4, BufferUsage.None);
             var vertices = new ParticleVertex[4];
-            vertices[0].Position = new Vector2(-0.5f, -0.5f); vertices[0].Texcoord = new Vector2(0.0f, 0.0f);
-            vertices[1].Position = new Vector2(-0.5f, 0.5f); vertices[1].Texcoord = new Vector2(0.0f, 1.0f);
-            vertices[2].Position = new Vector2(0.5f, -0.5f); vertices[2].Texcoord = new Vector2(1.0f, 0.0f);
-            vertices[3].Position = new Vector2(0.5f, 0.5f); vertices[3].Texcoord = new Vector2(1.0f, 1.0f);
+            vertices[0].Position = new Vector2(-0.5f, -0.5f);
+            vertices[1].Position = new Vector2(-0.5f, 0.5f);
+            vertices[2].Position = new Vector2(0.5f, -0.5f);
+            vertices[3].Position = new Vector2(0.5f, 0.5f);
             particleVertexBuffer.SetData(vertices);
             particleVertexBufferBinding = new VertexBufferBinding(particleVertexBuffer, 0, 0);
 
@@ -76,9 +79,32 @@ namespace ParticleStormControl
             ParticleInstance[] particles = new ParticleInstance[numParticles];
             for (int i = 0; i < numParticles; ++i)
             {
-
-               // particles[i].InstancePosition = 
+                particles[i].InstancePosition = new Vector2((float)Random.NextDouble(), (float)Random.NextDouble()) * Level.RELATIVE_MAX;
+                particles[i].InstanceDirection = Random.NextDirection();
+                particles[i].Size = (float)(Random.NextDouble(0.005f, 0.008f));
             }
+            instanceVertexBuffer.SetData(particles);
+        }
+
+        /// <summary>
+        /// updates size settings - please call once before using!
+        /// </summary>
+        public void Resize(int screenWidth, int screenHeight, Point fieldPixelSize, Point fieldPixelOffset)
+        {
+            particleEffect.Parameters["PosScale"].SetValue(new Vector2(fieldPixelSize.X, -fieldPixelSize.Y) /
+                                                             new Vector2(screenWidth, screenHeight) * 2);
+            particleEffect.Parameters["PosOffset"].SetValue(new Vector2(fieldPixelOffset.X, -fieldPixelOffset.Y) /
+                                                             new Vector2(screenWidth, screenHeight) * 2 - new Vector2(1, -1));
+            particleEffect.Parameters["RelativeMax"].SetValue(Level.RELATIVE_MAX);
+        }
+
+
+        public void Draw(GraphicsDevice device, float passedTime)
+        {
+            particleEffect.Parameters["ParticleMoving"].SetValue(passedTime* PARTICLE_SPEED);
+            particleEffect.CurrentTechnique.Passes[0].Apply();
+            device.SetVertexBuffers(particleVertexBufferBinding, instanceVertexBufferBinding);
+            device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 4, 0, 2, numParticles);
         }
     }
 }

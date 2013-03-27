@@ -110,6 +110,8 @@ namespace ParticleStormControl
                                                  AlphaDestinationBlend = Blend.One
                                              };
 
+        private BackgroundParticles backgroundParticles;
+
         public Level(GraphicsDevice device, ContentManager content)
         {
             this.contentManager = content;
@@ -140,14 +142,15 @@ namespace ParticleStormControl
             backgroundVertexBuffer.SetData(new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) });
             backgroundShader = content.Load<Effect>("shader/background");
 
+            // bg particles
+            backgroundParticles = new BackgroundParticles(device, content, 1000);
+
             // setup size
             Resize(device);
             
             // wipeout
             wipeoutExplosionTexture = content.Load<Texture2D>("capture_glow");
             wipeoutDamageTexture = content.Load<Texture2D>("capture_glow");
-
-            
         }
 
         public void NewGame(Player[] players)
@@ -479,21 +482,16 @@ namespace ParticleStormControl
 
         public void Draw(float totalTimeSeconds, GraphicsDevice device, Player[] players)
         {
+            // background particles
+            device.BlendState = BlendState.AlphaBlend;
+            backgroundParticles.Draw(device, totalTimeSeconds);
+
             // background
-            device.BlendState = BlendState.Opaque;
             device.SetVertexBuffer(backgroundVertexBuffer);
-          /*  Vector2[] positions = new Vector2[spawnPoints.Count];
-            Vector3[] colors = new Vector3[spawnPoints.Count];
-            for(int i=0; i<positions.Length; ++i)
-            {
-                positions[i] = spawnPoints[i].Position / Level.RELATIVE_MAX;
-                colors[i] = spawnPoints[i].ComputeColor().ToVector3();
-            } */
             backgroundShader.Parameters["Cells_Pos2D"].SetValue(spawnPoints.Select(x => x.Position).ToArray());
             backgroundShader.Parameters["Cells_Color"].SetValue(spawnPoints.Select(x => x.ComputeColor().ToVector3()).ToArray());
             backgroundShader.CurrentTechnique.Passes[0].Apply();
             device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
-
 
             // screenblend stuff
             spriteBatch.Begin(SpriteSortMode.BackToFront, ScreenBlend);
@@ -568,6 +566,9 @@ namespace ParticleStormControl
             backgroundShader.Parameters["RelativeMax"].SetValue(Level.RELATIVE_MAX);
 
             CreateParticleTarget(device);
+
+            // bg particles
+            backgroundParticles.Resize(device.Viewport.Width, device.Viewport.Height, fieldSize_pixel, fieldOffset_pixel);
         }
 
         private void CreateParticleTarget(GraphicsDevice device)
