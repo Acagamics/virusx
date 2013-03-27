@@ -52,7 +52,7 @@ namespace ParticleStormControl
 
         private int numParticles;
 
-        private const float PARTICLE_SPEED = 0.08f;
+        private const float PARTICLE_SPEED = 0.00001f;
 
         public BackgroundParticles(GraphicsDevice device, ContentManager content, int numParticles)
         {

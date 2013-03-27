@@ -40,12 +40,19 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 	float minDist = 999999;
 	float secondMinDist = 999999;
 	float3 color;
+
+	float r = 0;
+	float g = 0;
+
 	[unroll] for(int i=0; i<MAX_NUM_CELLS; ++i)
 	{
 	//	float2 toVec = v - Cells_Pos2D[i];
 	//	float distSq = dot(toVec,toVec);
-		float dist = distance(v, Cells_Pos2D[i]) * 2;
+		float dist = 1 - distance(v, Cells_Pos2D[i]) / sqrt(2);
 		
+		r = min(abs(dist - g), abs(dist - r));
+		g = max(g, dist);
+
 		cellFactor += exp(-FALLOFF * dist);
 		//cellFactor += 1.0/pow(distSq, 10.0);
 
@@ -72,8 +79,9 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 
 	float inner = saturate((0.8f - max(cellFactor, smoothBorder)) * (1 - hardBorder));
 	float4 outColor;
-	outColor = min(1, cellFactor*cellFactor) * 0.8f;
+	outColor.rgb =  r;//min(1, cellFactor*cellFactor) * 0.8f;
 		//(1-cellFactor)*(color+0.4f)*0.8f * (1-hardBorder) + hardBorder*hardBorder*hardBorder * 0.2;//lerp(float3(0.2f,0.2f,0.2f), color + 0.4f, inner) * 0.8f;
+	outColor.a = 1;
 	return outColor;
 }
 

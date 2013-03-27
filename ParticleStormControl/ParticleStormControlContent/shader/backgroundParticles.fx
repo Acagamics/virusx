@@ -21,7 +21,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
     VertexShaderOutput output;
 
-	float2 particlePos = frac(input.InstancePos + ParticleMoving * input.InstanceDir * input.Size);
+	float2 particlePos = frac(input.InstancePos + ParticleMoving * input.InstanceDir / input.Size);
 	output.Position.xy = input.Position * input.Size / RelativeMax + particlePos;
 	output.Position.xy = output.Position.xy * PosScale + PosOffset;
 
