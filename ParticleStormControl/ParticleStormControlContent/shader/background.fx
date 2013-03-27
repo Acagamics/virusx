@@ -1,4 +1,4 @@
-#define MAX_NUM_CELLS 19
+#define MAX_NUM_CELLS 16
 float2 Cells_Pos2D[MAX_NUM_CELLS];
 float3 Cells_Color[MAX_NUM_CELLS];
 
@@ -29,41 +29,51 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-	float2 v = input.Texcoord * RelativeMax;//(input.Texcoord - 0.5f)*2;
+	float2 v = input.Texcoord * RelativeMax;
 
 	// determine first, second and thrid minDist and the color of the minDist
 
-	const float FALLOFF = 60.0f;
-	const float FACTOR = -(1.0f/32.0f);
+	const float FALLOFF = 32.0f;
+	const float FACTOR = -(1.0f/16.0f);
 	float cellFactor = 0.0f;
 	float cellFactorDx = 0.0f;
 	float minDist = 999999;
+	float secondMinDist = 999999;
 	float3 color;
-	for(int i=0; i<NumCells; ++i)
+	[unroll] for(int i=0; i<MAX_NUM_CELLS; ++i)
 	{
-		float2 toVec = v - Cells_Pos2D[i];
-		float distSq = dot(toVec,toVec);
-		//float dist = distance(v, Cells_Pos2D[i]) * 2;
+	//	float2 toVec = v - Cells_Pos2D[i];
+	//	float distSq = dot(toVec,toVec);
+		float dist = distance(v, Cells_Pos2D[i]) * 2;
 		
-		//cellFactor += exp(-FALLOFF * dist);
-		cellFactor += 1.0/pow(distSq, 8.0);
+		cellFactor += exp(-FALLOFF * dist);
+		//cellFactor += 1.0/pow(distSq, 10.0);
 
-		[flatten] if(distSq < minDist)
+		[flatten] if(dist < minDist)
 		{
 			color = Cells_Color[i];
-			minDist = distSq;
+			secondMinDist = minDist;
+			minDist = dist;
 		}
+		else
+			secondMinDist = min(dist, secondMinDist);
     }
-	cellFactor = pow( 1.0/cellFactor, 1.0/16.0 );
-	//cellFactor = FACTOR * log(cellFactor);
-
+	//cellFactor = pow(1.0f/cellFactor, 1.0f/16.0f);
+	cellFactor = min(1.0, FACTOR * log(cellFactor));
+	float cellFactorSq = cellFactor*cellFactor;
+	//cellFactor *= cellFactor;
 
 
 	//cellFactor *= min(1.0f, (secondMinDist - minDist)); // borders
 
+
+	float hardBorder = smoothstep(0.1f, 0.0f, secondMinDist - minDist);
+	float smoothBorder = max(cellFactorSq*cellFactorSq, hardBorder*0.2);
+
+	float inner = saturate((0.8f - max(cellFactor, smoothBorder)) * (1 - hardBorder));
 	float4 outColor;
-	float border = 1-min(1, pow(cellFactor-0.1,2));
-	outColor.rgb = 1-cellFactor *2;//border * lerp(float3(1,1,1), color, saturate(0.95-cellFactor*1.5)); //+ max(0, 1 - pow(border * 4, 2)) * color * 0.4;
+	outColor.rgb = min(1, cellFactor*cellFactor) * 0.8f;
+		//(1-cellFactor)*(color+0.4f)*0.8f * (1-hardBorder) + hardBorder*hardBorder*hardBorder * 0.2;//lerp(float3(0.2f,0.2f,0.2f), color + 0.4f, inner) * 0.8f;
 	outColor.a = 1;
 	return outColor;
 }
