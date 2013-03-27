@@ -619,15 +619,11 @@ namespace ParticleStormControl
             {
                 case Item.ItemType.DANGER_ZONE:
                     mapObjects.Add(new DangerZone(contentManager, player.CursorPosition, player.Index));
-                    // statistic
-                    GameStatistics.addUsedItems(player.Index);
                     break;
 
                 case Item.ItemType.MUTATION:
                     switchCountdownTimer = switchCountdownLength;
                     switchCountdownActive = true;
-                    // statistic
-                    GameStatistics.addUsedItems(player.Index);
                     break;
 
                 case Item.ItemType.WIPEOUT:
@@ -636,10 +632,10 @@ namespace ParticleStormControl
                         wipeoutActive = true;
                         wipeoutProgress = 0.0f;
                     }
-                    // statistic
-                    GameStatistics.addUsedItems(player.Index);
                     break;
             }
+            // statistic
+            GameStatistics.addUsedItems(player.Index);
         }
     }
 }
