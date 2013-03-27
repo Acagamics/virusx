@@ -185,18 +185,18 @@ namespace ParticleStormControl
             // player starts
             const float LEVEL_BORDER = 0.2f;
 
-            spawnPoints.Add(new SpawnPoint(new Vector2(LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER), 1000.0f, 0.1f, 0, capture, captureExplosion,
+            spawnPoints.Add(new SpawnPoint(new Vector2(LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER), 1000.0f, 0.3f, 0, capture, captureExplosion,
                                                     glowTexture, captureGlow, hqInner, hqOuter));
-            spawnPoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER), 1000.0f, 0.1f, 1, capture, captureExplosion,
+            spawnPoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER), 1000.0f, 0.3f, 1, capture, captureExplosion,
                                                     glowTexture, captureGlow, hqInner, hqOuter));
             if(numPlayers >= 3)
             {
-                spawnPoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER), 1000.0f, 0.1f, 2, capture, captureExplosion,
+                spawnPoints.Add(new SpawnPoint(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER), 1000.0f, 0.3f, 2, capture, captureExplosion,
                                     glowTexture, captureGlow, hqInner, hqOuter));
             }
             if (numPlayers == 4)
             {
-                spawnPoints.Add(new SpawnPoint(new Vector2(LEVEL_BORDER, LEVEL_BORDER), 1000.0f, 0.1f, 3, capture, captureExplosion,
+                spawnPoints.Add(new SpawnPoint(new Vector2(LEVEL_BORDER, LEVEL_BORDER), 1000.0f, 0.3f, 3, capture, captureExplosion,
                                     glowTexture, captureGlow, hqInner, hqOuter));
             }
 
@@ -502,12 +502,13 @@ namespace ParticleStormControl
             }
             spriteBatch.End();
 
-
+            // the particles!
             DrawParticles(device);
 
-            // alphablended stuff
+            // alphablended spritebatch stuff
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
 
+            // countdown
             DrawCountdown(device);
             foreach (MapObject mapObject in mapObjects)
             {
@@ -515,6 +516,7 @@ namespace ParticleStormControl
                     mapObject.Draw_AlphaBlended(spriteBatch, this, totalTimeSeconds);
             }
 
+            // wipeout
             if (wipeoutActive)
                 spriteBatch.Draw(wipeoutExplosionTexture, ComputePixelRect_Centered(Level.RELATIVE_MAX / 2, Level.RELATIVE_MAX.X * wipeoutProgress * WIPEOUT_SIZEFACTOR),
                                     new Color(1.0f, 1.0f, 1.0f, 1.0f - wipeoutProgress));
@@ -541,7 +543,7 @@ namespace ParticleStormControl
                                            (device.Viewport.Width - fontCountdownLarge.MeasureString(text).X)*
                                            0.5f,
                                            (device.Viewport.Height - fontCountdownLarge.MeasureString(text).Y)*
-                                           0.5f + 40), Color.FromNonPremultiplied(80, 80, 80, 80));
+                                           0.5f + 40), Color.FromNonPremultiplied(140, 140, 140, 160));
             }
         }
 
