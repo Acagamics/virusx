@@ -91,6 +91,9 @@ float4 PixelShaderFunction_NoFalloff(VertexShaderOutput input) : COLOR0
 {
 	float2 v = (input.Texcoord - 0.5f)*2;
 	float alpha = dot(v,v) < 1.0f;
+	
+	clip(alpha - 1.0f/255.0f);
+
     return Color * alpha;
 }
 
@@ -98,7 +101,6 @@ technique WithFalloff
 {
     pass Pass1
     {
-		CullMode = None;
         VertexShader = compile vs_3_0 VertexShaderFunction();
         PixelShader = compile ps_3_0 PixelShaderFunction_Falloff();
     }
@@ -108,7 +110,6 @@ technique WithoutFalloff
 {
     pass Pass1
     {
-		CullMode = None;
         VertexShader = compile vs_3_0 VertexShaderFunction();
         PixelShader = compile ps_3_0 PixelShaderFunction_NoFalloff();
     }

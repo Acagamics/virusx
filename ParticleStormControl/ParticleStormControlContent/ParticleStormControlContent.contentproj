@@ -311,8 +311,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="shader\background.fx">
-      <Name>background</Name>
+    <Compile Include="shader\backgroundCells.fx">
+      <Name>backgroundCells</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
