@@ -449,7 +449,7 @@ namespace ParticleStormControl
                                 break;
 
                             // random movement
-                            Vector2 movement = new Vector2((float)random.NextDouble() - 0.5f, (float)random.NextDouble() - 0.5f);
+                            Vector2 movement = new Vector2((float)Random.NextDouble() - 0.5f, (float)Random.NextDouble() - 0.5f);
                             movement.Normalize();
 
                             // add only the first vertex, second is copied later!

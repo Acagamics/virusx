@@ -85,8 +85,7 @@ namespace ParticleStormControl
                 captureExplosion.Play();
                 glowtimer.Start();
                 explosionTimer.Start();
-                Random random = new Random();
-                explosionRotation = (float)(random.NextDouble() * MathHelper.TwoPi);
+                explosionRotation = (float)(Random.NextDouble() * MathHelper.TwoPi);
             }
             SpawnTimeAccum = 0.0f;
         }

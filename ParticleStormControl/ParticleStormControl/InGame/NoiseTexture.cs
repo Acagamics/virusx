@@ -13,10 +13,9 @@ namespace ParticleStormControl
         {
             Texture2D noise = new Texture2D(device, width, height, false, SurfaceFormat.HalfVector2);
 
-            Random rand = new Random();
             HalfSingle[] data = new HalfSingle[width * height * 2];
             for (int i = 0; i < data.Length; ++i)
-                data[i] = new HalfSingle((float)rand.NextDouble() * 2.0f - 1.0f);
+                data[i] = new HalfSingle((float)Random.NextDouble() * 2.0f - 1.0f);
 
             noise.SetData<HalfSingle>(data);
 

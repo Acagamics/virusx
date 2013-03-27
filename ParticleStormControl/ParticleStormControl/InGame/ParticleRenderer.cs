@@ -63,7 +63,7 @@ namespace ParticleStormControl
             particleEffect.Parameters["MinHealth"].SetValue(minimumHealth);
             particleEffect.Parameters["RelativeMax"].SetValue(Level.RELATIVE_MAX);
 
-            particleVertexBuffer = new VertexBuffer(device, vertex2dPosition.VertexDeclaration, 4, BufferUsage.WriteOnly);
+            particleVertexBuffer = new VertexBuffer(device, vertex2dPosition.VertexDeclaration, 4, BufferUsage.None);
             var vertices = new vertex2dPosition[4];
             vertices[0].Position = new Vector2(-0.5f, -0.5f); vertices[0].Texcoord = new Vector2(0.0f, 0.0f);
             vertices[1].Position = new Vector2(-0.5f, 0.5f); vertices[1].Texcoord = new Vector2(0.0f, 1.0f);

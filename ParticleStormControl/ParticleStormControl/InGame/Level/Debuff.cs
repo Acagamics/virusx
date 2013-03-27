@@ -43,8 +43,7 @@ namespace ParticleStormControl
         {
             explosionSound.Play();
             explosionTimer.Start();
-            Random random = new Random();
-            explosionRotation = (float)(random.NextDouble()*MathHelper.TwoPi);
+            explosionRotation = (float)(Random.NextDouble()*MathHelper.TwoPi);
         }
 
         public override void Update(float frameTimeSeconds, float totalTimeSeconds)

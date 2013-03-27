@@ -110,13 +110,9 @@ namespace ParticleStormControl
                                                  AlphaDestinationBlend = Blend.One
                                              };
 
-        private Random random;
-
         public Level(GraphicsDevice device, ContentManager content)
         {
             this.contentManager = content;
-
-            random = new Random(DateTime.Now.Millisecond);
 
             pickuptimer = new Stopwatch();
             pickuptimer.Start();
@@ -181,7 +177,7 @@ namespace ParticleStormControl
             // how many?
             const int MIN_NUMPOINTS = 4;
             const int MAX_NUMPOINTS = 12;
-            int pointcount = random.Next(MAX_NUMPOINTS - MIN_NUMPOINTS) + MIN_NUMPOINTS;
+            int pointcount = Random.Next(MAX_NUMPOINTS - MIN_NUMPOINTS) + MIN_NUMPOINTS;
 
             // player starts
             const float LEVEL_BORDER = 0.2f;
@@ -223,9 +219,8 @@ namespace ParticleStormControl
                     pos += new Vector2(LEVEL_BORDER, LEVEL_BORDER);
 
                     // position jitter
-                    double posJitter = (random.NextDouble() * 2.0 - 1.0) * POSITION_JITTER;
-                    double randomRadius = random.NextDouble() * MathHelper.TwoPi;
-                    pos += new Vector2((float)Math.Sin(randomRadius), (float)Math.Cos(randomRadius)) * (float)posJitter;
+                    double posJitter = (Random.NextDouble() * 2.0 - 1.0) * POSITION_JITTER;
+                    pos += Random.NextDirection() * (float)posJitter;
 
                     spawnPositions.Add(pos);
                 }
@@ -233,9 +228,9 @@ namespace ParticleStormControl
 
             // random skipping - nonlinear randomness!
             const int MAX_SKIPS = 5;
-            int numSkips = (int)(Math.Pow(random.NextDouble(), 4) * MAX_SKIPS + 0.5f);
+            int numSkips = (int)(Math.Pow(Random.NextDouble(), 4) * MAX_SKIPS + 0.5f);
             for(int i=0; i<numSkips; ++i)
-                spawnPositions.RemoveAt(random.Next(spawnPositions.Count));
+                spawnPositions.RemoveAt(Random.Next(spawnPositions.Count));
 
             // spawn generation
             foreach(Vector2 pos in spawnPositions)
@@ -354,15 +349,15 @@ namespace ParticleStormControl
             if (pickuptimer.Elapsed.TotalSeconds > 2)
             {
                 // random position within a certain range
-                Vector2 position = new Vector2((float)(random.NextDouble()) * 0.8f + 0.1f, (float)(random.NextDouble()) * 0.8f + 0.1f);
+                Vector2 position = new Vector2((float)(Random.NextDouble()) * 0.8f + 0.1f, (float)(Random.NextDouble()) * 0.8f + 0.1f);
 
-                if (random.NextDouble() < 0.5)
+                if (Random.NextDouble() < 0.5)
                     mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
-                else if (random.NextDouble() < 0.3)
+                else if (Random.NextDouble() < 0.3)
                     mapObjects.Add(new Debuff(position, debuffExplosionSound, debuffItemTexture, debuffExplosionTexture));
-                else if (random.NextDouble() < 0.18)
+                else if (Random.NextDouble() < 0.18)
                     mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
-                else if (random.NextDouble() < 0.1)
+                else if (Random.NextDouble() < 0.1)
                     mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager));
 
                 // restart timer
@@ -411,7 +406,7 @@ namespace ParticleStormControl
                 }
                 else if (reducedPlayerList.Length == 3)
                 {
-                    bool rotateLeft = random.Next(2) == 0;
+                    bool rotateLeft = Random.Next(2) == 0;
                     if (rotateLeft)
                     {
                         Player.SwitchPlayer(reducedPlayerList[0], reducedPlayerList[1]);
@@ -429,8 +424,8 @@ namespace ParticleStormControl
                 }
                 else if (reducedPlayerList.Length == 4)
                 {
-                    int first = random.Next(0, 4);
-                    int second = (first + random.Next(1, 4)) % 4;
+                    int first = Random.Next(0, 4);
+                    int second = (first + Random.Next(1, 4)) % 4;
                     Player.SwitchPlayer(players[first], players[second]);
                     SwapInts(playerIndices, reducedPlayerList[first].Index, reducedPlayerList[second].Index);
 

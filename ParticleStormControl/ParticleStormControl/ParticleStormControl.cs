@@ -61,6 +61,8 @@ namespace ParticleStormControl
 #endif
              * */
 
+            Random.InitRandom((uint)DateTime.Now.Millisecond);
+
             // read start settings
             Settings.Instance.ReadSettings();
 

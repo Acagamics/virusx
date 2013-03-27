@@ -65,6 +65,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InGame\BackgroundParticles.cs" />
     <Compile Include="InGame\DamageMap.cs" />
     <Compile Include="InGame\InGame.cs" />
     <Compile Include="InGame\InGameInterface.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="InGame\Level\Debuff.cs" />
     <Compile Include="InGame\Level\Item.cs" />
     <Compile Include="InGame\PercentageBar.cs" />
+    <Compile Include="InGame\Random.cs" />
     <Compile Include="InGame\Statistics.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="InGame\Level\CapturableObject.cs" />

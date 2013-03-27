@@ -64,8 +64,6 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
     return output;
 }
 
-
-
 float4 PixelShaderFunction_Falloff(VertexShaderOutput input) : COLOR0
 {
 	const float rippling = 3.0f;
