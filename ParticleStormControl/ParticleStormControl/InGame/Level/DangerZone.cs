@@ -4,6 +4,7 @@ using ParticleStormControl;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace ParticleStormControl
 {
@@ -30,12 +31,13 @@ namespace ParticleStormControl
 
         private readonly int possessingPlayer;
 
-        public DangerZone(Vector2 Position, SoundEffect explosionSound, Texture2D dangerZoneTextureInner, Texture2D dangerZoneTextureOuter, int possessingPlayer)
+        public DangerZone(ContentManager content, Vector2 Position, int possessingPlayer)
             : base(Position, 0.05f)
         {
-            this.explosionSound = explosionSound;
-            this.dangerZoneTextureOuter = dangerZoneTextureOuter;
-            this.dangerZoneTextureInner = dangerZoneTextureInner;
+            explosionSound = content.Load<SoundEffect>("sound/danger_zone");
+            dangerZoneTextureInner = content.Load<Texture2D>("danger_zone_inner");
+            dangerZoneTextureOuter = content.Load<Texture2D>("danger_zone_outer");
+
             this.possessingPlayer = possessingPlayer;
 
             explosionTimer = new Stopwatch();

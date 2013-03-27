@@ -26,20 +26,28 @@ namespace ParticleStormControl
         private SpriteBatch spriteBatch;
         private ContentManager contentManager;
 
-        private VertexBuffer backgroundVertexBuffer;
+        #region background(s)
+        private VertexBuffer backgroundQuadVertexBuffer;
         private Effect backgroundShader;
 
-        #region debuff ressources
-        private SoundEffect debuffExplosionSound;
-        private Texture2D debuffItemTexture;
-        private Texture2D debuffExplosionTexture;
+        private BackgroundParticles backgroundParticles;
+
+        private RasterizerState scissorTestRasterizerState = new RasterizerState
+                                                                {
+                                                                    CullMode = CullMode.None,
+                                                                    ScissorTestEnable = true,
+                                                                };
+                                                                    
+
         #endregion
 
-        #region dangerzone ressources
-        private SoundEffect dangerZoneSound;
-        private Texture2D dangerZoneInnerTexture;
-        private Texture2D dangerZoneOuterTexture;
-        #endregion
+        private Effect vignettingShader;
+        public static BlendState VignettingBlend = new BlendState
+                                                {
+                                                    ColorSourceBlend = Blend.Zero,
+                                                    ColorDestinationBlend = Blend.SourceAlpha,
+                                                    ColorBlendFunction = BlendFunction.Add
+                                                };
 
         public static BlendState ShadowBlend = new BlendState
                                                    {
@@ -76,6 +84,11 @@ namespace ParticleStormControl
         }
         private Point fieldOffset_pixel;
 
+        /// <summary>
+        /// the field area in pixels as rectangle
+        /// </summary>
+        private Rectangle fieldPixelRectangle;
+
         #endregion
 
         #region switch & wipeout
@@ -95,9 +108,11 @@ namespace ParticleStormControl
 
         #endregion
 
-
         private Stopwatch pickuptimer;
 
+        /// <summary>
+        /// target to that all viruses are added
+        /// </summary>
         private RenderTarget2D particleTexture;
 
         private BlendState ScreenBlend = new BlendState()
@@ -110,8 +125,6 @@ namespace ParticleStormControl
                                                  AlphaDestinationBlend = Blend.One
                                              };
 
-        private BackgroundParticles backgroundParticles;
-
         public Level(GraphicsDevice device, ContentManager content)
         {
             this.contentManager = content;
@@ -123,28 +136,19 @@ namespace ParticleStormControl
             
             spriteBatch = new SpriteBatch(device);
 
-            // debuff
-            debuffExplosionSound = content.Load<SoundEffect>("sound/explosion");
-            debuffExplosionTexture = content.Load<Texture2D>("explosion");
-            debuffItemTexture = content.Load<Texture2D>("items/debuff");
-
-            // dangerzone
-            dangerZoneSound = content.Load<SoundEffect>("sound/danger_zone");
-            dangerZoneInnerTexture = content.Load<Texture2D>("danger_zone_inner");
-            dangerZoneOuterTexture = content.Load<Texture2D>("danger_zone_outer");
-
             // switch
             switchSound = content.Load<SoundEffect>("sound/switch");
             fontCountdownLarge = content.Load<SpriteFont>("fontCountdown");
 
-            // background
-            backgroundVertexBuffer = new VertexBuffer(device, ScreenTriangleRenderer.ScreenAlignedTriangleVertex.VertexDeclaration, 4, BufferUsage.WriteOnly);
-            backgroundVertexBuffer.SetData(new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) });
+            // background & vignetting
+            backgroundQuadVertexBuffer = new VertexBuffer(device, ScreenTriangleRenderer.ScreenAlignedTriangleVertex.VertexDeclaration, 4, BufferUsage.WriteOnly);
+            backgroundQuadVertexBuffer.SetData(new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) });
             backgroundShader = content.Load<Effect>("shader/backgroundCells");
+            vignettingShader = content.Load<Effect>("shader/vignetting");
 
             // bg particles
             backgroundParticles = new BackgroundParticles(device, content);
-
+            
             // setup size
             Resize(device);
             
@@ -237,7 +241,7 @@ namespace ParticleStormControl
                 double nearestDist = spawnPositions.Min(x => { return x == pos ? 1 : (x - pos).LengthSquared(); });
 
                 float capturesize = (float)(100.0 + nearestDist * nearestDist * 25000);
-                capturesize = Math.Min(capturesize, 5000);
+                capturesize = Math.Min(capturesize, 2000);
 
 
                 spawnPoints.Add(new SpawnPoint(pos, capturesize, (float)Math.Sqrt(nearestDist), - 1, capture, captureExplosion, glowTexture, captureGlow, hqInner, hqOuter));
@@ -353,7 +357,7 @@ namespace ParticleStormControl
                 if (Random.NextDouble() < 0.5)
                     mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
                 else if (Random.NextDouble() < 0.3)
-                    mapObjects.Add(new Debuff(position, debuffExplosionSound, debuffItemTexture, debuffExplosionTexture));
+                    mapObjects.Add(new Debuff(position, contentManager));
                 else if (Random.NextDouble() < 0.18)
                     mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
                 else if (Random.NextDouble() < 0.1)
@@ -478,12 +482,16 @@ namespace ParticleStormControl
 
         public void Draw(float totalTimeSeconds, GraphicsDevice device, Player[] players)
         {
+            // activate scissor test - is this a performance issue?
+            device.ScissorRectangle = fieldPixelRectangle;
+            device.RasterizerState = scissorTestRasterizerState;
+
             // background particles
             device.BlendState = BlendState.NonPremultiplied;
             backgroundParticles.Draw(device, totalTimeSeconds);
 
             // background
-            device.SetVertexBuffer(backgroundVertexBuffer);
+            device.SetVertexBuffer(backgroundQuadVertexBuffer);
             backgroundShader.Parameters["Cells_Color"].SetValue(spawnPoints.Select(x => x.ComputeColor().ToVector3()).ToArray());
             backgroundShader.CurrentTechnique.Passes[0].Apply();
             device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
@@ -517,6 +525,16 @@ namespace ParticleStormControl
                                     new Color(1.0f, 1.0f, 1.0f, 1.0f - wipeoutProgress));
     
             spriteBatch.End();
+
+            // vignetting
+            device.BlendState = VignettingBlend;
+            device.SetVertexBuffer(backgroundQuadVertexBuffer);
+            vignettingShader.CurrentTechnique.Passes[0].Apply();
+            device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+
+            // rest rasterizer state if not allready happend
+            if (device.RasterizerState == scissorTestRasterizerState)
+                device.RasterizerState = RasterizerState.CullNone;
         }
 
         private void DrawParticles(GraphicsDevice device)
@@ -545,7 +563,7 @@ namespace ParticleStormControl
         public void Resize(GraphicsDevice device)
         {
             // letterboxing
-            float sizeY = device.Viewport.Width / RELATIVECOR_ASPECT_RATIO + 0.5f;
+            float sizeY = device.Viewport.Width / RELATIVECOR_ASPECT_RATIO;
             if (sizeY > device.Viewport.Height)
                 fieldSize_pixel = new Point((int)(device.Viewport.Height * RELATIVECOR_ASPECT_RATIO + 0.5f), device.Viewport.Height);
             else
@@ -555,12 +573,18 @@ namespace ParticleStormControl
             fieldOffset_pixel.X /= 2;
             fieldOffset_pixel.Y /= 2;
 
+            fieldPixelRectangle = new Rectangle(fieldOffset_pixel.X, fieldOffset_pixel.Y, fieldSize_pixel.X, fieldSize_pixel.Y);
+
             // setup background
-            backgroundShader.Parameters["PosScale"].SetValue(new Vector2(fieldSize_pixel.X, -fieldSize_pixel.Y) /
-                                                             new Vector2(device.Viewport.Width, device.Viewport.Height) * 2);
-            backgroundShader.Parameters["PosOffset"].SetValue(new Vector2(fieldOffset_pixel.X, -fieldOffset_pixel.Y) /
-                                                             new Vector2(device.Viewport.Width, device.Viewport.Height) * 2 - new Vector2(1, -1));
+            Vector2 posScale = new Vector2(fieldSize_pixel.X, -fieldSize_pixel.Y) /
+                               new Vector2(device.Viewport.Width, device.Viewport.Height) * 2;
+            Vector2 posOffset = new Vector2(fieldOffset_pixel.X, -fieldOffset_pixel.Y) /
+                                   new Vector2(device.Viewport.Width, device.Viewport.Height) * 2 - new Vector2(1, -1);
+            backgroundShader.Parameters["PosScale"].SetValue(posScale);
+            backgroundShader.Parameters["PosOffset"].SetValue(posOffset);
             backgroundShader.Parameters["RelativeMax"].SetValue(Level.RELATIVE_MAX);
+            vignettingShader.Parameters["PosScale"].SetValue(posScale);
+            vignettingShader.Parameters["PosOffset"].SetValue(posOffset);
 
             CreateParticleTarget(device);
 
@@ -593,7 +617,7 @@ namespace ParticleStormControl
             switch (player.ItemSlot)
             {
                 case Item.ItemType.DANGER_ZONE:
-                    mapObjects.Add(new DangerZone(player.CursorPosition, dangerZoneSound, dangerZoneInnerTexture, dangerZoneOuterTexture, player.Index));
+                    mapObjects.Add(new DangerZone(contentManager, player.CursorPosition, player.Index));
                     // statistic
                     GameStatistics.addUsedItems(player.Index);
                     break;

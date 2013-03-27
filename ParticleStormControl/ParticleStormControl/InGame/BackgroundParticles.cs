@@ -59,7 +59,7 @@ namespace ParticleStormControl
         // sizes
         private const float MIN_SIZE_CIRCLES = 0.008f;
         private const float MAX_SIZE_CIRCLES = 0.012f;
-        private const float MIN_SIZE_FILLED_CIRCLES = 0.004f;
+        private const float MIN_SIZE_FILLED_CIRCLES = 0.005f;
         private const float MAX_SIZE_FILLED_CIRCLES = 0.010f;
 
         /// <summary>

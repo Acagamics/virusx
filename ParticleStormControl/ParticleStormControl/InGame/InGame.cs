@@ -89,7 +89,6 @@ namespace ParticleStormControl
 
         public void StartNewGame(GraphicsDevice graphicsDevice, ContentManager content)
         {
-			State = GameState.Playing;
             players = new Player[Settings.Instance.NumPlayers];
             int count = 0;
             for (int i = 0; i < 3; ++i)
@@ -105,9 +104,11 @@ namespace ParticleStormControl
             // restart stuff
             level.NewGame(players);
             particleRenderer = new ParticleRenderer(graphicsDevice, content, players.Length);
+
             // init statistics
             level.GameStatistics = new Statistics(1f, Settings.Instance.NumPlayers);
-            
+
+            State = GameState.Playing;
             System.GC.Collect();
         }
 

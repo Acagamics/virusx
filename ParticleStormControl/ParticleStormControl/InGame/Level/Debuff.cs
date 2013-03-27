@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ParticleStormControl
@@ -28,12 +29,12 @@ namespace ParticleStormControl
 
         private readonly Vector2 textureCenter;
 
-        public Debuff(Vector2 Position, SoundEffect explosionSound, Texture2D itemTexture, Texture2D explosionTexture)
+        public Debuff(Vector2 Position, ContentManager content)
             : base(Position, -1, 0.01f, 20.0f, 3)
         {
-            this.explosionSound = explosionSound;
-            this.itemTexture = itemTexture;
-            this.explosionTexture = explosionTexture;
+            explosionSound = content.Load<SoundEffect>("sound/explosion");
+            explosionTexture = content.Load<Texture2D>("explosion");
+            itemTexture = content.Load<Texture2D>("items/debuff");
 
             Size = 0.05f;
             textureCenter = new Vector2(itemTexture.Width/2, itemTexture.Height/2);

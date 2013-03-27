@@ -55,7 +55,7 @@ namespace ParticleStormControl
             }
 
             // test
-            for (int i = 0; i <= levelPixelSize.X / bar.Width; i++)
+            /*for (int i = 0; i <= levelPixelSize.X / bar.Width; i++)
             {
                 spriteBatch.Draw(bar, new Rectangle(levelPixelOffset.X + bar.Width * i, levelPixelOffset.Y, bar.Width, HEIGHT / 2), new Rectangle(0, 0, bar.Width, bar.Height / 2), Color.White);
                 spriteBatch.Draw(bar, new Rectangle(levelPixelOffset.X + bar.Width * i, levelPixelOffset.Y + levelPixelSize.Y - HEIGHT / 2, bar.Width, HEIGHT / 2), new Rectangle(0, bar.Height / 2, bar.Width, bar.Height / 2), Color.White);
@@ -83,7 +83,7 @@ namespace ParticleStormControl
                     SpriteEffects.FlipVertically,
                     0);
             }
-
+            */
             spriteBatch.End();
         }
 

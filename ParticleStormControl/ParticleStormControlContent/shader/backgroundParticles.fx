@@ -32,7 +32,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
 float4 Circle(VertexShaderOutput input) : COLOR0
 {
-	float2 v = (input.Texcoord * 2 - 1);
+	float2 v = input.Texcoord * 2 - 1;
 	float distSq = dot(v,v);
 	float distSqInv = 1 - distSq;
 	float intensity = (distSqInv - distSqInv*distSqInv)*2.5f;
@@ -42,7 +42,7 @@ float4 Circle(VertexShaderOutput input) : COLOR0
 
 float4 FilledCircle(VertexShaderOutput input) : COLOR0
 {
-	float2 v = (input.Texcoord * 2 - 1);
+	float2 v = input.Texcoord * 2 - 1;
 	float intensity = (1.0f-dot(v,v)) * 0.5f;
 	clip(intensity - 1.0f/255.0f);
 	return intensity;
