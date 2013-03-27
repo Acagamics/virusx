@@ -89,6 +89,8 @@ namespace ParticleStormControl
 
         public void StartNewGame(GraphicsDevice graphicsDevice, ContentManager content)
         {
+            instantDeathProtectingTime = 0.0f;
+
             players = new Player[Settings.Instance.NumPlayers];
             int count = 0;
             for (int i = 0; i < 3; ++i)

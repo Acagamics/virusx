@@ -531,6 +531,7 @@ namespace ParticleStormControl
             device.SetVertexBuffer(backgroundQuadVertexBuffer);
             vignettingShader.CurrentTechnique.Passes[0].Apply();
             device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+            device.BlendState = BlendState.Opaque;
 
             // rest rasterizer state if not allready happend
             if (device.RasterizerState == scissorTestRasterizerState)
