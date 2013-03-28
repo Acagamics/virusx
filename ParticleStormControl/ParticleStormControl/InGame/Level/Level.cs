@@ -157,6 +157,15 @@ namespace ParticleStormControl
             wipeoutDamageTexture = content.Load<Texture2D>("capture_glow");
         }
 
+        public void NewEmptyLevel(GraphicsDevice device)
+        {
+            NewGame(new Player[0]);
+
+            // clear particle target
+            BeginDrawInternParticleTarget(device);
+            EndDrawInternParticleTarget(device);
+        }
+
         public void NewGame(Player[] players)
         {
             mapObjects.Clear();
@@ -166,9 +175,8 @@ namespace ParticleStormControl
             CreateLevel(contentManager, players.Length);
 
             // crosshairs for players
-            Texture2D crossHairTexture = contentManager.Load<Texture2D>("basic_crosshair");
             for (int i = 0; i < players.Length; ++i)
-                mapObjects.Add(new Crosshair(i, crossHairTexture));
+                mapObjects.Add(new Crosshair(i, contentManager));
         }
 
         private void CreateLevel(ContentManager content, int numPlayers)

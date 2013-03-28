@@ -163,7 +163,6 @@ namespace ParticleStormControl
                     device.Textures[i] = null;
                 }
             }
-
         }
     }
 }

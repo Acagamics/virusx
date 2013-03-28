@@ -17,12 +17,11 @@ namespace ParticleStormControl
 
         private Texture2D crossHairTexture;
 
-        public Crosshair (int playerindex, Texture2D crossHairTexture) :
+        public Crosshair (int playerindex, ContentManager contentManager) :
             base(Vector2.One, 0.05f)   // updated every frame, so why care..
         {
             PlayerIndex = playerindex;
-            this.crossHairTexture = crossHairTexture;
-
+            this.crossHairTexture = contentManager.Load<Texture2D>("basic_crosshair");;
         }
 
         public override void SwitchPlayer(int[] playerSwitchedTo)

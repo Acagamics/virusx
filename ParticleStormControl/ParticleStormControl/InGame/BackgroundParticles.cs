@@ -126,6 +126,7 @@ namespace ParticleStormControl
         public void Draw(GraphicsDevice device, float passedTime)
         {
             particleEffect.Parameters["ParticleMoving"].SetValue(passedTime* PARTICLE_SPEED);
+            device.Indices = particleIndexBuffer;
 
             particleEffect.CurrentTechnique.Passes[0].Apply();
             device.SetVertexBuffers(particleVertexBufferBinding, instanceVertexBufferBinding_Circles);
