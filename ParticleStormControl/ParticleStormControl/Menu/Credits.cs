@@ -18,11 +18,6 @@ namespace ParticleStormControl.Menu
             : base(menu)
         { }
 
-        public override void Initialize()
-        {
-            
-        }
-
         public override void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
         {
             logo = content.Load<Texture2D>("logo");

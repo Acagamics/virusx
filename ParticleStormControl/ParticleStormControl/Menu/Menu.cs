@@ -125,8 +125,8 @@ namespace ParticleStormControl.Menu
         {
             if(PageChangingEvent != null)
                 PageChangingEvent(newPage, activePage);
+            pages[(int)newPage].OnActivated(activePage);
             activePage = newPage;
-            pages[(int)activePage].Initialize();
         }
 
         public void Shutdown()
