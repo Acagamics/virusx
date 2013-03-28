@@ -122,7 +122,6 @@ namespace ParticleStormControl
             particleEffect.Parameters["RelativeMax"].SetValue(Level.RELATIVE_MAX);
         }
 
-
         public void Draw(GraphicsDevice device, float passedTime)
         {
             particleEffect.Parameters["ParticleMoving"].SetValue(passedTime* PARTICLE_SPEED);

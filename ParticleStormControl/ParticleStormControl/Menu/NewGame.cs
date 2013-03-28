@@ -1,4 +1,4 @@
-﻿#define QUICK_TWO_PLAYER_DEBUG
+﻿//#define QUICK_TWO_PLAYER_DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -202,16 +202,16 @@ namespace ParticleStormControl.Menu
                 Vector2 origin = new Vector2();
                 switch (i)
                 {
-                    case 0:
+                    case 2:
                         origin = new Vector2(padd + offX, padd + offY);
                         break;
-                    case 1:
+                    case 3:
                         origin = new Vector2(x + offX, y + offY);
                         break;
-                    case 2:
+                    case 1:
                         origin = new Vector2(x + offX, padd + offY);
                         break;
-                    case 3:
+                    case 0:
                         origin = new Vector2(padd + offX, y + offY);
                         break;
                 }
@@ -250,7 +250,11 @@ namespace ParticleStormControl.Menu
 
             // countdown
             if (countdown.TotalSeconds > 0)
-                spriteBatch.DrawString(menu.Font, ((int)countdown.TotalSeconds + 1).ToString(), new Vector2(Settings.Instance.ResolutionX / 2 - 5, Settings.Instance.ResolutionY / 2 - 15), countdown.TotalSeconds > safeCountdown ? Color.White : Color.Red);
+            {
+                String text = ((int)countdown.TotalSeconds + 1).ToString();
+                spriteBatch.DrawString(menu.FontCountdown, text, new Vector2(Settings.Instance.ResolutionX / 2 - 5, Settings.Instance.ResolutionY / 2 - 15), countdown.TotalSeconds > safeCountdown ? Color.White : Color.Red,
+                                        0.0f, menu.FontCountdown.MeasureString(text) * 0.5f, 1, SpriteEffects.None, 1.0f);
+            }
         }
 
         /* Helper */
