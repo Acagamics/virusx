@@ -104,7 +104,7 @@ namespace ParticleStormControl
         }
 
         // spawn stuff!
-        private const float spawnConstant = 1;//18.0f;  // higher means LESS!
+        private const float spawnConstant = 18.0f;  // higher means LESS!
         private const float spawnSettingFactor = 5.0f;  // remeber that high mass means mass_health=-1.0f
 
         /// <summary>
