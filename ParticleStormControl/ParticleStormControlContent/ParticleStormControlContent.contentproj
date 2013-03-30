@@ -252,8 +252,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="viruses\H1N1.png">
-      <Name>H1N1</Name>
+    <Compile Include="viruses\H5N1.png">
+      <Name>H5N1</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -267,8 +267,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="viruses\Noro.png">
-      <Name>Noro</Name>
+    <Compile Include="viruses\EpsteinBar.png">
+      <Name>EpsteinBar</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

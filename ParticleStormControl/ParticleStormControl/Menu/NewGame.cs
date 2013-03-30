@@ -1,4 +1,4 @@
-﻿#define QUICK_TWO_PLAYER_DEBUG
+﻿//#define QUICK_TWO_PLAYER_DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -54,10 +54,10 @@ namespace ParticleStormControl.Menu
         /// <param name="content"></param>
         public override void LoadContent(ContentManager content)
         {
-            viruses[0] = content.Load<Texture2D>("viruses/H1N1");
-            viruses[1] = content.Load<Texture2D>("viruses/HepatitisB");
-            viruses[2] = content.Load<Texture2D>("viruses/HIV");
-            viruses[3] = content.Load<Texture2D>("viruses/Noro");
+            viruses[(int)Player.VirusType.H5N1] = content.Load<Texture2D>("viruses/H5N1");
+            viruses[(int)Player.VirusType.HEPATITISB] = content.Load<Texture2D>("viruses/HepatitisB");
+            viruses[(int)Player.VirusType.HIV] = content.Load<Texture2D>("viruses/HIV");
+            viruses[(int)Player.VirusType.EPSTEINBAR] = content.Load<Texture2D>("viruses/EpsteinBar");
             icons = content.Load<Texture2D>("icons");
         }
 
