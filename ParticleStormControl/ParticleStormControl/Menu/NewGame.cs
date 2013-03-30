@@ -1,4 +1,4 @@
-﻿//#define QUICK_TWO_PLAYER_DEBUG
+﻿#define QUICK_TWO_PLAYER_DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -46,17 +46,6 @@ namespace ParticleStormControl.Menu
                 playerConnected[i] = false;
                 playerReady[i] = false;
             }
-
-            // :P
-#if QUICK_TWO_PLAYER_DEBUG
-            Settings.Instance.PlayerControls[0] = InputManager.ControlType.KEYBOARD0;
-            Settings.Instance.PlayerColorIndices[0] = 0;
-            Settings.Instance.PlayerControls[1] = InputManager.ControlType.KEYBOARD1;
-            Settings.Instance.PlayerColorIndices[1] = 1;
-            Settings.Instance.NumPlayers = 2;
-            playerReady[0] = playerReady[1] = playerConnected[0] = playerConnected[1] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = true;
-            menu.ChangePage(Menu.Page.INGAME);
-#endif
         }
 
         /// <summary>
@@ -78,6 +67,17 @@ namespace ParticleStormControl.Menu
         /// <param name="frameTimeInterval"></param>
         public override void Update(float frameTimeInterval)
         {
+            // :P
+#if QUICK_TWO_PLAYER_DEBUG
+            Settings.Instance.PlayerControls[0] = InputManager.ControlType.KEYBOARD0;
+            Settings.Instance.PlayerColorIndices[0] = 0;
+            Settings.Instance.PlayerControls[1] = InputManager.ControlType.KEYBOARD1;
+            Settings.Instance.PlayerColorIndices[1] = 1;
+            Settings.Instance.NumPlayers = 2;
+            playerReady[0] = playerReady[1] = playerConnected[0] = playerConnected[1] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = true;
+            menu.ChangePage(Menu.Page.INGAME);
+#endif
+
             if (InputManager.Instance.ExitButton())
                 menu.ChangePage(Menu.Page.MAINMENU);
 

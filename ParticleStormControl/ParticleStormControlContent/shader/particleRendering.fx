@@ -26,8 +26,7 @@ float2 RelativeMax;
 struct VertexShaderInput
 {
     float2 Position			: POSITION0;
-	float2 Texcoord			: TEXCOORD0;
-	float2 InstanceIndex	: TEXCOORD1;
+	float  InstanceIndex	: TEXCOORD0;
 };
 
 struct VertexShaderOutput
@@ -49,7 +48,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 	float health = tex2Dlod(sampInfos, vertexTexcoord).x;
 	
 	// health near zero brings this element into clipping space
-	[flatten]if(health > 0)	// dynamic branch? could spare texture lookup
+	if(health > 0)	// dynamic branch? could spare texture lookup - let compiler decide
 	{
 		health += MinHealth;
 		float2 instancePosition = tex2Dlod(sampPositions, vertexTexcoord).xy;	
@@ -57,10 +56,10 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 		output.Position.zw = float2(0.5f, 1.0f);
 	}
 	else
-		output.Position = 100;
+		output.Position.x = 100;
 	
 	output.InstanceIndex = input.InstanceIndex;
-	output.Texcoord = input.Texcoord;
+	output.Texcoord = input.Position + float2(0.5f, 0.5f);
     return output;
 }
 
@@ -85,6 +84,9 @@ float4 PixelShaderFunction_Falloff(VertexShaderOutput input) : COLOR0
 
 //	float alpha = 1.0f - dot(v,v);
 //   return Color * alpha;
+
+
+	return float4(1,0,1,1);
 }
 
 float4 PixelShaderFunction_NoFalloff(VertexShaderOutput input) : COLOR0

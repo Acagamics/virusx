@@ -17,16 +17,14 @@ namespace ParticleStormControl
         struct vertex2dPosition
         {
             public Vector2 Position;
-            public Vector2 Texcoord;
             public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration
-                        (new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0),
-                         new VertexElement(8, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0));
+                        (new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0));
         };
         struct vertex2dInstance
         {
             public float Index;
             public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration
-                                    (new VertexElement(0, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 1));
+                                    (new VertexElement(0, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 0));
         };
 
         /// <summary>
@@ -65,10 +63,10 @@ namespace ParticleStormControl
 
             particleVertexBuffer = new VertexBuffer(device, vertex2dPosition.VertexDeclaration, 4, BufferUsage.None);
             var vertices = new vertex2dPosition[4];
-            vertices[0].Position = new Vector2(-0.5f, -0.5f); vertices[0].Texcoord = new Vector2(0.0f, 0.0f);
-            vertices[1].Position = new Vector2(-0.5f, 0.5f); vertices[1].Texcoord = new Vector2(0.0f, 1.0f);
-            vertices[2].Position = new Vector2(0.5f, -0.5f); vertices[2].Texcoord = new Vector2(1.0f, 0.0f);
-            vertices[3].Position = new Vector2(0.5f, 0.5f); vertices[3].Texcoord = new Vector2(1.0f, 1.0f);
+            vertices[0].Position = new Vector2(-0.5f, -0.5f);
+            vertices[1].Position = new Vector2(-0.5f, 0.5f);
+            vertices[2].Position = new Vector2(0.5f, -0.5f);
+            vertices[3].Position = new Vector2(0.5f, 0.5f);
             particleVertexBuffer.SetData(vertices);
 
             particleIndexBuffer = new IndexBuffer(device, IndexElementSize.SixteenBits, 4, BufferUsage.WriteOnly);
@@ -100,6 +98,7 @@ namespace ParticleStormControl
 
         public void Draw(GraphicsDevice device, Player[] players, bool damage /*= false*/)
         {
+            // constant settings
             device.Indices = particleIndexBuffer;
 
             if(damage)
@@ -107,18 +106,18 @@ namespace ParticleStormControl
             else
                 particleEffect.CurrentTechnique = particleEffect.Techniques[0];
 
-            // switching rendering order every frame - this seems to affect the player damaging!
+            // reversing rendering order every frame - this seems to affect the player damaging!
             if (damage)
                 renderingOrderX = !renderingOrderX;
             if (renderingOrderX)
             {
                 for (int i = instanceVertexBufferBinding.Length - 1; i > -1; --i)
-                    Draw(device, damage, players[i]);
+                    DrawIntern(device, damage, players[i]);
             }
             else
             {
                 for (int i = 0; i < instanceVertexBufferBinding.Length; ++i)
-                    Draw(device, damage, players[i]);
+                    DrawIntern(device, damage, players[i]);
             }
 
 
@@ -127,7 +126,7 @@ namespace ParticleStormControl
             device.VertexTextures[1] = null;
         }
 
-        private void Draw(GraphicsDevice device, bool damage, Player player)
+        private void DrawIntern(GraphicsDevice device, bool damage, Player player)
         {
             if (!player.Alive)
                 return;
@@ -143,26 +142,25 @@ namespace ParticleStormControl
             particleEffect.CurrentTechnique.Passes[0].Apply();
 
             // sometimes there are problems with using linear - the effects prohibts this, but does still happen
-            for (int i = 0; i < 8; ++i)
+         /*   for (int i = 0; i < 8; ++i)
             {
                 if (device.Textures[i] != null)
                     device.SamplerStates[i] = SamplerState.PointClamp;
-            }
-
+            } */
 
             device.SetVertexBuffers(particleVertexBufferBinding, instanceVertexBufferBinding[player.Index]);
             device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 4, 0, 2, player.HighestUsedParticleIndex + 1);
 
 
             // reset
-            for (int i = 0; i < 8; ++i)
+        /*    for (int i = 0; i < 8; ++i)
             {
                 if (device.Textures[i] != null)
                 {
                     device.SamplerStates[i] = SamplerState.LinearWrap;
                     device.Textures[i] = null;
                 }
-            }
+            } */
         }
     }
 }
