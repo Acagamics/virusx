@@ -47,7 +47,7 @@ namespace ParticleStormControl
         public float Disciplin_speed
         {  get { return disciplin_speed_byVirus[virusIndex]; } }
 
-        private static readonly float[] mass_health_byVirus = new float[] { -0.7f, -0.3f, 0.6f, -1.0f };  // negative more mass, positive more health 
+        private static readonly float[] mass_health_byVirus = new float[] { -0.5f, -0.2f, 0.6f, -1.0f };  // negative more mass, positive more health 
         public float Mass_health
         { get { return mass_health_byVirus[virusIndex]; } }
 

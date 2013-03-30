@@ -47,7 +47,7 @@ namespace ParticleStormControl
 
         private Effect particleEffect;
 
-        private static readonly Vector2 RENDERING_SIZE_CONSTANT = new Vector2(0.0075f / Level.RELATIVECOR_ASPECT_RATIO, 0.0075f) / Player.healthConstant;
+        private static readonly Vector2 RENDERING_SIZE_CONSTANT = new Vector2(0.009f / Level.RELATIVECOR_ASPECT_RATIO, 0.009f) / Player.healthConstant;
         private const float minimumHealth = 5.0f;  // added to the health in rendering shader
 
         public ParticleRenderer(GraphicsDevice device, ContentManager content, int numPlayers)
@@ -102,9 +102,7 @@ namespace ParticleStormControl
             device.Indices = particleIndexBuffer;
 
             if(damage)
-                particleEffect.CurrentTechnique = particleEffect.Techniques[1];
-            else
-                particleEffect.CurrentTechnique = particleEffect.Techniques[0];
+                particleEffect.CurrentTechnique = particleEffect.Techniques["DamageMap"];
 
             // reversing rendering order every frame - this seems to affect the player damaging!
             if (damage)
@@ -130,6 +128,16 @@ namespace ParticleStormControl
         {
             if (!player.Alive)
                 return;
+
+            switch(player.Virus)
+            {
+                case Player.VirusType.H5N1:
+                    particleEffect.CurrentTechnique = particleEffect.Techniques["H5N1"];
+                    break;
+                default:
+                    particleEffect.CurrentTechnique = particleEffect.Techniques["Standard"];
+                    break;
+            }
 
             particleEffect.Parameters["PositionTexture"].SetValue(player.PositionTexture);
             particleEffect.Parameters["InfoTexture"].SetValue(player.InfoTexture);
