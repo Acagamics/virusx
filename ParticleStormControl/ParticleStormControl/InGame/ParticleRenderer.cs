@@ -101,9 +101,6 @@ namespace ParticleStormControl
             // constant settings
             device.Indices = particleIndexBuffer;
 
-            if(damage)
-                particleEffect.CurrentTechnique = particleEffect.Techniques["DamageMap"];
-
             // reversing rendering order every frame - this seems to affect the player damaging!
             if (damage)
                 renderingOrderX = !renderingOrderX;
@@ -138,6 +135,9 @@ namespace ParticleStormControl
                     particleEffect.CurrentTechnique = particleEffect.Techniques["Standard"];
                     break;
             }
+            if (damage)
+                particleEffect.CurrentTechnique = particleEffect.Techniques["DamageMap"];
+
 
             particleEffect.Parameters["PositionTexture"].SetValue(player.PositionTexture);
             particleEffect.Parameters["InfoTexture"].SetValue(player.InfoTexture);

@@ -61,8 +61,8 @@ namespace ParticleStormControl
         public const float healthConstant = 15.0f;
         public const float healthSettingFactor = 15.0f;
 
-        // discilplin constant - higher means that the player will move more straight in player's direction
-        private const float disciplinConstant = 0.4f;
+        // discilplin constant - higher means that the particles will move more straight in player's direction
+        private const float disciplinConstant = 0.5f;
         // attacking constant
         private const float attackingPerSecond = 30.0f;
 

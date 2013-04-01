@@ -66,15 +66,15 @@ namespace ParticleStormControl
             {
                 case Item.ItemType.DANGER_ZONE:
                     spriteBatch.Draw(itemBuff, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
-                                                   new Vector2(itemBuff.Width, itemBuff.Height) / 2,SpriteEffects.None, 0); // color);
+                                                   new Vector2(itemBuff.Width, itemBuff.Height) / 2,SpriteEffects.None, 1); // color);
                     break;
                 case Item.ItemType.MUTATION:
                     spriteBatch.Draw(itemMutate, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
-                                                   new Vector2(itemMutate.Width, itemMutate.Height) / 2, SpriteEffects.None, 0); // color);
+                                                   new Vector2(itemMutate.Width, itemMutate.Height) / 2, SpriteEffects.None, 1); // color);
                     break;
                 case Item.ItemType.WIPEOUT:
                     spriteBatch.Draw(itemWipeout, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
-                                                   new Vector2(itemWipeout.Width, itemWipeout.Height) / 2, SpriteEffects.None, 0); // color);
+                                                   new Vector2(itemWipeout.Width, itemWipeout.Height) / 2, SpriteEffects.None, 1); // color);
                     break;
             }
         }
