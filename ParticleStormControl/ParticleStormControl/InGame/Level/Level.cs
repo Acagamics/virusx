@@ -522,7 +522,9 @@ namespace ParticleStormControl
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
 
             // countdown
-            DrawCountdown(device);
+            DrawCountdown(device, totalTimeSeconds);
+
+            // all alpha blended objects
             foreach (MapObject mapObject in mapObjects)
             {
                 if (mapObject.Alive)
@@ -558,17 +560,19 @@ namespace ParticleStormControl
             spriteBatch.End(); 
         }
 
-        public void DrawCountdown(GraphicsDevice device)
+        public void DrawCountdown(GraphicsDevice device, float totalPassedTime)
         {
             if (switchCountdownActive)
             {
+                spriteBatch.Draw(mutateBig, ComputePixelRect(RELATIVE_MAX * 0.5f, RELATIVE_MAX.Y * 0.4f), null, Color.LightSlateGray * 0.4f,
+                                    -totalPassedTime, new Vector2(mutateBig.Width, mutateBig.Height) / 2, SpriteEffects.None, 0.0f);
                 string text = ((int) (switchCountdownTimer + 1)).ToString();
                 spriteBatch.DrawString(fontCountdownLarge, text,
                                        new Vector2(
                                            (device.Viewport.Width - fontCountdownLarge.MeasureString(text).X)*
                                            0.5f,
                                            (device.Viewport.Height - fontCountdownLarge.MeasureString(text).Y)*
-                                           0.5f + 40), Color.FromNonPremultiplied(140, 140, 140, 160));
+                                           0.5f + 40), Color.FromNonPremultiplied(180, 180, 180, 180));
             }
         }
 
