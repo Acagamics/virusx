@@ -22,6 +22,7 @@ namespace ParticleStormControl
         public List<SpawnPoint> SpawnPoints { get { return spawnPoints; } }
 
         private Texture2D pixelTexture;
+        private Texture2D mutateBig;
 
         private SpriteBatch spriteBatch;
         private ContentManager contentManager;
@@ -101,7 +102,7 @@ namespace ParticleStormControl
 
         private Texture2D wipeoutExplosionTexture;
         private Texture2D wipeoutDamageTexture;
-        private const float WIPEOUT_SPEED = 1.0f;
+        private const float WIPEOUT_SPEED = 0.5f;
         private const float WIPEOUT_SIZEFACTOR = 1.5f;
         private float wipeoutProgress = 0.0f;
         private bool wipeoutActive;
@@ -138,7 +139,7 @@ namespace ParticleStormControl
 
             // switch
             switchSound = content.Load<SoundEffect>("sound/switch");
-            fontCountdownLarge = content.Load<SpriteFont>("fontCountdown");
+            fontCountdownLarge = content.Load<SpriteFont>("fonts/fontCountdown");
 
             // background & vignetting
             backgroundQuadVertexBuffer = new VertexBuffer(device, ScreenTriangleRenderer.ScreenAlignedTriangleVertex.VertexDeclaration, 4, BufferUsage.WriteOnly);
@@ -148,13 +149,14 @@ namespace ParticleStormControl
 
             // bg particles
             backgroundParticles = new BackgroundParticles(device, content);
-            
+        
+            // effects
+            mutateBig = content.Load<Texture2D>("Mutate_big");
+            wipeoutExplosionTexture = content.Load<Texture2D>("Wipeout_big");
+            wipeoutDamageTexture = wipeoutExplosionTexture;
+    
             // setup size
             Resize(device);
-            
-            // wipeout
-            wipeoutExplosionTexture = content.Load<Texture2D>("capture_glow");
-            wipeoutDamageTexture = content.Load<Texture2D>("capture_glow");
         }
 
         public void NewEmptyLevel(GraphicsDevice device)
@@ -362,13 +364,13 @@ namespace ParticleStormControl
                 // random position within a certain range
                 Vector2 position = new Vector2((float)(Random.NextDouble()) * 0.8f + 0.1f, (float)(Random.NextDouble()) * 0.8f + 0.1f);
 
-                if (Random.NextDouble() < 0.5)
+                if (Random.NextDouble() < 0.2)
                     mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
-                else if (Random.NextDouble() < 0.3)
+                else if (Random.NextDouble() < 0.2)
                     mapObjects.Add(new Debuff(position, contentManager));
                 else if (Random.NextDouble() < 0.18)
                     mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
-                else if (Random.NextDouble() < 0.1)
+                else if (Random.NextDouble() < 0.2)
                     mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager));
 
                 // restart timer
@@ -529,8 +531,9 @@ namespace ParticleStormControl
 
             // wipeout
             if (wipeoutActive)
-                spriteBatch.Draw(wipeoutExplosionTexture, ComputePixelRect_Centered(Level.RELATIVE_MAX / 2, Level.RELATIVE_MAX.X * wipeoutProgress * WIPEOUT_SIZEFACTOR),
-                                    new Color(1.0f, 1.0f, 1.0f, 1.0f - wipeoutProgress));
+                spriteBatch.Draw(wipeoutExplosionTexture, ComputePixelRect(Level.RELATIVE_MAX / 2, Level.RELATIVE_MAX.X * wipeoutProgress * WIPEOUT_SIZEFACTOR),
+                                    null, new Color(1.0f, 1.0f, 1.0f, (float)(1.0 - Math.Sqrt(wipeoutProgress))), totalTimeSeconds, 
+                                    new Vector2(wipeoutExplosionTexture.Width, wipeoutExplosionTexture.Height) * 0.5f, SpriteEffects.None, 0.0f);
     
             spriteBatch.End();
 

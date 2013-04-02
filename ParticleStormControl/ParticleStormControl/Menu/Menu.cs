@@ -68,10 +68,10 @@ namespace ParticleStormControl.Menu
 
         public void LoadContent(ContentManager content)
         {
-            font = content.Load<SpriteFont>("font");
-            fontSmall = content.Load<SpriteFont>("fontSmall");
-            fontBold = content.Load<SpriteFont>("fontBold");
-            fontCountdown = content.Load<SpriteFont>("fontCountdown");
+            font = content.Load<SpriteFont>("fonts/font");
+            fontSmall = content.Load<SpriteFont>("fonts/fontSmall");
+            fontBold = content.Load<SpriteFont>("fonts/fontBold");
+            fontCountdown = content.Load<SpriteFont>("fonts/fontCountdown");
             pixelTexture = content.Load<Texture2D>("pix");
             foreach (MenuPage page in pages)
             {
