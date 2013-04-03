@@ -310,12 +310,37 @@ namespace ParticleStormControl
 
         public void ApplyDamage(DamageMap damageMap, float timeInterval, Player[] playerList)
         {
+            
+            int prevPosPlayer = -1;
             foreach (MapObject interest in mapObjects)
+            {
+                // statistics
+                if (interest is SpawnPoint)
+                {
+                    //if((interest as SpawnPoint).PossessingPercentage == 1f)
+                        prevPosPlayer = (interest as SpawnPoint).PossessingPlayer;
+                }
+                // original line
                 interest.ApplyDamage(damageMap, timeInterval);
+                // statistics
+                if (interest is SpawnPoint)
+                {
+                    if (prevPosPlayer != (interest as SpawnPoint).PossessingPlayer)
+                    {
+                        if (prevPosPlayer != -1)
+                            GameStatistics.addLostBases(prevPosPlayer);
+                        if ((interest as SpawnPoint).PossessingPercentage == 1f && (interest as SpawnPoint).PossessingPlayer != -1)
+                            GameStatistics.addCaptueredBases((interest as SpawnPoint).PossessingPlayer);
+                    }
+                }
+            }
         }
 
         public void Update(float frameTimeSeconds, float totalTimeSeconds, Player[] players)
         {
+            // statistics
+            uint[] possesingBases = new uint[players.Length];
+            for (int i = 0; i < possesingBases.Length; ++i) possesingBases[i] = 0;
             // update
             foreach (MapObject mapObject in mapObjects)
             {
@@ -327,6 +352,14 @@ namespace ParticleStormControl
                     crosshair.Position = players[crosshair.PlayerIndex].CursorPosition;
                     crosshair.ParticleAttractionPosition = players[crosshair.PlayerIndex].ParticleAttractionPosition;
                     crosshair.Alive = players[crosshair.PlayerIndex].Alive;
+                }
+
+                // statistics
+                if (mapObject is SpawnPoint)
+                {
+                    SpawnPoint sp = mapObject as SpawnPoint;
+                    if (sp.PossessingPlayer != -1)
+                        possesingBases[sp.PossessingPlayer]++;
                 }
             }
 
@@ -384,6 +417,18 @@ namespace ParticleStormControl
                 wipeoutProgress += frameTimeSeconds;
                 if (wipeoutProgress > 1.0f)
                     wipeoutActive = false;
+            }
+
+            // statistics
+            if (GameStatistics.UpdateTimer(frameTimeSeconds))
+            {
+                for (int i = 0; i < players.Length; ++i)
+                {
+                    // TODO: the player has to compute the overall health of his particles
+                    GameStatistics.setParticlesAndHealth(i, (uint)players[i].NumParticlesAlive, (uint)players[i].NumParticlesAlive);
+                    GameStatistics.setPossessingBases(i, possesingBases[i]);
+                }
+                GameStatistics.UpdateDomination();
             }
         }
 
