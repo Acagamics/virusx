@@ -392,18 +392,18 @@ namespace ParticleStormControl
             }
 
             // random events
-            if (pickuptimer.Elapsed.TotalSeconds > 2)
+            if (pickuptimer.Elapsed.TotalSeconds > 4/*2*/)
             {
                 // random position within a certain range
                 Vector2 position = new Vector2((float)(Random.NextDouble()) * 0.8f + 0.1f, (float)(Random.NextDouble()) * 0.8f + 0.1f);
 
-                if (Random.NextDouble() < 0.2)
+                if (Random.NextDouble() < 0.25 /*0.25*/)
                     mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
-                else if (Random.NextDouble() < 0.2)
+                else if (Random.NextDouble() < 0.23 /*0.2*/)
                     mapObjects.Add(new Debuff(position, contentManager));
-                else if (Random.NextDouble() < 0.18)
+                else if (Random.NextDouble() < 0.15 /*0.18*/)
                     mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
-                else if (Random.NextDouble() < 0.2)
+                else if (Random.NextDouble() < 0.32 /*0.2*/)
                     mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager));
 
                 // restart timer
