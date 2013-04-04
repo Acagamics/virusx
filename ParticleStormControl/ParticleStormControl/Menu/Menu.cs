@@ -32,6 +32,9 @@ namespace ParticleStormControl.Menu
 
         public SpriteFont FontBold { get { return fontBold; } }
         private SpriteFont fontBold;
+
+        public SpriteFont FontCountdown { get { return fontCountdown; } }
+        private SpriteFont fontCountdown;
         #endregion
 
         public int ScreenWidth { get { return game.GraphicsDevice.Viewport.Width; } }
@@ -65,9 +68,10 @@ namespace ParticleStormControl.Menu
 
         public void LoadContent(ContentManager content)
         {
-            font = content.Load<SpriteFont>("font");
-            fontSmall = content.Load<SpriteFont>("fontSmall");
-            fontBold = content.Load<SpriteFont>("fontBold");
+            font = content.Load<SpriteFont>("fonts/font");
+            fontSmall = content.Load<SpriteFont>("fonts/fontSmall");
+            fontBold = content.Load<SpriteFont>("fonts/fontBold");
+            fontCountdown = content.Load<SpriteFont>("fonts/fontCountdown");
             pixelTexture = content.Load<Texture2D>("pix");
             foreach (MenuPage page in pages)
             {
@@ -121,8 +125,8 @@ namespace ParticleStormControl.Menu
         {
             if(PageChangingEvent != null)
                 PageChangingEvent(newPage, activePage);
+            pages[(int)newPage].OnActivated(activePage);
             activePage = newPage;
-            pages[(int)activePage].Initialize();
         }
 
         public void Shutdown()

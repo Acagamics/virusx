@@ -10,10 +10,9 @@ namespace ParticleStormControl.Menu
         {
             this.menu = menu;
         }
-
+        public virtual void OnActivated(Menu.Page oldPage) { }
         public abstract void LoadContent(ContentManager content);
         public abstract void Update(float frameTimeInterval);
         public abstract void Draw(SpriteBatch spriteBatch, float frameTimeInterval);
-        public abstract void Initialize();
     }
 }

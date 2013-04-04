@@ -16,18 +16,20 @@ namespace ParticleStormControl
         
         public enum VirusType
 	    {
-            H1N1,
+            H5N1,
             HEPATITISB,
             HIV,
-            NORO,
+            EPSTEINBAR,
 
             NUM_VIRUSES
 	    }
 
-        public readonly static VirusType[] Viruses = { VirusType.H1N1, VirusType.HEPATITISB, VirusType.HIV, VirusType.NORO };
-        public readonly static string[] VirusNames = { "Influenza A virus", "Hepatitis B virus", "Human immunodeficiency virus", "Norovirus" };
-        public readonly static string[] VirusDescriptions = { "causes influenza in birds and some mammals, and is the only species of influenzavirus A.", "is a species of the genus Orthohepadnavirus, which is likewise a part of the Hepadnaviridae family of viruses.", "is a lentivirus (slowly replicating retrovirus) that causes acquired immunodeficiency syndrome (AIDS).", "are a genetically diverse group of single-stranded RNA, non-enveloped viruses in the Caliciviridae family." };
-
+        public readonly static VirusType[] Viruses = { VirusType.H5N1, VirusType.HEPATITISB, VirusType.HIV, VirusType.EPSTEINBAR };
+        public readonly static string[] VirusNames = { "Influenza A virus", "Hepatitis B virus", "Human immunodeficiency virus", "Epstein-Bar virus" };
+        public readonly static string[] VirusDescriptions = { "causes influenza in birds and some mammals, and is the only species of influenzavirus A.",
+                                                               "is a species of the genus Orthohepadnavirus, which is likewise a part of the Hepadnaviridae family of viruses.",
+                                                               "is a lentivirus (slowly replicating retrovirus) that causes acquired immunodeficiency syndrome (AIDS).",
+                                                               "best known as the cause of infectious mononucleosis (glandular fever). It is also associated with particular forms of cancer, such as Hodgkin's lymphoma, Burkitt's lymphoma, " };
         private int virusIndex;
         public int VirusIndex
         {
@@ -36,6 +38,35 @@ namespace ParticleStormControl
         }
         public VirusType Virus
         { get { return Viruses[virusIndex]; } }
+
+
+        #region properties
+
+        // please all values from -1 to 1
+        private static readonly float[] disciplin_speed_byVirus = new float[]{ 0.7f, 0.0f, -0.6f, 0.5f };  // negative more disciplin, ...
+        public float Disciplin_speed
+        {  get { return disciplin_speed_byVirus[virusIndex]; } }
+
+        private static readonly float[] mass_health_byVirus = new float[] { -0.5f, -0.2f, 0.6f, -1.0f };  // negative more mass, positive more health 
+        public float Mass_health
+        { get { return mass_health_byVirus[virusIndex]; } }
+
+
+
+        // speed stuff
+        private const float speedConstant = 0.13f;
+        private const float speedSettingFactor = 0.04f;
+
+        // life stuff
+        public const float healthConstant = 15.0f;
+        public const float healthSettingFactor = 15.0f;
+
+        // discilplin constant - higher means that the particles will move more straight in player's direction
+        private const float disciplinConstant = 0.5f;
+        // attacking constant
+        private const float attackingPerSecond = 30.0f;
+
+        #endregion
 
         #endregion
 
@@ -124,9 +155,9 @@ namespace ParticleStormControl
 
         #region Colors
 
-        public readonly static Color[] Colors = { Color.Red, Color.Blue, Color.Yellow, Color.Green, Color.Black, Color.Pink, Color.Orange  };
-        public readonly static Color[] ParticleColors = { new Color(240, 80, 70), new Color(75, 95, 220), new Color(250, 216, 50), new Color(80, 200, 80), Color.DarkSlateGray, Color.HotPink, new Color(250, 120, 20) };
-        public readonly static string[] ColorNames = { "Red", "Blue", "Yellow", "Green", "Black", "Pink", "Orange" };
+        public readonly static Color[] Colors = { Color.Red, Color.Blue, Color.Yellow, Color.Green, /*Color.Black,*/ Color.Pink, Color.Orange  };
+        public readonly static Color[] ParticleColors = { new Color(240, 80, 70), new Color(75, 95, 220), new Color(250, 216, 50), new Color(80, 200, 80),/* Color.DarkSlateGray, */Color.HotPink, new Color(250, 120, 20) };
+        public readonly static string[] ColorNames = { "Red", "Blue", "Yellow", "Green", /*"Black", */"Pink", "Orange" };
 
 #if XBOX
         public readonly static Color[] TextureDamageValue = {  new Color(0, 0, 0, 1),
@@ -226,39 +257,6 @@ namespace ParticleStormControl
 
         #endregion
 
-        #region "pad"/particle properties
-
-        // please all values from -1 to 1
-        private float disciplin_speed = 0.0f;  // negative more disciplin, ...
-        public float Disciplin_speed
-        {
-            get { return disciplin_speed; }
-            set { disciplin_speed = MathHelper.Clamp(value, -1, 1); }
-        }
-
-        private float mass_health = 0.0f;      // negative more mass, positive more health 
-        public float Mass_health
-        {
-            get { return mass_health; }
-            set { mass_health = MathHelper.Clamp(value, -1, 1); }
-        }
-
-
-        // speed stuff
-        private const float speedConstant = 0.13f; 
-        private const float speedSettingFactor = 0.04f;
-
-        // life stuff
-        public const float healthConstant = 15.0f;
-        public const float healthSettingFactor = 15.0f;
-
-        // discilplin constant - higher means that the player will move more straight in player's direction
-        private const float disciplinConstant = 0.4f;
-        // attacking constant
-        private const float attackingPerSecond = 30.0f;
-
-        #endregion
-
         #region random
 
         readonly Random random = new Random();
@@ -290,11 +288,12 @@ namespace ParticleStormControl
 
         #endregion
 
-        public Player(int playerIndex, GraphicsDevice device, ContentManager content, Texture2D noiseTexture, int colorIndex)
+        public Player(int playerIndex, int virusTypeIndex, GraphicsDevice device, ContentManager content, Texture2D noiseTexture, int colorIndex)
         {
             this.playerIndex = (PlayerIndex)playerIndex;
             this.noiseTexture = noiseTexture;
             this.colorIndex = colorIndex;
+            this.virusIndex = virusTypeIndex;
 
             this.ItemSlot = global::ParticleStormControl.Item.ItemType.NONE;
 
@@ -426,8 +425,8 @@ namespace ParticleStormControl
 
         public void UpdateCPUPart(float timeInterval, IList<SpawnPoint> spawnPoints, bool cantDie)
         {
-            float health = ((mass_health * 0.5f) + 1.5f) * healthConstant;
-            float speed = speedConstant + speedSettingFactor * disciplin_speed;
+            float health = ((Mass_health * 0.5f) + 1.5f) * healthConstant;
+            float speed = speedConstant + speedSettingFactor * Disciplin_speed;
 
             // compute spawnings
             numSpawns = 0;
@@ -437,7 +436,7 @@ namespace ParticleStormControl
                 if (spawn.PossessingPlayer == (int)playerIndex)
                 {
                     spawn.SpawnTimeAccum += timeInterval;
-                    float f = spawn.SpawnSize / (spawnConstant + spawnSettingFactor * mass_health);
+                    float f = spawn.SpawnSize / (spawnConstant + spawnSettingFactor * Mass_health);
                     int numSpawned = (int)(spawn.SpawnTimeAccum * f);
 
                     if (numSpawned > 0)

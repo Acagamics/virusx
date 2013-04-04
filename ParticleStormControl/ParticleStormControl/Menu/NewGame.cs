@@ -1,4 +1,4 @@
-﻿#define QUICK_TWO_PLAYER_DEBUG
+﻿//#define QUICK_TWO_PLAYER_DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -14,36 +14,59 @@ namespace ParticleStormControl.Menu
 {
     class NewGame : MenuPage
     {
-        int padd = 40; // padding for boxes
-        int offset = 5; // offset for arrows
+        private const int padd = 40; // padding for boxes
+        private const int offset = 5; // offset for arrows
 
-        int maxCountdown = 3;
-        int safeCountdown = 1;
+        private const int maxCountdown = 3;
+        private const int safeCountdown = 1;
 
-        bool[] playerConnected = new bool[4];
-        bool[] playerReady = new bool[4];
+        private bool[] playerConnected = new bool[4];
+        private bool[] playerReady = new bool[4];
 
-        Texture2D[] viruses = new Texture2D[4];
-        Texture2D icons;
+        private Texture2D[] viruses = new Texture2D[4];
+        private Texture2D icons;
 
-        Color fontColor = Color.Black;
-        TimeSpan countdown = new TimeSpan();
+        private readonly Color fontColor = Color.Black;
+        private TimeSpan countdown = new TimeSpan();
 
         public NewGame(Menu menu)
             : base(menu)
-        {
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public override void Initialize()
         {
             Settings.Instance.ResetPlayerSettingsToDefault();
             playerConnected = new bool[4];
             playerReady = new bool[4];
             countdown = new TimeSpan();
+        }
 
+        public override void OnActivated(Menu.Page oldPage)
+        {
+            Settings.Instance.ResetPlayerSettingsToDefault();
+            for (int i = 0; i < 4; ++i)
+            {
+                playerConnected[i] = false;
+                playerReady[i] = false;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="content"></param>
+        public override void LoadContent(ContentManager content)
+        {
+            viruses[(int)Player.VirusType.H5N1] = content.Load<Texture2D>("viruses/H5N1");
+            viruses[(int)Player.VirusType.HEPATITISB] = content.Load<Texture2D>("viruses/HepatitisB");
+            viruses[(int)Player.VirusType.HIV] = content.Load<Texture2D>("viruses/HIV");
+            viruses[(int)Player.VirusType.EPSTEINBAR] = content.Load<Texture2D>("viruses/EpsteinBar");
+            icons = content.Load<Texture2D>("icons");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="frameTimeInterval"></param>
+        public override void Update(float frameTimeInterval)
+        {
             // :P
 #if QUICK_TWO_PLAYER_DEBUG
             Settings.Instance.PlayerControls[0] = InputManager.ControlType.KEYBOARD0;
@@ -54,27 +77,7 @@ namespace ParticleStormControl.Menu
             playerReady[0] = playerReady[1] = playerConnected[0] = playerConnected[1] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = true;
             menu.ChangePage(Menu.Page.INGAME);
 #endif
-        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="content"></param>
-        public override void LoadContent(ContentManager content)
-        {
-            viruses[0] = content.Load<Texture2D>("viruses/H1N1");
-            viruses[1] = content.Load<Texture2D>("viruses/HepatitisB");
-            viruses[2] = content.Load<Texture2D>("viruses/HIV");
-            viruses[3] = content.Load<Texture2D>("viruses/Noro");
-            icons = content.Load<Texture2D>("icons");
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="frameTimeInterval"></param>
-        public override void Update(float frameTimeInterval)
-        {
             if (InputManager.Instance.ExitButton())
                 menu.ChangePage(Menu.Page.MAINMENU);
 
@@ -202,16 +205,16 @@ namespace ParticleStormControl.Menu
                 Vector2 origin = new Vector2();
                 switch (i)
                 {
-                    case 0:
+                    case 2:
                         origin = new Vector2(padd + offX, padd + offY);
                         break;
-                    case 1:
+                    case 3:
                         origin = new Vector2(x + offX, y + offY);
                         break;
-                    case 2:
+                    case 1:
                         origin = new Vector2(x + offX, padd + offY);
                         break;
-                    case 3:
+                    case 0:
                         origin = new Vector2(padd + offX, y + offY);
                         break;
                 }
@@ -250,12 +253,24 @@ namespace ParticleStormControl.Menu
 
             // countdown
             if (countdown.TotalSeconds > 0)
-                spriteBatch.DrawString(menu.Font, ((int)countdown.TotalSeconds + 1).ToString(), new Vector2(Settings.Instance.ResolutionX / 2 - 5, Settings.Instance.ResolutionY / 2 - 15), countdown.TotalSeconds > safeCountdown ? Color.White : Color.Red);
+            {
+                // last half ? draw black fade
+                if (countdown.TotalSeconds < InGame.GAME_BLEND_DURATION)
+                {
+                    float blend = (float)(InGame.GAME_BLEND_DURATION - countdown.TotalSeconds) / InGame.GAME_BLEND_DURATION;
+                    spriteBatch.Draw(menu.PixelTexture, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * blend);
+                }
+
+                // countdown
+                String text = ((int)countdown.TotalSeconds + 1).ToString();
+                spriteBatch.DrawString(menu.FontCountdown, text, new Vector2(Settings.Instance.ResolutionX / 2 - 5, Settings.Instance.ResolutionY / 2 - 15), countdown.TotalSeconds > safeCountdown ? Color.White : Color.Red,
+                                        0.0f, menu.FontCountdown.MeasureString(text) * 0.5f, 1, SpriteEffects.None, 1.0f);
+            }
         }
 
         /* Helper */
 
-        int getNextFreeColorIndex(int start)
+        private int getNextFreeColorIndex(int start)
         {
             while (Settings.Instance.PlayerColorIndices.Contains(start) || start >= Player.Colors.Length)
             {
@@ -264,7 +279,7 @@ namespace ParticleStormControl.Menu
             return start;
         }
 
-        int getPreviousFreeColorIndex(int start)
+        private int getPreviousFreeColorIndex(int start)
         {
             while (Settings.Instance.PlayerColorIndices.Contains(start) || start < 0)
             {
@@ -273,7 +288,7 @@ namespace ParticleStormControl.Menu
             return start;
         }
 
-        int getFreePlayerIndex()
+        private int getFreePlayerIndex()
         {
             int i = 0;
             while (playerConnected[i] && i < 3)
@@ -281,21 +296,21 @@ namespace ParticleStormControl.Menu
             return i;
         }
 
-        int offsetIfDown(InputManager.ControlActions action, int index)
+        private int offsetIfDown(InputManager.ControlActions action, int index)
         {
             return InputManager.Instance.ButtonPressed(action, Settings.Instance.PlayerControls[index], true) && !playerReady[index] ? offset : 0;
         }
 
-        void startCountdown()
+        private void startCountdown()
         {
-            bool allReady = true;
+            bool allReady = playerConnected.Count(x => x) > 1;
             for (int i = 0; i < 3; i++)
             {
                 if (playerConnected[i] != playerReady[i])
                     allReady = false;
             }
             if (allReady && Settings.Instance.NumPlayers > 0)
-                countdown = TimeSpan.FromSeconds(maxCountdown);
+                countdown = TimeSpan.FromSeconds(maxCountdown - 0.001);
         }
 
         private void toggleReady(int index)

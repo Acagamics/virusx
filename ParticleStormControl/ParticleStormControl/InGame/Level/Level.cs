@@ -22,6 +22,7 @@ namespace ParticleStormControl
         public List<SpawnPoint> SpawnPoints { get { return spawnPoints; } }
 
         private Texture2D pixelTexture;
+        private Texture2D mutateBig;
 
         private SpriteBatch spriteBatch;
         private ContentManager contentManager;
@@ -101,7 +102,7 @@ namespace ParticleStormControl
 
         private Texture2D wipeoutExplosionTexture;
         private Texture2D wipeoutDamageTexture;
-        private const float WIPEOUT_SPEED = 1.0f;
+        private const float WIPEOUT_SPEED = 0.5f;
         private const float WIPEOUT_SIZEFACTOR = 1.5f;
         private float wipeoutProgress = 0.0f;
         private bool wipeoutActive;
@@ -138,7 +139,7 @@ namespace ParticleStormControl
 
             // switch
             switchSound = content.Load<SoundEffect>("sound/switch");
-            fontCountdownLarge = content.Load<SpriteFont>("fontCountdown");
+            fontCountdownLarge = content.Load<SpriteFont>("fonts/fontCountdown");
 
             // background & vignetting
             backgroundQuadVertexBuffer = new VertexBuffer(device, ScreenTriangleRenderer.ScreenAlignedTriangleVertex.VertexDeclaration, 4, BufferUsage.WriteOnly);
@@ -148,13 +149,23 @@ namespace ParticleStormControl
 
             // bg particles
             backgroundParticles = new BackgroundParticles(device, content);
-            
+        
+            // effects
+            mutateBig = content.Load<Texture2D>("Mutate_big");
+            wipeoutExplosionTexture = content.Load<Texture2D>("Wipeout_big");
+            wipeoutDamageTexture = wipeoutExplosionTexture;
+    
             // setup size
             Resize(device);
-            
-            // wipeout
-            wipeoutExplosionTexture = content.Load<Texture2D>("capture_glow");
-            wipeoutDamageTexture = content.Load<Texture2D>("capture_glow");
+        }
+
+        public void NewEmptyLevel(GraphicsDevice device)
+        {
+            NewGame(new Player[0]);
+
+            // clear particle target
+            BeginDrawInternParticleTarget(device);
+            EndDrawInternParticleTarget(device);
         }
 
         public void NewGame(Player[] players)
@@ -166,9 +177,8 @@ namespace ParticleStormControl
             CreateLevel(contentManager, players.Length);
 
             // crosshairs for players
-            Texture2D crossHairTexture = contentManager.Load<Texture2D>("basic_crosshair");
             for (int i = 0; i < players.Length; ++i)
-                mapObjects.Add(new Crosshair(i, crossHairTexture));
+                mapObjects.Add(new Crosshair(i, contentManager));
         }
 
         private void CreateLevel(ContentManager content, int numPlayers)
@@ -300,12 +310,37 @@ namespace ParticleStormControl
 
         public void ApplyDamage(DamageMap damageMap, float timeInterval, Player[] playerList)
         {
+            
+            int prevPosPlayer = -1;
             foreach (MapObject interest in mapObjects)
+            {
+                // statistics
+                if (interest is SpawnPoint)
+                {
+                    //if((interest as SpawnPoint).PossessingPercentage == 1f)
+                        prevPosPlayer = (interest as SpawnPoint).PossessingPlayer;
+                }
+                // original line
                 interest.ApplyDamage(damageMap, timeInterval);
+                // statistics
+                if (interest is SpawnPoint)
+                {
+                    if (prevPosPlayer != (interest as SpawnPoint).PossessingPlayer)
+                    {
+                        if (prevPosPlayer != -1)
+                            GameStatistics.addLostBases(prevPosPlayer);
+                        if ((interest as SpawnPoint).PossessingPercentage == 1f && (interest as SpawnPoint).PossessingPlayer != -1)
+                            GameStatistics.addCaptueredBases((interest as SpawnPoint).PossessingPlayer);
+                    }
+                }
+            }
         }
 
         public void Update(float frameTimeSeconds, float totalTimeSeconds, Player[] players)
         {
+            // statistics
+            uint[] possesingBases = new uint[players.Length];
+            for (int i = 0; i < possesingBases.Length; ++i) possesingBases[i] = 0;
             // update
             foreach (MapObject mapObject in mapObjects)
             {
@@ -317,6 +352,14 @@ namespace ParticleStormControl
                     crosshair.Position = players[crosshair.PlayerIndex].CursorPosition;
                     crosshair.ParticleAttractionPosition = players[crosshair.PlayerIndex].ParticleAttractionPosition;
                     crosshair.Alive = players[crosshair.PlayerIndex].Alive;
+                }
+
+                // statistics
+                if (mapObject is SpawnPoint)
+                {
+                    SpawnPoint sp = mapObject as SpawnPoint;
+                    if (sp.PossessingPlayer != -1)
+                        possesingBases[sp.PossessingPlayer]++;
                 }
             }
 
@@ -349,18 +392,18 @@ namespace ParticleStormControl
             }
 
             // random events
-            if (pickuptimer.Elapsed.TotalSeconds > 2)
+            if (pickuptimer.Elapsed.TotalSeconds > 4/*2*/)
             {
                 // random position within a certain range
                 Vector2 position = new Vector2((float)(Random.NextDouble()) * 0.8f + 0.1f, (float)(Random.NextDouble()) * 0.8f + 0.1f);
 
-                if (Random.NextDouble() < 0.5)
+                if (Random.NextDouble() < 0.25 /*0.25*/)
                     mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
-                else if (Random.NextDouble() < 0.3)
+                else if (Random.NextDouble() < 0.23 /*0.2*/)
                     mapObjects.Add(new Debuff(position, contentManager));
-                else if (Random.NextDouble() < 0.18)
+                else if (Random.NextDouble() < 0.15 /*0.18*/)
                     mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
-                else if (Random.NextDouble() < 0.1)
+                else if (Random.NextDouble() < 0.32 /*0.2*/)
                     mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager));
 
                 // restart timer
@@ -374,6 +417,18 @@ namespace ParticleStormControl
                 wipeoutProgress += frameTimeSeconds;
                 if (wipeoutProgress > 1.0f)
                     wipeoutActive = false;
+            }
+
+            // statistics
+            if (GameStatistics.UpdateTimer(frameTimeSeconds))
+            {
+                for (int i = 0; i < players.Length; ++i)
+                {
+                    // TODO: the player has to compute the overall health of his particles
+                    GameStatistics.setParticlesAndHealth(i, (uint)players[i].NumParticlesAlive, (uint)players[i].NumParticlesAlive);
+                    GameStatistics.setPossessingBases(i, possesingBases[i]);
+                }
+                GameStatistics.UpdateDomination();
             }
         }
 
@@ -512,7 +567,9 @@ namespace ParticleStormControl
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
 
             // countdown
-            DrawCountdown(device);
+            DrawCountdown(device, totalTimeSeconds);
+
+            // all alpha blended objects
             foreach (MapObject mapObject in mapObjects)
             {
                 if (mapObject.Alive)
@@ -521,8 +578,9 @@ namespace ParticleStormControl
 
             // wipeout
             if (wipeoutActive)
-                spriteBatch.Draw(wipeoutExplosionTexture, ComputePixelRect_Centered(Level.RELATIVE_MAX / 2, Level.RELATIVE_MAX.X * wipeoutProgress * WIPEOUT_SIZEFACTOR),
-                                    new Color(1.0f, 1.0f, 1.0f, 1.0f - wipeoutProgress));
+                spriteBatch.Draw(wipeoutExplosionTexture, ComputePixelRect(Level.RELATIVE_MAX / 2, Level.RELATIVE_MAX.X * wipeoutProgress * WIPEOUT_SIZEFACTOR),
+                                    null, new Color(1.0f, 1.0f, 1.0f, (float)(1.0 - Math.Sqrt(wipeoutProgress))), totalTimeSeconds, 
+                                    new Vector2(wipeoutExplosionTexture.Width, wipeoutExplosionTexture.Height) * 0.5f, SpriteEffects.None, 0.0f);
     
             spriteBatch.End();
 
@@ -547,17 +605,19 @@ namespace ParticleStormControl
             spriteBatch.End(); 
         }
 
-        public void DrawCountdown(GraphicsDevice device)
+        public void DrawCountdown(GraphicsDevice device, float totalPassedTime)
         {
             if (switchCountdownActive)
             {
+                spriteBatch.Draw(mutateBig, ComputePixelRect(RELATIVE_MAX * 0.5f, RELATIVE_MAX.Y * 0.4f), null, Color.LightSlateGray * 0.4f,
+                                    -totalPassedTime, new Vector2(mutateBig.Width, mutateBig.Height) / 2, SpriteEffects.None, 0.0f);
                 string text = ((int) (switchCountdownTimer + 1)).ToString();
                 spriteBatch.DrawString(fontCountdownLarge, text,
                                        new Vector2(
                                            (device.Viewport.Width - fontCountdownLarge.MeasureString(text).X)*
                                            0.5f,
                                            (device.Viewport.Height - fontCountdownLarge.MeasureString(text).Y)*
-                                           0.5f + 40), Color.FromNonPremultiplied(140, 140, 140, 160));
+                                           0.5f + 40), Color.FromNonPremultiplied(180, 180, 180, 180));
             }
         }
 

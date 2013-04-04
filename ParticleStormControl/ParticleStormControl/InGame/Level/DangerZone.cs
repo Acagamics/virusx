@@ -15,7 +15,7 @@ namespace ParticleStormControl
         /// </summary>
         public const float explosionMaxSize = 0.22f;
 
-        private const float explosionDamage = 8;
+        private const float explosionDamage = 2.0f;
         private const float explosionDuration = 7.0f;
         private float currentExplosionSize;
         private float currentRotation;
@@ -24,7 +24,6 @@ namespace ParticleStormControl
         private float alpha = 1.0f;
 
         private SoundEffect explosionSound;
-        private Texture2D dangerZoneTextureOuter;
         private Texture2D dangerZoneTextureInner;
 
         private readonly Vector2 textureCenterZone;
@@ -36,14 +35,13 @@ namespace ParticleStormControl
         {
             explosionSound = content.Load<SoundEffect>("sound/danger_zone");
             dangerZoneTextureInner = content.Load<Texture2D>("danger_zone_inner");
-            dangerZoneTextureOuter = content.Load<Texture2D>("danger_zone_outer");
 
             this.possessingPlayer = possessingPlayer;
 
             explosionTimer = new Stopwatch();
 
             Size = 0.05f;
-            textureCenterZone = new Vector2(dangerZoneTextureOuter.Width / 2, dangerZoneTextureOuter.Height / 2);
+            textureCenterZone = new Vector2(dangerZoneTextureInner.Width / 2, dangerZoneTextureInner.Height / 2);
 
             Activate();
         }
@@ -80,7 +78,6 @@ namespace ParticleStormControl
         {
             // explosion
             Rectangle rect = level.ComputePixelRect(Position, currentExplosionSize);
-            spriteBatch.Draw(dangerZoneTextureOuter, rect, null, Settings.Instance.GetPlayerColor(possessingPlayer) * alpha, 0.0f, textureCenterZone, SpriteEffects.None, 0);
             spriteBatch.Draw(dangerZoneTextureInner, rect, null, Settings.Instance.GetPlayerColor(possessingPlayer) * alpha, currentRotation, textureCenterZone, SpriteEffects.None, 0);
         }
     }

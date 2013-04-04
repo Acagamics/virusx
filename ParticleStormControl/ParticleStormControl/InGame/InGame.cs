@@ -21,6 +21,8 @@ namespace ParticleStormControl
     /// </summary>
     public class InGame
     {
+        private GraphicsDevice graphicsDevice;
+
         /// <summary>
         /// Statistics
         /// </summary>
@@ -84,7 +86,16 @@ namespace ParticleStormControl
             else if (newPage == Menu.Menu.Page.INGAME)
                 State = InGame.GameState.Playing;
             else
+            {
+                // generic level as background
+                if (State != InGame.GameState.Inactive)
+                {
+                    level.NewEmptyLevel(graphicsDevice);
+                    particleRenderer = null;
+                }
+
                 State = InGame.GameState.Inactive;
+            }
         }
 
         public void StartNewGame(GraphicsDevice graphicsDevice, ContentManager content)
@@ -97,7 +108,7 @@ namespace ParticleStormControl
             {
                 if (Settings.Instance.PlayerConnected[i])
                 {
-                    players[count] = new Player(i, graphicsDevice, content, noiseWhite2D, Settings.Instance.PlayerColorIndices[i]);
+                    players[count] = new Player(i, Settings.Instance.PlayerVirusIndices[i], graphicsDevice, content, noiseWhite2D, Settings.Instance.PlayerColorIndices[i]);
                     players[count].Controls = Settings.Instance.PlayerControls[i];
                     count++;
                 }
@@ -121,12 +132,15 @@ namespace ParticleStormControl
         /// </summary>
         public void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
         {
+            this.graphicsDevice = graphicsDevice;
+
             damageMap = new DamageMap();
             noiseWhite2D = NoiseTexture.GenerateNoise2D16f(graphicsDevice, 64, 64);
 
             damageMap.LoadContent(graphicsDevice);
 
             level = new Level(graphicsDevice, content);
+            level.NewEmptyLevel(graphicsDevice); // fake level for background
             inGameInterface = new InGameInterface(content);
             percentageBar = new PercentageBar(content);
 
@@ -269,11 +283,14 @@ namespace ParticleStormControl
         /// <param name="spriteBatch">a unstarted spritebatch</param>
         public void Draw_Backbuffer(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            if(State == GameState.Inactive)
+            float timeSinceLastFrame = (float)gameTime.TotalGameTime.TotalSeconds;
+
+            // draw level even if inactive as background
+            level.Draw(timeSinceLastFrame, spriteBatch.GraphicsDevice, players);
+            if (State == GameState.Inactive)
                 return;
 
-            level.Draw((float)gameTime.TotalGameTime.TotalSeconds, spriteBatch.GraphicsDevice, players);
-            inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, (float)gameTime.TotalGameTime.TotalSeconds);
+            inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, timeSinceLastFrame);
 
             // debug draw damagemap
 #if DAMAGEMAP_DEBUGGING
@@ -282,11 +299,12 @@ namespace ParticleStormControl
             spriteBatch.End();  
 #endif
 
+            // draw the percentage bar
+            percentageBar.Draw(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, timeSinceLastFrame);
+
             // reading player gpu results
             for (int i = 0; i < players.Length; ++i)
                 players[i].ReadGPUResults();
-
-            percentageBar.Draw(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, (float)gameTime.TotalGameTime.TotalSeconds);
         }
 
         public void Resize(GraphicsDevice graphicsDevice)

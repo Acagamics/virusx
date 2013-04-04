@@ -26,8 +26,7 @@ float2 RelativeMax;
 struct VertexShaderInput
 {
     float2 Position			: POSITION0;
-	float2 Texcoord			: TEXCOORD0;
-	float2 InstanceIndex	: TEXCOORD1;
+	float  InstanceIndex	: TEXCOORD0;
 };
 
 struct VertexShaderOutput
@@ -49,7 +48,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 	float health = tex2Dlod(sampInfos, vertexTexcoord).x;
 	
 	// health near zero brings this element into clipping space
-	[flatten]if(health > 0)	// dynamic branch? could spare texture lookup
+	if(health > 0)	// dynamic branch? could spare texture lookup - let compiler decide
 	{
 		health += MinHealth;
 		float2 instancePosition = tex2Dlod(sampPositions, vertexTexcoord).xy;	
@@ -57,14 +56,14 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 		output.Position.zw = float2(0.5f, 1.0f);
 	}
 	else
-		output.Position = 100;
+		output.Position.x = 100;
 	
 	output.InstanceIndex = input.InstanceIndex;
-	output.Texcoord = input.Texcoord;
+	output.Texcoord = input.Position + float2(0.5f, 0.5f);
     return output;
 }
 
-float4 PixelShaderFunction_Falloff(VertexShaderOutput input) : COLOR0
+float4 PixelShaderFunction_Standard(VertexShaderOutput input) : COLOR0
 {
 	const float rippling = 3.0f;
 
@@ -85,6 +84,28 @@ float4 PixelShaderFunction_Falloff(VertexShaderOutput input) : COLOR0
 
 //	float alpha = 1.0f - dot(v,v);
 //   return Color * alpha;
+
+
+	return float4(1,0,1,1);
+}
+
+float4 PixelShaderFunction_H5N1(VertexShaderOutput input) : COLOR0
+{
+	const float stickCount = 6.0;
+
+	float2 v = (input.Texcoord - 0.5f)*2;
+
+	float midDist = dot(v,v);
+	float midDistInv = 1.0-midDist;
+	float circle = smoothstep(0.5, 1.0, midDistInv);
+//	circle = sqrt(circle);
+	float angle = atan2(v.x, v.y) + input.InstanceIndex;
+	float sticks = smoothstep(0.0, 0.5, sin(angle * stickCount)) * 
+				   smoothstep(1.0, 0.4, midDistInv) * midDistInv;
+	float virus = max(circle, sticks) - smoothstep(0.7, 1.0, midDistInv)*0.6;
+	clip(virus - 0.001f);
+
+    return Color * virus;
 }
 
 float4 PixelShaderFunction_NoFalloff(VertexShaderOutput input) : COLOR0
@@ -97,16 +118,25 @@ float4 PixelShaderFunction_NoFalloff(VertexShaderOutput input) : COLOR0
     return Color * alpha;
 }
 
-technique WithFalloff
+technique Standard
 {
     pass Pass1
     {
         VertexShader = compile vs_3_0 VertexShaderFunction();
-        PixelShader = compile ps_3_0 PixelShaderFunction_Falloff();
+        PixelShader = compile ps_3_0 PixelShaderFunction_Standard();
     }
 }
 
-technique WithoutFalloff
+technique H5N1
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunction();
+        PixelShader = compile ps_3_0 PixelShaderFunction_H5N1();
+    }
+}
+
+technique DamageMap
 {
     pass Pass1
     {
