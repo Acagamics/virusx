@@ -68,7 +68,7 @@ float4 PixelShaderFunction_Falloff(VertexShaderOutput input) : COLOR0
 {
 	const float rippling = 3.0f;
 
-	float2 v = (input.Texcoord - 0.5f)*2;
+	float2 v = input.Texcoord*2.0f - 1.0f;
 
 	// compute polar cordinates
 	float radius = length(v);
@@ -76,7 +76,7 @@ float4 PixelShaderFunction_Falloff(VertexShaderOutput input) : COLOR0
 	
 	// disturb radius
 	float disturbedRadius = radius * ((sin(angle*rippling) + sin(angle*rippling*2.0f)) * 0.1f + 1.1f);
-	float circle = 1.0f - min(1.0f, lerp(radius, disturbedRadius, 0.8f + sin(input.InstanceIndex)*0.5));
+	float circle = 1.0f - saturate(lerp(radius, disturbedRadius, 0.8f + sin(input.InstanceIndex)*0.5));
 	clip(circle - 0.001f);
 
 	circle = smoothstep(0.0f, 0.3f, circle) - smoothstep(0.25f, 0.4f, circle)*0.5f;
@@ -89,7 +89,7 @@ float4 PixelShaderFunction_Falloff(VertexShaderOutput input) : COLOR0
 
 float4 PixelShaderFunction_NoFalloff(VertexShaderOutput input) : COLOR0
 {
-	float2 v = (input.Texcoord - 0.5f)*2;
+	float2 v = input.Texcoord*2.0f - 1.0f;
 	float alpha = dot(v,v) < 1.0f;
 	
 	clip(alpha - 1.0f/255.0f);

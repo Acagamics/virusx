@@ -43,7 +43,7 @@ float4 Circle(VertexShaderOutput input) : COLOR0
 float4 FilledCircle(VertexShaderOutput input) : COLOR0
 {
 	float2 v = input.Texcoord * 2 - 1;
-	float intensity = (1.0f-dot(v,v)) * 0.5f;
+	float intensity = -dot(v,v) * 0.5f + 0.5f;
 	clip(intensity - 1.0f/255.0f);
 	return intensity;
 }

@@ -30,16 +30,16 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
 	float2 v = input.Texcoord * RelativeMax;
 
-	const float FALLOFF = 64.0f;
+	const float FALLOFF = 95.0f;
 	const float FACTOR = -(1.0f/16.0f);
 	float cellFactor = 0.0f;
 
 	[unroll] for(int i=0; i<MAX_NUM_CELLS; ++i)
 	{
 		float dist = distance(v, Cells_Pos2D[i]);
-		cellFactor += exp(-FALLOFF * dist);
+		cellFactor += exp2(-FALLOFF * dist);
     }
-	cellFactor = min(1.0, FACTOR * log(cellFactor));
+	cellFactor = saturate(FACTOR * log(cellFactor));
 
 	float4 outColor;
 	outColor = cellFactor;
