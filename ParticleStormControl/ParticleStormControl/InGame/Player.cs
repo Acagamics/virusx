@@ -52,17 +52,34 @@ namespace ParticleStormControl
         { get { return mass_health_byVirus[virusIndex]; } }
 
 
-
+        
         // speed stuff
+        private static readonly float[] speed_byVirus = new float[] { 0.7f, 0.0f, -0.6f, 0.5f };
         private const float speedConstant = 0.13f;
         private const float speedSettingFactor = 0.04f;
 
+        public float Speed
+        { get { return speedConstant + speedSettingFactor * speed_byVirus[virusIndex]; } }
+
         // life stuff
+        private static readonly float[] mass_byVirus = new float[] { -0.5f, -0.2f, 0.6f, -1.0f };
+        private static readonly float[] health_byVirus = new float[] { -0.5f, -0.2f, 0.6f, -1.0f };
         public const float healthConstant = 15.0f;
         public const float healthSettingFactor = 15.0f;
 
+        public float Mass
+        { get { return mass_byVirus[virusIndex]; } }
+
+        public float Health
+        { get { return ((health_byVirus[virusIndex] * 0.5f) + 1.5f) * healthConstant; } }
+
         // discilplin constant - higher means that the particles will move more straight in player's direction
+        private static readonly float[] disciplin_byVirus = new float[] { 0.7f, 0.0f, -0.6f, 0.5f };
         private const float disciplinConstant = 0.5f;
+
+        public float Disciplin
+        { get { return speedConstant + speedSettingFactor * speed_byVirus[virusIndex]; } }
+
         // attacking constant
         private const float attackingPerSecond = 30.0f;
 
@@ -425,8 +442,9 @@ namespace ParticleStormControl
 
         public void UpdateCPUPart(float timeInterval, IList<SpawnPoint> spawnPoints, bool cantDie)
         {
-            float health = ((Mass_health * 0.5f) + 1.5f) * healthConstant;
-            float speed = speedConstant + speedSettingFactor * Disciplin_speed;
+            // TODO health property and speed property
+            float health = Health;//((Mass_health * 0.5f) + 1.5f) * healthConstant;
+            float speed = Speed;//speedConstant + speedSettingFactor * Disciplin_speed;
 
             // compute spawnings
             numSpawns = 0;
