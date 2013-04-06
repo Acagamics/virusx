@@ -52,17 +52,34 @@ namespace ParticleStormControl
         { get { return mass_health_byVirus[virusIndex]; } }
 
 
-
+        
         // speed stuff
+        private static readonly float[] speed_byVirus = new float[] { 0.7f, 0.0f, -0.6f, 0.5f };
         private const float speedConstant = 0.13f;
         private const float speedSettingFactor = 0.04f;
 
+        public float Speed
+        { get { return speedConstant + speedSettingFactor * speed_byVirus[virusIndex]; } }
+
         // life stuff
+        private static readonly float[] mass_byVirus = new float[] { -0.5f, -0.2f, 0.6f, -1.0f };
+        private static readonly float[] health_byVirus = new float[] { -0.5f, -0.2f, 0.6f, -1.0f };
         public const float healthConstant = 15.0f;
         public const float healthSettingFactor = 15.0f;
 
+        public float Mass
+        { get { return mass_byVirus[virusIndex]; } }
+
+        public float Health
+        { get { return ((health_byVirus[virusIndex] * 0.5f) + 1.5f) * healthConstant; } }
+
         // discilplin constant - higher means that the particles will move more straight in player's direction
+        private static readonly float[] disciplin_byVirus = new float[] { 0.7f, 0.0f, -0.6f, 0.5f };
         private const float disciplinConstant = 0.5f;
+
+        public float Disciplin
+        { get { return speedConstant + speedSettingFactor * speed_byVirus[virusIndex]; } }
+
         // attacking constant
         private const float attackingPerSecond = 30.0f;
 
@@ -381,21 +398,19 @@ namespace ParticleStormControl
 
             #region PROCESS
 
-            float speed = speedConstant + speedSettingFactor * Disciplin_speed;
-
             particleProcessing.Parameters["Positions"].SetValue(PositionTexture);
             particleProcessing.Parameters["Movements"].SetValue(MovementTexture);
             particleProcessing.Parameters["Health"].SetValue(HealthTexture);
 
             particleProcessing.Parameters["particleAttractionPosition"].SetValue(particleAttractionPosition);
-            particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant * timeInterval / speed);
+            particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant * timeInterval / Speed);
             particleProcessing.Parameters["TimeInterval"].SetValue(timeInterval);
             particleProcessing.Parameters["DamageMap"].SetValue(damageMapTexture);
             particleProcessing.Parameters["DamageFactor"].SetValue(DamageMapMask[Index] * (attackingPerSecond * timeInterval * 255));
 
-            particleProcessing.Parameters["MovementFactor"].SetValue(speed * timeInterval);
+            particleProcessing.Parameters["MovementFactor"].SetValue(Speed * timeInterval);
 
-            particleProcessing.Parameters["NoiseToMovementFactor"].SetValue(timeInterval * NoiseToMovementFactor * speed);
+            particleProcessing.Parameters["NoiseToMovementFactor"].SetValue(timeInterval * NoiseToMovementFactor * Speed);
             particleProcessing.Parameters["NoiseTexture"].SetValue(noiseTexture);
 
             device.BlendState = BlendState.Opaque;
@@ -428,7 +443,8 @@ namespace ParticleStormControl
 
         public void UpdateCPUPart(float timeInterval, IList<SpawnPoint> spawnPoints, bool cantDie)
         {
-            float health = ((Mass_health * 0.5f) + 1.5f) * healthConstant;
+            // TODO health property and speed property
+            float health = Health;//((Mass_health * 0.5f) + 1.5f) * healthConstant;
 
             // compute spawnings
             numSpawns = 0;
