@@ -547,7 +547,6 @@ namespace ParticleStormControl
 
             // background
             device.SetVertexBuffer(backgroundQuadVertexBuffer);
-            backgroundShader.Parameters["Cells_Color"].SetValue(spawnPoints.Select(x => x.ComputeColor().ToVector3()).ToArray());
             backgroundShader.CurrentTechnique.Passes[0].Apply();
             device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
 

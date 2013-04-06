@@ -150,25 +150,25 @@ namespace ParticleStormControl
             particleEffect.CurrentTechnique.Passes[0].Apply();
 
             // sometimes there are problems with using linear - the effects prohibts this, but does still happen
-         /*   for (int i = 0; i < 8; ++i)
+            for (int i = 0; i < 8; ++i)
             {
                 if (device.Textures[i] != null)
                     device.SamplerStates[i] = SamplerState.PointClamp;
-            } */
+            }
 
             device.SetVertexBuffers(particleVertexBufferBinding, instanceVertexBufferBinding[player.Index]);
             device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 4, 0, 2, player.HighestUsedParticleIndex + 1);
 
 
             // reset
-        /*    for (int i = 0; i < 8; ++i)
+            for (int i = 0; i < 8; ++i)
             {
                 if (device.Textures[i] != null)
                 {
                     device.SamplerStates[i] = SamplerState.LinearWrap;
                     device.Textures[i] = null;
                 }
-            } */
+            }
         }
     }
 }

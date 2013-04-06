@@ -92,6 +92,7 @@ namespace ParticleStormControl
                 {
                     level.NewEmptyLevel(graphicsDevice);
                     particleRenderer = null;
+                    damageMap.Clear(graphicsDevice);
                 }
 
                 State = InGame.GameState.Inactive;
@@ -104,7 +105,7 @@ namespace ParticleStormControl
 
             players = new Player[Settings.Instance.NumPlayers];
             int count = 0;
-            for (int i = 0; i < 3; ++i)
+            for (int i = 0; i < 4; ++i)
             {
                 if (Settings.Instance.PlayerConnected[i])
                 {
@@ -113,6 +114,8 @@ namespace ParticleStormControl
                     count++;
                 }
             }
+
+            
 
             // restart stuff
             level.NewGame(players);
@@ -208,8 +211,6 @@ namespace ParticleStormControl
                     playerTaskList[i] = Task.Factory.StartNew(func, i);
                 Task.WaitAll(playerTaskList);
 #endif
-                // wining
-                CheckWinning(passedFrameTime);
 
                 // damaging - switch every frame to be xbox friendly (preserve content stuff)
                 // see also correlating gpu-functions
@@ -221,6 +222,9 @@ namespace ParticleStormControl
 
                 // level update
                 level.Update((float)gameTime.ElapsedGameTime.TotalSeconds, passedFrameTime, players);
+
+                // wining
+                CheckWinning(passedFrameTime);
             }
         }
 
@@ -245,8 +249,7 @@ namespace ParticleStormControl
             {
                 // statistics
                 level.GameStatistics.addWonMatches(winPlayerIndex);
-
-                State = GameState.Inactive;
+                
                 ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).ShownWinnerColorIndex = Settings.Instance.PlayerColorIndices[winPlayerIndex];
                 menu.ChangePage(Menu.Menu.Page.WIN);
             }
