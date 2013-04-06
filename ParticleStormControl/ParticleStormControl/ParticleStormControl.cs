@@ -1,5 +1,4 @@
 //#define NVIDIAPERFHUD_POSSIBLE
-#define SHOW_STATISTICS
 //#define DAMAGEMAP_DEBUGGING
 
 using System;
@@ -18,6 +17,7 @@ using System.Threading;
 
 using System.Threading.Tasks;
 using ParticleStormControl;
+using ParticleStormControl.Menu;
 
 #endif
 
@@ -29,17 +29,17 @@ namespace ParticleStormControl
     public class ParticleStormControl : Microsoft.Xna.Framework.Game
     {
         public const string VERSION = "pscd XX.04.2013";
+
+        private bool showStatistics = true;
      
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
         #region frame rate measurement
 
-#if SHOW_STATISTICS
         private float frameRateCounterElapsed;
         private float frameRate;
         private float frames;
-#endif
 
         #endregion
 
@@ -169,17 +169,14 @@ namespace ParticleStormControl
             float passedFrameTime = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
             InputManager.Instance.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
-            try 
-	        {
-                Window.Title = inGame.Players.Length.ToString() + " | InGame.State: " + inGame.State + " | menu.ActivePage: " + menu.ActivePage;
-	        }
-	        catch (Exception)
-	        {
-                Window.Title = "-1" + " | InGame.State: " + inGame.State + " | menu.ActivePage: " + menu.ActivePage;
-	        }
 
             menu.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+
             inGame.Update(gameTime);
+
+            if (InputManager.Instance.PressedButton(Keys.F1))
+                showStatistics = !showStatistics;
+
         }
 
         /// <summary>
@@ -199,36 +196,38 @@ namespace ParticleStormControl
 
 
             // show statistics
-#if SHOW_STATISTICS
-            frameRateCounterElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (frameRateCounterElapsed > 1.0f)
-            {
-                frameRateCounterElapsed -= 1.0f;
-                frameRate = frames;
-                frames = 0;
-            }
-            else
-                frames += 1;
 
-            string statistic= "";
-            statistic += gameTime.ElapsedGameTime.TotalMilliseconds.ToString("000.0") + "ms | " + frameRate.ToString("0.0") + "fps";
-
-            int totalParticleCount = 0;
-            if (inGame.State == InGame.GameState.Playing)
+            if (showStatistics)
             {
-                for (int i = 0; i < inGame.Players.Length; ++i)
+                frameRateCounterElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (frameRateCounterElapsed > 1.0f)
                 {
-                    statistic += "\nPlayer" + i + ": NumParticles: " + inGame.Players[i].NumParticlesAlive + " | HighestUsedIndex: " +
-                                        inGame.Players[i].HighestUsedParticleIndex + " | NumSpawns: " + inGame.Players[i].CurrentSpawnNumber;
-                    totalParticleCount += inGame.Players[i].NumParticlesAlive;
+                    frameRateCounterElapsed -= 1.0f;
+                    frameRate = frames;
+                    frames = 0;
                 }
-                statistic += "\nTotalParticles: " + totalParticleCount;
-            }
+                else
+                    frames += 1;
 
-            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
-            spriteBatch.DrawString(menu.FontSmall, statistic, new Vector2(5, 5), Color.Gray);
-            spriteBatch.End();
-#endif
+                string statistic = "";
+                statistic += gameTime.ElapsedGameTime.TotalMilliseconds.ToString("000.0") + "ms | " + frameRate.ToString("0.0") + "fps";
+
+                int totalParticleCount = 0;
+                if (inGame.State == InGame.GameState.Playing)
+                {
+                    for (int i = 0; i < inGame.Players.Length; ++i)
+                    {
+                        statistic += "\nPlayer" + i + ": NumParticles: " + inGame.Players[i].NumParticlesAlive + " | HighestUsedIndex: " +
+                                            inGame.Players[i].HighestUsedParticleIndex + " | NumSpawns: " + inGame.Players[i].CurrentSpawnNumber;
+                        totalParticleCount += inGame.Players[i].NumParticlesAlive;
+                    }
+                    statistic += "\nTotalParticles: " + totalParticleCount;
+                }
+
+                spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
+                SimpleButton.Draw(spriteBatch, menu.Font, statistic, new Vector2(5, 5), Color.FromNonPremultiplied(0, 0, 0, 128), menu.PixelTexture);
+                spriteBatch.End();
+            }
 
             base.Draw(gameTime);
         }

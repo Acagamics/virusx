@@ -136,14 +136,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fonts\fontSmall.spritefont">
-      <Name>fontSmall</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
-      <SubType>Designer</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="danger_zone_inner.png">
       <Name>danger_zone_inner</Name>
       <Importer>TextureImporter</Importer>
@@ -236,8 +228,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fonts\fontBold.spritefont">
-      <Name>fontBold</Name>
+    <Compile Include="fonts\fontHeading.spritefont">
+      <Name>fontHeading</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
       <SubType>Designer</SubType>

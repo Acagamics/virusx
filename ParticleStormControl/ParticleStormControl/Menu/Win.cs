@@ -34,8 +34,8 @@ namespace ParticleStormControl.Menu
         {
             spriteBatch.Draw(logo, new Vector2(0, menu.ScreenHeight - logo.Height + 200), Color.White);
             string text = Player.ColorNames[ShownWinnerColorIndex] + " wins!";
-            Vector2 stringSize = menu.Font.MeasureString(text);
-            spriteBatch.DrawString(menu.Font, text, (new Vector2(menu.ScreenWidth, menu.ScreenHeight) - menu.Font.MeasureString(text)) *0.5f, Player.Colors[ShownWinnerColorIndex]);
+            Vector2 stringSize = menu.FontHeading.MeasureString(text);
+            SimpleButton.Draw(spriteBatch, menu.FontHeading, text, (new Vector2(menu.ScreenWidth, menu.ScreenHeight) - stringSize) * 0.5f, Player.Colors[ShownWinnerColorIndex], menu.PixelTexture);
         }
     }
 }

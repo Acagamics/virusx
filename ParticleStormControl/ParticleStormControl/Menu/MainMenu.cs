@@ -69,14 +69,14 @@ namespace ParticleStormControl.Menu
 
         public override void Draw(SpriteBatch spriteBatch, float timeInterval)
         {
-            Vector2 screenMid = new Vector2(menu.ScreenWidth / 2, menu.ScreenHeight / 2);
+            SimpleButton.Draw(spriteBatch, menu.FontHeading, "< insert logo here >", new Vector2(100, 100), false, menu.PixelTexture);
 
-            SimpleButton.Draw(spriteBatch, menu.Font, "New Game", screenMid + new Vector2(0, -75), selectedButton == Button.NEWGAME);
-            SimpleButton.Draw(spriteBatch, menu.Font, "Options", screenMid + new Vector2(0, -25), selectedButton == Button.OPTIONS);
-            SimpleButton.Draw(spriteBatch, menu.Font, "Credits", screenMid + new Vector2(0, 25), selectedButton == Button.CREDITS);
-            SimpleButton.Draw(spriteBatch, menu.Font, "Exit", screenMid + new Vector2(0, 75), selectedButton == Button.END);
+            SimpleButton.Draw(spriteBatch, menu.Font, "New Game", new Vector2(100, 220), selectedButton == Button.NEWGAME, menu.PixelTexture);
+            SimpleButton.Draw(spriteBatch, menu.Font, "Options", new Vector2(100, 280), selectedButton == Button.OPTIONS, menu.PixelTexture);
+            SimpleButton.Draw(spriteBatch, menu.Font, "Credits", new Vector2(100, 340), selectedButton == Button.CREDITS, menu.PixelTexture);
+            SimpleButton.Draw(spriteBatch, menu.Font, "Exit Game", new Vector2(100, 400), selectedButton == Button.END, menu.PixelTexture);
 
-            spriteBatch.DrawString(menu.FontSmall, ParticleStormControl.VERSION, new Vector2(menu.ScreenWidth - 200, menu.ScreenHeight - 50), Color.Black);
+            spriteBatch.DrawString(menu.Font, ParticleStormControl.VERSION, new Vector2(menu.ScreenWidth - 200, menu.ScreenHeight - 50), Color.Black);
         }
     }
 }
