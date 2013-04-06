@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define EMPTY_LEVELDEBUG
+#define NO_ITEMS
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
@@ -191,11 +193,6 @@ namespace ParticleStormControl
             Texture2D hqInner = content.Load<Texture2D>("unit_hq_inner");
             Texture2D hqOuter = content.Load<Texture2D>("unit_hq_outer");
 
-            // how many?
-            const int MIN_NUMPOINTS = 4;
-            const int MAX_NUMPOINTS = 12;
-            int pointcount = Random.Next(MAX_NUMPOINTS - MIN_NUMPOINTS) + MIN_NUMPOINTS;
-
             // player starts
             List<Vector2> backgroundCellPositions = new List<Vector2>();
             const float LEVEL_BORDER = 0.2f;
@@ -243,7 +240,9 @@ namespace ParticleStormControl
             int numSkips = (int)(Math.Pow(Random.NextDouble(), 4) * MAX_SKIPS + 0.5f);
             for(int i=0; i<numSkips; ++i)
                 spawnPositions.RemoveAt(Random.Next(spawnPositions.Count));
-
+#if EMPTY_LEVELDEBUG
+            spawnPositions.Clear();
+#endif
             // spawn generation
             foreach(Vector2 pos in spawnPositions)
             {
@@ -396,7 +395,8 @@ namespace ParticleStormControl
             {
                 // random position within a certain range
                 Vector2 position = new Vector2((float)(Random.NextDouble()) * 0.8f + 0.1f, (float)(Random.NextDouble()) * 0.8f + 0.1f);
-
+#if NO_ITEMS
+#else
                 if (Random.NextDouble() < 0.25 /*0.25*/)
                     mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
                 else if (Random.NextDouble() < 0.23 /*0.2*/)
@@ -405,7 +405,7 @@ namespace ParticleStormControl
                     mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
                 else if (Random.NextDouble() < 0.32 /*0.2*/)
                     mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager));
-
+#endif
                 // restart timer
                 pickuptimer.Reset();
                 pickuptimer.Start();

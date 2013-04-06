@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define ALL_CURSORS_IN_CENTER_POSITION
+
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -43,42 +45,43 @@ namespace ParticleStormControl
         #region properties
 
         // please all values from -1 to 1
-        private static readonly float[] disciplin_speed_byVirus = new float[]{ 0.7f, 0.0f, -0.6f, 0.5f };  // negative more disciplin, ...
+        /*private static readonly float[] disciplin_speed_byVirus = new float[]{ 0.7f, 0.0f, -0.6f, 0.5f };  // negative more disciplin, ...
         public float Disciplin_speed
         {  get { return disciplin_speed_byVirus[virusIndex]; } }
 
         private static readonly float[] mass_health_byVirus = new float[] { -0.5f, -0.2f, 0.6f, -1.0f };  // negative more mass, positive more health 
         public float Mass_health
-        { get { return mass_health_byVirus[virusIndex]; } }
+        { get { return mass_health_byVirus[virusIndex]; } }*/
 
 
+        // attributs
+        private static readonly float[] mass_byVirus = new float[] { 0.5f, 1.0f, -0.3025f, 1.0f };
+        private static readonly float[] speed_byVirus = new float[] { 0.5f, 0.0f, 0.1f, 1.0f };
+        private static readonly float[] health_byVirus = new float[] { 0.5f, 0.5f, 1.0f, 0.0f };
+        private static readonly float[] disciplin_byVirus = new float[] { 0.4f, 0.4f, 0.8f, 0.0f };
         
         // speed stuff
-        private static readonly float[] speed_byVirus = new float[] { 0.7f, 0.0f, -0.6f, 0.5f };
         private const float speedConstant = 0.13f;
-        private const float speedSettingFactor = 0.04f;
+        private const float speedSettingFactor = 0.08f;
 
         public float Speed
         { get { return speedConstant + speedSettingFactor * speed_byVirus[virusIndex]; } }
 
         // life stuff
-        private static readonly float[] mass_byVirus = new float[] { -0.5f, -0.2f, 0.6f, -1.0f };
-        private static readonly float[] health_byVirus = new float[] { -0.5f, -0.2f, 0.6f, -1.0f };
         public const float healthConstant = 15.0f;
         public const float healthSettingFactor = 15.0f;
 
         public float Mass
-        { get { return mass_byVirus[virusIndex]; } }
+        { get { return -2*mass_byVirus[virusIndex]; } }
 
         public float Health
         { get { return ((health_byVirus[virusIndex] * 0.5f) + 1.5f) * healthConstant; } }
 
         // discilplin constant - higher means that the particles will move more straight in player's direction
-        private static readonly float[] disciplin_byVirus = new float[] { 0.7f, 0.0f, -0.6f, 0.5f };
-        private const float disciplinConstant = 0.5f;
+        private const float disciplinConstant = 0.15f;
 
         public float Disciplin
-        { get { return speedConstant + speedSettingFactor * speed_byVirus[virusIndex]; } }
+        { get { return 1-disciplin_byVirus[virusIndex]; } }
 
         // attacking constant
         private const float attackingPerSecond = 30.0f;
@@ -245,6 +248,19 @@ namespace ParticleStormControl
             get { return cursorPosition; }
         }
         private Vector2 cursorPosition;
+
+#if ALL_CURSORS_IN_CENTER_POSITION
+        private readonly static Vector2[] cursorStartPositions =
+            {
+                new Vector2(Level.RELATIVE_MAX.X-0.2f, 0.2f),
+                new Vector2(0.2f, Level.RELATIVE_MAX.Y-0.2f),
+                
+                //new Vector2(Level.RELATIVE_MAX.X/2, Level.RELATIVE_MAX.Y/2),
+                //new Vector2(Level.RELATIVE_MAX.X/2, Level.RELATIVE_MAX.Y/2),
+                new Vector2(Level.RELATIVE_MAX.X/2, Level.RELATIVE_MAX.Y/2),
+                new Vector2(Level.RELATIVE_MAX.X/2, Level.RELATIVE_MAX.Y/2)
+            };
+#else
         private readonly static Vector2[] cursorStartPositions =
             {
                 new Vector2(0.2f, Level.RELATIVE_MAX.Y-0.2f),
@@ -252,11 +268,12 @@ namespace ParticleStormControl
                 new Vector2(Level.RELATIVE_MAX.X-0.2f, Level.RELATIVE_MAX.Y-0.2f),
                 new Vector2(0.2f, 0.2f)
             };
-
+#endif
         /// <summary>
         /// movementspeed of the cursor
         /// </summary>
         private const float CURSOR_SPEED = 1.0f;
+
 
         #endregion
 
@@ -277,7 +294,7 @@ namespace ParticleStormControl
         #region random
 
         readonly Random random = new Random();
-        private const float NoiseToMovementFactor = 15 * disciplinConstant;
+        private float NoiseToMovementFactor { get { return 15 * disciplinConstant; } }
 
         #endregion
 
@@ -403,14 +420,14 @@ namespace ParticleStormControl
             particleProcessing.Parameters["Health"].SetValue(HealthTexture);
 
             particleProcessing.Parameters["particleAttractionPosition"].SetValue(particleAttractionPosition);
-            particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant * timeInterval / Speed);
+            particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant * timeInterval / (Disciplin*0.1f));//Speed);
             particleProcessing.Parameters["TimeInterval"].SetValue(timeInterval);
             particleProcessing.Parameters["DamageMap"].SetValue(damageMapTexture);
             particleProcessing.Parameters["DamageFactor"].SetValue(DamageMapMask[Index] * (attackingPerSecond * timeInterval * 255));
 
             particleProcessing.Parameters["MovementFactor"].SetValue(Speed * timeInterval);
 
-            particleProcessing.Parameters["NoiseToMovementFactor"].SetValue(timeInterval * NoiseToMovementFactor * Speed);
+            particleProcessing.Parameters["NoiseToMovementFactor"].SetValue(timeInterval /* NoiseToMovementFactor */ * Disciplin );//* Speed);
             particleProcessing.Parameters["NoiseTexture"].SetValue(noiseTexture);
 
             device.BlendState = BlendState.Opaque;
@@ -454,7 +471,7 @@ namespace ParticleStormControl
                 if (spawn.PossessingPlayer == (int)playerIndex)
                 {
                     spawn.SpawnTimeAccum += timeInterval;
-                    float f = spawn.SpawnSize / (spawnConstant + spawnSettingFactor * Mass_health);
+                    float f = spawn.SpawnSize / (spawnConstant + spawnSettingFactor * Mass);//Mass_health);
                     int numSpawned = (int)(spawn.SpawnTimeAccum * f);
 
                     if (numSpawned > 0)
