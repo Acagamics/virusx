@@ -1,5 +1,5 @@
-﻿#define EMPTY_LEVELDEBUG
-#define NO_ITEMS
+﻿//#define EMPTY_LEVELDEBUG
+//#define NO_ITEMS
 using System;
 using System.Collections.Generic;
 using System.Linq;

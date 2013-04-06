@@ -1,4 +1,4 @@
-﻿#define ALL_CURSORS_IN_CENTER_POSITION
+﻿//#define ALL_CURSORS_IN_CENTER_POSITION
 
 using System;
 using System.Collections.Generic;
@@ -55,10 +55,10 @@ namespace ParticleStormControl
 
 
         // attributs
-        private static readonly float[] mass_byVirus = new float[] { 0.5f, 1.0f, -0.3025f, 1.0f };
-        private static readonly float[] speed_byVirus = new float[] { 0.5f, 0.0f, 0.1f, 1.0f };
-        private static readonly float[] health_byVirus = new float[] { 0.5f, 0.5f, 1.0f, 0.0f };
-        private static readonly float[] disciplin_byVirus = new float[] { 0.4f, 0.4f, 0.8f, 0.0f };
+        private static readonly float[] mass_byVirus = new float[] { 0.5f, 0.65f, -0.285f, 1.0f };
+        private static readonly float[] speed_byVirus = new float[] { 0.5f, -0.6f, 0.1f, 1.0f };
+        private static readonly float[] health_byVirus = new float[] { 0.5f, 0.35f, 1.0f, 0.0f };
+        private static readonly float[] disciplin_byVirus = new float[] { 0.4f, 0.15f, 0.8f, 0.0f };
         
         // speed stuff
         private const float speedConstant = 0.13f;
