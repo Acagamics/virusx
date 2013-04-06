@@ -33,7 +33,7 @@ namespace ParticleStormControl
         public int NumPlayers { get { return numPlayers; } set { numPlayers = value; } }
         private int[] playerColorIndices = new int[] { -1, -1, -1, -1 };
         public int[] PlayerColorIndices { get { return playerColorIndices; } }
-        private int[] playerVirusIndices = new int[] { 0, 1, 2, 3 };
+        private int[] playerVirusIndices = new int[] { 0, 0, 0, 0 };
         public int[] PlayerVirusIndices { get { return playerVirusIndices; } }
         private bool[] playerConnected = new bool[] { false, false, false, false };
         public bool[] PlayerConnected
@@ -73,6 +73,7 @@ namespace ParticleStormControl
         public void ResetPlayerSettingsToDefault(int index)
         {
             playerControls[index] = InputManager.ControlType.NONE;
+            playerConnected[index] = false;
             playerColorIndices[index] = -1;
             playerVirusIndices[index] = 0;
         }

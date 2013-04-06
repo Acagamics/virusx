@@ -41,6 +41,7 @@ namespace ParticleStormControl.Menu
         public override void OnActivated(Menu.Page oldPage)
         {
             Settings.Instance.ResetPlayerSettingsToDefault();
+            countdown = TimeSpan.Zero;
             for (int i = 0; i < 4; ++i)
             {
                 playerConnected[i] = false;
@@ -306,7 +307,7 @@ namespace ParticleStormControl.Menu
         private void startCountdown()
         {
             bool allReady = playerConnected.Count(x => x) > 1;
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
                 if (playerConnected[i] != playerReady[i])
                     allReady = false;

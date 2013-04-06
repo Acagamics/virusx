@@ -262,6 +262,8 @@ namespace ParticleStormControl
             // numcells & 
         //    backgroundShader.Parameters["NumCells"].SetValue(backgroundCellPositions.Count);
             backgroundShader.Parameters["Cells_Pos2D"].SetValue(backgroundCellPositions.ToArray());
+            backgroundShader.Parameters["NoiseTexture"].SetValue(content.Load<Texture2D>("perlinnoisetest"));
+
         }
 
         /// <summary>
@@ -547,7 +549,6 @@ namespace ParticleStormControl
 
             // background
             device.SetVertexBuffer(backgroundQuadVertexBuffer);
-            backgroundShader.Parameters["Cells_Color"].SetValue(spawnPoints.Select(x => x.ComputeColor().ToVector3()).ToArray());
             backgroundShader.CurrentTechnique.Passes[0].Apply();
             device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
 

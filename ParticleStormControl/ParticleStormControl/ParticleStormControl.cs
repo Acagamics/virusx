@@ -169,6 +169,14 @@ namespace ParticleStormControl
             float passedFrameTime = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
             InputManager.Instance.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+            try 
+	        {
+                Window.Title = inGame.Players.Length.ToString() + " | InGame.State: " + inGame.State + " | menu.ActivePage: " + menu.ActivePage;
+	        }
+	        catch (Exception)
+	        {
+                Window.Title = "-1" + " | InGame.State: " + inGame.State + " | menu.ActivePage: " + menu.ActivePage;
+	        }
 
             menu.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
             inGame.Update(gameTime);

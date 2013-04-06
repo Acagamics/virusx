@@ -135,5 +135,12 @@ namespace ParticleStormControl
 
             spriteBatch.End();
         }
+
+        public void Clear(GraphicsDevice device)
+        {
+            device.SetRenderTarget(damageTexture);
+            device.Clear(ClearOptions.Target, clearColor, 0, 0);
+            device.SetRenderTarget(null);
+        }
     }
 }

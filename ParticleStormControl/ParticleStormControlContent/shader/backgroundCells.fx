@@ -1,10 +1,19 @@
 #define MAX_NUM_CELLS 16
 float2 Cells_Pos2D[MAX_NUM_CELLS];
-float3 Cells_Color[MAX_NUM_CELLS];
 
 float2 PosOffset;
 float2 PosScale;
 float2 RelativeMax;
+
+texture NoiseTexture;
+sampler2D sampNoise = sampler_state
+{	
+	Texture = <NoiseTexture>;
+    MagFilter = LINEAR;
+    MinFilter = LINEAR;
+    Mipfilter = LINEAR;
+};
+
 
 struct VertexShaderInput
 {
@@ -26,7 +35,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
     return output;
 }
 
-float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
+float4 Dist_PS(VertexShaderOutput input) : COLOR0
 {
 	float2 v = input.Texcoord * RelativeMax;
 
@@ -47,11 +56,45 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 	return outColor;
 }
 
-technique WithFalloff
+technique Dist
 {
     pass Pass1
     {
         VertexShader = compile vs_3_0 VertexShaderFunction();
-        PixelShader = compile ps_3_0 PixelShaderFunction();
+        PixelShader = compile ps_3_0 Dist_PS();
     }
 }
+
+
+// another nice solution
+/*
+
+*/
+
+/*
+{
+	float2 v = input.Texcoord * RelativeMax;
+
+	float minDist = 99999;
+	float secondMinDist = 99999;
+
+	[unroll] for(int i=0; i<MAX_NUM_CELLS; ++i)
+	{
+		float2 toPos = v - Cells_Pos2D[i];
+		float dist = dot(toPos, toPos);
+		[flatten] if(dist < secondMinDist)
+		{
+			[flatten] if(dist < minDist)
+			{
+				secondMinDist = minDist;
+				minDist = dist;
+			}
+			else
+				secondMinDist = dist;
+		}
+    }
+
+	float4 outColor;
+	outColor = (secondMinDist - minDist) * 5;
+	return outColor;
+}*/
