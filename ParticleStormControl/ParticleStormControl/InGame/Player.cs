@@ -52,17 +52,34 @@ namespace ParticleStormControl
         { get { return mass_health_byVirus[virusIndex]; } }
 
 
-
+        
         // speed stuff
+        private static readonly float[] speed_byVirus = new float[] { 0.7f, 0.0f, -0.6f, 0.5f };
         private const float speedConstant = 0.13f;
         private const float speedSettingFactor = 0.04f;
 
+        public float Speed
+        { get { return speedConstant + speedSettingFactor * speed_byVirus[virusIndex]; } }
+
         // life stuff
+        private static readonly float[] mass_byVirus = new float[] { -0.5f, -0.2f, 0.6f, -1.0f };
+        private static readonly float[] health_byVirus = new float[] { -0.5f, -0.2f, 0.6f, -1.0f };
         public const float healthConstant = 15.0f;
         public const float healthSettingFactor = 15.0f;
 
+        public float Mass
+        { get { return mass_byVirus[virusIndex]; } }
+
+        public float Health
+        { get { return ((health_byVirus[virusIndex] * 0.5f) + 1.5f) * healthConstant; } }
+
         // discilplin constant - higher means that the particles will move more straight in player's direction
+        private static readonly float[] disciplin_byVirus = new float[] { 0.7f, 0.0f, -0.6f, 0.5f };
         private const float disciplinConstant = 0.5f;
+
+        public float Disciplin
+        { get { return speedConstant + speedSettingFactor * speed_byVirus[virusIndex]; } }
+
         // attacking constant
         private const float attackingPerSecond = 30.0f;
 
@@ -80,10 +97,9 @@ namespace ParticleStormControl
 
         // info texture:
         // X: Health
-        // Y: Speed
 
         public Texture2D PositionTexture { get { return positionTargets[currentTextureIndex]; } }
-        public Texture2D InfoTexture { get { return infoTargets[currentTextureIndex]; } }
+        public Texture2D HealthTexture { get { return infoTargets[currentTextureIndex]; } }
         private Texture2D MovementTexture { get { return movementTexture[currentTextureIndex]; } }
         private Texture2D noiseTexture;
 
@@ -94,7 +110,7 @@ namespace ParticleStormControl
         private RenderTarget2D[] movementTexture = new RenderTarget2D[2];
         private RenderTargetBinding[][] renderTargetBindings;
 
-        private HalfVector2[] particleInfos = new HalfVector2[maxParticlesSqrt * maxParticlesSqrt];
+        private float[] particleHelath = new float[maxParticlesSqrt * maxParticlesSqrt];
 
         Effect particleProcessing;
 
@@ -120,13 +136,14 @@ namespace ParticleStormControl
             public Vector2 texturePosition;
             public Vector2 particlePosition;
             public Vector2 movement;
-            public Vector2 damageSpeed;
+           // public Vector2 damageSpeed;
+            public float health;
 
             private static readonly VertexDeclaration vertexDeclaration = new VertexDeclaration(
                         new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0),
                         new VertexElement(8, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
                         new VertexElement(16, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 1),
-                        new VertexElement(24, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 2));
+                        new VertexElement(24, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 2));
 
             static public VertexDeclaration VertexDeclaration
             { get { return vertexDeclaration; } }
@@ -300,13 +317,13 @@ namespace ParticleStormControl
             cursorPosition = cursorStartPositions[(int)playerIndex];
 
             for (int i = 0; i < maxParticles; ++i)
-                particleInfos[i] = new HalfVector2(-1.0f, -1.0f);
+                particleHelath[i] = -1.0f;
 
             // create rendertargets (they are pingponging ;) )
             positionTargets[0] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
             positionTargets[1] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            infoTargets[0] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            infoTargets[1] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            infoTargets[0] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            infoTargets[1] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
             movementTexture[0] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
             movementTexture[1] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
             renderTargetBindings = new RenderTargetBinding[][] { new RenderTargetBinding[] { positionTargets[0], movementTexture[0], infoTargets[0] }, 
@@ -316,7 +333,7 @@ namespace ParticleStormControl
             particleProcessing.Parameters["RelativeCorMax"].SetValue(Level.RELATIVE_MAX);
 
             // reset data
-            InfoTexture.SetData<HalfVector2>(particleInfos);
+            HealthTexture.SetData<float>(particleHelath);
 
             // spawn vb
             spawnVertexBuffer = new DynamicVertexBuffer(device, SpawnVertex.VertexDeclaration, 
@@ -353,9 +370,9 @@ namespace ParticleStormControl
             player1.currentTargetIndex = player2.currentTargetIndex;
             player2.currentTargetIndex = i;
 
-            HalfVector2[] vh4 = player1.particleInfos;
-            player1.particleInfos = player2.particleInfos;
-            player2.particleInfos = vh4;
+            float[] vh4 = player1.particleHelath;
+            player1.particleHelath = player2.particleHelath;
+            player2.particleHelath = vh4;
 
             i = player1.HighestUsedParticleIndex;
             player1.HighestUsedParticleIndex = player2.HighestUsedParticleIndex;
@@ -383,17 +400,18 @@ namespace ParticleStormControl
 
             particleProcessing.Parameters["Positions"].SetValue(PositionTexture);
             particleProcessing.Parameters["Movements"].SetValue(MovementTexture);
-            particleProcessing.Parameters["Infos"].SetValue(InfoTexture);
+            particleProcessing.Parameters["Health"].SetValue(HealthTexture);
 
             particleProcessing.Parameters["particleAttractionPosition"].SetValue(particleAttractionPosition);
-            particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant * timeInterval);
+            particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant * timeInterval / Speed);
             particleProcessing.Parameters["TimeInterval"].SetValue(timeInterval);
             particleProcessing.Parameters["DamageMap"].SetValue(damageMapTexture);
             particleProcessing.Parameters["DamageFactor"].SetValue(DamageMapMask[Index] * (attackingPerSecond * timeInterval * 255));
 
-            particleProcessing.Parameters["NoiseToMovementFactor"].SetValue(timeInterval * NoiseToMovementFactor);
-            particleProcessing.Parameters["NoiseTexture"].SetValue(noiseTexture);
+            particleProcessing.Parameters["MovementFactor"].SetValue(Speed * timeInterval);
 
+            particleProcessing.Parameters["NoiseToMovementFactor"].SetValue(timeInterval * NoiseToMovementFactor * Speed);
+            particleProcessing.Parameters["NoiseTexture"].SetValue(noiseTexture);
 
             device.BlendState = BlendState.Opaque;
             particleProcessing.CurrentTechnique = particleProcessing.Techniques[0];
@@ -420,13 +438,13 @@ namespace ParticleStormControl
 
         public void ReadGPUResults()
         {
-            InfoTexture.GetData<HalfVector2>(particleInfos);
+            HealthTexture.GetData<float>(particleHelath);
         }
 
         public void UpdateCPUPart(float timeInterval, IList<SpawnPoint> spawnPoints, bool cantDie)
         {
-            float health = ((Mass_health * 0.5f) + 1.5f) * healthConstant;
-            float speed = speedConstant + speedSettingFactor * Disciplin_speed;
+            // TODO health property and speed property
+            float health = Health;//((Mass_health * 0.5f) + 1.5f) * healthConstant;
 
             // compute spawnings
             numSpawns = 0;
@@ -455,8 +473,7 @@ namespace ParticleStormControl
                             int vertexIndex = numSpawns * 2;
                             spawnVerticesRAMBuffer[vertexIndex].particlePosition = spawn.Position;
                             spawnVerticesRAMBuffer[vertexIndex].movement = movement;
-                            spawnVerticesRAMBuffer[vertexIndex].damageSpeed.X = health;
-                            spawnVerticesRAMBuffer[vertexIndex].damageSpeed.Y = speed;
+                            spawnVerticesRAMBuffer[vertexIndex].health = health;
                             ++numSpawns;
                         }
                     }
@@ -506,10 +523,12 @@ namespace ParticleStormControl
 
         private bool IsAlive(int particleIndex)
         {
-            return (particleInfos[particleIndex].PackedValue & (((UInt32)1) << 15)) == 0;
-
+            // halffloat2
+            //return (particleHelath[particleIndex].PackedValue & (((UInt32)1) << 15)) == 0;
             // save version - use this temporary in case of bad xbox behaviour
-            // return particleInfos[particleIndex].ToVector4().Z < 0;
+            // return particleHelath[particleIndex].ToVector4().Z < 0;
+
+            return particleHelath[particleIndex] > 0;
         }
 
         /// <summary>

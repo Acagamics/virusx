@@ -263,6 +263,8 @@ namespace ParticleStormControl
             // numcells & 
         //    backgroundShader.Parameters["NumCells"].SetValue(backgroundCellPositions.Count);
             backgroundShader.Parameters["Cells_Pos2D"].SetValue(backgroundCellPositions.ToArray());
+            backgroundShader.Parameters["NoiseTexture"].SetValue(content.Load<Texture2D>("perlinnoisetest"));
+
         }
 
         /// <summary>
