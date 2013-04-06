@@ -75,7 +75,7 @@ namespace ParticleStormControl.Menu
             Settings.Instance.PlayerVirusIndices[0] = 2;
             Settings.Instance.PlayerControls[1] = InputManager.ControlType.KEYBOARD1;
             Settings.Instance.PlayerColorIndices[1] = 1;
-            Settings.Instance.PlayerVirusIndices[1] = 1;
+            Settings.Instance.PlayerVirusIndices[1] = 3;
             Settings.Instance.NumPlayers = 2;
             playerReady[0] = playerReady[1] = playerConnected[0] = playerConnected[1] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = true;
             menu.ChangePage(Menu.Page.INGAME);
