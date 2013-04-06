@@ -20,10 +20,10 @@ sampler2D sampMovements = sampler_state
     Mipfilter = POINT;
 };
 
-texture Infos;
-sampler2D sampInfos = sampler_state
+texture Health;
+sampler2D sampHealth = sampler_state
 {	
-	Texture = <Infos>;
+	Texture = <Health>;
     MagFilter = POINT;
     MinFilter = POINT;
     Mipfilter = POINT;
@@ -51,6 +51,7 @@ sampler2D sampNoise = sampler_state
 
 float2 particleAttractionPosition;
 float MovementChangeFactor;
+float MovementFactor;
 float TimeInterval;
 float4 DamageFactor;
 float NoiseToMovementFactor;
@@ -83,20 +84,20 @@ struct PixelShaderOutput
 {
 	float4 position : COLOR0;
 	float4 movement : COLOR1;
-	float4 infos : COLOR2;
+	float4 health : COLOR2;
 };
 PixelShaderOutput Process(VertexShaderOutput input)
 {
 	PixelShaderOutput output;
 	output.position = tex2D(sampPositions, input.Texcoord);
 	output.movement = tex2D(sampMovements, input.Texcoord);
-	output.infos = tex2D(sampInfos, input.Texcoord);
+	output.health = tex2D(sampHealth, input.Texcoord);
 
 	// movement
 	float2 aimed = normalize(particleAttractionPosition - output.position.xy);
-	output.movement.xy = normalize(lerp(output.movement.xy, aimed, MovementChangeFactor / output.infos.y));
-	output.movement.xy += tex2D(sampNoise, input.Texcoord + TimeInterval/2).xy * NoiseToMovementFactor * output.infos.y; // add noise
-    output.position.xy += output.movement.xy * (output.infos.y * TimeInterval);
+	output.movement.xy = normalize(lerp(output.movement.xy, aimed, MovementChangeFactor));
+	output.movement.xy += tex2D(sampNoise, input.Texcoord + TimeInterval/2).xy * NoiseToMovementFactor; // add noise
+    output.position.xy += output.movement.xy * MovementFactor;
 	
 	// texcoord position!
 	output.position.xy /= RelativeCorMax;
@@ -113,7 +114,7 @@ PixelShaderOutput Process(VertexShaderOutput input)
 	// damage
 	float4 damageMapMasked = tex2D(sampDamageMap, output.position.xy) * DamageFactor;
 	float damage = dot(damageMapMasked, 1.0f); 
-	output.infos.x -= damage;
+	output.health.x -= damage;
 
 
 	// game position!
@@ -154,7 +155,7 @@ PixelShaderOutput SpawnPS(VertexShaderOutput_Spawn input)
 	PixelShaderOutput output = (PixelShaderOutput)0;
 	output.position.xy = input.ParticlePosition;
 	output.movement.xy = input.Movement;
-	output.infos.xy = input.DamageSpeed;
+	output.health.xy = input.DamageSpeed;
     return output;
 }
 

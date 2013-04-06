@@ -140,7 +140,7 @@ namespace ParticleStormControl
 
 
             particleEffect.Parameters["PositionTexture"].SetValue(player.PositionTexture);
-            particleEffect.Parameters["InfoTexture"].SetValue(player.InfoTexture);
+            particleEffect.Parameters["InfoTexture"].SetValue(player.HealthTexture);
 
             if (damage)
                 particleEffect.Parameters["Color"].SetValue(Player.TextureDamageValue[player.Index].ToVector4());
