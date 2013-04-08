@@ -47,10 +47,10 @@ namespace ParticleStormControl.Menu
             sound = Settings.Instance.Sound;
 
             // search.. ehrm.. nearest resolution
-            availableResolutions.AddRange(GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Select(
-                                dispMode => new Resolution() { width = dispMode.Width, height = dispMode.Height }));
-            availableResolutions.Sort((a, b) => a.width == b.width ? a.height - b.height : a.width - b.width);
-
+            availableResolutions.AddRange(from dispMode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes
+                                          where dispMode.Format == SurfaceFormat.Color && dispMode.Width >= Settings.MINIMUM_SCREEN_WIDTH
+                                          orderby dispMode.Width, dispMode.Height
+                                          select new Resolution() { width = dispMode.Width, height = dispMode.Height });
             for(int i=0; i<availableResolutions.Count; ++i)
             {
                 if (availableResolutions[i].width >= Settings.Instance.ResolutionX &&
