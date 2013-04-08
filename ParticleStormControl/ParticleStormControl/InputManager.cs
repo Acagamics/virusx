@@ -191,11 +191,8 @@ namespace ParticleStormControl
         {
             foreach (GamePadState gstate in currentGamePadStates)
             {
-                if (gstate.ThumbSticks.Left.Y < -THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonDownTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS)
-                {
-                    thumbStickButtonDownTimer = 0.0f;
+                if (IsThumbstickDown(gstate))
                     return true;
-                }
             }
 
             return PressedButton(Buttons.DPadDown) || PressedButton(Keys.Down);
@@ -205,11 +202,8 @@ namespace ParticleStormControl
         {
             foreach (GamePadState gstate in currentGamePadStates)
             {
-                if (gstate.ThumbSticks.Left.Y > THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonUpTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS)
-                {
-                    thumbStickButtonUpTimer = 0.0f;
+                if (IsThumbstickUp(gstate))
                     return true;
-                }
             }
 
             return PressedButton(Buttons.DPadUp) || PressedButton(Keys.Up);
@@ -218,11 +212,8 @@ namespace ParticleStormControl
         {
             foreach (GamePadState gstate in currentGamePadStates)
             {
-                if (gstate.ThumbSticks.Left.X < -THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonLeftTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS)
-                {
-                    thumbStickButtonLeftTimer = 0.0f;
+                if (IsThumbstickLeft(gstate))
                     return true;
-                }
             }
 
             return PressedButton(Buttons.DPadLeft) || PressedButton(Keys.Left);
@@ -232,11 +223,8 @@ namespace ParticleStormControl
         {
             foreach (GamePadState gstate in currentGamePadStates)
             {
-                if (gstate.ThumbSticks.Left.X > THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonRightTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS)
-                {
-                    thumbStickButtonRightTimer = 0.0f;
+                if (IsThumbstickRight(gstate))
                     return true;
-                }
             }
 
             return PressedButton(Buttons.DPadRight) || PressedButton(Keys.Right);
@@ -305,6 +293,46 @@ namespace ParticleStormControl
             {
                 if (currentGamePadStates[i].IsButtonUp(button))
                     return true;
+            }
+            return false;
+        }
+
+        private bool IsThumbstickLeft(GamePadState gstate)
+        {
+            if (gstate.ThumbSticks.Left.X < -THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonLeftTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS)
+            {
+                thumbStickButtonLeftTimer = 0.0f;
+                return true;
+            }
+            return false;
+        }
+
+        private bool IsThumbstickRight(GamePadState gstate)
+        {
+            if (gstate.ThumbSticks.Left.X > THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonRightTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS)
+            {
+                thumbStickButtonRightTimer = 0.0f;
+                return true;
+            }
+            return false;
+        }
+
+        private bool IsThumbstickUp(GamePadState gstate)
+        {
+            if (gstate.ThumbSticks.Left.Y > THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonUpTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS)
+            {
+                thumbStickButtonUpTimer = 0.0f;
+                return true;
+            }
+            return false;
+        }
+
+        private bool IsThumbstickDown(GamePadState gstate)
+        {
+            if (gstate.ThumbSticks.Left.Y < -THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonDownTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS)
+            {
+                thumbStickButtonDownTimer = 0.0f;
+                return true;
             }
             return false;
         }
@@ -431,7 +459,7 @@ namespace ParticleStormControl
             }
         }
 
-        public bool ButtonPressed(ControlActions action, ControlType type, bool down)
+        public bool SpecificActionButtonPressed(ControlActions action, ControlType type, bool down)
         {
             switch (type)
             {
@@ -473,13 +501,13 @@ namespace ParticleStormControl
                     switch (action)
 	                {
                         case ControlActions.UP:
-                            return down ? IsButtonDown(Buttons.DPadUp, 0) : PressedButton(Buttons.DPadUp, 0);
+                            return down ? IsButtonDown(Buttons.DPadUp, 0) : PressedButton(Buttons.DPadUp, 0) || IsThumbstickUp(currentGamePadStates[0]);
                         case ControlActions.DOWN:
-                            return down ? IsButtonDown(Buttons.DPadDown, 0) : PressedButton(Buttons.DPadDown, 0);
+                            return down ? IsButtonDown(Buttons.DPadDown, 0) : PressedButton(Buttons.DPadDown, 0) || IsThumbstickDown(currentGamePadStates[0]);
                         case ControlActions.LEFT:
-                            return down ? IsButtonDown(Buttons.DPadLeft, 0) : PressedButton(Buttons.DPadLeft, 0);
+                            return down ? IsButtonDown(Buttons.DPadLeft, 0) : PressedButton(Buttons.DPadLeft, 0) || IsThumbstickLeft(currentGamePadStates[0]);
                         case ControlActions.RIGHT:
-                            return down ? IsButtonDown(Buttons.DPadRight, 0) : PressedButton(Buttons.DPadRight, 0);
+                            return down ? IsButtonDown(Buttons.DPadRight, 0) : PressedButton(Buttons.DPadRight, 0) || IsThumbstickRight(currentGamePadStates[0]);
                         case ControlActions.ACTION:
                             return down ? IsButtonDown(Buttons.A, 0) : PressedButton(Buttons.A, 0);
                         case ControlActions.HOLD:
@@ -490,13 +518,13 @@ namespace ParticleStormControl
                     switch (action)
                     {
                         case ControlActions.UP:
-                            return down ? IsButtonDown(Buttons.DPadUp, 1) : PressedButton(Buttons.DPadUp, 1);
+                            return down ? IsButtonDown(Buttons.DPadUp, 1) : PressedButton(Buttons.DPadUp, 1) || IsThumbstickUp(currentGamePadStates[1]);
                         case ControlActions.DOWN:
-                            return down ? IsButtonDown(Buttons.DPadDown, 1) : PressedButton(Buttons.DPadDown, 1);
+                            return down ? IsButtonDown(Buttons.DPadDown, 1) : PressedButton(Buttons.DPadDown, 1) || IsThumbstickDown(currentGamePadStates[1]);
                         case ControlActions.LEFT:
-                            return down ? IsButtonDown(Buttons.DPadLeft, 1) : PressedButton(Buttons.DPadLeft, 1);
+                            return down ? IsButtonDown(Buttons.DPadLeft, 1) : PressedButton(Buttons.DPadLeft, 1) || IsThumbstickLeft(currentGamePadStates[1]);
                         case ControlActions.RIGHT:
-                            return down ? IsButtonDown(Buttons.DPadRight, 1) : PressedButton(Buttons.DPadRight, 1);
+                            return down ? IsButtonDown(Buttons.DPadRight, 1) : PressedButton(Buttons.DPadRight, 1) || IsThumbstickRight(currentGamePadStates[1]);
                         case ControlActions.ACTION:
                             return down ? IsButtonDown(Buttons.A, 1) : PressedButton(Buttons.A, 1);
                         case ControlActions.HOLD:
@@ -507,13 +535,13 @@ namespace ParticleStormControl
                     switch (action)
                     {
                         case ControlActions.UP:
-                            return down ? IsButtonDown(Buttons.DPadUp, 2) : PressedButton(Buttons.DPadUp, 2);
+                            return down ? IsButtonDown(Buttons.DPadUp, 2) : PressedButton(Buttons.DPadUp, 2) || IsThumbstickUp(currentGamePadStates[2]);
                         case ControlActions.DOWN:
-                            return down ? IsButtonDown(Buttons.DPadDown, 2) : PressedButton(Buttons.DPadDown, 2);
+                            return down ? IsButtonDown(Buttons.DPadDown, 2) : PressedButton(Buttons.DPadDown, 2) || IsThumbstickDown(currentGamePadStates[2]);
                         case ControlActions.LEFT:
-                            return down ? IsButtonDown(Buttons.DPadLeft, 2) : PressedButton(Buttons.DPadLeft, 2);
+                            return down ? IsButtonDown(Buttons.DPadLeft, 2) : PressedButton(Buttons.DPadLeft, 2) || IsThumbstickLeft(currentGamePadStates[2]);
                         case ControlActions.RIGHT:
-                            return down ? IsButtonDown(Buttons.DPadRight, 2) : PressedButton(Buttons.DPadRight, 2);
+                            return down ? IsButtonDown(Buttons.DPadRight, 2) : PressedButton(Buttons.DPadRight, 2) || IsThumbstickRight(currentGamePadStates[2]);
                         case ControlActions.ACTION:
                             return down ? IsButtonDown(Buttons.A, 2) : PressedButton(Buttons.A, 2);
                         case ControlActions.HOLD:
@@ -524,13 +552,13 @@ namespace ParticleStormControl
                     switch (action)
                     {
                         case ControlActions.UP:
-                            return down ? IsButtonDown(Buttons.DPadUp, 3) : PressedButton(Buttons.DPadUp, 3);
+                            return down ? IsButtonDown(Buttons.DPadUp, 3) : PressedButton(Buttons.DPadUp, 3) || IsThumbstickUp(currentGamePadStates[3]);
                         case ControlActions.DOWN:
-                            return down ? IsButtonDown(Buttons.DPadDown, 3) : PressedButton(Buttons.DPadDown, 3);
+                            return down ? IsButtonDown(Buttons.DPadDown, 3) : PressedButton(Buttons.DPadDown, 3) || IsThumbstickDown(currentGamePadStates[3]);
                         case ControlActions.LEFT:
-                            return down ? IsButtonDown(Buttons.DPadLeft, 3) : PressedButton(Buttons.DPadLeft, 3);
+                            return down ? IsButtonDown(Buttons.DPadLeft, 3) : PressedButton(Buttons.DPadLeft, 3) || IsThumbstickLeft(currentGamePadStates[3]);
                         case ControlActions.RIGHT:
-                            return down ? IsButtonDown(Buttons.DPadRight, 3) : PressedButton(Buttons.DPadRight, 3);
+                            return down ? IsButtonDown(Buttons.DPadRight, 3) : PressedButton(Buttons.DPadRight, 3) || IsThumbstickRight(currentGamePadStates[3]);
                         case ControlActions.ACTION:
                             return down ? IsButtonDown(Buttons.A, 3) : PressedButton(Buttons.A, 3);
                         case ControlActions.HOLD:

@@ -181,6 +181,20 @@ namespace ParticleStormControl
         /// <returns></returns>
         public uint getAverageHealth(int playerIndex) { return playerIndex < playerCount ? averageHealth[playerIndex] : 0; }
         /// <summary>
+        /// the number of particles possessed by all players in a specific time step
+        /// </summary>
+        /// <param name="step"></param>
+        /// <returns></returns>
+        public uint getParticlesInStep(int step)
+        {
+            uint result = 0;
+            for (int i = 0; i < playerCount; i++)
+            {
+                result += getParticlesInStep(i, step);
+            }
+            return result;
+        }
+        /// <summary>
         /// the number of particles a player possessed in a specific time step
         /// </summary>
         /// <param name="playerIndex"></param>

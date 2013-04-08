@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework;
 
 namespace ParticleStormControl.Menu
 {
@@ -44,11 +45,15 @@ namespace ParticleStormControl.Menu
         public Page ActivePage
         {
             get { return activePage; }
-            set { ChangePage(value); }
         }
         private MenuPage[] pages = new MenuPage[(int)Page.NUM_PAGES];
 
         private ParticleStormControl game;
+
+        public ParticleStormControl Game // Haaaack (how else do I get the statistics outside the inGame?)
+        {
+            get { return game; }
+        }
 
         public Menu(ParticleStormControl game)
         {
@@ -76,10 +81,10 @@ namespace ParticleStormControl.Menu
             }
         }
 
-        public void Update(float frameTimeInterval)
+        public void Update(GameTime gameTime)
         {
             if (pages[(int)activePage] != null)
-                pages[(int)activePage].Update(frameTimeInterval);
+                pages[(int)activePage].Update(gameTime);
         }
 
         public void Draw(float frameTimeInterval, SpriteBatch spriteBatch)
@@ -117,12 +122,13 @@ namespace ParticleStormControl.Menu
         public delegate void PageChanging(Page newPage, Page oldPage);
         public event PageChanging PageChangingEvent;
 
-        public void ChangePage(Page newPage)
+        public void ChangePage(Page newPage, GameTime gameTime)
         {
             if(PageChangingEvent != null)
                 PageChangingEvent(newPage, activePage);
             pages[(int)newPage].OnActivated(activePage);
             activePage = newPage;
+            SimpleButton.Instance.ChangeHappened(gameTime);
         }
 
         public void Shutdown()

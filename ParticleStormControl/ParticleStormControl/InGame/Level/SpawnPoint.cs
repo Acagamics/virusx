@@ -82,7 +82,8 @@ namespace ParticleStormControl
         {
             if(PossessingPlayer != -1)
             {
-                captureExplosion.Play();
+                if(Settings.Instance.Sound)
+                    captureExplosion.Play();
                 glowtimer.Start();
                 explosionTimer.Start();
                 explosionRotation = (float)(Random.NextDouble() * MathHelper.TwoPi);
@@ -100,7 +101,8 @@ namespace ParticleStormControl
                 if (effectseconds > explosionDuration)
                 {
                     explosionTimer.Reset();
-                    capture.Play();
+                    if (Settings.Instance.Sound)
+                        capture.Play();
                 }
                 else
                 {

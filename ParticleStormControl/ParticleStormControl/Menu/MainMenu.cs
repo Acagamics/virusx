@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace ParticleStormControl.Menu
 {
@@ -33,7 +34,7 @@ namespace ParticleStormControl.Menu
             logo = content.Load<Texture2D>("logo");
         }
 
-        public override void Update(float frameTimeInterval)
+        public override void Update(GameTime gameTime)
         {
             // loopin
             int selectionInt = (int)selectedButton;
@@ -41,23 +42,33 @@ namespace ParticleStormControl.Menu
                 selectionInt = selectionInt == (int)Button.NUM_BUTTONS-1 ? 0 : selectionInt + 1;
             else if (InputManager.Instance.AnyUpButtonPressed())
                 selectionInt = selectionInt == 0 ? (int)Button.NUM_BUTTONS - 1 : selectionInt - 1;
+            if (selectionInt != (int)selectedButton)
+                SimpleButton.Instance.ChangeHappened(gameTime);
             selectedButton = (Button)(selectionInt);
 
             // button selected
-            if (InputManager.Instance.ContinueButton())
+            if (InputManager.Instance.PressedButton(Buttons.Start))
+            {
+                menu.ChangePage(Menu.Page.NEWGAME, gameTime);
+            }
+            else if (InputManager.Instance.ExitButton())
+            {
+                menu.Exit();
+            }
+            else if (InputManager.Instance.ContinueButton())
             {
                 switch (selectedButton)
                 {
                     case Button.NEWGAME:
-                        menu.ChangePage(Menu.Page.NEWGAME);
+                        menu.ChangePage(Menu.Page.NEWGAME, gameTime);
                         break;
 
                     case Button.OPTIONS:
-                        menu.ChangePage(Menu.Page.OPTIONS);
+                        menu.ChangePage(Menu.Page.OPTIONS, gameTime);
                         break;
 
                     case Button.CREDITS:
-                        menu.ChangePage(Menu.Page.CREDITS);
+                        menu.ChangePage(Menu.Page.CREDITS, gameTime);
                         break;
 
                     case Button.END:
@@ -69,12 +80,12 @@ namespace ParticleStormControl.Menu
 
         public override void Draw(SpriteBatch spriteBatch, float timeInterval)
         {
-            SimpleButton.Draw(spriteBatch, menu.FontHeading, "< insert logo here >", new Vector2(100, 100), false, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "< insert logo here >", new Vector2(100, 100), false, menu.PixelTexture);
 
-            SimpleButton.Draw(spriteBatch, menu.Font, "New Game", new Vector2(100, 220), selectedButton == Button.NEWGAME, menu.PixelTexture);
-            SimpleButton.Draw(spriteBatch, menu.Font, "Options", new Vector2(100, 280), selectedButton == Button.OPTIONS, menu.PixelTexture);
-            SimpleButton.Draw(spriteBatch, menu.Font, "Credits", new Vector2(100, 340), selectedButton == Button.CREDITS, menu.PixelTexture);
-            SimpleButton.Draw(spriteBatch, menu.Font, "Exit Game", new Vector2(100, 400), selectedButton == Button.END, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "New Game", new Vector2(100, 220), selectedButton == Button.NEWGAME, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Options", new Vector2(100, 280), selectedButton == Button.OPTIONS, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Credits", new Vector2(100, 340), selectedButton == Button.CREDITS, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Exit Game", new Vector2(100, 400), selectedButton == Button.END, menu.PixelTexture);
 
             spriteBatch.DrawString(menu.Font, ParticleStormControl.VERSION, new Vector2(menu.ScreenWidth - 200, menu.ScreenHeight - 50), Color.Black);
         }

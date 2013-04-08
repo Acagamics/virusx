@@ -14,6 +14,7 @@ namespace ParticleStormControl.Menu
     {
         Texture2D logo;
         bool fullscreen = Settings.Instance.Fullscreen;
+        bool sound = Settings.Instance.Sound;
         int width = Settings.Instance.ResolutionX;
         int height = Settings.Instance.ResolutionY;
 
@@ -21,6 +22,7 @@ namespace ParticleStormControl.Menu
         {
             RESOLUTION,
             FULLSCREEN,
+            SOUND,
             BACK,
             EXIT,
 
@@ -33,9 +35,11 @@ namespace ParticleStormControl.Menu
         {
         }
 
+        // if changed to main menu without saving
         public override void OnActivated(Menu.Page oldPage)
         {
             fullscreen = Settings.Instance.Fullscreen;
+            sound = Settings.Instance.Sound;
             width = Settings.Instance.ResolutionX;
             height = Settings.Instance.ResolutionY;
             selectedButton = Button.BACK;
@@ -46,7 +50,7 @@ namespace ParticleStormControl.Menu
             logo = content.Load<Texture2D>("logo");
         }
 
-        public override void Update(float frameTimeInterval)
+        public override void Update(GameTime gameTime)
         {
             // loopin
             int selectionInt = (int)selectedButton;
@@ -54,28 +58,35 @@ namespace ParticleStormControl.Menu
                 selectionInt = selectionInt == (int)Button.NUM_BUTTONS - 1 ? 0 : selectionInt + 1;
             else if (InputManager.Instance.AnyUpButtonPressed())
                 selectionInt = selectionInt == 0 ? (int)Button.NUM_BUTTONS - 1 : selectionInt - 1;
+            if (selectionInt != (int)selectedButton)
+                SimpleButton.Instance.ChangeHappened(gameTime);
             selectedButton = (Button)(selectionInt);
 
             // button selected
-            if (InputManager.Instance.ContinueButton() && selectedButton == Button.EXIT || InputManager.Instance.PressedButton(Keys.Escape))
+            if (InputManager.Instance.ContinueButton() && selectedButton == Button.EXIT || InputManager.Instance.PressedButton(Keys.Escape) || InputManager.Instance.ExitButton())
             {
-                menu.ChangePage(Menu.Page.MAINMENU);
+                menu.ChangePage(Menu.Page.MAINMENU, gameTime);
             }
             else if (InputManager.Instance.ContinueButton() && selectedButton == Button.BACK)
             {
                 Settings.Instance.Fullscreen = fullscreen;
+                Settings.Instance.Sound = sound;
                 Settings.Instance.ResolutionX = width;
                 Settings.Instance.ResolutionY = height;
                 menu.ApplyChangedGraphicsSettings();
-                menu.ChangePage(Menu.Page.MAINMENU);
+                menu.ChangePage(Menu.Page.MAINMENU, gameTime);
             }
-            else if (selectedButton == Button.FULLSCREEN && (InputManager.Instance.ContinueButton() || InputManager.Instance.AnyLeftButtonPressed() || InputManager.Instance.AnyRightButtonPressed()))
+            else if (selectedButton == Button.FULLSCREEN && (InputManager.Instance.AnyLeftButtonPressed() || InputManager.Instance.AnyRightButtonPressed() || InputManager.Instance.ContinueButton()))
             {
                 fullscreen = !fullscreen;
             }
+            else if (selectedButton == Button.SOUND && (InputManager.Instance.AnyLeftButtonPressed() || InputManager.Instance.AnyRightButtonPressed() || InputManager.Instance.ContinueButton()))
+            {
+                sound = !sound;
+            }
             else if (selectedButton == Button.RESOLUTION)
             {
-                if (InputManager.Instance.ContinueButton() || InputManager.Instance.AnyRightButtonPressed())
+                if (InputManager.Instance.AnyRightButtonPressed())
                 {
                     // find "nearest" display mode and set - uses width for searching
                     GraphicsDevice device = menu.PixelTexture.GraphicsDevice;
@@ -109,19 +120,25 @@ namespace ParticleStormControl.Menu
 
         public override void Draw(SpriteBatch spriteBatch, float timeInterval)
         {
-            SimpleButton.Draw(spriteBatch, menu.FontHeading, "Options", new Vector2(100, 100), false, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Options", new Vector2(100, 100), false, menu.PixelTexture);
 
-            SimpleButton.Draw(spriteBatch, menu.Font, "Screen Resolution", new Vector2(100, 220), selectedButton == Button.RESOLUTION, menu.PixelTexture);
-            SimpleButton.Draw(spriteBatch, menu.Font, "< " + width + " x " + height + " >", new Vector2(450, 220), false, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Screen Resolution", new Vector2(100, 220), selectedButton == Button.RESOLUTION, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< " + width + " x " + height + " >", new Vector2(450, 220), false, menu.PixelTexture);
 
-            SimpleButton.Draw(spriteBatch, menu.Font, "Fullscreen", new Vector2(100, 280), selectedButton == Button.FULLSCREEN, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Fullscreen", new Vector2(100, 280), selectedButton == Button.FULLSCREEN, menu.PixelTexture);
             if(fullscreen)
-                SimpleButton.Draw(spriteBatch, menu.Font, "< On >", new Vector2(450, 280), false, menu.PixelTexture);
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 280), Color.Green, menu.PixelTexture);
             else
-                SimpleButton.Draw(spriteBatch, menu.Font, "< Off >", new Vector2(450, 280), false, menu.PixelTexture);
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 280), Color.Red, menu.PixelTexture);
 
-            SimpleButton.Draw(spriteBatch, menu.Font, "Save and Exit", new Vector2(100, 400), selectedButton == Button.BACK, menu.PixelTexture);
-            SimpleButton.Draw(spriteBatch, menu.Font, "Cancel", new Vector2(100, 460), selectedButton == Button.EXIT, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Music and Sounds", new Vector2(100, 340), selectedButton == Button.SOUND, menu.PixelTexture);
+            if (sound)
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 340), Color.Green, menu.PixelTexture);
+            else
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 340), Color.Red, menu.PixelTexture);
+
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Save and Exit", new Vector2(100, 460), selectedButton == Button.BACK, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Cancel", new Vector2(100, 520), selectedButton == Button.EXIT, menu.PixelTexture);
         }
     }
 }

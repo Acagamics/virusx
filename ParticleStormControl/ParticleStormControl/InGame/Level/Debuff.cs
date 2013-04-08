@@ -42,7 +42,8 @@ namespace ParticleStormControl
 
         protected override void OnPossessingChanged()
         {
-            explosionSound.Play();
+            if(Settings.Instance.Sound)
+                explosionSound.Play();
             explosionTimer.Start();
             explosionRotation = (float)(Random.NextDouble()*MathHelper.TwoPi);
         }

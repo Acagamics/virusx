@@ -23,13 +23,13 @@ namespace ParticleStormControl.Menu
         {
         }
 
-        public override void Update(float frameTimeInterval)
+        public override void Update(GameTime gameTime)
         {
             // controller disconnect -> pause
             if (InputManager.Instance.PressedButton(Microsoft.Xna.Framework.Input.Keys.Escape) || InputManager.Instance.PauseButton() || InputManager.Instance.IsWaitingForReconnect())
-                menu.ActivePage = Menu.Page.PAUSED;
+                menu.ChangePage(Menu.Page.PAUSED, gameTime);
 
-            blendIn -= frameTimeInterval;
+            blendIn -= (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
         public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, float frameTimeInterval)

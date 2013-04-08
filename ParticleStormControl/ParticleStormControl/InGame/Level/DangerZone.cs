@@ -48,7 +48,8 @@ namespace ParticleStormControl
 
         private void Activate()
         {
-            explosionSound.Play();
+            if(Settings.Instance.Sound)
+                explosionSound.Play();
             explosionTimer.Start();
         }
 

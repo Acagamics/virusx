@@ -46,6 +46,11 @@ namespace ParticleStormControl
         private InGame inGame;
         private Menu.Menu menu;
 
+        public InGame InGame // haaaack alert!
+        {
+            get { return inGame; }
+        }
+
         public ParticleStormControl()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -170,7 +175,9 @@ namespace ParticleStormControl
 
             InputManager.Instance.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
 
-            menu.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+            menu.Update(gameTime);
+
+            SimpleButton.Instance.Update(gameTime);
 
             inGame.Update(gameTime);
 
@@ -225,7 +232,7 @@ namespace ParticleStormControl
                 }
 
                 spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
-                SimpleButton.Draw(spriteBatch, menu.Font, statistic, new Vector2(5, 5), Color.FromNonPremultiplied(0, 0, 0, 128), menu.PixelTexture);
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, statistic, new Vector2(5, 5), Color.FromNonPremultiplied(0, 0, 0, 128), menu.PixelTexture);
                 spriteBatch.End();
             }
 

@@ -65,8 +65,8 @@ namespace ParticleStormControl.Menu
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="frameTimeInterval"></param>
-        public override void Update(float frameTimeInterval)
+        /// <param name="gameTime"></param>
+        public override void Update(GameTime gameTime)
         {
             // :P
 #if QUICK_TWO_PLAYER_DEBUG
@@ -82,13 +82,13 @@ namespace ParticleStormControl.Menu
 #endif
 
             if (InputManager.Instance.ExitButton())
-                menu.ChangePage(Menu.Page.MAINMENU);
+                menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
             TimeSpan oldCountdown = countdown;
-            countdown = countdown.Subtract(TimeSpan.FromSeconds(frameTimeInterval));
+            countdown = countdown.Subtract(gameTime.ElapsedGameTime);
             if (oldCountdown.TotalSeconds > 0 && countdown.TotalSeconds <= 0)
             {
-                menu.ChangePage(Menu.Page.INGAME);
+                menu.ChangePage(Menu.Page.INGAME, gameTime);
                 return;
             }
 
@@ -127,29 +127,29 @@ namespace ParticleStormControl.Menu
             {
                 if (playerConnected[i])
                 {
-                    if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
+                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
                     {
                         if (--Settings.Instance.PlayerVirusIndices[i] < 0)
                             Settings.Instance.PlayerVirusIndices[i] = Player.Viruses.Length - 1;
                     }
 
-                    if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
+                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
                     {
                         if (++Settings.Instance.PlayerVirusIndices[i] >= Player.Viruses.Length)
                             Settings.Instance.PlayerVirusIndices[i] = 0;
                     }
 
-                    if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.UP, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
+                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.UP, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
                     {
                         Settings.Instance.PlayerColorIndices[i] = getPreviousFreeColorIndex(Settings.Instance.PlayerColorIndices[i]);
                     }
 
-                    if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.DOWN, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
+                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.DOWN, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
                     {
                         Settings.Instance.PlayerColorIndices[i] = getNextFreeColorIndex(Settings.Instance.PlayerColorIndices[i]);
                     }
 
-                    if (InputManager.Instance.ButtonPressed(InputManager.ControlActions.HOLD, Settings.Instance.PlayerControls[i], false))
+                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, Settings.Instance.PlayerControls[i], false))
                     {
                         if (playerReady[i])
                         {
@@ -208,10 +208,10 @@ namespace ParticleStormControl.Menu
                 Vector2 origin = new Vector2();
                 switch (i)
                 {
-                    case 2:
+                    case 3:
                         origin = new Vector2(padd + offX, padd + offY);
                         break;
-                    case 3:
+                    case 2:
                         origin = new Vector2(x + offX, y + offY);
                         break;
                     case 1:
@@ -225,35 +225,30 @@ namespace ParticleStormControl.Menu
                 if (playerConnected[i])
                 {
                     // text
-                    SimpleButton.Draw(spriteBatch, menu.FontHeading, Player.VirusNames[Settings.Instance.PlayerVirusIndices[i]].ToString(), origin + new Vector2(20 + boxWidth / 2, 20), false, menu.PixelTexture);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, Player.VirusNames[Settings.Instance.PlayerVirusIndices[i]].ToString(), origin + new Vector2(20 + boxWidth / 2, 20), false, menu.PixelTexture);
 
-                    SimpleButton.Draw(spriteBatch, menu.Font, "Controls: " + Player.ControlNames[(int)Settings.Instance.PlayerControls[i]].ToString(), origin + new Vector2(20 + boxWidth / 2, 110), false, menu.PixelTexture);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Controls: " + Player.ControlNames[(int)Settings.Instance.PlayerControls[i]].ToString(), origin + new Vector2(20 + boxWidth / 2, 110), false, menu.PixelTexture);
 
                     string colorString = "Color: ";
-                    SimpleButton.Draw(spriteBatch, menu.Font, colorString, origin + new Vector2(20 + boxWidth / 2, 170), false, menu.PixelTexture);
-                    SimpleButton.Draw(spriteBatch, menu.Font, Player.ColorNames[Settings.Instance.PlayerColorIndices[i]].ToString(), origin + new Vector2(40 + menu.Font.MeasureString(colorString).X + boxWidth / 2, 170), Player.Colors[Settings.Instance.PlayerColorIndices[i]], menu.PixelTexture);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, colorString, origin + new Vector2(20 + boxWidth / 2, 170), false, menu.PixelTexture);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, Player.ColorNames[Settings.Instance.PlayerColorIndices[i]].ToString(), origin + new Vector2(40 + menu.Font.MeasureString(colorString).X + boxWidth / 2, 170), Settings.Instance.GetPlayerColor(i), menu.PixelTexture);
 
-                    SimpleButton.Draw(spriteBatch, menu.Font, playerReady[i] ? "ready!" : "not ready", origin + new Vector2(64 + boxWidth / 2, 260), playerReady[i], menu.PixelTexture);
-                    SimpleButton.DrawTexture(spriteBatch, icons, new Rectangle((int)origin.X + 20 + boxWidth / 2, (int)origin.Y + 260, 16, 16), new Rectangle(playerReady[i] ? 48 : 0, 32, 16, 16), playerReady[i], menu.PixelTexture);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, playerReady[i] ? "ready!" : "not ready", origin + new Vector2(64 + boxWidth / 2, 260), playerReady[i], menu.PixelTexture);
+                    SimpleButton.Instance.DrawTexture(spriteBatch, icons, new Rectangle((int)origin.X + 20 + boxWidth / 2, (int)origin.Y + 260, 16, 16), new Rectangle(playerReady[i] ? 48 : 0, 32, 16, 16), playerReady[i], menu.PixelTexture);
 
                     // image
                     Rectangle destination = new Rectangle((int)origin.X + padd, (int)origin.Y + padd, boxWidth / 2 - padd, boxWidth / 2 - padd);
                     spriteBatch.Draw(viruses[Settings.Instance.PlayerVirusIndices[i]], destination, Color.White);
 
                     // arrows left & right
-                    SimpleButton.DrawTexture(spriteBatch, icons, new Rectangle((int)origin.X + 16, (int)origin.Y + 170, 16, 16), new Rectangle(0 + isActive(InputManager.ControlActions.LEFT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.LEFT, i), menu.PixelTexture);
-                    SimpleButton.DrawTexture(spriteBatch, icons, new Rectangle((int)origin.X + boxWidth - 32, (int)origin.Y + 170, 16, 16), new Rectangle(16 + isActive(InputManager.ControlActions.RIGHT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.RIGHT, i), menu.PixelTexture);
-
-                    // arrows up & down
-                    //spriteBatch.Draw(icons, new Rectangle((int)origin.X + 85 + boxWidth / 2, (int)origin.Y + 150 - offsetIfDown(InputManager.ControlActions.UP, i), 16, 16), new Rectangle(0, 16, 16, 16), Color.White);
-                    //spriteBatch.Draw(icons, new Rectangle((int)origin.X + 85 + boxWidth / 2, (int)origin.Y + 160 + offsetIfDown(InputManager.ControlActions.DOWN, i), 16, 16), new Rectangle(16, 16, 16, 16), Color.White);
-
+                    SimpleButton.Instance.DrawTexture(spriteBatch, icons, new Rectangle((int)origin.X + 16, (int)origin.Y + 170, 16, 16), new Rectangle(0 + isActive(InputManager.ControlActions.LEFT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.LEFT, i), menu.PixelTexture);
+                    SimpleButton.Instance.DrawTexture(spriteBatch, icons, new Rectangle((int)origin.X + boxWidth - 32, (int)origin.Y + 170, 16, 16), new Rectangle(16 + isActive(InputManager.ControlActions.RIGHT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.RIGHT, i), menu.PixelTexture);
                 }
                 else
                 {
                     string joinText = "< press continue to join game >";
                     Vector2 stringSize = menu.Font.MeasureString(joinText);
-                    SimpleButton.Draw(spriteBatch, menu.Font, joinText, origin + new Vector2((int)((boxWidth - stringSize.X) / 2), (int)((boxHeight - stringSize.Y) / 2)), false, menu.PixelTexture);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, joinText, origin + new Vector2((int)((boxWidth - stringSize.X) / 2), (int)((boxHeight - stringSize.Y) / 2)), true, menu.PixelTexture);
                 }
             }
 
@@ -270,7 +265,7 @@ namespace ParticleStormControl.Menu
                 // countdown
                 String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
                 Vector2 size = menu.FontCountdown.MeasureString(text) / 2;
-                SimpleButton.Draw(spriteBatch, menu.FontCountdown, text, new Vector2(Settings.Instance.ResolutionX / 2 - 5, Settings.Instance.ResolutionY / 2 - 15) - size, !(countdown.TotalSeconds > safeCountdown), menu.PixelTexture);
+                SimpleButton.Instance.Draw(spriteBatch, menu.FontCountdown, text, new Vector2(Settings.Instance.ResolutionX / 2 - 5, Settings.Instance.ResolutionY / 2 - 15) - size, !(countdown.TotalSeconds > safeCountdown), menu.PixelTexture);
             }
         }
 
@@ -304,7 +299,7 @@ namespace ParticleStormControl.Menu
 
         private bool isActive(InputManager.ControlActions action, int index)
         {
-            return InputManager.Instance.ButtonPressed(action, Settings.Instance.PlayerControls[index], true) && !playerReady[index];
+            return InputManager.Instance.SpecificActionButtonPressed(action, Settings.Instance.PlayerControls[index], true) && !playerReady[index];
         }
 
         private int isActive(InputManager.ControlActions action, int index, int offset)
