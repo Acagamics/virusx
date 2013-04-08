@@ -674,7 +674,7 @@ namespace ParticleStormControl
             int[,] cellIndex = new int[fieldSize_pixel.X, fieldSize_pixel.Y];
 
 
-            /*   const float FALLOFF = 95.0f;
+               const float FALLOFF = 95.0f;
                  const float FACTOR = -(1.0f / 16.0f);
         
                 Parallel.For(0, fieldSize_pixel.Y, y => // simple parallalization - just a "brute force" speed up an far from optimal threading!
@@ -685,8 +685,8 @@ namespace ParticleStormControl
                          greyvalues[x, y] = FACTOR * (float)Math.Log(cellPositions.Sum(cellPos => { return Math.Pow(2, -FALLOFF * Vector2.Distance(v, cellPos)); }));
                      }
                  });
-                 */
-
+                 
+/*
             int maxIndexX = fieldSize_pixel.X - 1;
             int maxIndexY = fieldSize_pixel.Y - 1;
 
@@ -715,9 +715,9 @@ namespace ParticleStormControl
 
               //      greyvalues[x, y] = (secondMinDist - minDist) > 0.01 ? 1 : 0;
                 }
-            });
+            });*/
 
-            const int KERNEL = 64;
+         //   const int KERNEL = 64;
 
 /*
             // better: summed area table

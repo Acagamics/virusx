@@ -15,8 +15,13 @@ namespace ParticleStormControl.Menu
         Texture2D logo;
         bool fullscreen = Settings.Instance.Fullscreen;
         bool sound = Settings.Instance.Sound;
-        int width = Settings.Instance.ResolutionX;
-        int height = Settings.Instance.ResolutionY;
+
+        struct Resolution
+        {
+            public int width, height;
+        };
+        List<Resolution> availableResolutions = new List<Resolution>();
+        int activeResolution;
 
         enum Button
         {
@@ -40,9 +45,23 @@ namespace ParticleStormControl.Menu
         {
             fullscreen = Settings.Instance.Fullscreen;
             sound = Settings.Instance.Sound;
-            width = Settings.Instance.ResolutionX;
-            height = Settings.Instance.ResolutionY;
+
+            // search.. ehrm.. nearest resolution
+            availableResolutions.AddRange(GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Select(
+                                dispMode => new Resolution() { width = dispMode.Width, height = dispMode.Height }));
+            availableResolutions.Sort((a, b) => a.width == b.width ? a.height - b.height : a.width - b.width);
+
+            for(int i=0; i<availableResolutions.Count; ++i)
+            {
+                if (availableResolutions[i].width >= Settings.Instance.ResolutionX &&
+                    availableResolutions[i].height >= Settings.Instance.ResolutionY)
+                {
+                    activeResolution = i;
+                    break;
+                }
+            }
             selectedButton = Button.BACK;
+            
         }
 
         public override void LoadContent(ContentManager content)
@@ -71,8 +90,8 @@ namespace ParticleStormControl.Menu
             {
                 Settings.Instance.Fullscreen = fullscreen;
                 Settings.Instance.Sound = sound;
-                Settings.Instance.ResolutionX = width;
-                Settings.Instance.ResolutionY = height;
+                Settings.Instance.ResolutionX = availableResolutions[activeResolution].width;
+                Settings.Instance.ResolutionY = availableResolutions[activeResolution].height;
                 menu.ApplyChangedGraphicsSettings();
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
             }
@@ -87,34 +106,9 @@ namespace ParticleStormControl.Menu
             else if (selectedButton == Button.RESOLUTION)
             {
                 if (InputManager.Instance.AnyRightButtonPressed())
-                {
-                    // find "nearest" display mode and set - uses width for searching
-                    GraphicsDevice device = menu.PixelTexture.GraphicsDevice;
-                    foreach (DisplayMode mode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes)
-                    {
-                        if (mode.Width >= Settings.MINIMUM_SCREEN_WIDTH && mode.Width > width)
-                        {
-                            width = mode.Width;
-                            height = mode.Height;
-                            break;
-                        }
-                    }
-                }
+                    activeResolution = activeResolution == availableResolutions.Count - 1 ? 0 : (activeResolution + 1);
                 else if (InputManager.Instance.AnyLeftButtonPressed())
-                {
-                    // find "nearest" display mode and set - uses width for searching
-                    GraphicsDevice device = menu.PixelTexture.GraphicsDevice;
-                    DisplayMode biggestSmallerOne = null;
-                    foreach (DisplayMode mode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes)  // iterating backwards is not possible
-                    {
-                        if (mode.Width >= Settings.MINIMUM_SCREEN_WIDTH && mode.Width < width)
-                            biggestSmallerOne = mode;
-                    }
-                    if (biggestSmallerOne == null)
-                        biggestSmallerOne = GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.First(x => x.Width >= Settings.MINIMUM_SCREEN_WIDTH);
-                    width = biggestSmallerOne.Width;
-                    height = biggestSmallerOne.Height;
-                }
+                    activeResolution = (activeResolution == 0 ? availableResolutions.Count : activeResolution) - 1;
             }
         }
 
@@ -123,7 +117,7 @@ namespace ParticleStormControl.Menu
             SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Options", new Vector2(100, 100), false, menu.PixelTexture);
 
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Screen Resolution", new Vector2(100, 220), selectedButton == Button.RESOLUTION, menu.PixelTexture);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< " + width + " x " + height + " >", new Vector2(450, 220), false, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< " + availableResolutions[activeResolution].width + " x " + availableResolutions[activeResolution].height + " >", new Vector2(450, 220), false, menu.PixelTexture);
 
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Fullscreen", new Vector2(100, 280), selectedButton == Button.FULLSCREEN, menu.PixelTexture);
             if(fullscreen)
