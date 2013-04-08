@@ -19,19 +19,19 @@ namespace ParticleStormControl.Menu
         {
         }
 
-        public override void Update(float frameTimeInterval)
+        public override void Update(GameTime gameTime)
         {
             // back to game
             if (InputManager.Instance.PauseButton() || InputManager.Instance.ContinueButton())
             {
                 // reset wait for reconnect settings - not connected pads will now be ignored
                 InputManager.Instance.ResetWaitingForReconnect();
-                menu.ChangePage(Menu.Page.INGAME);
+                menu.ChangePage(Menu.Page.INGAME, gameTime);
             }
 
             // shutdown per (any) pad
             if (InputManager.Instance.PressedButton(Buttons.Back) || InputManager.Instance.PressedButton(Keys.Escape))
-                menu.ActivePage = Menu.Page.MAINMENU;
+                menu.ChangePage(Menu.Page.MAINMENU, gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)

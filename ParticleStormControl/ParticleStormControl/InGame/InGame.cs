@@ -115,8 +115,6 @@ namespace ParticleStormControl
                 }
             }
 
-            
-
             // restart stuff
             level.NewGame(graphicsDevice, players);
             particleRenderer = new ParticleRenderer(graphicsDevice, content, players.Length);
@@ -148,10 +146,13 @@ namespace ParticleStormControl
             percentageBar = new PercentageBar(content);
 
             // backgroundmusic
-            song = content.Load<Song>("paniq_Godshatter");
-            MediaPlayer.Volume = 0.5f;
-            //MediaPlayer.Play(song);
-            MediaPlayer.IsRepeating = true;
+            if (Settings.Instance.Sound)
+            {
+                song = content.Load<Song>("paniq_Godshatter");
+                MediaPlayer.Volume = 0.5f;
+                //MediaPlayer.Play(song);
+                MediaPlayer.IsRepeating = true;
+            }
         }
 
 
@@ -224,11 +225,11 @@ namespace ParticleStormControl
                 level.Update((float)gameTime.ElapsedGameTime.TotalSeconds, passedFrameTime, players);
 
                 // wining
-                CheckWinning(passedFrameTime);
+                CheckWinning(gameTime);
             }
         }
 
-        private void CheckWinning(float passedFrameTime)
+        private void CheckWinning(GameTime gameTime)
         {
             // only one player alive
             winPlayerIndex = -1;
@@ -249,9 +250,12 @@ namespace ParticleStormControl
             {
                 // statistics
                 level.GameStatistics.addWonMatches(winPlayerIndex);
+
+                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).WinPlayerIndex = winPlayerIndex;
+                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).ConnectedPlayers = Settings.Instance.PlayerConnected;
+                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerColorIndices = Settings.Instance.PlayerColorIndices;
                 
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).ShownWinnerColorIndex = Settings.Instance.PlayerColorIndices[winPlayerIndex];
-                menu.ChangePage(Menu.Menu.Page.WIN);
+                menu.ChangePage(Menu.Menu.Page.WIN, gameTime);
             }
         }
 

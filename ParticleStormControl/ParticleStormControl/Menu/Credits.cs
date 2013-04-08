@@ -24,33 +24,30 @@ namespace ParticleStormControl.Menu
             acagamicsLogo = content.Load<Texture2D>("acagamicslogo");
         }
 
-        public override void Update(float frameTimeInterval)
+        public override void Update(GameTime gameTime)
         {
             // back to game
-            if (InputManager.Instance.PauseButton() || InputManager.Instance.ContinueButton())
-                menu.ActivePage = Menu.Page.MAINMENU;
+            if (InputManager.Instance.PauseButton() || InputManager.Instance.ContinueButton() || InputManager.Instance.PressedButton(Buttons.B) || InputManager.Instance.PressedButton(Keys.Escape) || InputManager.Instance.ExitButton())
+                menu.ChangePage(Menu.Page.MAINMENU, gameTime);
         }
-
-        private static readonly Color CaptionColor = Color.FromNonPremultiplied(120, 120, 120, 255);
-        private static readonly Color PersonColor = Color.FromNonPremultiplied(70, 70, 70, 255);
 
         public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)
         {
             spriteBatch.Draw(logo, new Vector2(menu.ScreenWidth- logo.Width + 200, menu.ScreenHeight - logo.Height + 300), Color.White);
-            spriteBatch.Draw(acagamicsLogo, new Vector2(menu.ScreenWidth - acagamicsLogo.Width, 0), Color.White);
-            spriteBatch.DrawString(menu.Font, "Particle Storm Control ~Deluxe~", new Vector2(20, 20), Color.FromNonPremultiplied(50, 50, 50, 255));
+            spriteBatch.Draw(acagamicsLogo, new Vector2(menu.ScreenWidth - acagamicsLogo.Width - 50, 50), Color.White);
+
+            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "A totally awesome game by", new Vector2(100, 100), false, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Andreas, Fritz, Sebastian and Tim", new Vector2(100, 160), false, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "(Prototype on the Global Game Jam 2012)", new Vector2(100, 220), false, menu.PixelTexture);
 
 
-            spriteBatch.DrawString(menu.FontSmall, "A totally awesome game by", new Vector2(20, 80), CaptionColor);
-            spriteBatch.DrawString(menu.FontSmall, "Andreas, Fritz, Sebastian and Tim", new Vector2(20, 110), PersonColor);
-            spriteBatch.DrawString(menu.FontSmall, "(Prototyp on the Global Game Jam 2012)", new Vector2(20, 140), CaptionColor);
-            
+            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Rewritten and deluxified by", new Vector2(100, 310), false, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Andreas Reich", new Vector2(100, 370), false, menu.PixelTexture);
 
-            spriteBatch.DrawString(menu.FontSmall, "Rewritten and deluxified by", new Vector2(20, 200), CaptionColor);
-            spriteBatch.DrawString(menu.FontSmall, "Andreas Reich", new Vector2(20, 230), PersonColor);
+            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "XBox360-Support & Testing by", new Vector2(100, 460), false, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Enrico", new Vector2(100, 520), false, menu.PixelTexture);
 
-            spriteBatch.DrawString(menu.FontSmall, "XBox360-Support & Testing by", new Vector2(20, 270), CaptionColor);
-            spriteBatch.DrawString(menu.FontSmall, "Enrico", new Vector2(20, 300), PersonColor);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "I like that!", new Vector2(100, 610), true, menu.PixelTexture);
         }
     }
 }

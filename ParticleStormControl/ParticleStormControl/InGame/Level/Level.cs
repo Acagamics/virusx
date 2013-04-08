@@ -445,7 +445,8 @@ namespace ParticleStormControl
             switchCountdownTimer -= frameTimeSeconds;
             if (switchCountdownActive && switchCountdownTimer < 0.0f)
             {
-                switchSound.Play();
+                if(Settings.Instance.Sound)
+                    switchSound.Play();
 
                 int[] playerIndices = { 0, 1, 2, 3 };
 

@@ -17,6 +17,7 @@ namespace ParticleStormControl
         private Settings() { }
 
         #region Graphics
+
         public const int MINIMUM_SCREEN_WIDTH = 1024;
 
         private bool fullscreen = false;
@@ -24,9 +25,11 @@ namespace ParticleStormControl
         int resolutionX = -1, resolutionY = -1;
         public int ResolutionX { get { return resolutionX; } set { Debug.Assert(value >= MINIMUM_SCREEN_WIDTH); resolutionX = value; } }
         public int ResolutionY { get { return resolutionY; } set { resolutionY = value; } }
+
         #endregion
 
         #region Game
+
         private InputManager.ControlType[] playerControls = new InputManager.ControlType[]{ InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE };
         public InputManager.ControlType[] PlayerControls { get { return playerControls; } }
         private int numPlayers;
@@ -41,6 +44,13 @@ namespace ParticleStormControl
             get { return playerConnected; }
             set { playerConnected = value; }
         }
+        
+        #endregion
+
+        #region Misc
+
+        bool sound = true;
+        public bool Sound { get { return sound; } set { sound = value; } }
         
         #endregion
 
@@ -109,6 +119,7 @@ namespace ParticleStormControl
                         {
                             case "display":
                                 fullscreen = Convert.ToBoolean(xmlConfigReader.GetAttribute("fullscreen"));
+                                sound = Convert.ToBoolean(xmlConfigReader.GetAttribute("sound"));
                                 resolutionX = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionX"));
                                 resolutionY = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionY"));
                                 break;
@@ -157,6 +168,8 @@ namespace ParticleStormControl
             settingsXML.WriteStartElement("settings");
 
             settingsXML.WriteStartElement("display");
+            settingsXML.WriteStartAttribute("sound");
+            settingsXML.WriteValue(sound);
             settingsXML.WriteStartAttribute("fullscreen");
             settingsXML.WriteValue(fullscreen);
             settingsXML.WriteStartAttribute("resolutionX");
