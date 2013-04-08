@@ -253,7 +253,7 @@ namespace ParticleStormControl.Menu
                 {
                     string joinText = "< press continue to join game >";
                     Vector2 stringSize = menu.Font.MeasureString(joinText);
-                    SimpleButton.Draw(spriteBatch, menu.Font, joinText, origin + new Vector2((boxWidth - stringSize.X) / 2, (boxHeight - stringSize.Y) / 2), false, menu.PixelTexture);
+                    SimpleButton.Draw(spriteBatch, menu.Font, joinText, origin + new Vector2((int)((boxWidth - stringSize.X) / 2), (int)((boxHeight - stringSize.Y) / 2)), false, menu.PixelTexture);
                 }
             }
 
