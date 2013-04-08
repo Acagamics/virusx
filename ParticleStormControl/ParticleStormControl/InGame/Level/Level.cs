@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.Threading.Tasks;
 
 namespace ParticleStormControl
 {
@@ -23,6 +24,8 @@ namespace ParticleStormControl
         private List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
         public List<SpawnPoint> SpawnPoints { get { return spawnPoints; } }
 
+        private List<Vector2> cellPositions = new List<Vector2>();
+
         private Texture2D pixelTexture;
         private Texture2D mutateBig;
 
@@ -31,7 +34,8 @@ namespace ParticleStormControl
 
         #region background(s)
         private VertexBuffer backgroundQuadVertexBuffer;
-        private Effect backgroundShader;
+        //private Effect backgroundShader;
+        private Texture2D backgroundTexture;
 
         private BackgroundParticles backgroundParticles;
 
@@ -146,7 +150,7 @@ namespace ParticleStormControl
             // background & vignetting
             backgroundQuadVertexBuffer = new VertexBuffer(device, ScreenTriangleRenderer.ScreenAlignedTriangleVertex.VertexDeclaration, 4, BufferUsage.WriteOnly);
             backgroundQuadVertexBuffer.SetData(new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) });
-            backgroundShader = content.Load<Effect>("shader/backgroundCells");
+       //     backgroundShader = content.Load<Effect>("shader/backgroundCells");
             vignettingShader = content.Load<Effect>("shader/vignetting");
 
             // bg particles
@@ -163,20 +167,23 @@ namespace ParticleStormControl
 
         public void NewEmptyLevel(GraphicsDevice device)
         {
-            NewGame(new Player[0]);
+            NewGame(device, new Player[0]);
 
             // clear particle target
             BeginDrawInternParticleTarget(device);
             EndDrawInternParticleTarget(device);
         }
 
-        public void NewGame(Player[] players)
+        public void NewGame(GraphicsDevice device, Player[] players)
         {
             mapObjects.Clear();
             spawnPoints.Clear();
 
             // create level
             CreateLevel(contentManager, players.Length);
+
+            // generate background
+            GenerateBackground(device);
 
             // crosshairs for players
             for (int i = 0; i < players.Length; ++i)
@@ -194,15 +201,15 @@ namespace ParticleStormControl
             Texture2D hqOuter = content.Load<Texture2D>("unit_hq_outer");
 
             // player starts
-            List<Vector2> backgroundCellPositions = new List<Vector2>();
+            cellPositions.Clear();
             const float LEVEL_BORDER = 0.2f;
             const float START_POINT_GLOW_SIZE = 0.35f;
-            backgroundCellPositions.Add(new Vector2(LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER));
-            backgroundCellPositions.Add(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER));
-            backgroundCellPositions.Add(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER));
-            backgroundCellPositions.Add(new Vector2(LEVEL_BORDER, LEVEL_BORDER));
+            cellPositions.Add(new Vector2(LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER));
+            cellPositions.Add(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER));
+            cellPositions.Add(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER));
+            cellPositions.Add(new Vector2(LEVEL_BORDER, LEVEL_BORDER));
             for(int i=0; i<numPlayers; ++i)
-                spawnPoints.Add(new SpawnPoint(backgroundCellPositions[i], 1000.0f, START_POINT_GLOW_SIZE, i, capture, captureExplosion, glowTexture, captureGlow, hqInner, hqOuter));
+                spawnPoints.Add(new SpawnPoint(cellPositions[i], 1000.0f, START_POINT_GLOW_SIZE, i, capture, captureExplosion, glowTexture, captureGlow, hqInner, hqOuter));
 
 
             // generate in a grid of equilateral triangles
@@ -235,7 +242,7 @@ namespace ParticleStormControl
             }
 
             // random skipping - nonlinear randomness!
-            backgroundCellPositions.AddRange(spawnPositions);
+            cellPositions.AddRange(spawnPositions);
             const int MAX_SKIPS = 5;
             int numSkips = (int)(Math.Pow(Random.NextDouble(), 4) * MAX_SKIPS + 0.5f);
             for(int i=0; i<numSkips; ++i)
@@ -261,9 +268,8 @@ namespace ParticleStormControl
 
             // numcells & 
         //    backgroundShader.Parameters["NumCells"].SetValue(backgroundCellPositions.Count);
-            backgroundShader.Parameters["Cells_Pos2D"].SetValue(backgroundCellPositions.ToArray());
-            backgroundShader.Parameters["NoiseTexture"].SetValue(content.Load<Texture2D>("perlinnoisetest"));
-
+         //   backgroundShader.Parameters["Cells_Pos2D"].SetValue(backgroundCellPositions.ToArray());
+         //   backgroundShader.Parameters["NoiseTexture"].SetValue(content.Load<Texture2D>("perlinnoisetest"));
         }
 
         /// <summary>
@@ -548,9 +554,10 @@ namespace ParticleStormControl
             backgroundParticles.Draw(device, totalTimeSeconds);
 
             // background
-            device.SetVertexBuffer(backgroundQuadVertexBuffer);
-            backgroundShader.CurrentTechnique.Passes[0].Apply();
-            device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+            spriteBatch.Draw(backgroundTexture, fieldPixelRectangle, Color.White);
+            spriteBatch.End();
+
 
             // screenblend stuff
             spriteBatch.Begin(SpriteSortMode.BackToFront, ScreenBlend);
@@ -642,9 +649,9 @@ namespace ParticleStormControl
                                new Vector2(device.Viewport.Width, device.Viewport.Height) * 2;
             Vector2 posOffset = new Vector2(fieldOffset_pixel.X, -fieldOffset_pixel.Y) /
                                    new Vector2(device.Viewport.Width, device.Viewport.Height) * 2 - new Vector2(1, -1);
-            backgroundShader.Parameters["PosScale"].SetValue(posScale);
-            backgroundShader.Parameters["PosOffset"].SetValue(posOffset);
-            backgroundShader.Parameters["RelativeMax"].SetValue(Level.RELATIVE_MAX);
+            //backgroundShader.Parameters["PosScale"].SetValue(posScale);
+            //backgroundShader.Parameters["PosOffset"].SetValue(posOffset);
+            //backgroundShader.Parameters["RelativeMax"].SetValue(Level.RELATIVE_MAX);
             vignettingShader.Parameters["PosScale"].SetValue(posScale);
             vignettingShader.Parameters["PosOffset"].SetValue(posOffset);
 
@@ -652,6 +659,98 @@ namespace ParticleStormControl
 
             // bg particles
             backgroundParticles.Resize(device.Viewport.Width, device.Viewport.Height, fieldSize_pixel, fieldOffset_pixel);
+        }
+
+        private void GenerateBackground(GraphicsDevice device)
+        {
+            if (backgroundTexture != null)
+                backgroundTexture.Dispose();
+            backgroundTexture = new Texture2D(device, fieldSize_pixel.X, fieldSize_pixel.Y, false, SurfaceFormat.Color);
+
+            // TODO: Use Shader & Optimize!
+            Color[] colorValues = new Color[fieldSize_pixel.X * fieldSize_pixel.Y];
+            float[,] greyvalues = new float[fieldSize_pixel.X, fieldSize_pixel.Y];
+            int[,] cellIndex = new int[fieldSize_pixel.X, fieldSize_pixel.Y];
+
+
+            /*   const float FALLOFF = 95.0f;
+                 const float FACTOR = -(1.0f / 16.0f);
+        
+                Parallel.For(0, fieldSize_pixel.Y, y => // simple parallalization - just a "brute force" speed up an far from optimal threading!
+                 {
+                     for (int x = 0; x < fieldSize_pixel.X; ++x)
+                     {
+                         Vector2 v = new Vector2((float)x / (fieldSize_pixel.X - 1), (float)y / (fieldSize_pixel.Y - 1)) * RELATIVE_MAX;
+                         greyvalues[x, y] = FACTOR * (float)Math.Log(cellPositions.Sum(cellPos => { return Math.Pow(2, -FALLOFF * Vector2.Distance(v, cellPos)); }));
+                     }
+                 });
+                 */
+
+            int maxIndexX = fieldSize_pixel.X - 1;
+            int maxIndexY = fieldSize_pixel.Y - 1;
+
+            Parallel.For(0, fieldSize_pixel.Y, y => // simple parallalization - just a "brute force" speed up an far from optimal threading!
+            {
+                for (int x = 0; x < fieldSize_pixel.X; ++x)
+                {
+                    Vector2 v = new Vector2((float)x / maxIndexX, (float)y / maxIndexY) * RELATIVE_MAX;
+                    float minDist = 9999;
+                //    float secondMinDist = 9999;
+                    for (int cell = 0; cell < cellPositions.Count; ++cell)
+                    {
+                        float dist = Vector2.DistanceSquared(v, cellPositions[cell]);
+                       // if (dist < secondMinDist)
+                      //  {
+                            if (dist < minDist)
+                            {
+                           //     secondMinDist = minDist;
+                                minDist = dist;
+                                cellIndex[x,y] = cell;
+                            }
+                           // else
+                            //    secondMinDist = dist;
+                        //}
+                    }
+
+              //      greyvalues[x, y] = (secondMinDist - minDist) > 0.01 ? 1 : 0;
+                }
+            });
+
+            const int KERNEL = 64;
+
+/*
+            // better: summed area table
+            Parallel.For(0, fieldSize_pixel.Y, y => // simple parallalization - just a "brute force" speed up an far from optimal threading!
+            {
+                for (int x = 0; x < fieldSize_pixel.X; ++x)
+                {
+                    int minX = Math.Max(0, x - KERNEL);
+                    int maxX = Math.Min(maxIndexX, x + KERNEL);
+                    int minY = Math.Max(0, y - KERNEL);
+                    int maxY = Math.Min(maxIndexY, y + KERNEL);
+                    int numMyCells = -1;
+                    int myCell = cellIndex[x, y];
+                    for (int neighbourX = minX; neighbourX < maxX; ++neighbourX)
+                    {
+                        for (int neighbourY = minY; neighbourY < maxY; ++neighbourY)
+                        {
+                            numMyCells += myCell == cellIndex[neighbourX, neighbourY] ? 1 : 0;
+                        }
+                    }
+
+                    greyvalues[x, y] = (float)numMyCells / (KERNEL * KERNEL*4);
+                }
+            });
+            */
+            for (int y = 0; y < fieldSize_pixel.Y; ++y)
+            {
+                for (int x = 0; x < fieldSize_pixel.X; ++x)
+                {
+                    colorValues[x + y * fieldSize_pixel.X] = Color.White * greyvalues[x,y];
+                }
+            }
+
+            backgroundTexture.SetData<Color>(colorValues);
         }
 
         private void CreateParticleTarget(GraphicsDevice device)

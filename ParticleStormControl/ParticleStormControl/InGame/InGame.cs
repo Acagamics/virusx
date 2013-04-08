@@ -118,7 +118,7 @@ namespace ParticleStormControl
             
 
             // restart stuff
-            level.NewGame(players);
+            level.NewGame(graphicsDevice, players);
             particleRenderer = new ParticleRenderer(graphicsDevice, content, players.Length);
 
             // init statistics

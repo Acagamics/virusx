@@ -93,7 +93,7 @@ float4 PixelShaderFunction_H5N1(VertexShaderOutput input) : COLOR0
 {
 	const float stickCount = 6.0;
 
-	float2 v = (input.Texcoord - 0.5f)*2;
+	float2 v = input.Texcoord *2 - 1.0;
 
 	float midDist = dot(v,v);
 	float midDistInv = 1.0-midDist;
