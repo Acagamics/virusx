@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Audio;
 using ParticleStormControl;
+using Microsoft.Xna.Framework.Content;
 
 namespace ParticleStormControl
 {
@@ -59,16 +60,15 @@ namespace ParticleStormControl
 
         private readonly float glowSize_Game;
 
-        public SpawnPoint(Vector2 PositionIn, float spawnSize, float glowSize_Game, int startposession, SoundEffect capture, SoundEffect captureExplosion, 
-                          Texture2D glowTexture, Texture2D explosionTexture, Texture2D innerTexture, Texture2D outerTexture)
+        public SpawnPoint(Vector2 PositionIn, float spawnSize, float glowSize_Game, int startposession, ContentManager content)
             : base(PositionIn, startposession, /*1.0f / (float)Math.Log(spawnSize)*/ 4.0f / spawnSize, -1.0f, 6)
         {
-            this.capture = capture;
-            this.captureExplosion = captureExplosion;
-            this.glowTexture = glowTexture;
-            this.innerTexture = innerTexture;
-            this.outerTexture = outerTexture;
-            this.explosionTexture = explosionTexture;
+            this.capture = content.Load<SoundEffect>("sound/capture");
+            this.captureExplosion = content.Load<SoundEffect>("sound/captureExplosion");
+            this.glowTexture = content.Load<Texture2D>("glow");
+            this.innerTexture = content.Load<Texture2D>("unit_hq_inner");
+            this.outerTexture = content.Load<Texture2D>("unit_hq_outer");
+            this.explosionTexture = content.Load<Texture2D>("explosion");
             this.SpawnSize = spawnSize;
             this.glowSize_Game = glowSize_Game;
 

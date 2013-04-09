@@ -5,6 +5,16 @@ float2 PosOffset;
 float2 PosScale;
 float2 RelativeMax;
 
+texture BackgroundTexture;
+sampler2D sampBackground = sampler_state
+{	
+	Texture = <BackgroundTexture>;
+    MagFilter = POINT;
+    MinFilter = POINT;
+    Mipfilter = POINT;
+};
+
+
 texture NoiseTexture;
 sampler2D sampNoise = sampler_state
 {	
@@ -56,7 +66,22 @@ float4 Dist_PS(VertexShaderOutput input) : COLOR0
 	return outColor;
 }
 
-technique Dist
+float4 Output_PS(VertexShaderOutput input) : COLOR0
+{
+	return tex2D(sampBackground, input.Texcoord);
+}
+
+technique TOutput
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunction();
+        PixelShader = compile ps_3_0 Output_PS();
+    }
+}
+
+
+technique TDist
 {
     pass Pass1
     {

@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ParticleStormControl;
 using ParticleStormControl.Menu;
+using System.Collections.Generic;
 
 #endif
 
@@ -28,7 +29,7 @@ namespace ParticleStormControl
     /// </summary>
     public class ParticleStormControl : Microsoft.Xna.Framework.Game
     {
-        public const string VERSION = "pscd XX.04.2013";
+        public const string VERSION = "virusstorm XX.04.2013";
 
         private bool showStatistics = true;
      
@@ -45,6 +46,7 @@ namespace ParticleStormControl
 
         private InGame inGame;
         private Menu.Menu menu;
+        private Background background;
 
         public InGame InGame // haaaack alert!
         {
@@ -106,7 +108,10 @@ namespace ParticleStormControl
             graphics.PreferredBackBufferWidth = Settings.Instance.ResolutionX;
             graphics.PreferredBackBufferHeight = Settings.Instance.ResolutionY;
             graphics.ApplyChanges();
+
             inGame.Resize(GraphicsDevice);
+            if (background != null)
+                RegenerateBackground();
         }
 
         void WindowClientSizeChanged(object sender, EventArgs e)
@@ -143,8 +148,45 @@ namespace ParticleStormControl
         {
             inGame.LoadContent(GraphicsDevice, Content);
             menu.LoadContent(Content);
+
+            background = new Background(GraphicsDevice, Content);
+            RegenerateBackground();
         }
 
+        private void RegenerateBackground()
+        {
+            background.Resize(GraphicsDevice, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
+
+            // generate cell positions for menu background
+            const int SPAWNS_GRID_X = 6;
+            const int SPAWNS_GRID_Y = 3;
+            const double POSITION_JITTER = 0.12;
+            List<Vector2> cellPositions = new List<Vector2>();
+            for (int x = 0; x < SPAWNS_GRID_X; ++x)
+            {
+                for (int y = 0; y < SPAWNS_GRID_Y; ++y)
+                {
+                    // "natural skip"
+                    if ((x == SPAWNS_GRID_X - 1 && y % 2 == 0) ||
+                        ((x == 0 || x == SPAWNS_GRID_X - 2 + y % 2) && (y == 0 || y == SPAWNS_GRID_Y - 1)))
+                        continue;
+
+                    // position
+                    Vector2 pos = new Vector2((float)x / (SPAWNS_GRID_X - 1), (float)y / (SPAWNS_GRID_Y - 1));
+                    if (y % 2 == 0)
+                        pos.X += 0.5f / (SPAWNS_GRID_X - 1);
+
+                    // position jitter
+                    double posJitter = (Random.NextDouble() * 2.0 - 1.0) * POSITION_JITTER;
+                    pos += Random.NextDirection() * (float)posJitter;
+
+                    cellPositions.Add(pos);
+                }
+            }
+            background.Generate(cellPositions, Vector2.One);
+            background.Resize(GraphicsDevice, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
+        }
+        
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// all content.
@@ -195,15 +237,16 @@ namespace ParticleStormControl
             // offsite stuff
             inGame.Draw_OffsiteBuffers(gameTime, GraphicsDevice);
 
-
+            // draw backbuffer
             GraphicsDevice.Clear(Color.Black);
 
+            if (inGame.State == global::ParticleStormControl.InGame.GameState.Inactive)
+                background.Draw(GraphicsDevice, (float)gameTime.TotalGameTime.TotalSeconds);
             inGame.Draw_Backbuffer(gameTime, spriteBatch);
             menu.Draw((float)gameTime.ElapsedGameTime.TotalSeconds, spriteBatch);
 
 
             // show statistics
-
             if (showStatistics)
             {
                 frameRateCounterElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;

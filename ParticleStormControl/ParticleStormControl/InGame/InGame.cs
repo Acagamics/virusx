@@ -90,7 +90,6 @@ namespace ParticleStormControl
                 // generic level as background
                 if (State != InGame.GameState.Inactive)
                 {
-                    level.NewEmptyLevel(graphicsDevice);
                     particleRenderer = null;
                     damageMap.Clear(graphicsDevice);
                 }
@@ -141,7 +140,6 @@ namespace ParticleStormControl
             damageMap.LoadContent(graphicsDevice);
 
             level = new Level(graphicsDevice, content);
-            level.NewEmptyLevel(graphicsDevice); // fake level for background
             inGameInterface = new InGameInterface(content);
             percentageBar = new PercentageBar(content);
 
@@ -290,12 +288,13 @@ namespace ParticleStormControl
         /// <param name="spriteBatch">a unstarted spritebatch</param>
         public void Draw_Backbuffer(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            float timeSinceLastFrame = (float)gameTime.TotalGameTime.TotalSeconds;
-
-            // draw level even if inactive as background
-            level.Draw(timeSinceLastFrame, spriteBatch.GraphicsDevice, players);
             if (State == GameState.Inactive)
                 return;
+
+            float timeSinceLastFrame = (float)gameTime.TotalGameTime.TotalSeconds;
+
+            // draw level
+            level.Draw(timeSinceLastFrame, spriteBatch.GraphicsDevice, players);
 
             inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, timeSinceLastFrame);
 

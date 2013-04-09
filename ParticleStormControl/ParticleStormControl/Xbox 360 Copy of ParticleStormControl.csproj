@@ -65,7 +65,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="InGame\BackgroundParticles.cs" />
+    <Compile Include="background\Background.cs" />
+    <Compile Include="background\BackgroundParticles.cs" />
     <Compile Include="InGame\DamageMap.cs" />
     <Compile Include="InGame\InGame.cs" />
     <Compile Include="InGame\InGameInterface.cs" />
