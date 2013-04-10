@@ -85,10 +85,10 @@ float4 ComputeBackground_PS(VertexShaderOutput input) : COLOR0
 	float worleySecond = worley - maxComp;
 	float value = min(log(worley / worleySecond), 10.0f);	// loga - logb
 	
-	float cellFactor = 0.1f + (value-0.8f) * 0.3f -
-						cubicPulse(2.5, 1.0f, value) * 0.5f +
-						cubicPulse(3, 0.5f, value) * 0.1f + 
-						cubicPulse(4, 3.0f, value) * 0.4f;
+	float cellFactor = (value-0.8f) * 0.3f -
+						cubicPulse(2.5f, 1.0f, value) * 0.5f +
+						cubicPulse(3.0f, 0.5f, value) * 0.3f + 
+						cubicPulse(4.0f, 3.0f, value) * 0.4f;
 
 	float4 outColor;
 
