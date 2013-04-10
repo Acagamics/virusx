@@ -29,6 +29,17 @@ namespace ParticleStormControl
             quadVertexBuffer.SetData(new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) });
         }
 
+
+
+        private float cubicPulse(float peak, float width, float x)
+        {
+            // http://www.iquilezles.org/www/articles/functions/functions.htm
+            x = Math.Abs(x - peak);
+            if (x > width) return 0.0f;
+            x /= width;
+            return 1.0f - x * x * (3.0f - 2.0f * x);
+        }
+
         public void Generate(List<Vector2> cellPositions, Vector2 relativeMax)
         {
             this.cellPositions = cellPositions;
@@ -37,6 +48,10 @@ namespace ParticleStormControl
             if (cellPositions.Count == 0)
                 return;
 
+
+            backgroundShader.Parameters["NumCells"].SetValue(cellPositions.Count);
+            backgroundShader.Parameters["Cells_Pos2D"].SetValue(cellPositions.ToArray());
+/*
             // TODO: Use Shader & Optimize!
             Color[] colorValues = new Color[backgroundTexture.Width * backgroundTexture.Height];
             float[,] greyvalues = new float[backgroundTexture.Width, backgroundTexture.Height];
@@ -44,74 +59,28 @@ namespace ParticleStormControl
 
 
             const float FALLOFF = 95.0f;
-            const float FACTOR = -(1.0f / 16.0f);
 
             Parallel.For(0, backgroundTexture.Height, y => // simple parallalization - just a "brute force" speed up an far from optimal threading!
             {
                 for (int x = 0; x < backgroundTexture.Width; ++x)
                 {
                     Vector2 v = new Vector2((float)x / (backgroundTexture.Width - 1), (float)y / (backgroundTexture.Height - 1)) * relativeCoordMax;
-                    greyvalues[x, y] = FACTOR * (float)Math.Log(cellPositions.Sum(cellPos => { return Math.Pow(2, -FALLOFF * Vector2.Distance(v, cellPos)); }));
+
+                    float minDist = (float)cellPositions.Min(cellPos => { return Vector2.Distance(v, cellPos); });
+                  
+                    double worley = cellPositions.Sum(cellPos => { return Math.Pow(2, -FALLOFF * Vector2.Distance(v, cellPos)); });
+                    double worleySecond = worley - Math.Pow(2, -FALLOFF * minDist);
+
+                    float value = (float)Math.Log(worley / worleySecond);
+
+                    greyvalues[x, y] = 0.1f + (float)Math.Sqrt(value) * 0.2f + cubicPulse(2, 0.5f, (float)value) * 0.1f + cubicPulse(3.0f, 3.0f, (float)value) * 0.4f;
+
+                    //greyvalues[x, y] = FACTOR * (float)Math.Log(cellPositions.Sum(cellPos => { return Math.Pow(2, -FALLOFF * Vector2.Distance(v, cellPos)); }));
+                    //greyvalues[x, y] = (float)cellPositions.Min(cellPos => { return Vector2.DistanceSquared(v, cellPos); }) * 20;
                 }
             });
 
-            /*
-                        int maxIndexX = backgroundTexture.Width - 1;
-                        int maxIndexY = backgroundTexture.Height - 1;
-
-                        Parallel.For(0, backgroundTexture.Height, y => // simple parallalization - just a "brute force" speed up an far from optimal threading!
-                        {
-                            for (int x = 0; x < backgroundTexture.Width; ++x)
-                            {
-                                Vector2 v = new Vector2((float)x / maxIndexX, (float)y / maxIndexY) * RELATIVE_MAX;
-                                float minDist = 9999;
-                            //    float secondMinDist = 9999;
-                                for (int cell = 0; cell < cellPositions.Count; ++cell)
-                                {
-                                    float dist = Vector2.DistanceSquared(v, cellPositions[cell]);
-                                   // if (dist < secondMinDist)
-                                  //  {
-                                        if (dist < minDist)
-                                        {
-                                       //     secondMinDist = minDist;
-                                            minDist = dist;
-                                            cellIndex[x,y] = cell;
-                                        }
-                                       // else
-                                        //    secondMinDist = dist;
-                                    //}
-                                }
-
-                          //      greyvalues[x, y] = (secondMinDist - minDist) > 0.01 ? 1 : 0;
-                            }
-                        });*/
-
-            //   const int KERNEL = 64;
-
-            /*
-                        // better: summed area table
-                        Parallel.For(0, backgroundTexture.Height, y => // simple parallalization - just a "brute force" speed up an far from optimal threading!
-                        {
-                            for (int x = 0; x < backgroundTexture.Width; ++x)
-                            {
-                                int minX = Math.Max(0, x - KERNEL);
-                                int maxX = Math.Min(maxIndexX, x + KERNEL);
-                                int minY = Math.Max(0, y - KERNEL);
-                                int maxY = Math.Min(maxIndexY, y + KERNEL);
-                                int numMyCells = -1;
-                                int myCell = cellIndex[x, y];
-                                for (int neighbourX = minX; neighbourX < maxX; ++neighbourX)
-                                {
-                                    for (int neighbourY = minY; neighbourY < maxY; ++neighbourY)
-                                    {
-                                        numMyCells += myCell == cellIndex[neighbourX, neighbourY] ? 1 : 0;
-                                    }
-                                }
-
-                                greyvalues[x, y] = (float)numMyCells / (KERNEL * KERNEL*4);
-                            }
-                        });
-                        */
+        
             for (int y = 0; y < backgroundTexture.Height; ++y)
             {
                 for (int x = 0; x < backgroundTexture.Width; ++x)
@@ -120,7 +89,7 @@ namespace ParticleStormControl
                 }
             }
 
-            backgroundTexture.SetData<Color>(colorValues);
+            backgroundTexture.SetData<Color>(colorValues);*/
         }
 
         /// <summary>
@@ -166,6 +135,7 @@ namespace ParticleStormControl
             backgroundParticles.Draw(device, totalTimeSeconds);
 
             // cells
+            backgroundShader.CurrentTechnique = backgroundShader.Techniques["TCompute"];
             backgroundShader.Parameters["BackgroundTexture"].SetValue(backgroundTexture);
             device.SetVertexBuffer(quadVertexBuffer);
             backgroundShader.CurrentTechnique.Passes[0].Apply();
