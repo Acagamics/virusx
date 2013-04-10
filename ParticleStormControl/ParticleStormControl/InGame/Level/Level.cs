@@ -168,7 +168,34 @@ namespace ParticleStormControl
                 mapObjects.Add(new Crosshair(i, contentManager));
         }
 
+        static public List<Vector2> GenerateCellPositions(int numX, int numY, float positionJitter, Vector2 border, Vector2 valueRange)
+        {
+            List<Vector2> spawnPositions = new List<Vector2>();
+            for (int x = 0; x < numX; ++x)
+            {
+                for (int y = 0; y < numY; ++y)
+                {
+                    // "natural skip"
+                    if ((x == numX - 1 && y % 2 == 0) ||
+                        ((x == 0 || x == numX - 2 + y % 2) && (y == 0 || y == numY - 1)))
+                        continue;
 
+                    // position
+                    Vector2 pos = new Vector2((float)x / (numX - 1), (float)y / (numY - 1));
+                    if (y % 2 == 0)
+                        pos.X += 0.5f / (numX - 1);
+                    pos *= valueRange - border * 2.0f;
+                    pos += border;
+
+                    // position jitter
+                    float posJitter = (float)(Random.NextDouble() * 2.0 - 1.0) * positionJitter;
+                    pos += Random.NextDirection() * posJitter;
+
+                    spawnPositions.Add(pos);
+                }
+            }
+            return spawnPositions;
+        }
 
         private void CreateLevel(ContentManager content, int numPlayers)
         {
@@ -187,31 +214,8 @@ namespace ParticleStormControl
             // generate in a grid of equilateral triangles
             const int SPAWNS_GRID_X = 6;
             const int SPAWNS_GRID_Y = 3;
-            const double POSITION_JITTER = 0.12;
-            List<Vector2> spawnPositions = new List<Vector2>();
-            for (int x = 0; x < SPAWNS_GRID_X; ++x)
-            {
-                for (int y = 0; y < SPAWNS_GRID_Y; ++y)
-                {
-                    // "natural skip"
-                    if ((x == SPAWNS_GRID_X-1 && y % 2 == 0) ||
-                        ((x == 0 || x == SPAWNS_GRID_X - 2 + y % 2) && (y == 0 || y == SPAWNS_GRID_Y - 1)))
-                        continue;
+            List<Vector2> spawnPositions = GenerateCellPositions(SPAWNS_GRID_X, SPAWNS_GRID_Y, 0.12f, new Vector2(LEVEL_BORDER), RELATIVE_MAX);
 
-                    // position
-                    Vector2 pos = new Vector2((float)x / (SPAWNS_GRID_X - 1), (float)y / (SPAWNS_GRID_Y - 1));
-                    if (y % 2 == 0)
-                        pos.X += 0.5f / (SPAWNS_GRID_X - 1);
-                    pos *= RELATIVE_MAX - new Vector2(LEVEL_BORDER) * 2.0f;
-                    pos += new Vector2(LEVEL_BORDER, LEVEL_BORDER);
-
-                    // position jitter
-                    double posJitter = (Random.NextDouble() * 2.0 - 1.0) * POSITION_JITTER;
-                    pos += Random.NextDirection() * (float)posJitter;
-
-                    spawnPositions.Add(pos);
-                }
-            }
 
             // random skipping - nonlinear randomness!
             cellPositions.AddRange(spawnPositions);
@@ -619,7 +623,7 @@ namespace ParticleStormControl
             CreateParticleTarget(device);
 
             // bg particles
-            background.Resize(device, fieldPixelRectangle);
+            background.Resize(device, fieldPixelRectangle, Level.RELATIVE_MAX);
         }
 
         private void CreateParticleTarget(GraphicsDevice device)

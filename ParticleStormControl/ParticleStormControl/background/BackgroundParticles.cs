@@ -113,13 +113,13 @@ namespace ParticleStormControl
         /// <summary>
         /// updates size settings - please call once before using!
         /// </summary>
-        public void Resize(int screenWidth, int screenHeight, Point fieldPixelSize, Point fieldPixelOffset)
+        public void Resize(int screenWidth, int screenHeight, Point fieldPixelSize, Point fieldPixelOffset, Vector2 relativeMax)
         {
             particleEffect.Parameters["PosScale"].SetValue(new Vector2(fieldPixelSize.X, -fieldPixelSize.Y) /
                                                              new Vector2(screenWidth, screenHeight) * 2);
             particleEffect.Parameters["PosOffset"].SetValue(new Vector2(fieldPixelOffset.X, -fieldPixelOffset.Y) /
                                                              new Vector2(screenWidth, screenHeight) * 2 - new Vector2(1, -1));
-            particleEffect.Parameters["RelativeMax"].SetValue(Level.RELATIVE_MAX);
+            particleEffect.Parameters["RelativeMax"].SetValue(relativeMax);
         }
 
         public void Draw(GraphicsDevice device, float passedTime)

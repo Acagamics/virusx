@@ -29,11 +29,13 @@ namespace ParticleStormControl
             quadVertexBuffer.SetData(new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) });
         }
 
-        public void Generate(List<Vector2> cellPositions, Vector2 relativeCoordMax)
+        public void Generate(List<Vector2> cellPositions, Vector2 relativeMax)
         {
             this.cellPositions = cellPositions;
-            this.relativeCoordMax = relativeCoordMax;
-            backgroundShader.Parameters["RelativeMax"].SetValue(relativeCoordMax);
+            this.relativeCoordMax = relativeMax;
+
+            if (cellPositions.Count == 0)
+                return;
 
             // TODO: Use Shader & Optimize!
             Color[] colorValues = new Color[backgroundTexture.Width * backgroundTexture.Height];
@@ -125,7 +127,7 @@ namespace ParticleStormControl
         /// Resizes the background.
         /// Please call once before using!
         /// </summary>
-        public void Resize(GraphicsDevice device, Rectangle areaInPixel)
+        public void Resize(GraphicsDevice device, Rectangle areaInPixel, Vector2 relativeCoordMax)
         {
             Resize(device, areaInPixel, this.cellPositions, this.relativeCoordMax);
         }
@@ -135,8 +137,10 @@ namespace ParticleStormControl
         /// </summary>
         public void Resize(GraphicsDevice device, Rectangle areaInPixel, List<Vector2> cellPositions, Vector2 relativeCoordMax)
         {
+            this.relativeCoordMax = relativeCoordMax;
+
             // resize background particles
-            backgroundParticles.Resize(device.Viewport.Width, device.Viewport.Height, new Point(areaInPixel.Width, areaInPixel.Height), areaInPixel.Location);
+            backgroundParticles.Resize(device.Viewport.Width, device.Viewport.Height, new Point(areaInPixel.Width, areaInPixel.Height), areaInPixel.Location, relativeCoordMax);
 
             // resize background and regenerate
             if (backgroundTexture != null)
@@ -152,6 +156,7 @@ namespace ParticleStormControl
                                    new Vector2(device.Viewport.Width, device.Viewport.Height) * 2 - new Vector2(1, -1);
             backgroundShader.Parameters["PosScale"].SetValue(posScale);
             backgroundShader.Parameters["PosOffset"].SetValue(posOffset);
+            backgroundShader.Parameters["RelativeMax"].SetValue(relativeCoordMax);
         }
 
         public void Draw(GraphicsDevice device, float totalTimeSeconds)

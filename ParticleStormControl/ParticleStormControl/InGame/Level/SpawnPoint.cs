@@ -68,7 +68,7 @@ namespace ParticleStormControl
             this.glowTexture = content.Load<Texture2D>("glow");
             this.innerTexture = content.Load<Texture2D>("unit_hq_inner");
             this.outerTexture = content.Load<Texture2D>("unit_hq_outer");
-            this.explosionTexture = content.Load<Texture2D>("explosion");
+            this.explosionTexture = content.Load<Texture2D>("capture_glow");
             this.SpawnSize = spawnSize;
             this.glowSize_Game = glowSize_Game;
 

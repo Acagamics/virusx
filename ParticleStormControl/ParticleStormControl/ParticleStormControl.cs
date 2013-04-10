@@ -155,36 +155,10 @@ namespace ParticleStormControl
 
         private void RegenerateBackground()
         {
-            background.Resize(GraphicsDevice, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
-
             // generate cell positions for menu background
-            const int SPAWNS_GRID_X = 6;
-            const int SPAWNS_GRID_Y = 3;
-            const double POSITION_JITTER = 0.12;
-            List<Vector2> cellPositions = new List<Vector2>();
-            for (int x = 0; x < SPAWNS_GRID_X; ++x)
-            {
-                for (int y = 0; y < SPAWNS_GRID_Y; ++y)
-                {
-                    // "natural skip"
-                    if ((x == SPAWNS_GRID_X - 1 && y % 2 == 0) ||
-                        ((x == 0 || x == SPAWNS_GRID_X - 2 + y % 2) && (y == 0 || y == SPAWNS_GRID_Y - 1)))
-                        continue;
-
-                    // position
-                    Vector2 pos = new Vector2((float)x / (SPAWNS_GRID_X - 1), (float)y / (SPAWNS_GRID_Y - 1));
-                    if (y % 2 == 0)
-                        pos.X += 0.5f / (SPAWNS_GRID_X - 1);
-
-                    // position jitter
-                    double posJitter = (Random.NextDouble() * 2.0 - 1.0) * POSITION_JITTER;
-                    pos += Random.NextDirection() * (float)posJitter;
-
-                    cellPositions.Add(pos);
-                }
-            }
-            background.Generate(cellPositions, Vector2.One);
-            background.Resize(GraphicsDevice, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
+            Vector2 relativeMax = new Vector2(GraphicsDevice.Viewport.AspectRatio, 1.0f);
+            List<Vector2> cellPositions = Level.GenerateCellPositions(7, 4, 0.09f, new Vector2(-0.1f), relativeMax);
+            background.Resize(GraphicsDevice, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), cellPositions, relativeMax);
         }
         
         /// <summary>
