@@ -161,7 +161,7 @@ namespace ParticleStormControl
             spawnPoints.Clear();
 
             // create level
-            CreateLevel(contentManager, players.Length);
+            CreateLevel(device, contentManager, players.Length);
 
             // crosshairs for players
             for (int i = 0; i < players.Length; ++i)
@@ -197,7 +197,7 @@ namespace ParticleStormControl
             return spawnPositions;
         }
 
-        private void CreateLevel(ContentManager content, int numPlayers)
+        private void CreateLevel(GraphicsDevice device, ContentManager content, int numPlayers)
         {
             // player starts
             List<Vector2> cellPositions = new List<Vector2>();
@@ -243,7 +243,7 @@ namespace ParticleStormControl
             mapObjects.AddRange(spawnPoints);
 
             // background
-            background.Generate(cellPositions, Level.RELATIVE_MAX);
+            background.Generate(device, cellPositions, Level.RELATIVE_MAX);
         }
 
         /// <summary>

@@ -1,5 +1,7 @@
 #define MAX_NUM_CELLS 32
-float2 Cells_Pos2D[MAX_NUM_CELLS];
+float2 Cells_Pos2D[MAX_NUM_CELLS];	// todo compress
+float3 Cells_Color[MAX_NUM_CELLS];
+
 int NumCells;
 
 float2 PosOffset;
@@ -15,14 +17,13 @@ sampler2D sampBackground = sampler_state
     Mipfilter = POINT;
 };
 
-
-texture NoiseTexture;
-sampler2D sampNoise = sampler_state
+texture CellColorTexture;
+sampler2D sampCellColor = sampler_state
 {	
-	Texture = <NoiseTexture>;
-    MagFilter = LINEAR;
-    MinFilter = LINEAR;
-    Mipfilter = LINEAR;
+	Texture = <CellColorTexture>;
+    MagFilter = POINT;
+    MinFilter = POINT;
+    Mipfilter = POINT;
 };
 
 
@@ -63,24 +64,36 @@ float4 ComputeBackground_PS(VertexShaderOutput input) : COLOR0
 
 	float maxComp = -99999;
 	float worley = 0.0f;
+	float cellColorTexcoord;
 	[loop]for(int i=0; i<NumCells; ++i)
 	{
         float dist = distance(v, Cells_Pos2D[i]);
 		float comp = pow(2.0f, -FALLOFF * dist);
 		worley += comp;
+		[flatten]if(maxComp < comp)
+		{
+			cellColorTexcoord = i;
+			maxComp = maxComp;
+		}
 		maxComp = max(comp, maxComp);
     }
+
+	cellColorTexcoord /= NumCells-1;
+	float3 cellColor = tex2D(sampCellColor, cellColorTexcoord).rgb;
+
 
 	float worleySecond = worley - maxComp;
 	float value = min(log(worley / worleySecond), 10.0f);	// loga - logb
 	
-	float cellFactor = 0.1f + (value-0.6f) * 0.3f -
+	float cellFactor = 0.1f + (value-0.8f) * 0.3f -
 						cubicPulse(2.5, 1.0f, value) * 0.5f +
 						cubicPulse(3, 0.5f, value) * 0.1f + 
 						cubicPulse(4, 3.0f, value) * 0.4f;
 
 	float4 outColor;
-	outColor = cellFactor;
+
+
+	outColor.rgb = cellColor * cellFactor;
 	outColor.a = 0.95f - saturate(value*0.03f);
 	return outColor;
 }
