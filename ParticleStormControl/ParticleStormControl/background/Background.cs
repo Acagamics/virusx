@@ -22,6 +22,8 @@ namespace ParticleStormControl
         private List<Vector2> cellPositions = new List<Vector2>();
         private Vector2 relativeCoordMax;
 
+        public int NumBackgroundCells { get { return cellPositions.Count;  } }
+
         public Background(GraphicsDevice device, ContentManager content)
         {
             backgroundParticles = new BackgroundParticles(device, content);
@@ -39,24 +41,13 @@ namespace ParticleStormControl
             if (cellPositions.Count == 0)
                 return;
 
-
-
-
             backgroundShader.Parameters["NumCells"].SetValue(cellPositions.Count);
             backgroundShader.Parameters["Cells_Pos2D"].SetValue(cellPositions.ToArray());
+            backgroundShader.Parameters["RelativeMax"].SetValue(relativeCoordMax);
 
             if (cellColorTexture != null)
                 cellColorTexture.Dispose();
             cellColorTexture = new Texture2D(device, cellPositions.Count, 1, false, SurfaceFormat.Color);
-
-
-
-            Color[] colors = new Color[cellPositions.Count];
-            for(int i=0; i<colors.Length; ++i)
-                colors[i] = new Color(1, 1, 1, 1.0f);
-            colors[10] = new Color(0, 0, 1, 1.0f);
-            colors[11] = new Color(1, 0, 0, 1.0f);
-            UpdateColors(colors);
         }
 
         /// <summary>
@@ -92,7 +83,6 @@ namespace ParticleStormControl
                                    new Vector2(device.Viewport.Width, device.Viewport.Height) * 2 - new Vector2(1, -1);
             backgroundShader.Parameters["PosScale"].SetValue(posScale);
             backgroundShader.Parameters["PosOffset"].SetValue(posOffset);
-            backgroundShader.Parameters["RelativeMax"].SetValue(relativeCoordMax);
         }
 
         public void UpdateColors(Color[] colors)

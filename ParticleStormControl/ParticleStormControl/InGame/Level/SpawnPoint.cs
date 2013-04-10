@@ -61,7 +61,7 @@ namespace ParticleStormControl
         private readonly float glowSize_Game;
 
         public SpawnPoint(Vector2 PositionIn, float spawnSize, float glowSize_Game, int startposession, ContentManager content)
-            : base(PositionIn, startposession, /*1.0f / (float)Math.Log(spawnSize)*/ 4.0f / spawnSize, -1.0f, 6)
+            : base(PositionIn, startposession, /*1.0f / (float)Math.Log(spawnSize)*/ 4.0f / spawnSize, -1.0f, 5)
         {
             this.capture = content.Load<SoundEffect>("sound/capture");
             this.captureExplosion = content.Load<SoundEffect>("sound/captureExplosion");
@@ -132,14 +132,14 @@ namespace ParticleStormControl
 
         public override void Draw_ScreenBlended(SpriteBatch spriteBatch, Level level, float totalTimeSeconds)
         {
-            // glow for possed ones
+         /*   // glow for possed ones
             if (PossessingPlayer != -1)
             {
                 float currentsize = MathHelper.Clamp((float)glowtimer.Elapsed.TotalSeconds * 2.5f, 0.0f, 1.0f) * glowSize_Game;
                 Color glowColor = Settings.Instance.GetPlayerColor(PossessingPlayer) * 0.5f;
                 if (currentsize > 0.0f)
                     spriteBatch.Draw(glowTexture, level.ComputePixelRect_Centered(Position, currentsize), null, glowColor, 0.0f, Vector2.Zero, SpriteEffects.None, 1.0f);
-            }
+            } */
         }
 
         public override void DrawToDamageMap(SpriteBatch spriteBatch)

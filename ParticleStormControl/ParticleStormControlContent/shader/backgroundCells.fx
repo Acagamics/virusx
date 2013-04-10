@@ -43,7 +43,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
     VertexShaderOutput output;
 	output.Position.xy = input.Position * PosScale + PosOffset;
 	output.Position.zw = float2(0,1);
-	output.Texcoord = input.Position;
+	output.Texcoord = input.Position * RelativeMax;
     return output;
 }
 
@@ -58,7 +58,7 @@ float cubicPulse(float peak, float width, float x)
 
 float4 ComputeBackground_PS(VertexShaderOutput input) : COLOR0
 {
-	float2 v = input.Texcoord * RelativeMax;
+	float2 v = input.Texcoord;
 
 	const float FALLOFF = 95.0f;
 
@@ -78,7 +78,7 @@ float4 ComputeBackground_PS(VertexShaderOutput input) : COLOR0
 		maxComp = max(comp, maxComp);
     }
 
-	cellColorTexcoord /= NumCells-1;
+	cellColorTexcoord /= NumCells-1 + 0.5f / NumCells;
 	float3 cellColor = tex2D(sampCellColor, cellColorTexcoord).rgb;
 
 

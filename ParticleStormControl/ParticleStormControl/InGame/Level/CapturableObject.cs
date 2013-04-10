@@ -155,11 +155,11 @@ namespace ParticleStormControl
         public Color ComputeColor()
         {
             if (PossessingPlayer != -1)
-                return Color.Lerp(Color.LightGray, Settings.Instance.GetPlayerColor(PossessingPlayer), PossessingPercentage);
+                return Color.Lerp(Color.White, Settings.Instance.GetPlayerColor(PossessingPlayer), PossessingPercentage);
             else if (CapturingPlayer != -1)
-                return Color.Lerp(Color.LightGray, Settings.Instance.GetPlayerColor(CapturingPlayer), PossessingPercentage);
+                return Color.Lerp(Color.White, Settings.Instance.GetPlayerColor(CapturingPlayer), PossessingPercentage);
             else
-                return Color.LightGray;
+                return Color.White;
         }
     }
 }

@@ -218,11 +218,15 @@ namespace ParticleStormControl
 
 
             // random skipping - nonlinear randomness!
-            cellPositions.AddRange(spawnPositions);
             const int MAX_SKIPS = 5;
             int numSkips = (int)(Math.Pow(Random.NextDouble(), 4) * MAX_SKIPS + 0.5f);
-            for(int i=0; i<numSkips; ++i)
-                spawnPositions.RemoveAt(Random.Next(spawnPositions.Count));
+            Vector2[] removedCells = new Vector2[numSkips];
+            for (int i = 0; i < numSkips; ++i)
+            {
+                int index = Random.Next(spawnPositions.Count);
+                removedCells[i] = spawnPositions[index];
+                spawnPositions.RemoveAt(index);
+            }
 #if EMPTY_LEVELDEBUG
             spawnPositions.Clear();
 #endif
@@ -235,15 +239,15 @@ namespace ParticleStormControl
                 float capturesize = (float)(100.0 + nearestDist * nearestDist * 25000);
                 capturesize = Math.Min(capturesize, 2000);
 
-
                 spawnPoints.Add(new SpawnPoint(pos, capturesize, (float)Math.Sqrt(nearestDist), - 1, content));
             }
-
-
             mapObjects.AddRange(spawnPoints);
 
             // background
-            background.Generate(device, cellPositions, Level.RELATIVE_MAX);
+            List<Vector2> renderCells = new List<Vector2>(spawnPoints.Select(x => x.Position));// to keep things simple, place spawnpoints at the beginning
+            renderCells.AddRange(removedCells);
+            renderCells.AddRange(cellPositions.GetRange(numPlayers, 4 - numPlayers));
+            background.Generate(device, renderCells, Level.RELATIVE_MAX);
         }
 
         /// <summary>
@@ -412,6 +416,15 @@ namespace ParticleStormControl
                 }
                 GameStatistics.UpdateDomination();
             }
+
+            // background colors
+            var colors = spawnPoints.Select(x => {
+                Color color = x.ComputeColor();
+                float saturation = Vector3.Dot(color.ToVector3(), new Vector3(0.3f, 0.59f, 0.11f));
+                return Color.Lerp(color, new Color(saturation, saturation, saturation), 0.6f);
+            })
+            .Concat(Enumerable.Repeat(Color.DimGray, background.NumBackgroundCells - spawnPoints.Count));
+            background.UpdateColors(colors.ToArray());
         }
 
         public void UpdateSwitching(float frameTimeSeconds, Player[] players)
