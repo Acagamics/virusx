@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using ParticleStormControl;
 using ParticleStormControl.Menu;
 using System.Collections.Generic;
+using System.Linq;
 
 #endif
 
@@ -157,8 +158,9 @@ namespace ParticleStormControl
         {
             // generate cell positions for menu background
             Vector2 relativeMax = new Vector2(GraphicsDevice.Viewport.AspectRatio, 1.0f);
-            List<Vector2> cellPositions = Level.GenerateCellPositions(7, 4, 0.09f, new Vector2(-0.1f), relativeMax);
+            List<Vector2> cellPositions = Level.GenerateCellPositions(7, 4, 0.09f, new Vector2(0.0f), relativeMax);
             background.Resize(GraphicsDevice, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), cellPositions, relativeMax);
+            background.UpdateColors(Enumerable.Repeat(Color.DimGray, cellPositions.Count).ToArray()); 
         }
         
         /// <summary>
