@@ -12,9 +12,9 @@ texture BackgroundTexture;
 sampler2D sampBackground = sampler_state
 {	
 	Texture = <BackgroundTexture>;
-    MagFilter = POINT;
-    MinFilter = POINT;
-    Mipfilter = POINT;
+    MagFilter = LINEAR;	// this sucks!
+    MinFilter = LINEAR;
+    Mipfilter = LINEAR;
 };
 
 texture CellColorTexture;

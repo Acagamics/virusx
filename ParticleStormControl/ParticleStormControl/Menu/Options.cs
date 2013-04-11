@@ -61,7 +61,6 @@ namespace ParticleStormControl.Menu
                 }
             }
             selectedButton = Button.BACK;
-            
         }
 
         public override void LoadContent(ContentManager content)
