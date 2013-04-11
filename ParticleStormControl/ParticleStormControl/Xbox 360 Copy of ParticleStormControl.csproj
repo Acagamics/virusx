@@ -102,6 +102,8 @@
     <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="background\nucleus_inner.png" />
+    <Content Include="background\nucleus_outer.png" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
   </ItemGroup>

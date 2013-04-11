@@ -302,15 +302,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="nucleus.png">
-      <Name>nucleus</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
-      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="items\danger.png">
       <Name>danger</Name>
       <Importer>TextureImporter</Importer>
@@ -324,6 +315,22 @@
       <Name>danger_zone_inner</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="nucleus_inner.png">
+      <Name>nucleus_inner</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
+    <Compile Include="nucleus_outer.png">
+      <Name>nucleus_outer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
