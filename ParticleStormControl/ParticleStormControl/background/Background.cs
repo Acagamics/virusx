@@ -71,7 +71,7 @@ namespace ParticleStormControl
             device.SetRenderTarget(null);
             backgroundShader.CurrentTechnique = backgroundShader.Techniques["TOutput"];
             backgroundShader.Parameters["PosScale"].SetValue(posScale);
-            backgroundShader.Parameters["PosOffset"].SetValue(posOffset + new Vector2(-0.5f / (float)device.Viewport.Width, 0.5f / (float).Viewport.Height));   // + half pixel correction
+            backgroundShader.Parameters["PosOffset"].SetValue(posOffset + new Vector2(-0.5f / (float)device.Viewport.Width, 0.5f / (float)device.Viewport.Height));   // + half pixel correction
             backgroundShader.Parameters["RelativeMax"].SetValue(Vector2.One);
 
          //    using (var file = new System.IO.FileStream("background.png", System.IO.FileMode.Create))
