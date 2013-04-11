@@ -262,12 +262,14 @@ namespace ParticleStormControl
                 //new Vector2(Level.RELATIVE_MAX.X/2, Level.RELATIVE_MAX.Y/2)
             };
 #else
+        private readonly static float cursor_offset_x = 0.2f;
+        private readonly static float cursor_offset_y = 0.04f;
         private readonly static Vector2[] cursorStartPositions =
             {
-                new Vector2(0.2f, Level.RELATIVE_MAX.Y-0.2f),
-                new Vector2(Level.RELATIVE_MAX.X-0.2f, 0.2f),
-                new Vector2(Level.RELATIVE_MAX.X-0.2f, Level.RELATIVE_MAX.Y-0.2f),
-                new Vector2(0.2f, 0.2f)
+                new Vector2(0.2f + cursor_offset_x, Level.RELATIVE_MAX.Y-0.2f - cursor_offset_y),
+                new Vector2(Level.RELATIVE_MAX.X-0.2f - cursor_offset_x, 0.2f + cursor_offset_y),
+                new Vector2(Level.RELATIVE_MAX.X-0.2f - cursor_offset_x, Level.RELATIVE_MAX.Y-0.2f- cursor_offset_y),
+                new Vector2(0.2f + cursor_offset_x, 0.2f + cursor_offset_y)
             };
 #endif
         /// <summary>
@@ -562,7 +564,7 @@ namespace ParticleStormControl
 
             float len = cursorMove.Length();
             if (len > 1.0f) cursorMove /= len;
-            cursorPosition += cursorMove;
+            cursorPosition += (cursorMove * 0.65f);
 
             cursorPosition.X = MathHelper.Clamp(cursorPosition.X, 0.0f, Level.RELATIVE_MAX.X);
             cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, Level.RELATIVE_MAX.Y);
