@@ -53,7 +53,19 @@ namespace ParticleStormControl
         public float Mass_health
         { get { return mass_health_byVirus[virusIndex]; } }*/
 
+        public string AttributValueToString(float value)
+        {
+            string symbol = "";
+            if (value < 0f) { symbol += "-"; value *= -1f; }
+            else symbol += "+";
+            string result = symbol;
+            if (value > 0.24f) result += symbol;
+            if (value > 0.49f) result += symbol;
+            if (value > 0.74f) result += symbol;
+            if (value > 0.9f) result += symbol;
 
+            return result;
+        }
         // attributs
         private static readonly float[] mass_byVirus = new float[] { 0.4f, 0.55f, 0.085f, 1.0f };
         private static readonly float[] speed_byVirus = new float[] { 0.4f, -0.6f, 0.4f, 1.0f };

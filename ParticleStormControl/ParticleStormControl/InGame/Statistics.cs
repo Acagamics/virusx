@@ -350,7 +350,10 @@ namespace ParticleStormControl
             float basePercentage = 0f;
             for (int i = 0; i < playerCount; ++i)
             {
-                healthPercentage = (float)healthInStep[i][currentStep] / overallHealth;
+                if (overallHealth != 0)
+                    healthPercentage = (float)healthInStep[i][currentStep] / overallHealth;
+                else
+                    healthPercentage = 1f / playerCount;
                 basePercentage = (float)possessingBasesInStep[i][currentStep] / overallBases;
                 dominationInStep[i].Add(healthPercentage + basePercentage);
             }
