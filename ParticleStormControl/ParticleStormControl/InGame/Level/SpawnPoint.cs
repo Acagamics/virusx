@@ -61,7 +61,7 @@ namespace ParticleStormControl
         private readonly float glowSize_Game;
 
         public SpawnPoint(Vector2 PositionIn, float spawnSize, float glowSize_Game, int startposession, ContentManager content)
-            : base(PositionIn, startposession, /*1.0f / (float)Math.Log(spawnSize)*/ 4.0f / spawnSize, -1.0f, 5)
+            : base(PositionIn, startposession, /*1.0f / (float)Math.Log(spawnSize)*/ 1.0f / spawnSize, -1.0f, 5)
         {
             this.capture = content.Load<SoundEffect>("sound/capture");
             this.captureExplosion = content.Load<SoundEffect>("sound/captureExplosion");
