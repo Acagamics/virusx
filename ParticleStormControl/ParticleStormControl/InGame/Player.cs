@@ -53,7 +53,7 @@ namespace ParticleStormControl
         public float Mass_health
         { get { return mass_health_byVirus[virusIndex]; } }*/
 
-        public string AttributValueToString(float value)
+        static public string AttributValueToString(float value)
         {
             string symbol = "";
             if (value < 0f) { symbol += "-"; value *= -1f; }
@@ -67,10 +67,10 @@ namespace ParticleStormControl
             return result;
         }
         // attributs
-        private static readonly float[] mass_byVirus = new float[] { 0.4f, 0.55f, 0.085f, 1.0f };
-        private static readonly float[] speed_byVirus = new float[] { 0.4f, -0.6f, 0.4f, 1.0f };
-        private static readonly float[] health_byVirus = new float[] { 0.4f, 0.35f, 1.0f, -0.4f };
-        private static readonly float[] disciplin_byVirus = new float[] { 0.4f, 0.15f, 0.65f, 0.5f };
+        public static readonly float[] mass_byVirus = new float[] { 0.4f, 0.55f, 0.085f, 1.0f };
+        public static readonly float[] speed_byVirus = new float[] { 0.4f, -0.6f, 0.4f, 1.0f };
+        public static readonly float[] health_byVirus = new float[] { 0.4f, 0.35f, 1.0f, -0.4f };
+        public static readonly float[] disciplin_byVirus = new float[] { 0.4f, 0.15f, 0.65f, 0.5f };
         
         // speed stuff
         private const float speedConstant = 0.13f;

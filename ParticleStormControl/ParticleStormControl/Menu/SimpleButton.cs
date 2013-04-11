@@ -20,7 +20,7 @@ namespace ParticleStormControl.Menu
         private readonly Color selectedColor = Color.Black;
         private readonly Color normalColor = Color.White;
 
-        private readonly int padding = 10;
+        public const int PADDING = 10;
         private TimeSpan animationDuration = TimeSpan.FromMilliseconds(200);
         private TimeSpan lastChange = new TimeSpan();
         private TimeSpan currentTime = new TimeSpan();
@@ -34,10 +34,11 @@ namespace ParticleStormControl.Menu
         /// <param name="position"></param>
         /// <param name="selected"></param>
         /// <param name="texture">The pixel texture</param>
-        /// <param name="width">override the original width</param>
+        /// <param name="width">override the original width, 0 for auto, -1 for none</param>
         public void Draw(SpriteBatch spriteBatch, SpriteFont font, string label, Vector2 position, bool selected, Texture2D texture, int width = 0)
         {
-            DrawBackground(spriteBatch, position, selected && !IsAnimated() ? normalColor : selectedColor, texture, font.MeasureString(label), false, width); // do not try to understand this
+            if(width >= 0)
+                DrawBackground(spriteBatch, position, selected && !IsAnimated() ? normalColor : selectedColor, texture, font.MeasureString(label), false, width); // do not try to understand this
             spriteBatch.DrawString(font, label, position, selected ? selectedColor : normalColor);
 
             if (IsAnimated() && selected)
@@ -79,16 +80,16 @@ namespace ParticleStormControl.Menu
 
         private void DrawBackground(SpriteBatch spriteBatch, Vector2 position, Color color, Texture2D texture, Vector2 size, bool animated, int width = 0)
         {
-            int _width = (int)size.X + 2 * padding;
+            int _width = (int)size.X + 2 * PADDING;
             if (width > 0)
                 _width = width;
-            
-            int _height = (int)size.Y + 2 * padding;
+
+            int _height = (int)size.Y + 2 * PADDING;
             if (animated)
                 _height = GetHeight(_height);
-            
 
-            spriteBatch.Draw(texture, new Rectangle((int)position.X - padding, (int)position.Y - padding, _width, _height), color);
+
+            spriteBatch.Draw(texture, new Rectangle((int)position.X - PADDING, (int)position.Y - PADDING, _width, _height), color);
         }
 
         /// <summary>
