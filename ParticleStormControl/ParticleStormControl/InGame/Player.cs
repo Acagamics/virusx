@@ -62,13 +62,13 @@ namespace ParticleStormControl
             if (value > 0.24f) result += symbol;
             if (value > 0.49f) result += symbol;
             if (value > 0.74f) result += symbol;
-            if (value > 0.9f) result += symbol;
+            //if (value > 0.9f) result += symbol;
 
             return result;
         }
         // attributs
-        private static readonly float[] mass_byVirus = new float[] { 0.4f, 0.55f, 0.085f, 1.0f };
-        private static readonly float[] speed_byVirus = new float[] { 0.4f, -0.6f, 0.4f, 1.0f };
+        private static readonly float[] mass_byVirus = new float[] { 0.4f, 0.6f, 0.085f, 1.0f };
+        private static readonly float[] speed_byVirus = new float[] { 0.4f, -0.5f, 0.4f, 1.0f };
         private static readonly float[] health_byVirus = new float[] { 0.4f, 0.35f, 1.0f, -0.4f };
         private static readonly float[] disciplin_byVirus = new float[] { 0.4f, 0.15f, 0.65f, 0.5f };
         
