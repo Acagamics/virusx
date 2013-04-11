@@ -76,27 +76,30 @@ float4 ComputeBackground_PS(VertexShaderOutput input) : COLOR0
 			maxComp = comp;
 		}
     }
-
 	cellColorTexcoord /= NumCells-1 + 0.5f / NumCells;
-	float3 cellColor = tex2D(sampCellColor, cellColorTexcoord).rgb;
 
 	float worleySecond = worley - maxComp;
 	float value = min(log(worley / worleySecond), 10.0f);	// loga - logb
 	
-	float cellFactor = 0.1f + (value-0.8f) * 0.3f -
-						cubicPulse(2.5, 1.0f, value) * 0.5f +
-						cubicPulse(3, 0.5f, value) * 0.1f + 
-						cubicPulse(4, 3.0f, value) * 0.4f;
+	float cellFactor = (value-0.8f) * 0.3f -
+						cubicPulse(2.5f, 1.0f, value) * 0.5f +
+						cubicPulse(3.0f, 0.5f, value) * 0.3f + 
+						cubicPulse(4.0f, 3.0f, value) * 0.4f;
 
 	float4 outColor;
-	outColor.rgb = cellColor * cellFactor;
-	outColor.a = 0.95f - value*0.03f;
+	outColor.r = cellFactor;
+	outColor.g = 0.95f - saturate(value*0.03f);
+	outColor.b = cellColorTexcoord;
+	outColor.a = 1.0f;
 	return outColor;
 }
 
 float4 Output_PS(VertexShaderOutput input) : COLOR0
 {
-	return tex2D(sampBackground, input.Texcoord);
+	float3 backgroundInfo = tex2D(sampBackground, input.Texcoord).rgb;
+	float3 cellColor = tex2D(sampCellColor, float2(backgroundInfo.b, 0.5f)).rgb;
+
+	return float4(backgroundInfo.r * cellColor, backgroundInfo.g);
 }
 
 technique TOutput

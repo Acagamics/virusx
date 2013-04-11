@@ -14,7 +14,7 @@ namespace ParticleStormControl
         private BackgroundParticles backgroundParticles;
 
         private VertexBuffer quadVertexBuffer;
-        private Texture2D backgroundTexture;
+        private RenderTarget2D backgroundTexture;
         private Effect backgroundShader;
 
         private Texture2D cellColorTexture;
@@ -41,13 +41,41 @@ namespace ParticleStormControl
             if (cellPositions.Count == 0)
                 return;
 
+            // new cellcolors
+            backgroundShader.Parameters["CellColorTexture"].SetValue((Texture2D)null);
+            if (cellColorTexture == null || cellColorTexture.Width != cellPositions.Count)
+            {
+                if (cellColorTexture != null) cellColorTexture.Dispose();
+                cellColorTexture = new Texture2D(device, cellPositions.Count, 1, false, SurfaceFormat.Color);
+            }
+
+            // memorize old some old settings
+            Vector2 posScale = backgroundShader.Parameters["PosScale"].GetValueVector2();
+            Vector2 posOffset = backgroundShader.Parameters["PosOffset"].GetValueVector2();
+
+            // new settings
             backgroundShader.Parameters["NumCells"].SetValue(cellPositions.Count);
             backgroundShader.Parameters["Cells_Pos2D"].SetValue(cellPositions.ToArray());
             backgroundShader.Parameters["RelativeMax"].SetValue(relativeCoordMax);
+            backgroundShader.Parameters["PosScale"].SetValue(new Vector2(2.0f, -2.0f));
+            backgroundShader.Parameters["PosOffset"].SetValue(new Vector2(-1.0f, 1.0f));
+            backgroundShader.CurrentTechnique = backgroundShader.Techniques["TCompute"];
 
-            if (cellColorTexture != null)
-                cellColorTexture.Dispose();
-            cellColorTexture = new Texture2D(device, cellPositions.Count, 1, false, SurfaceFormat.Color);
+            // precompute background
+            device.SetRenderTarget(backgroundTexture);
+            device.SetVertexBuffer(quadVertexBuffer);
+            backgroundShader.CurrentTechnique.Passes[0].Apply();
+            device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+
+            // setup for normal rendering
+            device.SetRenderTarget(null);
+            backgroundShader.CurrentTechnique = backgroundShader.Techniques["TOutput"];
+            backgroundShader.Parameters["PosScale"].SetValue(posScale);
+            backgroundShader.Parameters["PosOffset"].SetValue(posOffset + new Vector2(-0.5f / (float)device.Viewport.Width, 0.5f / (float)device.Viewport.Height));   // + half pixel correction
+            backgroundShader.Parameters["RelativeMax"].SetValue(Vector2.One);
+
+         //    using (var file = new System.IO.FileStream("background.png", System.IO.FileMode.Create))
+         //       backgroundTexture.SaveAsPng(file, backgroundTexture.Width, backgroundTexture.Height);
         }
 
         /// <summary>
@@ -69,12 +97,16 @@ namespace ParticleStormControl
             // resize background particles
             backgroundParticles.Resize(device.Viewport.Width, device.Viewport.Height, new Point(areaInPixel.Width, areaInPixel.Height), areaInPixel.Location, relativeCoordMax);
 
-            // resize background and regenerate
-            if (backgroundTexture != null)
-                backgroundTexture.Dispose();
-            backgroundTexture = new Texture2D(device, areaInPixel.Width, areaInPixel.Height, false, SurfaceFormat.Color);
-            Generate(device, cellPositions, relativeCoordMax);
+            // resize background texture if necessary
+            backgroundShader.Parameters["BackgroundTexture"].SetValue((Texture2D)null);
+            if (backgroundTexture == null || backgroundTexture.Width != areaInPixel.Width || backgroundTexture.Height != areaInPixel.Height)
+            {
+                if (backgroundTexture != null) backgroundTexture.Dispose();
+                backgroundTexture = new RenderTarget2D(device, areaInPixel.Width, areaInPixel.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            }
 
+            // resize background and regenerate
+            Generate(device, cellPositions, relativeCoordMax);
 
             // background shader
             Vector2 posScale = new Vector2(areaInPixel.Width, -areaInPixel.Height) /
@@ -87,6 +119,8 @@ namespace ParticleStormControl
 
         public void UpdateColors(Color[] colors)
         {
+            cellColorTexture.GraphicsDevice.Textures[0] = null;
+            cellColorTexture.GraphicsDevice.Textures[1] = null;
             System.Diagnostics.Debug.Assert(colors.Length == cellPositions.Count);
             cellColorTexture.SetData(colors);
         }
@@ -98,13 +132,11 @@ namespace ParticleStormControl
             backgroundParticles.Draw(device, totalTimeSeconds);
 
             // cells
-            backgroundShader.CurrentTechnique = backgroundShader.Techniques["TCompute"];
             backgroundShader.Parameters["BackgroundTexture"].SetValue(backgroundTexture);
             backgroundShader.Parameters["CellColorTexture"].SetValue(cellColorTexture);
             device.SetVertexBuffer(quadVertexBuffer);
             backgroundShader.CurrentTechnique.Passes[0].Apply();
             device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
-            device.Textures[0] = null;
         }
     }
 }
