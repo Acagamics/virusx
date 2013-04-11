@@ -54,8 +54,7 @@ namespace ParticleStormControl
         // textures
         private Texture2D glowTexture;
         private Texture2D explosionTexture;
-        private Texture2D innerTexture;
-        private Texture2D outerTexture;
+        private Texture2D nucleusTexture;
 
 
         private readonly float glowSize_Game;
@@ -66,8 +65,7 @@ namespace ParticleStormControl
             this.capture = content.Load<SoundEffect>("sound/capture");
             this.captureExplosion = content.Load<SoundEffect>("sound/captureExplosion");
             this.glowTexture = content.Load<Texture2D>("glow");
-            this.innerTexture = content.Load<Texture2D>("unit_hq_inner");
-            this.outerTexture = content.Load<Texture2D>("unit_hq_outer");
+            this.nucleusTexture = content.Load<Texture2D>("nucleus");
             this.explosionTexture = content.Load<Texture2D>("capture_glow");
             this.SpawnSize = spawnSize;
             this.glowSize_Game = glowSize_Game;
@@ -118,8 +116,9 @@ namespace ParticleStormControl
             // main
             Color color = ComputeColor();
             Rectangle rect = level.ComputePixelRect(Position, Size);
-            spriteBatch.Draw(outerTexture, rect, null, color, totalTimeSeconds, new Vector2(outerTexture.Width * 0.5f, outerTexture.Height * 0.5f), SpriteEffects.None, 0.8f);
-            spriteBatch.Draw(innerTexture, rect, null, color, totalTimeSeconds, new Vector2(innerTexture.Width * 0.5f, innerTexture.Height * 0.5f), SpriteEffects.None, 0.7f);
+         //   spriteBatch.Draw(outerTexture, rect, null, color, totalTimeSeconds, new Vector2(outerTexture.Width * 0.5f, outerTexture.Height * 0.5f), SpriteEffects.None, 0.8f);
+            spriteBatch.Draw(nucleusTexture, rect, null, color, 0, new Vector2(nucleusTexture.Width * 0.5f, nucleusTexture.Height * 0.5f), 
+                                            SpriteEffects.None, 0.7f);
 
             // explosion
             if (explosionTimer.IsRunning && PossessingPlayer != -1)

@@ -20,6 +20,7 @@ using ParticleStormControl;
 using ParticleStormControl.Menu;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 #endif
 
@@ -61,6 +62,12 @@ namespace ParticleStormControl
             graphics.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
 #endif
 
+     /*   graphics.DeviceReset += (x, y) =>
+                {
+                    //ApplyChangedGraphicsSettings();
+                    Debugger.Break();
+                }; */
+
             graphics.SynchronizeWithVerticalRetrace = true;
             /* too high framerates kill the particle behaviour!
             // no vsync if statistics are wanted
@@ -85,7 +92,7 @@ namespace ParticleStormControl
 
             Content.RootDirectory = "Content";
             Window.AllowUserResizing = false;
-         //   Window.ClientSizeChanged += new EventHandler<EventArgs>(WindowClientSizeChanged);
+            Window.ClientSizeChanged += new EventHandler<EventArgs>(WindowClientSizeChanged);
             Window.Title = "Particle Storm Control ~Deluxe~";
         }
 
@@ -117,10 +124,12 @@ namespace ParticleStormControl
 
         void WindowClientSizeChanged(object sender, EventArgs e)
         {
-            graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+           /* graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
             graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
             graphics.ApplyChanges();
             inGame.Resize(GraphicsDevice);
+            RegenerateBackground(); */
+            ApplyChangedGraphicsSettings();
         }
 
         /// <summary>

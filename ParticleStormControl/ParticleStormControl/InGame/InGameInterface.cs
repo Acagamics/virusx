@@ -11,7 +11,7 @@ namespace ParticleStormControl
     class InGameInterface
     {
         private Texture2D itemBox;
-        private Texture2D itemBuff;
+        private Texture2D itemDanger;
         private Texture2D itemMutate;
         private Texture2D itemWipeout;
 
@@ -20,7 +20,7 @@ namespace ParticleStormControl
         public InGameInterface(ContentManager content)
         {
             itemBox = content.Load<Texture2D>("itemBox");
-            itemBuff = content.Load<Texture2D>("items/buff");
+            itemDanger = content.Load<Texture2D>("items/danger");
             itemMutate = content.Load<Texture2D>("items/mutate");
             itemWipeout = content.Load<Texture2D>("items/wipeout");
         }
@@ -45,7 +45,7 @@ namespace ParticleStormControl
                 Color color = players[i].Color;
                 color.A = (byte)(255 * TRANSPARENCY);
 
-                Vector2 halfBoxSize = new Vector2(itemBuff.Width, itemBuff.Height);
+                Vector2 halfBoxSize = new Vector2(itemDanger.Width, itemDanger.Height);
                 spriteBatch.Draw(itemBox, itemDisplayRectangles[i], null, color, 0.0f, Vector2.Zero, flips[i], 0);
 
                 DrawItem(spriteBatch, players[i].ItemSlot, itemDisplayRectangles[i], color, Item.ROTATION_SPEED * totalTimeSeconds);
@@ -65,8 +65,8 @@ namespace ParticleStormControl
             switch (type)
             {
                 case Item.ItemType.DANGER_ZONE:
-                    spriteBatch.Draw(itemBuff, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
-                                                   new Vector2(itemBuff.Width, itemBuff.Height) / 2,SpriteEffects.None, 1); // color);
+                    spriteBatch.Draw(itemDanger, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
+                                                   new Vector2(itemDanger.Width, itemDanger.Height) / 2,SpriteEffects.None, 1); // color);
                     break;
                 case Item.ItemType.MUTATION:
                     spriteBatch.Draw(itemMutate, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
