@@ -27,7 +27,7 @@ namespace ParticleStormControl
 					Q[i] = Q[i - 3] ^ Q[i - 2] ^ PHI ^ i;
         }
 
-        public static uint Next()
+        public static UInt32 Next()
         {
             UInt64 t, a = 18782L;
 			UInt32 i = 4095;
@@ -51,12 +51,12 @@ namespace ParticleStormControl
 
         public static int Next(int max)
         {
-            return (int)(Next() % (uint)max);
+            return Math.Abs((int)Next()) % max;
         }
 
         public static int Next(int min, int max)
         {
-            return (int)Next() % (max - min) + min;
+            return Math.Abs((int)Next()) % (max - min) + min;
         }
 
         public static double NextDouble()
