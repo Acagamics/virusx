@@ -27,7 +27,7 @@ namespace ParticleStormControl
 	    }
 
         public readonly static VirusType[] Viruses = { VirusType.H5N1, VirusType.HEPATITISB, VirusType.HIV, VirusType.EPSTEINBAR };
-        public readonly static string[] VirusNames = { "Influenza A virus", "Hepatitis B virus", "Human immunodeficiency virus", "Epstein-Bar virus" };
+        public readonly static string[] VirusNames = { "Influenza A", "Hepatitis B", "Human immunodeficiency", "Epstein-Bar" };
         public readonly static string[] VirusDescriptions = { "causes influenza in birds and some mammals, and is the only species of influenzavirus A.",
                                                                "is a species of the genus Orthohepadnavirus, which is likewise a part of the Hepadnaviridae family of viruses.",
                                                                "is a lentivirus (slowly replicating retrovirus) that causes acquired immunodeficiency syndrome (AIDS).",
@@ -62,13 +62,13 @@ namespace ParticleStormControl
             if (value > 0.24f) result += symbol;
             if (value > 0.49f) result += symbol;
             if (value > 0.74f) result += symbol;
-            if (value > 0.9f) result += symbol;
+            //if (value > 0.9f) result += symbol;
 
             return result;
         }
         // attributs
-        public static readonly float[] mass_byVirus = new float[] { 0.4f, 0.55f, 0.085f, 1.0f };
-        public static readonly float[] speed_byVirus = new float[] { 0.4f, -0.6f, 0.4f, 1.0f };
+        public static readonly float[] mass_byVirus = new float[] { 0.4f, 0.6f, 0.085f, 1.0f };
+        public static readonly float[] speed_byVirus = new float[] { 0.4f, -0.5f, 0.4f, 1.0f };
         public static readonly float[] health_byVirus = new float[] { 0.4f, 0.35f, 1.0f, -0.4f };
         public static readonly float[] disciplin_byVirus = new float[] { 0.4f, 0.15f, 0.65f, 0.5f };
         

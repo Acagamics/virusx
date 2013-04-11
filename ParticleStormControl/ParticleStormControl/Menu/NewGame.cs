@@ -256,25 +256,26 @@ namespace ParticleStormControl.Menu
                     SimpleButton.Instance.DrawTexture(spriteBatch, icons, new Rectangle((int)origin.X + 20 + boxWidth / 2, (int)origin.Y + 260, 16, 16), new Rectangle(playerReady[i] ? 48 : 0, 32, 16, 16), playerReady[i], menu.PixelTexture);
 
                     // description
-                    const int descpX0 = 70;
-                    const int descpX1 = 200;
+                    const int backgroundLength = 280;
+                    const int descpX0 = 65;
+                    const int descpX1 = backgroundLength / 2 + descpX0;
                     int descpStrLen = (int)menu.Font.MeasureString("Disciplin").X;
                     string symbols = Player.AttributValueToString(Player.speed_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Speed", origin + new Vector2(descpX0, 260 - boxSize), playerReady[i], menu.PixelTexture, 130);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, 260 - boxSize), playerReady[i], menu.PixelTexture, -1);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Speed", origin + new Vector2(descpX0, 260 - boxSize), false, menu.PixelTexture, backgroundLength);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, 260 - boxSize), false, menu.PixelTexture, -1);
                     symbols = Player.AttributValueToString(Player.mass_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Mass", origin + new Vector2(descpX0, 260), playerReady[i], menu.PixelTexture, 130);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, 260), playerReady[i], menu.PixelTexture, -1);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Mass", origin + new Vector2(descpX0, 260), false, menu.PixelTexture, backgroundLength);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, 260), false, menu.PixelTexture, -1);
                     symbols = Player.AttributValueToString(Player.disciplin_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Disciplin", origin + new Vector2(descpX1, 260 - boxSize), playerReady[i], menu.PixelTexture, 130);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, 260 - boxSize), playerReady[i], menu.PixelTexture, -1);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Loyalty", origin + new Vector2(descpX1, 260 - boxSize), false, menu.PixelTexture, -1);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, 260 - boxSize), false, menu.PixelTexture, -1);
                     symbols = Player.AttributValueToString(Player.health_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Health", origin + new Vector2(descpX1, 260), playerReady[i], menu.PixelTexture, 130);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, 260), playerReady[i], menu.PixelTexture, -1);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Health", origin + new Vector2(descpX1, 260), false, menu.PixelTexture, -1);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, 260), false, menu.PixelTexture, -1);
                    
                     // image
-                //    Rectangle destination = new Rectangle((int)origin.X + padd, (int)origin.Y + padd, boxWidth / 2 - padd, boxWidth / 2 - padd);
-                //    spriteBatch.Draw(viruses[Settings.Instance.PlayerVirusIndices[i]], destination, Color.White);
+                    Rectangle destination = new Rectangle((int)origin.X + padd, (int)origin.Y + padd, boxWidth / 2 - padd, boxWidth / 2 - padd);
+                    spriteBatch.Draw(viruses[Settings.Instance.PlayerVirusIndices[i]], destination, Color.White);
 
                     // arrows left & right
                     SimpleButton.Instance.DrawTexture(spriteBatch, icons, new Rectangle((int)origin.X + 16, (int)origin.Y + 170, 16, 16), new Rectangle(0 + isActive(InputManager.ControlActions.LEFT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.LEFT, i), menu.PixelTexture);
