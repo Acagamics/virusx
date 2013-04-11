@@ -387,7 +387,7 @@ namespace ParticleStormControl
                     mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
                 else if (Random.NextDouble() < 0.23 /*0.2*/)
                     mapObjects.Add(new Debuff(position, contentManager));
-                else if (Random.NextDouble() < 0.15 /*0.18*/)
+                else if (Random.NextDouble() < 1.15 /*0.18*/)
                     mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
                 else if (Random.NextDouble() < 0.32 /*0.2*/)
                     mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager));
@@ -421,7 +421,7 @@ namespace ParticleStormControl
             var colors = spawnPoints.Select(x => {
                 Color color = x.ComputeColor();
                 float saturation = Vector3.Dot(color.ToVector3(), new Vector3(0.3f, 0.59f, 0.11f));
-                return Color.Lerp(color, new Color(saturation, saturation, saturation), 0.6f);
+                return Color.Lerp(color, new Color(saturation, saturation, saturation), 0.5f) * 2;
             })
             .Concat(Enumerable.Repeat(Color.DimGray, background.NumBackgroundCells - spawnPoints.Count));
             background.UpdateColors(colors.ToArray());

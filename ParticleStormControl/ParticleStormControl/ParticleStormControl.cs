@@ -32,7 +32,7 @@ namespace ParticleStormControl
     {
         public const string VERSION = "virusstorm XX.04.2013";
 
-        private bool showStatistics = true;
+        private bool showStatistics = false;
      
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
