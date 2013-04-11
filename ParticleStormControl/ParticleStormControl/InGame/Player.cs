@@ -262,8 +262,8 @@ namespace ParticleStormControl
                 //new Vector2(Level.RELATIVE_MAX.X/2, Level.RELATIVE_MAX.Y/2)
             };
 #else
-        private readonly static float cursor_offset_x = -0.2f;
-        private readonly static float cursor_offset_y = -0.2f;//04f;
+        private readonly static float cursor_offset_x = 0.2f;
+        private readonly static float cursor_offset_y = 0.04f;
         private readonly static Vector2[] cursorStartPositions =
             {
                 new Vector2(0.2f + cursor_offset_x, Level.RELATIVE_MAX.Y-0.2f - cursor_offset_y),
