@@ -555,9 +555,6 @@ namespace ParticleStormControl
             // alphablended spritebatch stuff
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
 
-            // countdown
-            DrawCountdown(device, totalTimeSeconds);
-
             // all alpha blended objects
             foreach (MapObject mapObject in mapObjects)
             {
@@ -570,7 +567,12 @@ namespace ParticleStormControl
                 spriteBatch.Draw(wipeoutExplosionTexture, ComputePixelRect(Level.RELATIVE_MAX / 2, Level.RELATIVE_MAX.X * wipeoutProgress * WIPEOUT_SIZEFACTOR),
                                     null, new Color(1.0f, 1.0f, 1.0f, (float)(1.0 - Math.Sqrt(wipeoutProgress))), totalTimeSeconds, 
                                     new Vector2(wipeoutExplosionTexture.Width, wipeoutExplosionTexture.Height) * 0.5f, SpriteEffects.None, 0.0f);
-    
+
+
+            // countdown
+            DrawCountdown(device, totalTimeSeconds);
+
+
             spriteBatch.End();
 
             // vignetting
@@ -598,15 +600,15 @@ namespace ParticleStormControl
         {
             if (switchCountdownActive)
             {
-                spriteBatch.Draw(mutateBig, ComputePixelRect(RELATIVE_MAX * 0.5f, RELATIVE_MAX.Y * 0.4f), null, Color.LightSlateGray * 0.4f,
-                                    -totalPassedTime, new Vector2(mutateBig.Width, mutateBig.Height) / 2, SpriteEffects.None, 0.0f);
+                Rectangle mutateBigRect = ComputePixelRect(RELATIVE_MAX * 0.5f, RELATIVE_MAX.Y * 0.7f);
+                spriteBatch.Draw(mutateBig, mutateBigRect, null, Color.LightSlateGray * 0.6f,
+                                    -totalPassedTime, new Vector2(mutateBig.Width, mutateBig.Height) / 2, SpriteEffects.None, 1.0f);
                 string text = ((int) (switchCountdownTimer + 1)).ToString();
+
                 spriteBatch.DrawString(fontCountdownLarge, text,
-                                       new Vector2(
-                                           (device.Viewport.Width - fontCountdownLarge.MeasureString(text).X)*
-                                           0.5f,
-                                           (device.Viewport.Height - fontCountdownLarge.MeasureString(text).Y)*
-                                           0.5f + 40), Color.FromNonPremultiplied(180, 180, 180, 180));
+                                       new Vector2(mutateBigRect.X - fontCountdownLarge.MeasureString(text).X / 2,
+                                                     mutateBigRect.Y - fontCountdownLarge.MeasureString(text).Y / 2 + 10),
+                                    Color.LightGray, 0.0f, Vector2.Zero, 1, SpriteEffects.None, 0.0f);
             }
         }
 
