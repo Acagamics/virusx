@@ -160,8 +160,21 @@ namespace ParticleStormControl
         /// <param name="playerIndex"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public float getDomination(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? dominationInStep[playerIndex][step] : 0) : 0; }
-
+        public float getDominationInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? dominationInStep[playerIndex][step] : 0) : 0; }
+        /// <summary>
+        /// the added domination for all players in a specific time step
+        /// </summary>
+        /// <param name="step"></param>
+        /// <returns></returns>
+        public float getDominationInStep(int step) 
+        {
+            float result = 0;
+            for (int i = 0; i < playerCount; i++)
+            {
+                result += getDominationInStep(i, step);
+            }
+            return result;
+        }
         /// <summary>
         /// The maximum number of particles a player possessed in a game
         /// </summary>
@@ -208,6 +221,20 @@ namespace ParticleStormControl
         /// <param name="step"></param>
         /// <returns></returns>
         public uint getHealthInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? healthInStep[playerIndex][step] : 0) : 0; }
+        /// <summary>
+        /// the number of particles possessed by all players in a specific time step
+        /// </summary>
+        /// <param name="step"></param>
+        /// <returns></returns>
+        public uint getHealthInStep(int step)
+        {
+            uint result = 0;
+            for (int i = 0; i < playerCount; i++)
+            {
+                result += getHealthInStep(i, step);
+            }
+            return result;
+        }
         /// <summary>
         /// the number of bases/spawnPoints a player possessed in a specific time step
         /// </summary>

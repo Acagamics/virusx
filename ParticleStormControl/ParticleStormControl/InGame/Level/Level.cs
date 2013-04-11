@@ -388,7 +388,7 @@ namespace ParticleStormControl
                     mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
                 else if (Random.NextDouble() < 0.23 /*0.2*/)
                     mapObjects.Add(new Debuff(position, contentManager));
-                else if (Random.NextDouble() < 1.15 /*0.18*/)
+                else if (Random.NextDouble() < 0.15 /*0.18*/)
                     mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
                 else if (Random.NextDouble() < 0.32 /*0.2*/)
                     mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager));
@@ -412,7 +412,7 @@ namespace ParticleStormControl
                 for (int i = 0; i < players.Length; ++i)
                 {
                     // TODO: the player has to compute the overall health of his particles
-                    GameStatistics.setParticlesAndHealth(i, (uint)players[i].NumParticlesAlive, (uint)players[i].NumParticlesAlive);
+                    GameStatistics.setParticlesAndHealth(i, (uint)players[i].NumParticlesAlive, (uint)players[i].TotalHealth);
                     GameStatistics.setPossessingBases(i, possesingBases[i]);
                 }
                 GameStatistics.UpdateDomination();

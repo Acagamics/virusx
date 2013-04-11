@@ -89,7 +89,7 @@ namespace ParticleStormControl
 
         private int GetPercent(Player[] players, int index)
         {
-            return players[index].NumParticlesAlive;
+            return (int)players[index].TotalHealth+players[index].NumParticlesAlive;
         }
     }
 }

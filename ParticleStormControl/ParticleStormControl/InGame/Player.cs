@@ -55,10 +55,10 @@ namespace ParticleStormControl
 
 
         // attributs
-        private static readonly float[] mass_byVirus = new float[] { 0.4f, 0.55f/*0.65f*/, -0.285f, 1.0f };
+        private static readonly float[] mass_byVirus = new float[] { 0.4f, 0.55f, 0.085f, 1.0f };
         private static readonly float[] speed_byVirus = new float[] { 0.4f, -0.6f, 0.4f, 1.0f };
-        private static readonly float[] health_byVirus = new float[] { 0.4f, 0.35f, 1.0f, -0.3f };
-        private static readonly float[] disciplin_byVirus = new float[] { 0.4f, 0.15f, 0.8f, 0.5f };
+        private static readonly float[] health_byVirus = new float[] { 0.4f, 0.35f, 1.0f, -0.4f };
+        private static readonly float[] disciplin_byVirus = new float[] { 0.4f, 0.15f, 0.65f, 0.5f };
         
         // speed stuff
         private const float speedConstant = 0.13f;
@@ -262,8 +262,8 @@ namespace ParticleStormControl
                 //new Vector2(Level.RELATIVE_MAX.X/2, Level.RELATIVE_MAX.Y/2)
             };
 #else
-        private readonly static float cursor_offset_x = 0.2f;
-        private readonly static float cursor_offset_y = 0.04f;
+        private readonly static float cursor_offset_x = -0.2f;
+        private readonly static float cursor_offset_y = -0.2f;//04f;
         private readonly static Vector2[] cursorStartPositions =
             {
                 new Vector2(0.2f + cursor_offset_x, Level.RELATIVE_MAX.Y-0.2f - cursor_offset_y),
@@ -570,11 +570,11 @@ namespace ParticleStormControl
             cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, Level.RELATIVE_MAX.Y);
 
             // hold move
-            if(!InputManager.Instance.HoldButtonPressed(playerIndex))
+            if(Alive && !InputManager.Instance.HoldButtonPressed(playerIndex))
                 particleAttractionPosition = cursorPosition;
             
             // action
-            if (InputManager.Instance.ActionButtonPressed(playerIndex) && ItemSlot != Item.ItemType.NONE)
+            if (Alive && InputManager.Instance.ActionButtonPressed(playerIndex) && ItemSlot != Item.ItemType.NONE)
             {
                 level.PlayerUseItem(this);
                 ItemSlot = Item.ItemType.NONE;
