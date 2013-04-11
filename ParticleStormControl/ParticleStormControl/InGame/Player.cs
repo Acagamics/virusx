@@ -309,6 +309,9 @@ namespace ParticleStormControl
         public float TimeDead
         { get; private set; }
 
+        public float TotalHealth { get { return totalHealth; } }
+        private float totalHealth = 0.0f;
+
         public float RemainingTimeAlive
         {
             get
@@ -463,9 +466,6 @@ namespace ParticleStormControl
 
         public void UpdateCPUPart(float timeInterval, IList<SpawnPoint> spawnPoints, bool cantDie)
         {
-            // TODO health property and speed property
-            float health = Health;//((Mass_health * 0.5f) + 1.5f) * healthConstant;
-
             // compute spawnings
             numSpawns = 0;
             int numSpawnPoints = 0;
@@ -493,7 +493,7 @@ namespace ParticleStormControl
                             int vertexIndex = numSpawns * 2;
                             spawnVerticesRAMBuffer[vertexIndex].particlePosition = spawn.Position;
                             spawnVerticesRAMBuffer[vertexIndex].movement = movement;
-                            spawnVerticesRAMBuffer[vertexIndex].health = health;
+                            spawnVerticesRAMBuffer[vertexIndex].health = Health;
                             ++numSpawns;
                         }
                     }
@@ -503,14 +503,17 @@ namespace ParticleStormControl
 
             // find places for spawning and check if there are any particles
             // seperate loop for faster iterating!
+            totalHealth = 0.0f;
             int biggestAliveIndex = 0;
             NumParticlesAlive = 0;
             int currentSpawn = 0;
             int imax = (int)MathHelper.Clamp(HighestUsedParticleIndex + numSpawns + 1, 0, maxParticles);
             for (int i = 0; i < imax; ++i)
             {
-                if (IsAlive(i))
+                float particleHealth = particleHelath[i];
+                if (particleHealth > 0.0f)
                 {
+                    totalHealth += particleHealth;
                     ++NumParticlesAlive;
                     biggestAliveIndex = i;
                 }
@@ -541,7 +544,7 @@ namespace ParticleStormControl
         }
 
 
-        private bool IsAlive(int particleIndex)
+       /* private bool IsAlive(int particleIndex)
         {
             // halffloat2
             //return (particleHelath[particleIndex].PackedValue & (((UInt32)1) << 15)) == 0;
@@ -549,7 +552,7 @@ namespace ParticleStormControl
             // return particleHelath[particleIndex].ToVector4().Z < 0;
 
             return particleHelath[particleIndex] > 0;
-        }
+        }*/
 
         /// <summary>
         /// controll through a gamepad or 

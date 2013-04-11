@@ -31,7 +31,7 @@ namespace ParticleStormControl
             switch(Type)
             {
                 case ItemType.DANGER_ZONE:
-                    itemTexture = content.Load<Texture2D>("items/buff");
+                    itemTexture = content.Load<Texture2D>("items/danger");
                     break;
                 case ItemType.MUTATION:
                     itemTexture = content.Load<Texture2D>("items/mutate");
