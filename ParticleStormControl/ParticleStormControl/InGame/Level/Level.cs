@@ -237,7 +237,7 @@ namespace ParticleStormControl
                 double nearestDist = spawnPositions.Min(x => { return x == pos ? 1 : (x - pos).LengthSquared(); });
 
                 float capturesize = (float)(100.0 + nearestDist * nearestDist * 25000);
-                capturesize = Math.Min(capturesize, 2000);
+                capturesize = Math.Min(capturesize, 1300);
 
                 spawnPoints.Add(new SpawnPoint(pos, capturesize, (float)Math.Sqrt(nearestDist), - 1, content));
             }

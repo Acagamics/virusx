@@ -64,23 +64,21 @@ float4 ComputeBackground_PS(VertexShaderOutput input) : COLOR0
 
 	float maxComp = -99999;
 	float worley = 0.0f;
-	float cellColorTexcoord;
+	float cellColorTexcoord = 0;
 	[loop]for(int i=0; i<NumCells; ++i)
 	{
         float dist = distance(v, Cells_Pos2D[i]);
-		float comp = pow(2.0f, -FALLOFF * dist);
+		float comp = exp2(-FALLOFF * dist);
 		worley += comp;
 		[flatten]if(maxComp < comp)
 		{
 			cellColorTexcoord = i;
-			maxComp = maxComp;
+			maxComp = comp;
 		}
-		maxComp = max(comp, maxComp);
     }
 
 	cellColorTexcoord /= NumCells-1 + 0.5f / NumCells;
 	float3 cellColor = tex2D(sampCellColor, cellColorTexcoord).rgb;
-
 
 	float worleySecond = worley - maxComp;
 	float value = min(log(worley / worleySecond), 10.0f);	// loga - logb
@@ -91,10 +89,8 @@ float4 ComputeBackground_PS(VertexShaderOutput input) : COLOR0
 						cubicPulse(4, 3.0f, value) * 0.4f;
 
 	float4 outColor;
-
-
 	outColor.rgb = cellColor * cellFactor;
-	outColor.a = 0.95f - saturate(value*0.03f);
+	outColor.a = 0.95f - value*0.03f;
 	return outColor;
 }
 
