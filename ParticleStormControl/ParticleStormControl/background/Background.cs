@@ -74,8 +74,8 @@ namespace ParticleStormControl
             backgroundShader.Parameters["PosOffset"].SetValue(posOffset + new Vector2(-0.5f / (float)device.Viewport.Width, 0.5f / (float)device.Viewport.Height));   // + half pixel correction
             backgroundShader.Parameters["RelativeMax"].SetValue(Vector2.One);
 
-         //    using (var file = new System.IO.FileStream("background.png", System.IO.FileMode.Create))
-         //       backgroundTexture.SaveAsPng(file, backgroundTexture.Width, backgroundTexture.Height);
+             using (var file = new System.IO.FileStream("background.png", System.IO.FileMode.Create))
+                backgroundTexture.SaveAsPng(file, backgroundTexture.Width, backgroundTexture.Height);
         }
 
         /// <summary>
@@ -110,9 +110,9 @@ namespace ParticleStormControl
 
             // background shader
             Vector2 posScale = new Vector2(areaInPixel.Width, -areaInPixel.Height) /
-                                   new Vector2(device.Viewport.Width, device.Viewport.Height) * 2;
+                                   new Vector2(device.Viewport.Width, device.Viewport.Height) * 2.0f;
             Vector2 posOffset = new Vector2(areaInPixel.X, -areaInPixel.Y) /
-                                   new Vector2(device.Viewport.Width, device.Viewport.Height) * 2 - new Vector2(1, -1);
+                                   new Vector2(device.Viewport.Width, device.Viewport.Height) * 2.0f - new Vector2(1, -1);
             backgroundShader.Parameters["PosScale"].SetValue(posScale);
             backgroundShader.Parameters["PosOffset"].SetValue(posOffset);
         }

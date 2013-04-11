@@ -12,9 +12,9 @@ texture BackgroundTexture;
 sampler2D sampBackground = sampler_state
 {	
 	Texture = <BackgroundTexture>;
-    MagFilter = POINT;
-    MinFilter = POINT;
-    Mipfilter = POINT;
+    MagFilter = LINEAR;	// this sucks!
+    MinFilter = LINEAR;
+    Mipfilter = LINEAR;
 };
 
 texture CellColorTexture;
@@ -64,18 +64,17 @@ float4 ComputeBackground_PS(VertexShaderOutput input) : COLOR0
 
 	float maxComp = -99999;
 	float worley = 0.0f;
-	float cellColorTexcoord;
+	float cellColorTexcoord = 0;
 	[loop]for(int i=0; i<NumCells; ++i)
 	{
         float dist = distance(v, Cells_Pos2D[i]);
-		float comp = pow(2.0f, -FALLOFF * dist);
+		float comp = exp2(-FALLOFF * dist);
 		worley += comp;
 		[flatten]if(maxComp < comp)
 		{
 			cellColorTexcoord = i;
-			maxComp = maxComp;
+			maxComp = comp;
 		}
-		maxComp = max(comp, maxComp);
     }
 	cellColorTexcoord /= NumCells-1 + 0.5f / NumCells;
 

@@ -237,7 +237,7 @@ namespace ParticleStormControl
                 double nearestDist = spawnPositions.Min(x => { return x == pos ? 1 : (x - pos).LengthSquared(); });
 
                 float capturesize = (float)(100.0 + nearestDist * nearestDist * 25000);
-                capturesize = Math.Min(capturesize, 2000);
+                capturesize = Math.Min(capturesize, 1100);
 
                 spawnPoints.Add(new SpawnPoint(pos, capturesize, (float)Math.Sqrt(nearestDist), - 1, content));
             }
@@ -358,12 +358,12 @@ namespace ParticleStormControl
                     if (item != null && !item.Timeouted && item.PossessingPlayer != -1 && item.PossessingPercentage == 1.0f)
                     {
                         // reject if player allready owns a item
-                        if (players[item.PossessingPlayer].ItemSlot != Item.ItemType.NONE)
+                      /*  if (players[item.PossessingPlayer].ItemSlot != Item.ItemType.NONE)
                         {
                             item.Alive = true;
                             continue;
                         }
-                        else
+                        else */
                         {
                             players[item.PossessingPlayer].ItemSlot = item.Type;
                             // statistics

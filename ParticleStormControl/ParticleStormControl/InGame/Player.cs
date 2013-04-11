@@ -175,8 +175,8 @@ namespace ParticleStormControl
 
         #region Colors
 
-        public readonly static Color[] Colors = { Color.Red, Color.Blue, Color.Yellow, Color.Green, /*Color.Black,*/ Color.Pink, Color.Orange  };
-        public readonly static Color[] ParticleColors = { new Color(240, 80, 70), new Color(75, 95, 220), new Color(250, 216, 50), new Color(80, 200, 80),/* Color.DarkSlateGray, */Color.HotPink, new Color(250, 120, 20) };
+        public readonly static Color[] Colors = { Color.Red, Color.Blue, Color.Yellow, Color.Green, /*Color.Black,*/ Color.DeepPink, Color.Orange  };
+        public readonly static Color[] ParticleColors = { new Color(240, 80, 70), new Color(75, 95, 220), new Color(250, 216, 50), new Color(80, 200, 80),/* Color.DarkSlateGray, */Color.DeepPink, new Color(250, 120, 20) };
         public readonly static string[] ColorNames = { "Red", "Blue", "Yellow", "Green", /*"Black", */"Pink", "Orange" };
 
 #if XBOX
