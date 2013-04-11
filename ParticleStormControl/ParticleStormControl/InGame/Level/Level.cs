@@ -421,7 +421,7 @@ namespace ParticleStormControl
             var colors = spawnPoints.Select(x => {
                 Color color = x.ComputeColor();
                 float saturation = Vector3.Dot(color.ToVector3(), new Vector3(0.3f, 0.59f, 0.11f));
-                return Color.Lerp(color, new Color(saturation, saturation, saturation), 0.5f) * 2;
+                return Color.Lerp(color, new Color(saturation, saturation, saturation), 0.8f) * 1.5f;
             })
             .Concat(Enumerable.Repeat(Color.DimGray, background.NumBackgroundCells - spawnPoints.Count));
             background.UpdateColors(colors.ToArray());
