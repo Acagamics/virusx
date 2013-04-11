@@ -570,11 +570,11 @@ namespace ParticleStormControl
             cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, Level.RELATIVE_MAX.Y);
 
             // hold move
-            if(!InputManager.Instance.HoldButtonPressed(playerIndex))
+            if(Alive && !InputManager.Instance.HoldButtonPressed(playerIndex))
                 particleAttractionPosition = cursorPosition;
             
             // action
-            if (InputManager.Instance.ActionButtonPressed(playerIndex) && ItemSlot != Item.ItemType.NONE)
+            if (Alive && InputManager.Instance.ActionButtonPressed(playerIndex) && ItemSlot != Item.ItemType.NONE)
             {
                 level.PlayerUseItem(this);
                 ItemSlot = Item.ItemType.NONE;
