@@ -160,6 +160,7 @@ namespace ParticleStormControl
             mapObjects.Clear();
             spawnPoints.Clear();
 
+            switchCountdownActive = false;
             // create level
             CreateLevel(device, contentManager, players.Length);
 
