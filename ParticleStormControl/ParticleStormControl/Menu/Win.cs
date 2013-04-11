@@ -98,13 +98,15 @@ namespace ParticleStormControl.Menu
             area.Inflate(-10, -10);
 
             // draw amount of particles per player and step
-            for (int step = 1; step < statistics.Steps; step++)
+            for (int step = 0; step < statistics.Steps; step++)
             {
                 uint total = (uint)statistics.getHealthInStep(step);
                 int offset = 0;
                 for (int j = 0; j < statistics.PlayerCount; j++)
                 {
-                    int height = (int)((statistics.getHealthInStep(j, step) * (uint)area.Height) / total);
+                    int height = area.Height / statistics.PlayerCount;
+                    if(total != 0)
+                    height = (int)((statistics.getHealthInStep(j, step) * (uint)area.Height) / total);
                     spriteBatch.Draw(menu.PixelTexture, new Rectangle(area.X + step * stepWidth, area.Y + offset, stepWidth, height), Player.Colors[PlayerColorIndices[j]]);
                     offset += height;
                 }
