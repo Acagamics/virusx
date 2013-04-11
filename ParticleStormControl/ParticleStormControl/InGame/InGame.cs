@@ -27,6 +27,10 @@ namespace ParticleStormControl
         /// Statistics
         /// </summary>
         public Statistics GameStatistics { get { if (level == null) return null; return level.GameStatistics; } }
+        /// <summary>
+        /// time interval for collecting statistical data
+        /// </summary>
+        private const float timeBetweenUpdates = 0.25f;
 
         private Menu.Menu menu;
 
