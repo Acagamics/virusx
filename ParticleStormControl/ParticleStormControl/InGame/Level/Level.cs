@@ -388,7 +388,7 @@ namespace ParticleStormControl
                     mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
                 else if (Random.NextDouble() < 0.23 /*0.2*/)
                     mapObjects.Add(new Debuff(position, contentManager));
-                else if (Random.NextDouble() < 1.15 /*0.18*/)
+                else if (Random.NextDouble() < 0.15 /*0.18*/)
                     mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
                 else if (Random.NextDouble() < 0.32 /*0.2*/)
                     mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager));
