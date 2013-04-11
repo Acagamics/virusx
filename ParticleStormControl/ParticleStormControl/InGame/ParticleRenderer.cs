@@ -131,8 +131,17 @@ namespace ParticleStormControl
                 case Player.VirusType.H5N1:
                     particleEffect.CurrentTechnique = particleEffect.Techniques["H5N1"];
                     break;
+                case Player.VirusType.HEPATITISB:
+                    particleEffect.CurrentTechnique = particleEffect.Techniques["HepatitisB"];
+                    break;
+                case Player.VirusType.HIV:
+                    particleEffect.CurrentTechnique = particleEffect.Techniques["HIV"];
+                    break;
+                case Player.VirusType.EPSTEINBAR:
+                    particleEffect.CurrentTechnique = particleEffect.Techniques["EpsteinBar"];
+                    break;
                 default:
-                    particleEffect.CurrentTechnique = particleEffect.Techniques["Standard"];
+                    particleEffect.CurrentTechnique = particleEffect.Techniques["DamageMap"];
                     break;
             }
             if (damage)

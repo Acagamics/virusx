@@ -63,7 +63,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
     return output;
 }
 
-float4 PixelShaderFunction_Standard(VertexShaderOutput input) : COLOR0
+float4 PixelShaderFunction_EpsteinBar(VertexShaderOutput input) : COLOR0
 {
 	const float rippling = 3.0f;
 
@@ -108,6 +108,47 @@ float4 PixelShaderFunction_H5N1(VertexShaderOutput input) : COLOR0
     return Color * virus;
 }
 
+float4 PixelShaderFunction_HepatitisB(VertexShaderOutput input) : COLOR0
+{
+	const float stickCount = 6.0;
+
+	float2 v = input.Texcoord *2 - 1.0;
+
+	float angle = atan2(v.x, v.y) + input.InstanceIndex;
+	float sticks = sin(angle * 10.0)*0.5 + 0.5;
+
+	float distSq = dot(v,v);
+	float distSqInv = saturate(1.0 - distSq);
+	float virus = saturate(distSqInv + sticks*(distSqInv-0.6)) - distSqInv * distSqInv * 0.7;
+	
+	clip(virus - 0.001f);
+
+    return Color * virus * 1.5f;
+}
+
+float4 PixelShaderFunction_HIV(VertexShaderOutput input) : COLOR0
+{
+	const float stickCount = 6.0;
+
+	float2 v = input.Texcoord *2 - 1.0;
+
+	float angle = atan2(v.x, v.y) + input.InstanceIndex;
+	float sticks = sin(angle * 10.0)*0.5 + 0.5;
+
+	float distSq = dot(v,v);
+	float distSqInv = saturate(1.0 - distSq);
+	
+	float distSqInvSq = distSqInv*distSqInv;
+	float circle = distSqInv - distSqInvSq*3.0;
+	float sticksSq = sticks*sticks;
+	float plates = saturate(circle * 15.0 * sticksSq);
+	float virus = saturate(saturate(plates + sticksSq * distSqInv) + distSqInvSq) - distSqInvSq*0.5;
+
+	clip(virus - 0.001f);
+
+    return Color * virus;
+}
+
 float4 PixelShaderFunction_NoFalloff(VertexShaderOutput input) : COLOR0
 {
 	float2 v = input.Texcoord*2.0f - 1.0f;
@@ -118,12 +159,12 @@ float4 PixelShaderFunction_NoFalloff(VertexShaderOutput input) : COLOR0
     return Color * alpha;
 }
 
-technique Standard
+technique EpsteinBar
 {
     pass Pass1
     {
         VertexShader = compile vs_3_0 VertexShaderFunction();
-        PixelShader = compile ps_3_0 PixelShaderFunction_Standard();
+        PixelShader = compile ps_3_0 PixelShaderFunction_EpsteinBar();
     }
 }
 
@@ -133,6 +174,24 @@ technique H5N1
     {
         VertexShader = compile vs_3_0 VertexShaderFunction();
         PixelShader = compile ps_3_0 PixelShaderFunction_H5N1();
+    }
+}
+
+technique HIV
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunction();
+        PixelShader = compile ps_3_0 PixelShaderFunction_HIV();
+    }
+}
+
+technique HepatitisB
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunction();
+        PixelShader = compile ps_3_0 PixelShaderFunction_HepatitisB();
     }
 }
 

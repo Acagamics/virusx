@@ -1,4 +1,5 @@
 ﻿//#define QUICK_TWO_PLAYER_DEBUG
+#define QUICK_FOUR_PLAYER_DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -78,7 +79,23 @@ namespace ParticleStormControl.Menu
             Settings.Instance.PlayerVirusIndices[1] = 3;
             Settings.Instance.NumPlayers = 2;
             playerReady[0] = playerReady[1] = playerConnected[0] = playerConnected[1] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = true;
-            menu.ChangePage(Menu.Page.INGAME);
+            menu.ChangePage(Menu.Page.INGAME,gameTime);
+#elif QUICK_FOUR_PLAYER_DEBUG
+            Settings.Instance.PlayerControls[0] = InputManager.ControlType.KEYBOARD0;
+            Settings.Instance.PlayerColorIndices[0] = 1;
+            Settings.Instance.PlayerVirusIndices[0] = 0;
+            Settings.Instance.PlayerControls[1] = InputManager.ControlType.KEYBOARD1;
+            Settings.Instance.PlayerColorIndices[1] = 3;
+            Settings.Instance.PlayerVirusIndices[1] = 1;
+            Settings.Instance.PlayerControls[2] = InputManager.ControlType.GAMEPAD0;
+            Settings.Instance.PlayerColorIndices[2] = 4;
+            Settings.Instance.PlayerVirusIndices[2] = 2;
+            Settings.Instance.PlayerControls[3] = InputManager.ControlType.GAMEPAD1;
+            Settings.Instance.PlayerColorIndices[3] = 5;
+            Settings.Instance.PlayerVirusIndices[3] = 3;
+            Settings.Instance.NumPlayers = 4;
+            playerReady[0] = playerReady[1] = playerReady[2] = playerReady[3] = playerConnected[0] = playerConnected[1] = playerConnected[2] = playerConnected[3] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = Settings.Instance.PlayerConnected[2] = Settings.Instance.PlayerConnected[3] = true;
+            menu.ChangePage(Menu.Page.INGAME,gameTime);
 #endif
 
             if (InputManager.Instance.ExitButton())
