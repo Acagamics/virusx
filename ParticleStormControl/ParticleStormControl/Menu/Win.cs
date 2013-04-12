@@ -143,10 +143,10 @@ namespace ParticleStormControl.Menu
             }
 
             // hide rounding errors
-         /*    area.Inflate(10, 10);
+            area.Inflate(10, 10);
            area.Y = area.Bottom - 12;
             area.Height = 12;
-            spriteBatch.Draw(menu.PixelTexture, area, Color.Black); */
+            spriteBatch.Draw(menu.PixelTexture, area, Color.Black);
         }
     }
 }
