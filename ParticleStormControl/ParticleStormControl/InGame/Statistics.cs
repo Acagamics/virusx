@@ -18,7 +18,9 @@ namespace ParticleStormControl
             DANGER_ZONE,
             MUTATION,
             WIPEOUT,
-            ANTI_BODY
+            ANTI_BODY,
+
+            NUM_STAT_ITEMS
         }
 
         public struct ItemUsed 
@@ -273,7 +275,7 @@ namespace ParticleStormControl
         /// <param name="playerIndex"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public List<StatItems> getUsedItemsInStep(int playerIndex, int step)
+    /*    public List<StatItems> getUsedItemsInStep(int playerIndex, int step)
         {
             List<StatItems> result = new List<StatItems>();
 
@@ -287,6 +289,27 @@ namespace ParticleStormControl
             }
 
             return result;
+        } */
+
+        /// <summary>
+        /// returns the first item used in a given step by a given player
+        /// </summary>
+        /// <param name="playerIndex"></param>
+        /// <param name="step"></param>
+        /// <returns>null if there wasn't any item</returns>
+        public StatItems? getFirstUsedItemInStep(int playerIndex, int step)
+        {
+            if (step < steps && playerIndex < playerCount)
+            {
+                foreach (ItemUsed item in itemsUsedByPlayer[playerIndex])
+                {
+                    if (item.step == step)
+                        return item.item;
+                    else if (step < item.step) break;
+                }
+            }
+
+            return null;
         }
 
         #endregion

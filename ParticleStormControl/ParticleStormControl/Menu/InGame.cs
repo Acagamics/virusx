@@ -9,7 +9,7 @@ namespace ParticleStormControl.Menu
     class InGame : MenuPage
     {
         private float blendIn;
-        internal const float GAME_BLEND_DURATION = 0.3f;
+        internal const float GAME_BLEND_DURATION = 0.5f;
 
         public InGame(Menu menu) : base(menu)
         {}

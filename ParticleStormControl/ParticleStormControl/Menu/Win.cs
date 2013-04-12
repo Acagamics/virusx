@@ -11,9 +11,12 @@ namespace ParticleStormControl.Menu
 {
     class Win : MenuPage
     {
-        Statistics statistics;
-        List<String> captions = new List<String> { "Captured", "Lost", "Max #", "Average #", "Average HP", "Items" };
-        List<String>[] values;
+        private Statistics statistics;
+        private List<String> captions = new List<String> { "Captured", "Lost", "Max #", "Average #", "Average HP", "Items" };
+        private List<String>[] values;
+
+        private Texture2D[] itemTextures = new Texture2D[(int)Statistics.StatItems.NUM_STAT_ITEMS]; 
+        private const int ITEM_DISPLAY_SIZE = 40;
 
         public int WinPlayerIndex { get; set; }
         public bool[] ConnectedPlayers { get; set; }
@@ -47,6 +50,10 @@ namespace ParticleStormControl.Menu
 
         public override void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
         {
+            itemTextures[(int)Statistics.StatItems.DANGER_ZONE] = content.Load<Texture2D>("items/danger");
+            itemTextures[(int)Statistics.StatItems.MUTATION] = content.Load<Texture2D>("items/mutate");
+            itemTextures[(int)Statistics.StatItems.WIPEOUT] = content.Load<Texture2D>("items/wipeout");
+            itemTextures[(int)Statistics.StatItems.ANTI_BODY] = content.Load<Texture2D>("items/debuff");
         }
 
         public override void Update(GameTime gameTime)
@@ -99,7 +106,7 @@ namespace ParticleStormControl.Menu
             area.Inflate(-10, -10);
 
             // draw amount of particles per player and step
-            for (int step = 0; step < statistics.Steps; step++)
+            for (int step = 0; step < statistics.Steps; step++)     // if this stuff slows down the whole game.... suprise suprise, let's optimize! ;P
             {
                 uint total = (uint)statistics.getHealthInStep(step);
                 int offset = 0;
@@ -110,7 +117,37 @@ namespace ParticleStormControl.Menu
                         height = (int)((statistics.getHealthInStep(j, step) * (uint)area.Height) / total);
                     else
                         height = area.Height / statistics.PlayerCount;
-                    spriteBatch.Draw(menu.PixelTexture, new Rectangle(area.X + step * stepWidth, area.Y + offset, stepWidth, height), Player.Colors[PlayerColorIndices[j]]);
+
+                    Rectangle rect = new Rectangle(area.X + step * stepWidth, area.Y + offset, stepWidth, height);
+                    spriteBatch.Draw(menu.PixelTexture, rect, Player.Colors[PlayerColorIndices[j]]);
+
+                    offset += height;
+                }
+            }
+
+            // draw items
+            for (int step = 0; step < statistics.Steps; step++)     // if this stuff slows down the whole game.... suprise suprise, let's optimize! ;P
+            {
+                uint total = (uint)statistics.getHealthInStep(step);
+                int offset = 0;
+                for (int j = 0; j < statistics.PlayerCount; j++)
+                {
+                    int height;
+                    if (total != 0)
+                        height = (int)((statistics.getHealthInStep(j, step) * (uint)area.Height) / total);
+                    else
+                        height = area.Height / statistics.PlayerCount;
+
+                    // render
+                    Statistics.StatItems? itemUsed = statistics.getFirstUsedItemInStep(j, step);
+                    if (itemUsed != null)
+                    {
+                        spriteBatch.Draw(itemTextures[(int)itemUsed],
+                            new Rectangle(area.X + step * stepWidth - ITEM_DISPLAY_SIZE / 2,
+                                          area.Y + offset + (height - ITEM_DISPLAY_SIZE) / 2, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
+                            Color.White);
+                    }
+
                     offset += height;
                 }
             }

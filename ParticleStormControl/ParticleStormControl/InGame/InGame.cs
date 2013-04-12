@@ -30,7 +30,7 @@ namespace ParticleStormControl
         /// <summary>
         /// time interval for collecting statistical data
         /// </summary>
-        private const float timeBetweenUpdates = 0.25f;
+        private const float timeBetweenUpdates = 0.1f;
 
         private Menu.Menu menu;
 
