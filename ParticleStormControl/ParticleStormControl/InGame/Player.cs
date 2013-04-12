@@ -340,6 +340,15 @@ namespace ParticleStormControl
 
         #endregion
 
+        #region bases
+
+        /// <summary>
+        /// for the percentage bar
+        /// </summary>
+        public uint PossingBases { get; set; }
+
+        #endregion
+
         public Player(int playerIndex, int virusTypeIndex, GraphicsDevice device, ContentManager content, Texture2D noiseTexture, int colorIndex)
         {
             this.playerIndex = (PlayerIndex)playerIndex;

@@ -56,7 +56,7 @@ namespace ParticleStormControl
         #region absolut statistics
 
         private ulong[] generatedParticles;
-        private uint[] captueredBases; // active
+        private uint[] capturedBases; // active
         private uint[] lostBases; // active
         private uint[] wonMatches; // active
         //private uint[] lostMatches;
@@ -90,7 +90,7 @@ namespace ParticleStormControl
         private void init()
         {
             generatedParticles = new ulong[playerCount];
-            captueredBases = new uint[playerCount];
+            capturedBases = new uint[playerCount];
             lostBases = new uint[playerCount];
             wonMatches = new uint[playerCount];
             collectedItems = new uint[playerCount];
@@ -146,7 +146,7 @@ namespace ParticleStormControl
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public uint getCaptueredBases(int playerIndex) { return playerIndex < playerCount ? captueredBases[playerIndex] : 0; }
+        public uint getCapturedBases(int playerIndex) { return playerIndex < playerCount ? capturedBases[playerIndex] : 0; }
         /// <summary>
         /// The total amount of lost bases/spawnPoints
         /// </summary>
@@ -179,26 +179,14 @@ namespace ParticleStormControl
         public uint getKilledEnemies(int playerIndex) { return playerIndex < playerCount ? killedEnemies[playerIndex] : 0; }
 
         /// <summary>
-        /// The domination value per TimeStep. It is a value between 0 and 2. Zero means no domination (death) and 2 means complete domination (winning player)
+        /// The domination value per TimeStep. It is a value between 0 and 1. Zero means no domination (death) and 1 means complete domination (winning player).
+        /// The sum of the domination value of all players is always 1
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <param name="step"></param>
         /// <returns></returns>
         public float getDominationInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? dominationInStep[playerIndex][step] : 0) : 0; }
-        /// <summary>
-        /// the added domination for all players in a specific time step
-        /// </summary>
-        /// <param name="step"></param>
-        /// <returns></returns>
-        public float getDominationInStep(int step) 
-        {
-            float result = 0;
-            for (int i = 0; i < playerCount; i++)
-            {
-                result += getDominationInStep(i, step);
-            }
-            return result;
-        }
+        
         /// <summary>
         /// The maximum number of particles a player possessed in a game
         /// </summary>
@@ -303,8 +291,8 @@ namespace ParticleStormControl
         public void addCaptueredBases(int playerIndex, int bases = 1)
         {
             if (playerIndex < 0 || playerIndex >= playerCount) return;
-            if (bases > 0) captueredBases[playerIndex] += (uint)bases;
-            else captueredBases[playerIndex] -= (uint)bases;
+            if (bases > 0) capturedBases[playerIndex] += (uint)bases;
+            else capturedBases[playerIndex] -= (uint)bases;
         }
 
         public void addLostBases(int playerIndex, int bases = 1)
@@ -384,25 +372,24 @@ namespace ParticleStormControl
         public void UpdateDomination()
         {
             int currentStep = steps - 1;
-            ulong overallHealth = 0;
-            uint overallBases = 0;
+            ulong overall = 0;
+
             for (int i = 0; i < playerCount; ++i)
             {
-                overallHealth += healthInStep[i][currentStep];
-                overallBases += possessingBasesInStep[i][currentStep];
+                overall += getDominationPercentage(i,currentStep);
             }
 
-            float healthPercentage = 0f;
-            float basePercentage = 0f;
+            float percentage = 0f;
             for (int i = 0; i < playerCount; ++i)
             {
-                if (overallHealth != 0)
-                    healthPercentage = (float)healthInStep[i][currentStep] / overallHealth;
-                else
-                    healthPercentage = 1f / playerCount;
-                basePercentage = (float)possessingBasesInStep[i][currentStep] / overallBases;
-                dominationInStep[i].Add(healthPercentage + basePercentage);
+                percentage = (float)((double)getDominationPercentage(i, currentStep) / overall);
+                dominationInStep[i].Add(percentage);
             }
+        }
+
+        private ulong getDominationPercentage(int playerIndex, int step)
+        {
+            return healthInStep[playerIndex][step] + possessingBasesInStep[playerIndex][step] * 1000 + particlesInStep[playerIndex][step];
         }
 
         public void itemUsed(int playerIndex, Item.ItemType _item)

@@ -34,7 +34,7 @@ namespace ParticleStormControl.Menu
                 if (ConnectedPlayers[i])
                 {
                     values[counter] = new List<string>();
-                    values[counter].Add(statistics.getCaptueredBases(i).ToString());
+                    values[counter].Add(statistics.getCapturedBases(i).ToString());
                     values[counter].Add(statistics.getLostBases(i).ToString());
                     values[counter].Add(statistics.getMaxSimultaneousParticles(i).ToString());
                     values[counter].Add(statistics.getAverageParticles(i).ToString());

@@ -349,6 +349,11 @@ namespace ParticleStormControl
                 }
             }
 
+            for (int i = 0; i < players.Length; ++i)
+            {
+                players[i].PossingBases = possesingBases[i];
+            }
+
             // remove dead objects
             for (int i = 0; i < mapObjects.Count; ++i)
             {
