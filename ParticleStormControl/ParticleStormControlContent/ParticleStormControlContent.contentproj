@@ -201,28 +201,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="viruses\H5N1.png">
-      <Name>H5N1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="viruses\HepatitisB.png">
-      <Name>HepatitisB</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="viruses\HIV.png">
-      <Name>HIV</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="viruses\EpsteinBar.png">
-      <Name>EpsteinBar</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="icons.png">
       <Name>icons</Name>
       <Importer>TextureImporter</Importer>

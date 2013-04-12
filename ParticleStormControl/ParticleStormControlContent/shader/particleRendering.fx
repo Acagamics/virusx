@@ -36,7 +36,7 @@ struct VertexShaderOutput
 	float InstanceIndex : TEXCOORD1;
 };
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+VertexShaderOutput VS(VertexShaderInput input)
 {
     VertexShaderOutput output;
 
@@ -63,7 +63,28 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
     return output;
 }
 
-float4 PixelShaderFunction_EpsteinBar(VertexShaderOutput input) : COLOR0
+// http://blogs.msdn.com/b/shawnhar/archive/2010/04/05/spritebatch-and-custom-shaders-in-xna-game-studio-4-0.aspx
+float2 ScreenSize;
+struct SpriteBatchVSInput
+{
+	float4 Position : POSITION0;
+	float2 Texcoord : TEXCOORD0;
+	float4 Color    : COLOR0;
+};
+
+VertexShaderOutput VS_SpritebatchParticle(SpriteBatchVSInput input)
+{
+    VertexShaderOutput output;
+
+	output.Position.xy = input.Position / ScreenSize * float2(2, -2) + float2(-1, 1);
+	output.Position.zw = float2(0.5f, 1.0f);
+
+	output.InstanceIndex = 0;
+	output.Texcoord = input.Texcoord;
+    return output;
+}
+
+float4 PS_EpsteinBar(VertexShaderOutput input) : COLOR0
 {
 	const float rippling = 3.0f;
 
@@ -82,14 +103,11 @@ float4 PixelShaderFunction_EpsteinBar(VertexShaderOutput input) : COLOR0
 	
     return Color * circle;
 
-//	float alpha = 1.0f - dot(v,v);
-//   return Color * alpha;
 
-
-	return float4(1,0,1,1);
+//	return float4(1,0,1,1);
 }
 
-float4 PixelShaderFunction_H5N1(VertexShaderOutput input) : COLOR0
+float4 PS_H5N1(VertexShaderOutput input) : COLOR0
 {
 	const float stickCount = 6.0;
 
@@ -102,13 +120,13 @@ float4 PixelShaderFunction_H5N1(VertexShaderOutput input) : COLOR0
 	float angle = atan2(v.x, v.y) + input.InstanceIndex;
 	float sticks = smoothstep(0.0, 0.5, sin(angle * stickCount)) * 
 				   smoothstep(1.0, 0.4, midDistInv) * midDistInv;
-	float virus = max(circle, sticks) - smoothstep(0.7, 1.0, midDistInv)*0.6;
+	float virus = (max(circle, sticks) - smoothstep(0.7, 1.0, midDistInv)*0.6) * 1.3f;
 	clip(virus - 0.001f);
 
     return Color * virus;
 }
 
-float4 PixelShaderFunction_HepatitisB(VertexShaderOutput input) : COLOR0
+float4 PS_HepatitisB(VertexShaderOutput input) : COLOR0
 {
 	const float stickCount = 6.0;
 
@@ -126,7 +144,7 @@ float4 PixelShaderFunction_HepatitisB(VertexShaderOutput input) : COLOR0
     return Color * virus * 1.5f;
 }
 
-float4 PixelShaderFunction_HIV(VertexShaderOutput input) : COLOR0
+float4 PS_HIV(VertexShaderOutput input) : COLOR0
 {
 	const float stickCount = 6.0;
 
@@ -149,7 +167,7 @@ float4 PixelShaderFunction_HIV(VertexShaderOutput input) : COLOR0
     return Color * virus;
 }
 
-float4 PixelShaderFunction_NoFalloff(VertexShaderOutput input) : COLOR0
+float4 PS_NoFalloff(VertexShaderOutput input) : COLOR0
 {
 	float2 v = input.Texcoord*2.0f - 1.0f;
 	float alpha = dot(v,v) < 1.0f;
@@ -159,21 +177,21 @@ float4 PixelShaderFunction_NoFalloff(VertexShaderOutput input) : COLOR0
     return Color * alpha;
 }
 
-technique EpsteinBar
-{
-    pass Pass1
-    {
-        VertexShader = compile vs_3_0 VertexShaderFunction();
-        PixelShader = compile ps_3_0 PixelShaderFunction_EpsteinBar();
-    }
-}
-
 technique H5N1
 {
     pass Pass1
     {
-        VertexShader = compile vs_3_0 VertexShaderFunction();
-        PixelShader = compile ps_3_0 PixelShaderFunction_H5N1();
+        VertexShader = compile vs_3_0 VS();
+        PixelShader = compile ps_3_0 PS_H5N1();
+    }
+}
+
+technique EpsteinBar
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_3_0 VS();
+        PixelShader = compile ps_3_0 PS_EpsteinBar();
     }
 }
 
@@ -181,8 +199,8 @@ technique HIV
 {
     pass Pass1
     {
-        VertexShader = compile vs_3_0 VertexShaderFunction();
-        PixelShader = compile ps_3_0 PixelShaderFunction_HIV();
+        VertexShader = compile vs_3_0 VS();
+        PixelShader = compile ps_3_0 PS_HIV();
     }
 }
 
@@ -190,8 +208,44 @@ technique HepatitisB
 {
     pass Pass1
     {
-        VertexShader = compile vs_3_0 VertexShaderFunction();
-        PixelShader = compile ps_3_0 PixelShaderFunction_HepatitisB();
+        VertexShader = compile vs_3_0 VS();
+        PixelShader = compile ps_3_0 PS_HepatitisB();
+    }
+}
+
+technique EpsteinBar_Spritebatch
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_3_0 VS_SpritebatchParticle();
+        PixelShader = compile ps_3_0 PS_EpsteinBar();
+    }
+}
+
+technique H5N1_Spritebatch
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_3_0 VS_SpritebatchParticle();
+        PixelShader = compile ps_3_0 PS_H5N1();
+    }
+}
+
+technique HIV_Spritebatch
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_3_0 VS_SpritebatchParticle();
+        PixelShader = compile ps_3_0 PS_HIV();
+    }
+}
+
+technique HepatitisB_Spritebatch
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_3_0 VS_SpritebatchParticle();
+        PixelShader = compile ps_3_0 PS_HepatitisB();
     }
 }
 
@@ -199,7 +253,7 @@ technique DamageMap
 {
     pass Pass1
     {
-        VertexShader = compile vs_3_0 VertexShaderFunction();
-        PixelShader = compile ps_3_0 PixelShaderFunction_NoFalloff();
+        VertexShader = compile vs_3_0 VS();
+        PixelShader = compile ps_3_0 PS_NoFalloff();
     }
 }

@@ -108,15 +108,10 @@ namespace ParticleStormControl.Menu
             // draw amount of particles per player and step
             for (int step = 0; step < statistics.Steps; step++)     // if this stuff slows down the whole game.... suprise suprise, let's optimize! ;P
             {
-                uint total = (uint)statistics.getHealthInStep(step);
                 int offset = 0;
                 for (int j = 0; j < statistics.PlayerCount; j++)
                 {
-                    int height;
-                    if (total != 0)
-                        height = (int)((statistics.getHealthInStep(j, step) * (uint)area.Height) / total);
-                    else
-                        height = area.Height / statistics.PlayerCount;
+                    int height = (int)(statistics.getDominationInStep(j, step) * (uint)area.Height);
 
                     Rectangle rect = new Rectangle(area.X + step * stepWidth, area.Y + offset, stepWidth, height);
                     spriteBatch.Draw(menu.PixelTexture, rect, Player.Colors[PlayerColorIndices[j]]);
@@ -128,16 +123,11 @@ namespace ParticleStormControl.Menu
             // draw items
             for (int step = 0; step < statistics.Steps; step++)     // if this stuff slows down the whole game.... suprise suprise, let's optimize! ;P
             {
-                uint total = (uint)statistics.getHealthInStep(step);
                 int offset = 0;
                 for (int j = 0; j < statistics.PlayerCount; j++)
                 {
-                    int height;
-                    if (total != 0)
-                        height = (int)((statistics.getHealthInStep(j, step) * (uint)area.Height) / total);
-                    else
-                        height = area.Height / statistics.PlayerCount;
-
+                    int height = (int)(statistics.getDominationInStep(j, step) * (uint)area.Height);
+                    
                     // render
                     Statistics.StatItems? itemUsed = statistics.getFirstUsedItemInStep(j, step);
                     if (itemUsed != null)

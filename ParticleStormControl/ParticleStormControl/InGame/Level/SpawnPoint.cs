@@ -20,7 +20,7 @@ namespace ParticleStormControl
         /// <summary>
         /// max explosion size
         /// </summary>
-        public const float explosionMaxSize = 0.3f;
+        public const float explosionMaxSize = 0.75f;
 
         /// <summary>
         ///  current explosionsize
@@ -28,7 +28,7 @@ namespace ParticleStormControl
         private float currentExplosionSize;
         private float currentExplosionAlpha;
         private float explosionRotation;
-        private const int explosionDamage = 10;
+        private const int explosionDamage = 8;//10;
         private const float explosionDuration = 1.0f;
         
         private Stopwatch explosionTimer = new Stopwatch();
