@@ -413,9 +413,9 @@ namespace ParticleStormControl
             player1.HighestUsedParticleIndex = player2.HighestUsedParticleIndex;
             player2.HighestUsedParticleIndex = i;
 
-            Item.ItemType item = player1.ItemSlot;
+        /*    Item.ItemType item = player1.ItemSlot;
             player1.ItemSlot = player2.ItemSlot;
-            player2.ItemSlot = item;
+            player2.ItemSlot = item; */
         }
 
         public void UpdateGPUPart(GraphicsDevice device, float timeInterval, Texture2D damageMapTexture)
