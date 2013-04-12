@@ -57,11 +57,11 @@ namespace ParticleStormControl
         private Texture2D nucleusTexture_inner;
         private Texture2D nucleusTexture_outer;
 
-        private readonly float rotation;
+        private readonly float randomAngle;
         private readonly float glowSize_Game;
 
         public SpawnPoint(Vector2 PositionIn, float spawnSize, float glowSize_Game, int startposession, ContentManager content)
-            : base(PositionIn, startposession, /*1.0f / (float)Math.Log(spawnSize)*/ 1.0f / spawnSize, -1.0f, 5)
+            : base(PositionIn, startposession, 1.0f / spawnSize, -1.0f, 5)
         {
             this.capture = content.Load<SoundEffect>("sound/capture");
             this.captureExplosion = content.Load<SoundEffect>("sound/captureExplosion");
@@ -72,12 +72,12 @@ namespace ParticleStormControl
             this.SpawnSize = spawnSize;
             this.glowSize_Game = glowSize_Game;
 
-            rotation = (float)Random.NextDouble(Math.PI * 2);
+            randomAngle = (float)Random.NextDouble(Math.PI * 2);
 
             if(startposession != -1)
                 glowtimer.Start();
 
-            Size = ((spawnSize - 100.0f )/ 900.0f) * (0.025f) + 0.025f;
+            Size = ((spawnSize - 100.0f)/ 900.0f) * (0.05f) + 0.03f;
         }
 
         protected override void OnPossessingChanged()
@@ -119,11 +119,12 @@ namespace ParticleStormControl
         {
             // main
             Color color = ComputeColor();
-            Rectangle rect = level.ComputePixelRect(Position, Size);
+            const float PULSING = 0.01f;
          //   spriteBatch.Draw(outerTexture, rect, null, color, totalTimeSeconds, new Vector2(outerTexture.Width * 0.5f, outerTexture.Height * 0.5f), SpriteEffects.None, 0.8f);
-            spriteBatch.Draw(nucleusTexture_inner, rect, null, color, totalTimeSeconds + rotation,
+            spriteBatch.Draw(nucleusTexture_inner, level.ComputePixelRect(Position, Size + (float)Math.Sin(totalTimeSeconds * 1.7 + randomAngle) * PULSING - PULSING), 
+                                                null, color, totalTimeSeconds + randomAngle,
                 new Vector2(nucleusTexture_inner.Width * 0.5f, nucleusTexture_inner.Height * 0.5f), SpriteEffects.None, 0.7f);
-            spriteBatch.Draw(nucleusTexture_outer, rect, null, color, 0,
+            spriteBatch.Draw(nucleusTexture_outer, level.ComputePixelRect(Position, Size), null, color, 0,
                 new Vector2(nucleusTexture_outer.Width * 0.5f, nucleusTexture_outer.Height * 0.5f), SpriteEffects.None, 0.6f);
 
             // explosion
