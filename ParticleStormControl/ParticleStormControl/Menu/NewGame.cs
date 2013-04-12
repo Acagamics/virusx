@@ -219,7 +219,7 @@ namespace ParticleStormControl.Menu
 
             int textBoxHeight = (int)menu.Font.MeasureString("ABC").Y + SimpleButton.PADDING * 2;
             int ARROW_SIZE = textBoxHeight;
-            int SIDE_PADDING = ARROW_SIZE + 20;
+            int SIDE_PADDING = ARROW_SIZE + 30;
 
             virusRenderEffect.Parameters["ScreenSize"].SetValue(new Vector2(menu.ScreenWidth, menu.ScreenHeight));
 
@@ -249,8 +249,9 @@ namespace ParticleStormControl.Menu
                     SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, Player.VirusNames[Settings.Instance.PlayerVirusIndices[i]].ToString(),
                                                     origin + new Vector2(SIDE_PADDING, 0),false, menu.PixelTexture);
 
+                    // controlls
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, Player.ControlNames[(int)Settings.Instance.PlayerControls[i]].ToString(),
-                                                    origin + new Vector2(SIDE_PADDING, textBoxHeight + SimpleButton.PADDING * 3), false, menu.PixelTexture);
+                                                    origin + new Vector2(SIDE_PADDING, textBoxHeight*2 + SimpleButton.PADDING * 2), false, menu.PixelTexture);
 
                     /*
                     string colorString = "Color: ";
@@ -259,9 +260,12 @@ namespace ParticleStormControl.Menu
                                     origin + new Vector2(SIDE_PADDING + SimpleButton.PADDING * 2 + menu.Font.MeasureString(colorString).X, textBoxHeight * 2.5f), Settings.Instance.GetPlayerColor(i), menu.PixelTexture);
                     */
 
+                    // ready
+                    int readyHeight = textBoxHeight * 4;
                     string playerReadyText = playerReady[i] ? "ready!" : "not ready";
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, playerReadyText, origin + new Vector2(SIDE_PADDING + ARROW_SIZE, textBoxHeight*3), playerReady[i], menu.PixelTexture);
-                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X + SIDE_PADDING - SimpleButton.PADDING, (int)origin.Y + textBoxHeight * 3 - SimpleButton.PADDING, ARROW_SIZE, ARROW_SIZE), new Rectangle(playerReady[i] ? 48 : 0, 32, 16, 16), playerReady[i], menu.PixelTexture);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, playerReadyText, origin + new Vector2(SIDE_PADDING + ARROW_SIZE, readyHeight), playerReady[i], menu.PixelTexture);
+                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X + SIDE_PADDING - SimpleButton.PADDING,
+                                            (int)origin.Y + readyHeight - SimpleButton.PADDING, ARROW_SIZE, ARROW_SIZE), new Rectangle(playerReady[i] ? 48 : 0, 32, 16, 16), playerReady[i], menu.PixelTexture);
 
                     // description
                     int descpStrLen = (int)menu.Font.MeasureString("Discipline").X + 7;
@@ -269,26 +273,29 @@ namespace ParticleStormControl.Menu
                     int backgroundLength = boxWidth - SIDE_PADDING * 2 + SimpleButton.PADDING*2;//(descpStrLen + symbolLen) * 2 + 15;
                     int descpX0 = SIDE_PADDING;
                     int descpX1 = descpX0 + backgroundLength / 2;
-                    float descpY = textBoxHeight * 6.5f;
+                    float descpY = boxHeight - textBoxHeight * 2;
 
                     string symbols = Player.AttributValueToString(Player.speed_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Speed", origin + new Vector2(descpX0, descpY - textBoxHeight), false, menu.PixelTexture, backgroundLength);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, descpY - textBoxHeight), false, menu.PixelTexture, -1);
-                    symbols = Player.AttributValueToString(Player.mass_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Mass", origin + new Vector2(descpX0, descpY), false, menu.PixelTexture, backgroundLength);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Speed", origin + new Vector2(descpX0, descpY), false, menu.PixelTexture, backgroundLength);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, descpY), false, menu.PixelTexture, -1);
+                    symbols = Player.AttributValueToString(Player.mass_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Mass", origin + new Vector2(descpX0, descpY + textBoxHeight), false, menu.PixelTexture, backgroundLength);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, descpY + textBoxHeight), false, menu.PixelTexture, -1);
                     symbols = Player.AttributValueToString(Player.disciplin_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Discipline", origin + new Vector2(descpX1, descpY - textBoxHeight), false, menu.PixelTexture, -1);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, descpY - textBoxHeight), false, menu.PixelTexture, -1);
-                    symbols = Player.AttributValueToString(Player.health_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Health", origin + new Vector2(descpX1, descpY), false, menu.PixelTexture, -1);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Discipline", origin + new Vector2(descpX1, descpY), false, menu.PixelTexture, -1);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, descpY), false, menu.PixelTexture, -1);
+                    symbols = Player.AttributValueToString(Player.health_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Health", origin + new Vector2(descpX1, descpY + textBoxHeight), false, menu.PixelTexture, -1);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, descpY + textBoxHeight), false, menu.PixelTexture, -1);
                    
                     // image
-                    Rectangle destination = new Rectangle((int)origin.X + 240, (int)origin.Y + textBoxHeight + SimpleButton.PADDING * 2, 120, 120);
-                    destination.Inflate(10, 10);
-                    spriteBatch.Draw(menu.PixelTexture, destination, new Color(10, 10, 10));
-                    destination.Inflate(-10, -10);
+                    const int VIRUS_SIZE = 110;
+                    const int VIRUS_PADDING = 10;
+                    Rectangle virusImageRect = new Rectangle((int)origin.X + boxWidth - VIRUS_SIZE - SIDE_PADDING, 
+                                                    (int)origin.Y + textBoxHeight + 40, VIRUS_SIZE, VIRUS_SIZE);
+                    virusImageRect.Inflate(VIRUS_PADDING, VIRUS_PADDING);
+                    spriteBatch.Draw(menu.PixelTexture, virusImageRect, Color.Black);
+                    virusImageRect.Inflate(-VIRUS_PADDING, -VIRUS_PADDING);
                     spriteBatch.End(); // yeah this sucks terrible! TODO better solution
                     switch(Player.Viruses[Settings.Instance.PlayerVirusIndices[i]])
                     {
@@ -305,14 +312,23 @@ namespace ParticleStormControl.Menu
                             virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["HepatitisB_Spritebatch"];
                             break;
                     }
-                    virusRenderEffect.Parameters["Color"].SetValue(Settings.Instance.GetPlayerColor(i).ToVector4());
+                    virusRenderEffect.Parameters["Color"].SetValue(Player.ParticleColors[Settings.Instance.PlayerColorIndices[i]].ToVector4() * 1.5f);
                     spriteBatch.Begin(0, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, virusRenderEffect);
-                    spriteBatch.Draw(menu.PixelTexture, destination, Color.White);
+                    spriteBatch.Draw(menu.PixelTexture, virusImageRect, Color.White);
                     spriteBatch.End();
                     spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
 
+                    const int ARROW_UP_SIZE = 25;
+                    const int ARROW_WIDDEN = 8;
+                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(virusImageRect.Center.X - (ARROW_UP_SIZE + ARROW_WIDDEN) / 2,
+                                                            virusImageRect.Y - ARROW_UP_SIZE - VIRUS_PADDING / 2, ARROW_UP_SIZE + ARROW_WIDDEN, ARROW_UP_SIZE),
+                                                new Rectangle(0 + isActive(InputManager.ControlActions.UP, i, 32), 16, 16, 16), isActive(InputManager.ControlActions.UP, i), menu.PixelTexture);
+                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(virusImageRect.Center.X - (ARROW_UP_SIZE + ARROW_WIDDEN) / 2,
+                                                            virusImageRect.Bottom + VIRUS_PADDING / 2, ARROW_UP_SIZE + ARROW_WIDDEN, ARROW_UP_SIZE),
+                                                new Rectangle(16 + isActive(InputManager.ControlActions.DOWN, i, 32), 16, 16, 16), isActive(InputManager.ControlActions.DOWN, i), menu.PixelTexture);
+                    
                     // arrows left & right
-                    int arrowY = (int)descpY - ARROW_SIZE;//boxHeight / 2 - ARROW_SIZE;
+                    int arrowY = (int)readyHeight - ARROW_SIZE;//boxHeight / 2 - ARROW_SIZE;
                     SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE), new Rectangle(0 + isActive(InputManager.ControlActions.LEFT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.LEFT, i), menu.PixelTexture);
                     SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X + boxWidth - ARROW_SIZE, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE), new Rectangle(16 + isActive(InputManager.ControlActions.RIGHT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.RIGHT, i), menu.PixelTexture);
                 }
