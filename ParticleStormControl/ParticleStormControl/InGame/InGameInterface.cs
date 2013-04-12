@@ -47,7 +47,7 @@ namespace ParticleStormControl
                     Color color = players[i].Color;
                     color.A = (byte)(255 * TRANSPARENCY);
 
-                    Vector2 halfBoxSize = new Vector2(itemDanger.Width, itemDanger.Height);
+                    //Vector2 halfBoxSize = new Vector2(itemBox.Width, itemBox.Height);
                     spriteBatch.Draw(itemBox, itemDisplayRectangles[i], null, color, 0.0f, Vector2.Zero, flips[i], 0);
 
                     DrawItem(spriteBatch, players[i].ItemSlot, itemDisplayRectangles[i], color, Item.ROTATION_SPEED * totalTimeSeconds);
