@@ -88,7 +88,7 @@ namespace ParticleStormControl.Menu
                 }
             }
 
-            DrawDiagram(spriteBatch, frameTimeInterval, new Rectangle(90, 250 + 60 * values.Length, Settings.Instance.ResolutionX - 180, Settings.Instance.ResolutionY - 360 - 60 * values.Length));
+            DrawDiagram(spriteBatch, frameTimeInterval, new Rectangle(90, 200 + 60 * values.Length, Settings.Instance.ResolutionX - 180, Settings.Instance.ResolutionY - 360 - 60 * values.Length));
 
             // continue button
             text = "continue";
@@ -142,11 +142,39 @@ namespace ParticleStormControl.Menu
                 }
             }
 
-            // hide rounding errors
+            // hide rounding errors ...
             area.Inflate(10, 10);
-           area.Y = area.Bottom - 12;
+            area.Y = area.Bottom - 12;
             area.Height = 12;
             spriteBatch.Draw(menu.PixelTexture, area, Color.Black);
+
+            // draw timings
+            const int numSteps = 4;
+            for (int i = 0; i < numSteps; ++i)
+            {
+                float progress = (float)i / (numSteps-1);
+                string endTimeString = GenerateTimeString(statistics.Steps * statistics.StepTime * progress);
+                float textLen = menu.Font.MeasureString(endTimeString).X;
+                
+                float textOffset;
+                if(i == 0)
+                    textOffset = SimpleButton.PADDING;
+                else if (i == numSteps-1)
+                    textOffset = -textLen - SimpleButton.PADDING;
+                else
+                    textOffset = -textLen / 2;
+
+                
+                float x = area.X + area.Width * progress + textOffset;
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, endTimeString, new Vector2(x, area.Y + area.Height + 10), false, menu.PixelTexture);
+            }
+        }
+
+        private string GenerateTimeString(float time)
+        {
+            int minutes = (int)(time / 60.0f);
+            int seconds = (int)(time - minutes * 60 + 0.5f);
+            return minutes + ":" + String.Format("00", seconds);
         }
     }
 }
