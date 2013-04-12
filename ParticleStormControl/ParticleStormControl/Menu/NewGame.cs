@@ -133,6 +133,7 @@ namespace ParticleStormControl.Menu
                     playerConnected[index] = true;
                     Settings.Instance.PlayerControls[index] = type;
                     Settings.Instance.PlayerColorIndices[index] = colorIndex;
+                    Settings.Instance.PlayerVirusIndices[index] = Random.Next(4);
                     Settings.Instance.NumPlayers++;
                     Settings.Instance.PlayerConnected[index] = true;
                     countdown = TimeSpan.FromSeconds(-1);
