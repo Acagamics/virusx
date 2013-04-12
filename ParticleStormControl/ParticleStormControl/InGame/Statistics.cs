@@ -266,6 +266,7 @@ namespace ParticleStormControl
         /// <param name="step"></param>
         /// <returns></returns>
         public uint getPossessingBasesInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? possessingBasesInStep[playerIndex][step] : 0) : 0; }
+        
         /// <summary>
         /// a List of all items a player used/activated in a specific time step. The List is empty if the player has not used/activated any item.
         /// </summary>
