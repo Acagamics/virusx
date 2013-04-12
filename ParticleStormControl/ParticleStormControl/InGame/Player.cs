@@ -67,10 +67,10 @@ namespace ParticleStormControl
             return result;
         }
         // attributs
-        public static readonly float[] mass_byVirus = new float[] { 0.4f, 0.6f, 0.085f, 1.0f };
-        public static readonly float[] speed_byVirus = new float[] { 0.4f, -0.5f, 0.4f, 1.0f };
-        public static readonly float[] health_byVirus = new float[] { 0.4f, 0.35f, 1.0f, -0.4f };
-        public static readonly float[] disciplin_byVirus = new float[] { 0.4f, 0.15f, 0.65f, 0.5f };
+        public static readonly float[] mass_byVirus = new float[] { 0.5f, 0.6f, 0.085f, 1.0f };
+        public static readonly float[] speed_byVirus = new float[] { 0.44f, -0.45f, 0.3f, 1.0f };
+        public static readonly float[] health_byVirus = new float[] { 0.5f, 0.35f, 1.0f, -0.4f };
+        public static readonly float[] disciplin_byVirus = new float[] { 0.44f, 0.15f, 0.65f, 0.5f };
         
         // speed stuff
         private const float speedConstant = 0.13f;
