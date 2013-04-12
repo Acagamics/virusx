@@ -19,12 +19,13 @@ namespace ParticleStormControl
         #region Graphics
 
         public const int MINIMUM_SCREEN_WIDTH = 1024;
+        public const int MINIMUM_SCREEN_HEIGHT = 768;
 
         private bool fullscreen = false;
         public bool Fullscreen { get { return fullscreen; } set { fullscreen = value; } }
         int resolutionX = -1, resolutionY = -1;
         public int ResolutionX { get { return resolutionX; } set { Debug.Assert(value >= MINIMUM_SCREEN_WIDTH); resolutionX = value; } }
-        public int ResolutionY { get { return resolutionY; } set { resolutionY = value; } }
+        public int ResolutionY { get { return resolutionY; } set { Debug.Assert(value >= MINIMUM_SCREEN_HEIGHT); resolutionY = value; } }
 
         #endregion
 

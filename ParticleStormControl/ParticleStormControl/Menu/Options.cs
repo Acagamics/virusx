@@ -48,7 +48,8 @@ namespace ParticleStormControl.Menu
 
             // search.. ehrm.. nearest resolution
             availableResolutions.AddRange(from dispMode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes
-                                          where dispMode.Format == SurfaceFormat.Color && dispMode.Width >= Settings.MINIMUM_SCREEN_WIDTH
+                                          where dispMode.Format == SurfaceFormat.Color && dispMode.Width >= Settings.MINIMUM_SCREEN_WIDTH && 
+                                                                                          dispMode.Height >= Settings.MINIMUM_SCREEN_HEIGHT
                                           orderby dispMode.Width, dispMode.Height
                                           select new Resolution() { width = dispMode.Width, height = dispMode.Height });
             for(int i=0; i<availableResolutions.Count; ++i)
