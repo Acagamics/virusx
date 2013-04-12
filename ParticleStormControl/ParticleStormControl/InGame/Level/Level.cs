@@ -108,6 +108,16 @@ namespace ParticleStormControl
 
         #endregion
 
+        #region item possebilities
+
+        /// <summary>
+        /// item possebilities [0] = no item; [5] = no item; [1] = antibody; [2] = dangerZone; [3] = mutate; [4] = wipeout
+        /// every value is [i-1] + possebility
+        /// </summary>
+        private static readonly float[] itemPossebilities = new float[] { 0.0f, 0.25f, 0.40f, 0.55f, 0.75f, 1.0f };
+
+        #endregion
+        
         private Stopwatch pickuptimer;
 
         /// <summary>
@@ -397,14 +407,22 @@ namespace ParticleStormControl
                 Vector2 position = new Vector2((float)(Random.NextDouble()) * 0.8f + 0.1f, (float)(Random.NextDouble()) * 0.8f + 0.1f);
 #if NO_ITEMS
 #else
-                if (Random.NextDouble() < 0.25 /*0.25*/)
+                double next_item_pos = Random.NextDouble();
+                for (int i = 1; i < itemPossebilities.Length; i++)
+                {
+                    if (itemPossebilities[i - 1] < next_item_pos && next_item_pos < itemPossebilities[i])
+                    {
+                        AddItem(i,position);
+                    }
+                }
+                /*if (Random.NextDouble() < 0.25 )
                     mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
-                else if (Random.NextDouble() < 0.23 /*0.2*/)
+                else if (Random.NextDouble() < 0.23)
                     mapObjects.Add(new Debuff(position, contentManager));
-                else if (Random.NextDouble() < 0.15 /*0.18*/)
+                else if (Random.NextDouble() < 0.15)
                     mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
-                else if (Random.NextDouble() < 0.32 /*0.2*/)
-                    mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager));
+                else if (Random.NextDouble() < 0.32)
+                    mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager));*/
 #endif
                 // restart timer
                 pickuptimer.Reset();
@@ -438,6 +456,18 @@ namespace ParticleStormControl
             })
             .Concat(Enumerable.Repeat(Color.DimGray, background.NumBackgroundCells - spawnPoints.Count));
             background.UpdateColors(colors.ToArray());
+        }
+
+        private void AddItem(int i, Vector2 position)
+        {
+            switch (i)
+            {
+                case 1: mapObjects.Add(new Debuff(position, contentManager)); break;
+                case 2: mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager)); break;
+                case 3: mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager)); break;
+                case 4: mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager)); break;
+                default: break;
+            }
         }
 
         public void UpdateSwitching(float frameTimeSeconds, Player[] players)
