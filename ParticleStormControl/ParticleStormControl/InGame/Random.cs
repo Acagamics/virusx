@@ -44,16 +44,31 @@ namespace ParticleStormControl
 			return (Q[i] = r - x);
         }
 
+        /// <summary>
+        /// between 0 and max-1
+        /// </summary>
+        /// <param name="max"></param>
+        /// <returns></returns>
         public static uint Next(uint max)
         {
             return Next() % max;
         }
 
+        /// <summary>
+        /// between 0 and max-1
+        /// </summary>
+        /// <param name="max"></param>
+        /// <returns></returns>
         public static int Next(int max)
         {
             return Math.Abs((int)Next()) % max;
         }
 
+        /// <summary>
+        /// between min and max-1
+        /// </summary>
+        /// <param name="max"></param>
+        /// <returns></returns>
         public static int Next(int min, int max)
         {
             return Math.Abs((int)Next()) % (max - min) + min;
