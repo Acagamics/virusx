@@ -11,6 +11,27 @@ namespace ParticleStormControl
     /// </summary>
     public class Statistics
     {
+        #region used items
+        
+        public enum StatItems
+        {
+            DANGER_ZONE,
+            MUTATION,
+            WIPEOUT,
+            ANTI_BODY
+        }
+
+        public struct ItemUsed 
+        {
+            public StatItems item;
+            public int step;
+            public static ItemUsed newItemUsed(StatItems _item, int _step) { ItemUsed res; res.item = _item; res.step = _step; return res; }
+        }
+
+        List<ItemUsed>[] itemsUsedByPlayer;
+
+        #endregion
+
         #region control variables
 
         private float stepTime;
@@ -48,12 +69,12 @@ namespace ParticleStormControl
         #region time depend statistics
 
         private List<uint>[] particlesInStep; // active
-        private List<uint>[] healthInStep; // active but wrong input
+        private List<uint>[] healthInStep; // active
         private uint[] averageParticles; // active
         private uint[] averageHealth; // active
         private uint[] maxSimultaneousParticles; // active
-        private List<float>[] dominationInStep;
-        private List<uint>[] possessingBasesInStep;
+        private List<float>[] dominationInStep; // active
+        private List<uint>[] possessingBasesInStep; // active
 
         #endregion
 
@@ -86,12 +107,15 @@ namespace ParticleStormControl
             healthInStep = new List<uint>[playerCount];
             possessingBasesInStep = new List<uint>[playerCount];
 
+            itemsUsedByPlayer = new List<ItemUsed>[playerCount];
+
             for (int i = 0; i < playerCount; ++i)
             {
                 particlesInStep[i] = new List<uint>();
                 healthInStep[i] = new List<uint>();
                 dominationInStep[i] = new List<float>();
                 possessingBasesInStep[i] = new List<uint>();
+                itemsUsedByPlayer[i] = new List<ItemUsed>();
             }
         }
 
@@ -242,6 +266,27 @@ namespace ParticleStormControl
         /// <param name="step"></param>
         /// <returns></returns>
         public uint getPossessingBasesInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? possessingBasesInStep[playerIndex][step] : 0) : 0; }
+        /// <summary>
+        /// a List of all items a player used/activated in a specific time step. The List is empty if the player has not used/activated any item.
+        /// </summary>
+        /// <param name="playerIndex"></param>
+        /// <param name="step"></param>
+        /// <returns></returns>
+        public List<StatItems> getUsedItemsInStep(int playerIndex, int step)
+        {
+            List<StatItems> result = new List<StatItems>();
+
+            if (step < steps && playerIndex < playerCount)
+            {
+                foreach (ItemUsed item in itemsUsedByPlayer[playerIndex])
+                {
+                    if (item.step == step) result.Add(item.item);
+                    else if (step < item.step) break;
+                }
+            }
+
+            return result;
+        }
 
         #endregion
 
@@ -357,6 +402,28 @@ namespace ParticleStormControl
                 basePercentage = (float)possessingBasesInStep[i][currentStep] / overallBases;
                 dominationInStep[i].Add(healthPercentage + basePercentage);
             }
+        }
+
+        public void itemUsed(int playerIndex, Item.ItemType _item)
+        {
+            if (playerIndex < 0 || playerIndex >= playerCount) return;
+
+            StatItems item;
+            switch (_item)
+            {
+                case Item.ItemType.DANGER_ZONE: item = StatItems.DANGER_ZONE; break;
+                case Item.ItemType.MUTATION: item = StatItems.MUTATION; break;
+                case Item.ItemType.WIPEOUT: item = StatItems.WIPEOUT; break;
+                default: return;
+            }
+            itemUsed(playerIndex, item);
+        }
+
+        public void itemUsed(int playerIndex, StatItems _item = StatItems.ANTI_BODY)
+        {
+            if (playerIndex < 0 || playerIndex >= playerCount) return;
+
+            itemsUsedByPlayer[playerIndex].Add(ItemUsed.newItemUsed(_item,steps-1));
         }
 
         #endregion

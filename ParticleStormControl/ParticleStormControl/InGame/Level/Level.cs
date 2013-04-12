@@ -341,7 +341,7 @@ namespace ParticleStormControl
                 }
 
                 // statistics
-                if (mapObject is SpawnPoint)
+                else if (mapObject is SpawnPoint)
                 {
                     SpawnPoint sp = mapObject as SpawnPoint;
                     if (sp.PossessingPlayer != -1)
@@ -370,6 +370,14 @@ namespace ParticleStormControl
                             // statistics
                             GameStatistics.addCollectedItems(item.PossessingPlayer);
                         }
+                    }
+
+                    // statistics (a debuff has been activated)
+                    Debuff debuff = mapObjects[i] as Debuff;
+                    if (debuff != null)
+                    if(debuff.CapturingPlayer != -1 && debuff.PossessingPercentage >= 1.0f)
+                    {
+                        GameStatistics.itemUsed(debuff.CapturingPlayer);
                     }
 
                     mapObjects.RemoveAt(i);
@@ -411,7 +419,6 @@ namespace ParticleStormControl
             {
                 for (int i = 0; i < players.Length; ++i)
                 {
-                    // TODO: the player has to compute the overall health of his particles
                     GameStatistics.setParticlesAndHealth(i, (uint)players[i].NumParticlesAlive, (uint)players[i].TotalHealth);
                     GameStatistics.setPossessingBases(i, possesingBases[i]);
                 }
@@ -684,6 +691,7 @@ namespace ParticleStormControl
             }
             // statistic
             GameStatistics.addUsedItems(player.Index);
+            GameStatistics.itemUsed(player.Index, player.ItemSlot);
         }
     }
 }

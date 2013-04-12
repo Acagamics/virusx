@@ -1,5 +1,5 @@
 ﻿//#define QUICK_TWO_PLAYER_DEBUG
-//#define QUICK_FOUR_PLAYER_DEBUG
+#define QUICK_FOUR_PLAYER_DEBUG
 
 using System;
 using System.Collections.Generic;
