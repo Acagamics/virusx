@@ -108,13 +108,13 @@ namespace ParticleStormControl
 
         #endregion
 
-        #region item possebilities
+        #region item possibilities
 
         /// <summary>
         /// item possebilities [0] = no item; [5] = no item; [1] = antibody; [2] = dangerZone; [3] = mutate; [4] = wipeout
         /// every value is [i-1] + possebility
         /// </summary>
-        private static readonly float[] itemPossebilities = new float[] { 0.0f, 0.25f, 0.40f, 0.55f, 0.75f, 1.0f };
+        private static readonly float[] itemPossibilities = new float[] { 0.0f, 0.25f, 0.40f, 0.55f, 0.75f, 1.0f };
 
         #endregion
         
@@ -408,9 +408,9 @@ namespace ParticleStormControl
 #if NO_ITEMS
 #else
                 double next_item_pos = Random.NextDouble();
-                for (int i = 1; i < itemPossebilities.Length; i++)
+                for (int i = 1; i < itemPossibilities.Length; i++)
                 {
-                    if (itemPossebilities[i - 1] < next_item_pos && next_item_pos < itemPossebilities[i])
+                    if (itemPossibilities[i - 1] < next_item_pos && next_item_pos < itemPossibilities[i])
                     {
                         AddItem(i,position);
                     }
