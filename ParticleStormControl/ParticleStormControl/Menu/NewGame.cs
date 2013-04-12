@@ -274,8 +274,8 @@ namespace ParticleStormControl.Menu
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, 260), false, menu.PixelTexture, -1);
                    
                     // image
-                   // Rectangle destination = new Rectangle((int)origin.X + padd, (int)origin.Y + padd, boxWidth / 2 - padd, boxWidth / 2 - padd);
-                   // spriteBatch.Draw(viruses[Settings.Instance.PlayerVirusIndices[i]], destination, Color.White);
+                    Rectangle destination = new Rectangle((int)origin.X + padd, (int)origin.Y + padd, boxWidth / 2 - padd, boxWidth / 2 - padd);
+                    spriteBatch.Draw(viruses[Settings.Instance.PlayerVirusIndices[i]], destination, Color.White);
 
                     // arrows left & right
                     SimpleButton.Instance.DrawTexture(spriteBatch, icons, new Rectangle((int)origin.X + 16, (int)origin.Y + 170, 16, 16), new Rectangle(0 + isActive(InputManager.ControlActions.LEFT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.LEFT, i), menu.PixelTexture);

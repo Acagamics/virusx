@@ -617,10 +617,9 @@ namespace ParticleStormControl
         {
             // letterboxing
             float sizeY = device.Viewport.Width / RELATIVECOR_ASPECT_RATIO;
-            if (sizeY > device.Viewport.Height)
-                fieldSize_pixel = new Point((int)(device.Viewport.Height * RELATIVECOR_ASPECT_RATIO + 0.5f), device.Viewport.Height);
-            else
-                fieldSize_pixel = new Point((int)(sizeY * RELATIVECOR_ASPECT_RATIO), (int)sizeY);
+            if (sizeY + PercentageBar.HEIGHT > device.Viewport.Height)
+                sizeY = device.Viewport.Height - PercentageBar.HEIGHT;
+            fieldSize_pixel = new Point((int)(sizeY * RELATIVECOR_ASPECT_RATIO), (int)sizeY);
 
             fieldOffset_pixel = new Point(device.Viewport.Width - fieldSize_pixel.X, device.Viewport.Height - fieldSize_pixel.Y + PercentageBar.HEIGHT);
             fieldOffset_pixel.X /= 2;
