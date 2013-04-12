@@ -32,7 +32,7 @@ namespace ParticleStormControl
 
         protected readonly float damageFactor;
 
-        public CapturableObject(Vector2 Position, int possessingPlayer, float damageFactor, float lifeTime/* = -1.0f*/, int damageMapPixelHalfRange /*= 4*/, float size = 0.05f) :
+        public CapturableObject(Vector2 Position, int possessingPlayer, float damageFactor, float lifeTime/* = -1.0f*/, int damageMapPixelHalfRange /*= 4*/, float size = 0.06f) :
             base(Position, size)
         {
             this.lifeTime = lifeTime;

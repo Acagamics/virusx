@@ -25,7 +25,7 @@ namespace ParticleStormControl
         private Texture2D itemTexture;
 
         public Item(Vector2 position, ItemType type, ContentManager content) :
-            base(position, -1, 0.01f, 15.0f, 3, 0.05f)
+            base(position, -1, 0.01f, 15.0f, 3)
         {
             this.Type = type;
             switch(Type)
