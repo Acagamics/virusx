@@ -36,7 +36,9 @@ namespace ParticleStormControl
 
         #region control variables
 
-        private float stepTime;
+        //private float stepTime;
+        private const float stepTime = 0.25f;
+
         /// <summary>
         /// the time in seconds between tracking time depending statistic values
         /// </summary>
@@ -80,10 +82,10 @@ namespace ParticleStormControl
 
         #endregion
 
-        public Statistics(float _stepTime, int _playerCount)
+        public Statistics(int _playerCount)
         {
             steps = 0;
-            stepTime = _stepTime;
+            //stepTime = _stepTime;
             playerCount = _playerCount;
             remainingTime = 0f;
             init();

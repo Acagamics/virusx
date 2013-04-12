@@ -27,10 +27,6 @@ namespace ParticleStormControl
         /// Statistics
         /// </summary>
         public Statistics GameStatistics { get { if (level == null) return null; return level.GameStatistics; } }
-        /// <summary>
-        /// time interval for collecting statistical data
-        /// </summary>
-        private const float timeBetweenUpdates = 0.1f;
 
         private Menu.Menu menu;
 
@@ -123,7 +119,7 @@ namespace ParticleStormControl
             particleRenderer = new ParticleRenderer(graphicsDevice, content, players.Length);
 
             // init statistics
-            level.GameStatistics = new Statistics(1f, Settings.Instance.NumPlayers);
+            level.GameStatistics = new Statistics(Settings.Instance.NumPlayers);
 
             State = GameState.Playing;
             System.GC.Collect();
