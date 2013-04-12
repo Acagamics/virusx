@@ -80,8 +80,8 @@ namespace ParticleStormControl.Menu
 
         public override void Draw(SpriteBatch spriteBatch, float timeInterval)
         {
-            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "< insert logo here >", new Vector2(100, 100), false, menu.PixelTexture);
-
+            //SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "< insert logo here >", new Vector2(100, 100), false, menu.PixelTexture);
+            spriteBatch.Draw(logo, new Rectangle(menu.ScreenWidth - (int)(logo.Width*1.2f),(int)(logo.Height*0.2f), logo.Width,logo.Height), Color.White);
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "New Game", new Vector2(100, 220), selectedButton == Button.NEWGAME, menu.PixelTexture);
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Options", new Vector2(100, 280), selectedButton == Button.OPTIONS, menu.PixelTexture);
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Credits", new Vector2(100, 340), selectedButton == Button.CREDITS, menu.PixelTexture);
