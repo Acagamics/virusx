@@ -92,6 +92,7 @@ namespace ParticleStormControl.Menu
         private void DrawDiagram(SpriteBatch spriteBatch, float frameTimeInterval, Rectangle area)
         {
             int stepWidth = area.Width / statistics.Steps;
+            area.Width = stepWidth * statistics.Steps + 20;
 
             // draw border
             spriteBatch.Draw(menu.PixelTexture, area, Color.Black);
@@ -104,21 +105,21 @@ namespace ParticleStormControl.Menu
                 int offset = 0;
                 for (int j = 0; j < statistics.PlayerCount; j++)
                 {
-                    int height = area.Height / statistics.PlayerCount;
-                    if(total != 0)
-                    height = (int)((statistics.getHealthInStep(j, step) * (uint)area.Height) / total);
+                    int height;
+                    if (total != 0)
+                        height = (int)((statistics.getHealthInStep(j, step) * (uint)area.Height) / total);
+                    else
+                        height = area.Height / statistics.PlayerCount;
                     spriteBatch.Draw(menu.PixelTexture, new Rectangle(area.X + step * stepWidth, area.Y + offset, stepWidth, height), Player.Colors[PlayerColorIndices[j]]);
                     offset += height;
                 }
             }
 
             // hide rounding errors
-            area.Inflate(10, 10);
-            area.Y = area.Bottom - 12;
+         /*    area.Inflate(10, 10);
+           area.Y = area.Bottom - 12;
             area.Height = 12;
-            spriteBatch.Draw(menu.PixelTexture, area, Color.Black);
+            spriteBatch.Draw(menu.PixelTexture, area, Color.Black); */
         }
-
-
     }
 }
