@@ -174,7 +174,7 @@ namespace ParticleStormControl.Menu
         {
             int minutes = (int)(time / 60.0f);
             int seconds = (int)(time - minutes * 60 + 0.5f);
-            return minutes + ":" + String.Format("00", seconds);
+            return String.Format("{0:00}:{1:00}", minutes, seconds);
         }
     }
 }
