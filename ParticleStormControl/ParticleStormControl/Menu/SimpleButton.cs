@@ -52,14 +52,31 @@ namespace ParticleStormControl.Menu
         /// <param name="font"></param>
         /// <param name="label"></param>
         /// <param name="position"></param>
-        /// <param name="color"></param>
+        /// <param name="backgroundColor"></param>
         /// <param name="texture">The pixel texture</param>
         /// <param name="width">override the original width</param>
-        public void Draw(SpriteBatch spriteBatch, SpriteFont font, string label, Vector2 position, Color color, Texture2D texture, int width = 0)
+        public void Draw(SpriteBatch spriteBatch, SpriteFont font, string label, Vector2 position, Color backgroundColor, Texture2D texture, int width = 0)
         {
-            DrawBackground(spriteBatch, position, color, texture, font.MeasureString(label), false, width);
+            DrawBackground(spriteBatch, position, backgroundColor, texture, font.MeasureString(label), false, width);
             spriteBatch.DrawString(font, label, position, normalColor);
         }
+
+        /// <summary>
+        /// Draws a string with a colored background (can't be selected) and a non-standard colored string
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="font"></param>
+        /// <param name="label"></param>
+        /// <param name="position"></param>
+        /// <param name="backgroundColor"></param>
+        /// <param name="texture">The pixel texture</param>
+        /// <param name="width">override the original width</param>
+        public void Draw(SpriteBatch spriteBatch, SpriteFont font, string label, Vector2 position, Color backgroundColor, Color textColor, Texture2D texture, int width = 0)
+        {
+            DrawBackground(spriteBatch, position, backgroundColor, texture, font.MeasureString(label), false, width);
+            spriteBatch.DrawString(font, label, position, textColor);
+        }
+
 
         /// <summary>
         /// Draws e.g. an icon with a background
@@ -73,9 +90,29 @@ namespace ParticleStormControl.Menu
         /// <param name="width"></param>
         public void DrawTexture(SpriteBatch spriteBatch, Texture2D texture, Rectangle destinationRectangle, Rectangle sourceRectangle, bool selected, Texture2D background, int width = 0)
         {
-            DrawBackground(spriteBatch, new Vector2(destinationRectangle.X, destinationRectangle.Y), selected ? selectedColor : normalColor, background, new Vector2(sourceRectangle.Width + 8, sourceRectangle.Height + 8), false, width);
-            destinationRectangle.Offset(4, 4);
+            DrawBackground(spriteBatch, new Vector2(destinationRectangle.X, destinationRectangle.Y), selected ? selectedColor : normalColor, background, new Vector2(sourceRectangle.Width, sourceRectangle.Height), false, width);
+         //   destinationRectangle.Offset(4, 4);
             spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, Color.White);
+        }
+
+        /// <summary>
+        /// same as DrawTexture but without background padding and scaling of the texture - the only rect given is the background
+        /// the graphic will then be placed in the middle of this rect
+        /// </summary>
+        public void DrawTexture_NoScalingNoPadding(SpriteBatch spriteBatch, Texture2D texture, Rectangle backgroundRectangle, Rectangle sourceRectangle, bool selected, Texture2D background, int width = 0)
+        {
+            DrawBackgroundNoPadding(spriteBatch, backgroundRectangle, selected ? selectedColor : normalColor, background, false, width);
+            Rectangle destinationRectangle = new Rectangle();
+            destinationRectangle.Width = sourceRectangle.Width;
+            destinationRectangle.Height = sourceRectangle.Height;
+            destinationRectangle.X = backgroundRectangle.Center.X - sourceRectangle.Width / 2;
+            destinationRectangle.Y = backgroundRectangle.Center.Y - sourceRectangle.Height / 2;
+            spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, Color.White);
+        }
+
+        private void DrawBackgroundNoPadding(SpriteBatch spriteBatch, Rectangle rect, Color color, Texture2D texture, bool animated, int width = 0)
+        {
+            spriteBatch.Draw(texture, rect, color);
         }
 
         private void DrawBackground(SpriteBatch spriteBatch, Vector2 position, Color color, Texture2D texture, Vector2 size, bool animated, int width = 0)
@@ -87,7 +124,6 @@ namespace ParticleStormControl.Menu
             int _height = (int)size.Y + 2 * PADDING;
             if (animated)
                 _height = GetHeight(_height);
-
 
             spriteBatch.Draw(texture, new Rectangle((int)position.X - PADDING, (int)position.Y - PADDING, _width, _height), color);
         }

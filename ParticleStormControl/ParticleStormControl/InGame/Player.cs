@@ -225,7 +225,7 @@ namespace ParticleStormControl
         static public readonly String[] ControlNames = new String[]
         {
             "WASD + SHIFT",
-            "Arrow Keys + CTRL",
+            "Arrows + CTRL",
             "Gamepad 1",
             "Gamepad 2",
             "Gamepad 3",
