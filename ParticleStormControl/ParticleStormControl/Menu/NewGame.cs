@@ -299,7 +299,7 @@ namespace ParticleStormControl.Menu
                     spriteBatch.End(); // yeah this sucks terrible! TODO better solution
                     switch(Player.Viruses[Settings.Instance.PlayerVirusIndices[i]])
                     {
-                        case Player.VirusType.EPSTEINBAR:
+                        case Player.VirusType.EPSTEINBARR:
                             virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["EpsteinBar_Spritebatch"];
                             break;
                         case Player.VirusType.H5N1:

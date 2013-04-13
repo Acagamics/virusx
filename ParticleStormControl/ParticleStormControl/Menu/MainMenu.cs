@@ -43,7 +43,7 @@ namespace ParticleStormControl.Menu
             else if (InputManager.Instance.AnyUpButtonPressed())
                 selectionInt = selectionInt == 0 ? (int)Button.NUM_BUTTONS - 1 : selectionInt - 1;
             if (selectionInt != (int)selectedButton)
-                SimpleButton.Instance.ChangeHappened(gameTime);
+                SimpleButton.Instance.ChangeHappened(gameTime, menu.SoundEffect);
             selectedButton = (Button)(selectionInt);
 
             // button selected

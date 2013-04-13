@@ -29,6 +29,8 @@ namespace ParticleStormControl
         private Texture2D pixelTexture;
         private Texture2D mutateBig;
 
+        private SoundEffect wipeOutSound;
+
         private SpriteBatch spriteBatch;
         private ContentManager contentManager;
 
@@ -143,6 +145,8 @@ namespace ParticleStormControl
             pickuptimer.Start();
 
             pixelTexture = content.Load<Texture2D>("pix");
+
+            wipeOutSound = content.Load<SoundEffect>("sound/andromadax24__woosh-01");
             
             spriteBatch = new SpriteBatch(device);
 
@@ -720,6 +724,8 @@ namespace ParticleStormControl
                     {
                         wipeoutActive = true;
                         wipeoutProgress = 0.0f;
+                        if (Settings.Instance.Sound)
+                            wipeOutSound.Play();
                     }
                     break;
             }

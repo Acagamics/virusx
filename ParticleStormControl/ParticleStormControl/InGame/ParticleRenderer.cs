@@ -137,7 +137,7 @@ namespace ParticleStormControl
                 case Player.VirusType.HIV:
                     particleEffect.CurrentTechnique = particleEffect.Techniques["HIV"];
                     break;
-                case Player.VirusType.EPSTEINBAR:
+                case Player.VirusType.EPSTEINBARR:
                     particleEffect.CurrentTechnique = particleEffect.Techniques["EpsteinBar"];
                     break;
                 default:

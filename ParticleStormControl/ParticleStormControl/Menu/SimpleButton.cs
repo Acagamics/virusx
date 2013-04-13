@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 namespace ParticleStormControl.Menu
 {
@@ -132,9 +133,11 @@ namespace ParticleStormControl.Menu
         /// Call this function when the selection changed!
         /// </summary>
         /// <param name="gameTime"></param>
-        public void ChangeHappened(GameTime gameTime)
+        public void ChangeHappened(GameTime gameTime, SoundEffect sound)
         {
             lastChange = gameTime.TotalGameTime;
+            if(Settings.Instance.Sound)
+                sound.Play();
         }
 
         public void Update(GameTime gameTime)
