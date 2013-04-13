@@ -89,13 +89,13 @@ namespace ParticleStormControl
         public static readonly string[] DiscriptorDisciplin = new string[] { "++", "++", "+++", "+" };
         #endregion
         // attributs
-        private static readonly float[] mass_byVirus = new float[] { 0.5f, 0.63f, 0.075f, 1.0f };
+        private static readonly float[] mass_byVirus = new float[] { 0.5f, 0.63f, 0.075f, 1.1f };
         private static readonly float[] speed_byVirus = new float[] { 0.44f, -0.42f, 0.3f, 1.0f };
         private static readonly float[] health_byVirus = new float[] { 0.5f, 0.35f, 1.0f, -0.4f };
-        private static readonly float[] disciplin_byVirus = new float[] { 0.44f, 0.25f, 0.65f, 0.5f };
-        
+        private static readonly float[] disciplin_byVirus = new float[] { 0.44f, 0.25f, 0.65f, 0.51f };
+       
         // speed stuff
-        private const float speedConstant = 0.13f;
+        private const float speedConstant = 0.18f; // 0.13f;
         private const float speedSettingFactor = 0.08f;
 
         public float Speed
@@ -112,7 +112,7 @@ namespace ParticleStormControl
         { get { return ((health_byVirus[virusIndex] * 0.5f) + 1.5f) * healthConstant; } }
 
         // discilplin constant - higher means that the particles will move more straight in player's direction
-        private const float disciplinConstant = 0.15f;
+        private const float disciplinConstant = 0.19f;// 0.15f;
 
         public float Disciplin
         { get { return 1-disciplin_byVirus[virusIndex]; } }

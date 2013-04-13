@@ -612,7 +612,7 @@ namespace ParticleStormControl
             DrawParticles(device);
 
             // alphablended spritebatch stuff
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, scissorTestRasterizerState);
 
             // all alpha blended objects
             foreach (MapObject mapObject in mapObjects)

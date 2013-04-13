@@ -19,6 +19,7 @@ namespace ParticleStormControl.Menu
             OPTIONS,
             PAUSED,
             CONTROLS,
+            VIRUSES,
 
             INGAME,
             WIN,
@@ -82,6 +83,7 @@ namespace ParticleStormControl.Menu
             pages[(int)Page.INGAME] = new InGame(this);
             pages[(int)Page.CREDITS] = new Credits(this);
             pages[(int)Page.CONTROLS] = new Controls(this);
+            pages[(int)Page.VIRUSES] = new Viruses(this);
         }
 
         public void LoadContent(ContentManager content)

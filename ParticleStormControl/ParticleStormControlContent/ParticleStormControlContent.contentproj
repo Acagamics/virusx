@@ -75,7 +75,7 @@
     <Compile Include="fonts\font.spritefont">
       <Name>font</Name>
       <Importer>FontDescriptionImporter</Importer>
-      <Processor>NuclexSpriteFontDescriptionProcessor</Processor>
+      <Processor>FontDescriptionProcessor</Processor>
       <SubType>Designer</SubType>
     </Compile>
   </ItemGroup>

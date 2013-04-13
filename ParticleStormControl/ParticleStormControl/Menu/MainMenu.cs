@@ -18,6 +18,7 @@ namespace ParticleStormControl.Menu
             NEWGAME,
             CONTROLS,
             OPTIONS,
+            VIRUSES,
             CREDITS,
             END,
 
@@ -68,6 +69,10 @@ namespace ParticleStormControl.Menu
                         menu.ChangePage(Menu.Page.OPTIONS, gameTime);
                         break;
 
+                    case Button.VIRUSES:
+                        menu.ChangePage(Menu.Page.VIRUSES, gameTime);
+                        break;
+
                     case Button.CREDITS:
                         menu.ChangePage(Menu.Page.CREDITS, gameTime);
                         break;
@@ -86,8 +91,9 @@ namespace ParticleStormControl.Menu
             SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "New Game", new Vector2(100, 370), selectedButton == Button.NEWGAME, menu.TexPixel);
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Controls", new Vector2(100, 440), selectedButton == Button.CONTROLS, menu.TexPixel);
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Options", new Vector2(100, 500), selectedButton == Button.OPTIONS, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Credits", new Vector2(100, 560), selectedButton == Button.CREDITS, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Exit Game", new Vector2(100, 620), selectedButton == Button.END, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Viruses", new Vector2(100, 560), selectedButton == Button.VIRUSES, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Credits", new Vector2(100, 620), selectedButton == Button.CREDITS, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Exit Game", new Vector2(100, 680), selectedButton == Button.END, menu.TexPixel);
 
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, ParticleStormControl.VERSION, new Vector2(menu.ScreenWidth - SimpleButton.PADDING, menu.ScreenHeight - SimpleButton.PADDING) - menu.Font.MeasureString(ParticleStormControl.VERSION), false, menu.TexPixel);
         }

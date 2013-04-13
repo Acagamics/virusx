@@ -31,7 +31,7 @@ namespace ParticleStormControl
     /// </summary>
     public class ParticleStormControl : Microsoft.Xna.Framework.Game
     {
-        public const string VERSION = "version 1.0 - 13.04.2013";
+        public const string VERSION = "version 0.8 - 15.04.2013";
 
         private bool showStatistics = false;
      

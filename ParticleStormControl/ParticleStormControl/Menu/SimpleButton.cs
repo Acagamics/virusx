@@ -40,10 +40,11 @@ namespace ParticleStormControl.Menu
         {
             if(width >= 0)
                 DrawBackground(spriteBatch, position, selected && !IsAnimated() ? normalColor : selectedColor, texture, font.MeasureString(label), false, width); // do not try to understand this
-            spriteBatch.DrawString(font, label, position, selected ? selectedColor : normalColor);
-
+            
             if (IsAnimated() && selected)
                 DrawBackground(spriteBatch, position, normalColor, texture, font.MeasureString(label), true, width);
+
+            spriteBatch.DrawString(font, label, position, selected ? selectedColor : normalColor);
         }
 
         /// <summary>
@@ -152,7 +153,7 @@ namespace ParticleStormControl.Menu
         /// <returns></returns>
         private int GetHeight(int maxHeight)
         {
-            return (int)((currentTime.Subtract(lastChange).TotalMilliseconds * maxHeight) / animationDuration.Milliseconds);
+            return (int)((currentTime.Subtract(lastChange).TotalMilliseconds * maxHeight) / animationDuration.TotalMilliseconds);
         }
 
         private bool IsAnimated()
