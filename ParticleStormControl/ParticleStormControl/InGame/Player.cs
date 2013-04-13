@@ -600,7 +600,7 @@ namespace ParticleStormControl
                 level.PlayerUseItem(this);
                 ItemSlot = Item.ItemType.NONE;
             }
-            
+      /*      
 #if DEBUG
             // save particle textures on pressing space
             if (InputManager.Instance.PressedButton(Keys.Tab))
@@ -612,8 +612,9 @@ namespace ParticleStormControl
                 using (var file = new System.IO.FileStream("movement target " + playerIndex + ".png", System.IO.FileMode.Create))
                     movementTexture[currentTargetIndex].SaveAsPng(file, maxParticlesSqrt, maxParticlesSqrt);
             }
-#endif
+#endif     */
         }
+  
 
         /// <summary>
         /// still alive?

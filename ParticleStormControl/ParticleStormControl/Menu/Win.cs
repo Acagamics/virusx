@@ -22,6 +22,18 @@ namespace ParticleStormControl.Menu
         public bool[] ConnectedPlayers { get; set; }
         public int[] PlayerColorIndices { get; set; }
 
+        enum DiagramType
+        {
+            DOMINATION,
+            HEALTH,
+            MASS,
+            SPAWN_POINTS,
+
+            NUM_VALUES
+        };
+        private static readonly string[] DIAGRAM_DESCRIPTIONS = new string[]{ "Domination", "Total HP", "Number of Viruses", "Number of Cells" };
+        private DiagramType currentDiagramType;
+
         public Win(Menu menu)
             : base(menu)
         { }
@@ -29,6 +41,7 @@ namespace ParticleStormControl.Menu
         public override void OnActivated(Menu.Page oldPage)
         {
             statistics = menu.Game.InGame.Level.GameStatistics;
+            currentDiagramType = DiagramType.DOMINATION;
 
             values = new List<string>[statistics.PlayerCount];
             int counter = 0;
@@ -60,6 +73,12 @@ namespace ParticleStormControl.Menu
         {
             if (InputManager.Instance.ContinueButton())
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+
+            if (InputManager.Instance.AnyRightButtonPressed())
+                currentDiagramType = (DiagramType)(((int)currentDiagramType + 1) % (int)DiagramType.NUM_VALUES);
+
+            if (InputManager.Instance.AnyLeftButtonPressed())
+                currentDiagramType = (DiagramType)((((int)currentDiagramType - 1) < 0 ? (int)DiagramType.NUM_VALUES-1 : (int)(currentDiagramType)) -1);
         }
 
         public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)
@@ -88,7 +107,27 @@ namespace ParticleStormControl.Menu
                 }
             }
 
-            DrawDiagram(spriteBatch, frameTimeInterval, new Rectangle(90, 200 + 60 * values.Length, Settings.Instance.ResolutionX - 180, Settings.Instance.ResolutionY - 360 - 60 * values.Length));
+            // draw diagrams
+            int descriptionY = 220 + 60 * values.Length;
+            Rectangle diagramArea = new Rectangle(90, descriptionY + (int)menu.FontHeading.MeasureString(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType]).Y + SimpleButton.PADDING, 
+                                                    Settings.Instance.ResolutionX - 180, Settings.Instance.ResolutionY - 360 - 60 * values.Length);
+            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, DIAGRAM_DESCRIPTIONS[(int)currentDiagramType],
+                                        new Vector2(100, descriptionY), false, menu.PixelTexture);
+            switch (currentDiagramType)
+            {
+                case DiagramType.DOMINATION:
+                    DrawDiagram(spriteBatch, (step, player) => statistics.getDominationInStep(player, step), frameTimeInterval, diagramArea);
+                    break;
+                case DiagramType.HEALTH:
+                    DrawDiagram(spriteBatch, (step, player) => statistics.getHealthInStep(player, step) / statistics.getHealthInStep(step), frameTimeInterval, diagramArea);
+                    break;
+                case DiagramType.MASS:
+                    DrawDiagram(spriteBatch, (step, player) => statistics.getParticlesInStep(player, step) / statistics.getParticlesInStep(step), frameTimeInterval, diagramArea);
+                    break;
+                case DiagramType.SPAWN_POINTS:
+          //          DrawDiagram(spriteBatch, (step, player) => statistics.get(player, step), frameTimeInterval, diagramArea);
+                    break;
+            }           
 
             // continue button
             text = "continue";
@@ -96,7 +135,15 @@ namespace ParticleStormControl.Menu
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, text, new Vector2((int)((Settings.Instance.ResolutionX - width) * 0.5f), Settings.Instance.ResolutionY - 80), true, menu.PixelTexture);
         }
 
-        private void DrawDiagram(SpriteBatch spriteBatch, float frameTimeInterval, Rectangle area)
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="heightFunction">function returning a height for a given (1st para) step from a given (2nd para) player. Sum of heights in a step should be one!</param>
+        /// <param name="frameTimeInterval"></param>
+        /// <param name="area"></param>
+        private void DrawDiagram(SpriteBatch spriteBatch, Func<int, int, float> heightFunction, float frameTimeInterval, Rectangle area)
         {
             int stepWidth = area.Width / statistics.Steps;
             area.Width = stepWidth * statistics.Steps + 20;
@@ -105,31 +152,33 @@ namespace ParticleStormControl.Menu
             spriteBatch.Draw(menu.PixelTexture, area, Color.Black);
             area.Inflate(-10, -10);
 
+            // if this stuff slows down the whole game.... suprise suprise, let's optimize! ;P
+
             // draw amount of particles per player and step
-            for (int step = 0; step < statistics.Steps; step++)     // if this stuff slows down the whole game.... suprise suprise, let's optimize! ;P
+            for (int step = 0; step < statistics.Steps; step++)     
             {
                 int offset = 0;
-                for (int j = 0; j < statistics.PlayerCount; j++)
+                for (int playerIndex = 0; playerIndex < statistics.PlayerCount; playerIndex++)
                 {
-                    int height = (int)(statistics.getDominationInStep(j, step) * (uint)area.Height);
+                    int height = (int)(heightFunction(step, playerIndex) * (uint)area.Height);
 
                     Rectangle rect = new Rectangle(area.X + step * stepWidth, area.Y + offset, stepWidth, height);
-                    spriteBatch.Draw(menu.PixelTexture, rect, Player.Colors[PlayerColorIndices[j]]);
+                    spriteBatch.Draw(menu.PixelTexture, rect, Player.Colors[PlayerColorIndices[playerIndex]]);
 
                     offset += height;
                 }
             }
 
             // draw items
-            for (int step = 0; step < statistics.Steps; step++)     // if this stuff slows down the whole game.... suprise suprise, let's optimize! ;P
+            for (int step = 0; step < statistics.Steps; step++)    
             {
                 int offset = 0;
-                for (int j = 0; j < statistics.PlayerCount; j++)
+                for (int playerIndex = 0; playerIndex < statistics.PlayerCount; playerIndex++)
                 {
-                    int height = (int)(statistics.getDominationInStep(j, step) * (uint)area.Height);
+                    int height = (int)(heightFunction(step, playerIndex) * (uint)area.Height);
                     
                     // render
-                    Statistics.StatItems? itemUsed = statistics.getFirstUsedItemInStep(j, step);
+                    Statistics.StatItems? itemUsed = statistics.getFirstUsedItemInStep(playerIndex, step);
                     if (itemUsed != null)
                     {
                         spriteBatch.Draw(itemTextures[(int)itemUsed],

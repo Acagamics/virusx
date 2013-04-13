@@ -207,6 +207,9 @@ namespace ParticleStormControl
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            if (spriteBatch.IsDisposed)
+                return;
+
             // offsite stuff
             inGame.Draw_OffsiteBuffers(gameTime, GraphicsDevice);
 
