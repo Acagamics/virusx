@@ -230,6 +230,49 @@ namespace ParticleStormControl
             return PressedButton(Buttons.DPadRight) || PressedButton(Keys.Right);
         }
 
+        public bool AnyDownButtonDown()
+        {
+            foreach (GamePadState gstate in currentGamePadStates)
+            {
+                if (IsThumbstickDown(gstate))
+                    return true;
+            }
+
+            return IsButtonDown(Buttons.DPadDown) || IsButtonDown(Keys.Down);
+        }
+
+        public bool AnyUpButtonDown()
+        {
+            foreach (GamePadState gstate in currentGamePadStates)
+            {
+                if (IsThumbstickUp(gstate))
+                    return true;
+            }
+
+            return IsButtonDown(Buttons.DPadUp) || IsButtonDown(Keys.Up);
+        }
+        public bool AnyLeftButtonDown()
+        {
+            foreach (GamePadState gstate in currentGamePadStates)
+            {
+                if (IsThumbstickLeft(gstate))
+                    return true;
+            }
+
+            return IsButtonDown(Buttons.DPadLeft) || IsButtonDown(Keys.Left);
+        }
+
+        public bool AnyRightButtonDown()
+        {
+            foreach (GamePadState gstate in currentGamePadStates)
+            {
+                if (IsThumbstickRight(gstate))
+                    return true;
+            }
+
+            return IsButtonDown(Buttons.DPadRight) || IsButtonDown(Keys.Right);
+        }
+
         #endregion
 
         #region Basic Input Commands
