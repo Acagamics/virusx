@@ -55,6 +55,21 @@ namespace ParticleStormControl
         public int Steps { get { return steps; } }
         private float remainingTime;
 
+        private int lastStep;
+        /// <summary>
+        /// the highest time step if you multiply this with the StepTime you get the overall time for the game
+        /// </summary>
+        public int LastStep { get { return lastStep; } }
+        /// <summary>
+        /// the first time point for which statistical data is available. Multiplay this with StepTime and you get the start time of the statistics
+        /// </summary>
+        public int FirstStep { get { return LastStep - Steps; } }
+
+        private int maxStoredSteps;
+        /// <summary>
+        /// The maximum number of steps which will be stored. If the game takes longer, the data from the beginning of the game will be deletet
+        /// </summary>
+        public int MaxStoredSteps { get { return maxStoredSteps; } }
         #endregion
 
         #region absolut statistics
@@ -86,12 +101,13 @@ namespace ParticleStormControl
 
         #endregion
 
-        public Statistics(int _playerCount, uint _overallNumberOfBases)
+        public Statistics(int _playerCount, int _maxStoredSteps, uint _overallNumberOfBases)
         {
-            steps = 0;
+            steps = lastStep = 0;
             //stepTime = _stepTime;
             playerCount = _playerCount;
             remainingTime = 0f;
+            maxStoredSteps = _maxStoredSteps;
             OverallNumberOfBases = _overallNumberOfBases;
             init();
         }
@@ -133,6 +149,7 @@ namespace ParticleStormControl
             if (remainingTime <= 0f)
             {
                 remainingTime = stepTime;
+                lastStep++;
                 return true;
             }
             else
@@ -360,11 +377,12 @@ namespace ParticleStormControl
             else killedEnemies[playerIndex] -= (uint)enemies;
         }
 
-        public void setParticlesAndHealth(int playerIndex, uint particles, uint health)
+        public void setParticlesAndHealthAndPossesingBases(int playerIndex, uint particles, uint health, uint bases)
         {
             if (playerIndex < 0 || playerIndex >= playerCount) return;
             particlesInStep[playerIndex].Add(particles);
             healthInStep[playerIndex].Add(health);
+            possessingBasesInStep[playerIndex].Add((uint)bases);
 
             if (particles >= maxSimultaneousParticles[playerIndex])
                 maxSimultaneousParticles[playerIndex] = particles;
@@ -374,10 +392,16 @@ namespace ParticleStormControl
             if (steps < particlesInStep[playerIndex].Count) steps = particlesInStep[playerIndex].Count;
         }
 
-        public void setPossessingBases(int playerIndex, uint bases)
+        private void reduceAllListsByOne()
         {
-            if (playerIndex < 0 || playerIndex >= playerCount) return;
-            possessingBasesInStep[playerIndex].Add((uint)bases);
+            for (int i = 0; i < playerCount; ++i)
+            {
+                particlesInStep[i].RemoveAt(0);
+                healthInStep[i].RemoveAt(0);
+                dominationInStep[i].RemoveAt(0);
+                possessingBasesInStep[i].RemoveAt(0);
+            }
+
         }
 
         private void computeAverage(int playerIndex)
@@ -385,7 +409,12 @@ namespace ParticleStormControl
             ulong overallParticles = 0;
             ulong overallHealth = 0;
 
-            foreach (uint i in particlesInStep[playerIndex])
+            for (int i = 0; i < steps; ++i)
+            {
+                overallParticles += (ulong)particlesInStep[playerIndex][i];
+                overallHealth += (ulong)healthInStep[playerIndex][i];
+            }
+            /*foreach (uint i in particlesInStep[playerIndex])
             {
                 overallParticles += (ulong)i;
             }
@@ -393,7 +422,7 @@ namespace ParticleStormControl
             foreach (uint i in healthInStep[playerIndex])
             {
                 overallHealth += (ulong)i;
-            }
+            }*/
 
             averageParticles[playerIndex] = (uint)(overallParticles / (ulong)particlesInStep[playerIndex].Count);
             averageHealth[playerIndex] = (uint)(overallHealth / (ulong)healthInStep[playerIndex].Count);
@@ -414,6 +443,12 @@ namespace ParticleStormControl
             {
                 percentage = (float)((double)getDominationPercentage(i, currentStep) / overall);
                 dominationInStep[i].Add(percentage);
+            }
+
+            if (steps == maxStoredSteps)
+            {
+                steps--;
+                reduceAllListsByOne();
             }
         }
 
