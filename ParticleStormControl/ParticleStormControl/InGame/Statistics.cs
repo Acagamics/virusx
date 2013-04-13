@@ -339,8 +339,6 @@ namespace ParticleStormControl
             if (playerIndex >= 0 && playerIndex < PlayerCount)
             {
                 deathStep[playerIndex] = lastStep;
-                particlesInStep[playerIndex][lastStep] = 0;
-                possessingBasesInStep[playerIndex][lastStep] = 0;
             }
         }
 

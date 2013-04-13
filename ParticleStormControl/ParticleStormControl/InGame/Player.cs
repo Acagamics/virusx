@@ -438,6 +438,9 @@ namespace ParticleStormControl
 
         public void UpdateGPUPart(GraphicsDevice device, float timeInterval, Texture2D damageMapTexture)
         {
+            if (!alive)
+                return;
+
             // update spawn vb if necessary
             if(numSpawns > 0)
                 spawnVertexBuffer.SetData<SpawnVertex>(spawnVerticesRAMBuffer, 0, numSpawns*2);
@@ -496,6 +499,13 @@ namespace ParticleStormControl
 
         public void UpdateCPUPart(float timeInterval, IList<SpawnPoint> spawnPoints, bool cantDie)
         {
+            if (!alive)
+            {
+                NumParticlesAlive = 0;
+                totalHealth = 0.0f;
+                return;
+            }
+
             // compute spawnings
             numSpawns = 0;
             int numSpawnPoints = 0;
