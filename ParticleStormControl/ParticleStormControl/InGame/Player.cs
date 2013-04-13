@@ -28,10 +28,23 @@ namespace ParticleStormControl
 
         public readonly static VirusType[] Viruses = { VirusType.H5N1, VirusType.HEPATITISB, VirusType.HIV, VirusType.EPSTEINBARR };
         public readonly static string[] VirusNames = { "Influenza A", "Hepatitis B", "Human immunodeficiency", "Epstein-Barr" };
-        public readonly static string[] VirusDescriptions = { "causes influenza in birds and some mammals, and is the only species of influenzavirus A.",
-                                                               "is a species of the genus Orthohepadnavirus, which is likewise a part of the Hepadnaviridae family of viruses.",
-                                                               "is a lentivirus (slowly replicating retrovirus) that causes acquired immunodeficiency syndrome (AIDS).",
-                                                               "best known as the cause of infectious mononucleosis (glandular fever). It is also associated with particular forms of cancer, such as Hodgkin's lymphoma, Burkitt's lymphoma, " };
+        public readonly static string[] VirusAdditionalInfo = { "It is a highly contagious virus which is a potantial pandemic threat.",
+                                                               "Can also lead to cirrhosis and hepatocellular carcinoma.",
+                                                               "Infection with HIV occurs by the transfer of blood, semen, vaginal fluid, pre-ejaculate, or breast milk.",
+                                                               "It is one of the most common viruses in humans." };
+        public readonly static string[] VirusClassification = { "Group V; Genus A; Family of Orthomyxoviridae",
+                                                                  "Goup VII; Genus Orthohepadnavirus; Family of Hepadnaviridae",
+                                                                  "Group VI; Genus Lentivirus; Family of Retroviridae",
+                                                                  "Group I; Genus of Lymphocryptovirus; Family of" };
+        public readonly static string[] VirusShortName = { "H5N1",
+                                                             "HBV",
+                                                             "HIV",
+                                                             "EBV" };
+        public readonly static string[] VirusCausedDisease = { "avian influenza (bird flu)",
+                                                                 "hepatitis B",
+                                                                 "acquired immunodeficiency syndrome (AIDS)",
+                                                                 "Implicated in several diseases that include infectious mononucleosis, multiple sclerosis and Hodgkin lymphoma." };
+        
         private int virusIndex;
         public int VirusIndex
         {
