@@ -94,6 +94,10 @@ namespace ParticleStormControl.Menu
             int pad = 30; // padding from left
             int col = 150; // width of the columns
             
+            // zentrieren
+            // header um eins verschoben
+
+
             // draw winning string
             string text = Player.ColorNames[PlayerColorIndices[WinPlayerIndex]] + " wins!";
             int width = (int)menu.FontHeading.MeasureString(text).X;
@@ -102,7 +106,7 @@ namespace ParticleStormControl.Menu
             // draw all captions
             for (int i = 0; i < captions.Count; i++)
             {
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, captions[i], new Vector2(pad + col * i, 150), false, menu.PixelTexture, col - 20);
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, captions[i], new Vector2(pad + col * (i+1), 150), false, menu.PixelTexture, col - 20);
             }
 
             // fill table with values
@@ -191,6 +195,7 @@ namespace ParticleStormControl.Menu
                     spriteBatch.Draw(menu.PixelTexture, rect, Player.Colors[PlayerColorIndices[playerIndex]]);
                 }
 
+                // this ehm.. could be a single quad
                 if (offset < area.Height)
                 {
                     int height = area.Height - offset;
@@ -265,13 +270,16 @@ namespace ParticleStormControl.Menu
                 SimpleButton.Instance.Draw(spriteBatch, menu.Font, endTimeString, new Vector2(x, area.Y + area.Height + 10), false, menu.PixelTexture);
             }
 
+
+            // TOdO: gamepad button fix
+
             // arrows
             int ARROW_SIZE = 50;
             int arrowY = area.Y + (area.Height - ARROW_SIZE) / 2;//boxHeight / 2 - ARROW_SIZE;
             SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Left - ARROW_SIZE - 20, arrowY, ARROW_SIZE, ARROW_SIZE),
-                                                                new Rectangle(0 + (InputManager.Instance.AnyLeftButtonDown() ? 32 : 0), 0, 16, 16), InputManager.Instance.AnyLeftButtonDown(), menu.PixelTexture);
+                                                                new Rectangle(0 + (InputManager.Instance.AnyLeftButtonDown() ? 32 : 0), 0, 16, 16), !InputManager.Instance.AnyLeftButtonDown(), menu.PixelTexture);
             SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Right + 20, arrowY, ARROW_SIZE, ARROW_SIZE),
-                                                                new Rectangle(16 + (InputManager.Instance.AnyRightButtonDown() ? 32 : 0), 0, 16, 16), InputManager.Instance.AnyRightButtonDown(), menu.PixelTexture);
+                                                                new Rectangle(16 + (InputManager.Instance.AnyRightButtonDown() ? 32 : 0), 0, 16, 16), !InputManager.Instance.AnyRightButtonDown(), menu.PixelTexture);
 
         }
 
