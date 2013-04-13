@@ -124,6 +124,7 @@ namespace ParticleStormControl
             usedItems = new uint[playerCount];
             killedEnemies = new uint[playerCount];
             deathStep = new int[playerCount];
+
             
             dominationInStep = new List<float>[playerCount];
 
@@ -144,6 +145,7 @@ namespace ParticleStormControl
                 dominationInStep[i] = new List<float>();
                 possessingBasesInStep[i] = new List<uint>();
                 itemsUsedByPlayer[i] = new List<ItemUsed>();
+                deathStep[i] = -1;
             }
         }
 
@@ -164,7 +166,7 @@ namespace ParticleStormControl
 
         #region getter for statistics
 
-        public int getDeathStepOfPlayer(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? deathStep[playerIndex] : 0 : 0; }
+        public int getDeathStepOfPlayer(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? deathStep[playerIndex] : -2 : -2; }
         /// <summary>
         /// Not tracked yet. The total amount of generated particles
         /// </summary>
@@ -332,7 +334,7 @@ namespace ParticleStormControl
 
         #region collecting statistics
 
-        public void playerDied(int playerIndex) { if (playerIndex < 0 || playerIndex >= playerCount) return; deathStep[playerIndex] = lastStep; }
+        public void playerDied(int playerIndex) { if (playerIndex >= 0 && playerIndex < PlayerCount) deathStep[playerIndex] = lastStep; }
 
         public void addGeneratedParticles(int playerIndex, int particles = 1)
         {

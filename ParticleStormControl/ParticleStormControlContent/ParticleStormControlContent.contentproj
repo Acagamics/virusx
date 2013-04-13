@@ -319,6 +319,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="death.png">
+      <Name>death</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="sound\09 Beach.mp3">
       <Name>09 Beach</Name>
       <Importer>Mp3Importer</Importer>
