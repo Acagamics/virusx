@@ -43,7 +43,7 @@ namespace ParticleStormControl.Menu
             spriteBatch.DrawString(font, label, position, selected ? selectedColor : normalColor);
 
             if (IsAnimated() && selected)
-                DrawBackground(spriteBatch, position, normalColor, texture, font.MeasureString(label), true);
+                DrawBackground(spriteBatch, position, normalColor, texture, font.MeasureString(label), true, width);
         }
 
         /// <summary>

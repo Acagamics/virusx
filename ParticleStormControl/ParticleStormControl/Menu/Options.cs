@@ -82,7 +82,7 @@ namespace ParticleStormControl.Menu
             selectedButton = (Button)(selectionInt);
 
             // button selected
-            if (InputManager.Instance.ContinueButton() && selectedButton == Button.EXIT || InputManager.Instance.PressedButton(Keys.Escape) || InputManager.Instance.ExitButton())
+            if (InputManager.Instance.ContinueButton() && selectedButton == Button.EXIT || InputManager.Instance.PressedButton(Keys.Escape) || InputManager.Instance.PressedButton(Buttons.B) || InputManager.Instance.ExitButton())
             {
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
             }
@@ -114,25 +114,25 @@ namespace ParticleStormControl.Menu
 
         public override void Draw(SpriteBatch spriteBatch, float timeInterval)
         {
-            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Options", new Vector2(100, 100), false, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Options", new Vector2(100, 100), false, menu.TexPixel);
 
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Screen Resolution", new Vector2(100, 220), selectedButton == Button.RESOLUTION, menu.PixelTexture);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< " + availableResolutions[activeResolution].width + " x " + availableResolutions[activeResolution].height + " >", new Vector2(450, 220), false, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Screen Resolution", new Vector2(100, 220), selectedButton == Button.RESOLUTION, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< " + availableResolutions[activeResolution].width + " x " + availableResolutions[activeResolution].height + " >", new Vector2(450, 220), false, menu.TexPixel);
 
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Fullscreen", new Vector2(100, 280), selectedButton == Button.FULLSCREEN, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Fullscreen", new Vector2(100, 280), selectedButton == Button.FULLSCREEN, menu.TexPixel);
             if(fullscreen)
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 280), Color.Green, menu.PixelTexture);
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 280), Color.Green, menu.TexPixel);
             else
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 280), Color.Red, menu.PixelTexture);
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 280), Color.Red, menu.TexPixel);
 
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Music and Sounds", new Vector2(100, 340), selectedButton == Button.SOUND, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Music and Sounds", new Vector2(100, 340), selectedButton == Button.SOUND, menu.TexPixel);
             if (sound)
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 340), Color.Green, menu.PixelTexture);
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 340), Color.Green, menu.TexPixel);
             else
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 340), Color.Red, menu.PixelTexture);
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 340), Color.Red, menu.TexPixel);
 
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Save and Exit", new Vector2(100, 460), selectedButton == Button.BACK, menu.PixelTexture);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Cancel", new Vector2(100, 520), selectedButton == Button.EXIT, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Save and Exit", new Vector2(100, 460), selectedButton == Button.BACK, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Cancel", new Vector2(100, 520), selectedButton == Button.EXIT, menu.TexPixel);
         }
     }
 }

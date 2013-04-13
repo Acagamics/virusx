@@ -19,6 +19,7 @@ namespace ParticleStormControl
     {
         // statistics
         public Statistics GameStatistics { get; set; }
+        private bool dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug = true;
 
         private List<MapObject> mapObjects = new List<MapObject>();
         private List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
@@ -328,9 +329,15 @@ namespace ParticleStormControl
                     if (prevPosPlayer != (interest as SpawnPoint).PossessingPlayer)
                     {
                         if (prevPosPlayer != -1)
+                        {
                             GameStatistics.addLostBases(prevPosPlayer);
+                            InputManager.Instance.StartRumble(prevPosPlayer, 0.42f, 0.6f);
+                        }
                         if ((interest as SpawnPoint).PossessingPercentage == 1f && (interest as SpawnPoint).PossessingPlayer != -1)
+                        {
                             GameStatistics.addCaptueredBases((interest as SpawnPoint).PossessingPlayer);
+                            InputManager.Instance.StartRumble((interest as SpawnPoint).PossessingPlayer,0.42f,0.5f);
+                        }
                     }
                 }
             }
@@ -388,6 +395,7 @@ namespace ParticleStormControl
                             players[item.PossessingPlayer].ItemSlot = item.Type;
                             // statistics
                             GameStatistics.addCollectedItems(item.PossessingPlayer);
+                            InputManager.Instance.StartRumble(item.PossessingPlayer, 0.25f, 0.37f);
                         }
                     }
 
@@ -397,6 +405,7 @@ namespace ParticleStormControl
                     if(debuff.CapturingPlayer != -1 && debuff.PossessingPercentage >= 1.0f)
                     {
                         GameStatistics.itemUsed(debuff.CapturingPlayer);
+                        InputManager.Instance.StartRumble(debuff.CapturingPlayer, 0.25f, 0.22f);
                     }
 
                     mapObjects.RemoveAt(i);
@@ -444,11 +453,15 @@ namespace ParticleStormControl
             // statistics
             if (GameStatistics.UpdateTimer(frameTimeSeconds))
             {
-                for (int i = 0; i < players.Length; ++i)
+                if (!dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug)
                 {
-                    GameStatistics.setParticlesAndHealthAndPossesingBases(i, (uint)players[i].NumParticlesAlive, (uint)players[i].TotalHealth, (uint)possesingBases[i]);
+                    for (int i = 0; i < players.Length; ++i)
+                    {
+                        GameStatistics.setParticlesAndHealthAndPossesingBases(i, (uint)players[i].NumParticlesAlive, (uint)players[i].TotalHealth, (uint)possesingBases[i]);
+                    }
+                    GameStatistics.UpdateDomination();
                 }
-                GameStatistics.UpdateDomination();
+                else dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug = false;
             }
 
             // background colors
