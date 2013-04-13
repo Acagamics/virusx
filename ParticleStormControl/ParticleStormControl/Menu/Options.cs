@@ -99,6 +99,7 @@ namespace ParticleStormControl.Menu
                 Settings.Instance.ForceFeedback = forceFeedback;
                 Settings.Instance.ResolutionX = availableResolutions[activeResolution].width;
                 Settings.Instance.ResolutionY = availableResolutions[activeResolution].height;
+                Settings.Instance.Save();
                 menu.ApplyChangedGraphicsSettings();
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
             }
