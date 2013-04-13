@@ -32,7 +32,7 @@ namespace ParticleStormControl.Menu
 
         public override void LoadContent(ContentManager content)
         {
-            logo = content.Load<Texture2D>("logo");
+            logo = content.Load<Texture2D>("logoNew");
         }
 
         public override void Update(GameTime gameTime)
@@ -51,10 +51,6 @@ namespace ParticleStormControl.Menu
             if (InputManager.Instance.PressedButton(Buttons.Start))
             {
                 menu.ChangePage(Menu.Page.NEWGAME, gameTime);
-            }
-            else if (InputManager.Instance.ExitButton())
-            {
-                menu.Exit();
             }
             else if (InputManager.Instance.ContinueButton())
             {
@@ -83,17 +79,17 @@ namespace ParticleStormControl.Menu
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch, float timeInterval)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            //SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "< insert logo here >", new Vector2(100, 100), false, menu.PixelTexture);
-            spriteBatch.Draw(logo, new Rectangle(menu.ScreenWidth - (int)(logo.Width*1.2f),(int)(logo.Height*0.2f), logo.Width,logo.Height), Color.White);
-            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "New Game", new Vector2(100, 270), selectedButton == Button.NEWGAME, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Controls", new Vector2(100, 340), selectedButton == Button.CONTROLS, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Options", new Vector2(100, 400), selectedButton == Button.OPTIONS, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Credits", new Vector2(100, 460), selectedButton == Button.CREDITS, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Exit Game", new Vector2(100, 520), selectedButton == Button.END, menu.TexPixel);
+            spriteBatch.Draw(logo, new Rectangle(50, 50, logo.Width,logo.Height), Color.White);
 
-            spriteBatch.DrawString(menu.Font, ParticleStormControl.VERSION, new Vector2(menu.ScreenWidth - 200, menu.ScreenHeight - 50), Color.Black);
+            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "New Game", new Vector2(100, 370), selectedButton == Button.NEWGAME, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Controls", new Vector2(100, 440), selectedButton == Button.CONTROLS, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Options", new Vector2(100, 500), selectedButton == Button.OPTIONS, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Credits", new Vector2(100, 560), selectedButton == Button.CREDITS, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Exit Game", new Vector2(100, 620), selectedButton == Button.END, menu.TexPixel);
+
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, ParticleStormControl.VERSION, new Vector2(menu.ScreenWidth - SimpleButton.PADDING, menu.ScreenHeight - SimpleButton.PADDING) - menu.Font.MeasureString(ParticleStormControl.VERSION), false, menu.TexPixel);
         }
     }
 }

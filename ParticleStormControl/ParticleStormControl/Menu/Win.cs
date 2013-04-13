@@ -42,7 +42,7 @@ namespace ParticleStormControl.Menu
             : base(menu)
         { }
 
-        public override void OnActivated(Menu.Page oldPage)
+        public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
             statistics = menu.Game.InGame.Level.GameStatistics;
             currentDiagramType = DiagramType.DOMINATION;
@@ -89,7 +89,7 @@ namespace ParticleStormControl.Menu
                 currentDiagramType = (DiagramType)((((int)currentDiagramType - 1) < 0 ? (int)DiagramType.NUM_VALUES : (int)(currentDiagramType)) -1);
         }
 
-        public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             const int SIDE_PADDING = 30; // padding from left
             const int COLUMN_WIDTH = 145; // width of the columns WITH PADDING!
@@ -130,21 +130,21 @@ namespace ParticleStormControl.Menu
             {
                 case DiagramType.DOMINATION:
                     DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => statistics.getDominationInStep(player, step),
-                                                    frameTimeInterval, maxWidth, height, yPos);
+                                                    (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.HEALTH:
                     DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => statistics.getHealthInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
                                                         (float)statistics.getHealthInStep(player, step) / statistics.getHealthInStep(step),
-                                                                     frameTimeInterval, maxWidth, height, yPos);
+                                                                     (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.MASS:
                     DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => statistics.getParticlesInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
                                                         (float)statistics.getParticlesInStep(player, step) / statistics.getParticlesInStep(step),
-                                                                     frameTimeInterval, maxWidth, height, yPos);
+                                                                     (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.SPAWN_POINTS:
                     DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => (float)statistics.getPossessingBasesInStep(player, step) / statistics.OverallNumberOfBases,
-                                                                     frameTimeInterval, maxWidth, height, yPos);
+                                                                     (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
             }
 

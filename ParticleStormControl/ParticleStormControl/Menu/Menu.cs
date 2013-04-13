@@ -67,11 +67,8 @@ namespace ParticleStormControl.Menu
         private MenuPage[] pages = new MenuPage[(int)Page.NUM_PAGES];
 
         private ParticleStormControl game;
-
         public ParticleStormControl Game // Haaaack (how else do I get the statistics outside the inGame?)
-        {
-            get { return game; }
-        }
+        { get { return game; } }
 
         public Menu(ParticleStormControl game)
         {
@@ -110,11 +107,11 @@ namespace ParticleStormControl.Menu
                 pages[(int)activePage].Update(gameTime);
         }
 
-        public void Draw(float frameTimeInterval, SpriteBatch spriteBatch)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
             if(pages[(int)activePage] != null)
-                pages[(int)activePage].Draw(spriteBatch, frameTimeInterval);
+                pages[(int)activePage].Draw(spriteBatch, gameTime);
             spriteBatch.End();
         }
 
@@ -148,7 +145,7 @@ namespace ParticleStormControl.Menu
         {
             if(PageChangingEvent != null)
                 PageChangingEvent(newPage, activePage);
-            pages[(int)newPage].OnActivated(activePage);
+            pages[(int)newPage].OnActivated(activePage, gameTime);
             activePage = newPage;
             if(newPage != Page.INGAME)
                 SimpleButton.Instance.ChangeHappened(gameTime, SoundEffect);

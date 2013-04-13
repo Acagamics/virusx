@@ -39,7 +39,7 @@ namespace ParticleStormControl.Menu
             countdown = new TimeSpan();
         }
 
-        public override void OnActivated(Menu.Page oldPage)
+        public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
             Settings.Instance.ResetPlayerSettingsToDefault();
             countdown = TimeSpan.Zero;
@@ -190,7 +190,7 @@ namespace ParticleStormControl.Menu
         /// </summary>
         /// <param name="spriteBatch"></param>
         /// <param name="timeInterval"></param>
-        public override void Draw(SpriteBatch spriteBatch, float timeInterval)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
            /* int boxHeight = (int)(Settings.Instance.ResolutionX * 0.5625f - padd) / 2;
             int boxWidth = (int)(boxHeight * 1.8f);
@@ -212,11 +212,6 @@ namespace ParticleStormControl.Menu
             const int boxHeight = 768 / 2 - padd * 2;
 
             // four boxes
-            /*spriteBatch.Draw(menu.PixelTexture, new Rectangle(padd + offX, padd + offY, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
-            spriteBatch.Draw(menu.PixelTexture, new Rectangle(x + offX, padd + offY, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
-            spriteBatch.Draw(menu.PixelTexture, new Rectangle(padd + offX, y + offY, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));
-            spriteBatch.Draw(menu.PixelTexture, new Rectangle(x + offX, y + offY, boxWidth, boxHeight), Color.FromNonPremultiplied(255, 255, 255, 128));*/
-
             int textBoxHeight = (int)menu.Font.MeasureString("ABC").Y + SimpleButton.PADDING * 2;
             int ARROW_SIZE = textBoxHeight;
             int SIDE_PADDING = ARROW_SIZE + 30;
@@ -354,8 +349,10 @@ namespace ParticleStormControl.Menu
 
                 // countdown
                 String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
-                Vector2 size = menu.FontCountdown.MeasureString(text) / 2;
-                SimpleButton.Instance.Draw(spriteBatch, menu.FontCountdown, text, new Vector2(Settings.Instance.ResolutionX / 2 - 5, Settings.Instance.ResolutionY / 2 - 15) - size, !(countdown.TotalSeconds > safeCountdown), menu.TexPixel);
+                Vector2 size = menu.FontCountdown.MeasureString(text);
+                spriteBatch.Draw(menu.TexPixel, new Rectangle(0, 0, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY), Color.FromNonPremultiplied(0, 0, 0, 128));
+                SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, menu.TexPixel, new Rectangle(0, Settings.Instance.ResolutionY / 2 - (int)(0.75f * size.Y), Settings.Instance.ResolutionX, (int)(size.Y * 1.5f)), menu.TexPixel.Bounds, !(countdown.TotalSeconds > safeCountdown), menu.TexPixel);
+                SimpleButton.Instance.Draw(spriteBatch, menu.FontCountdown, text, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), !(countdown.TotalSeconds > safeCountdown), menu.TexPixel);
             }
         }
 

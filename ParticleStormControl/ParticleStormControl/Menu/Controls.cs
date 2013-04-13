@@ -27,10 +27,10 @@ namespace ParticleStormControl.Menu
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
         }
 
-        public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             string[,] data = {
-                                 { null,                 "Keyboard 0",   "Keyboard 1",   "Gamepad" },
+                                 { null,                 "Keyboard 1",   "Keyboard 2",   "Gamepad" },
                                  { "Up",                 "W",            "Arrow Up",     null },
                                  { "Left",               "A",            "Arrow Left",   null },
                                  { "Down",               "S",            "Arrow Down",   null },
