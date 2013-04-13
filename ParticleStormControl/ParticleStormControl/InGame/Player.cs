@@ -53,7 +53,7 @@ namespace ParticleStormControl
         public float Mass_health
         { get { return mass_health_byVirus[virusIndex]; } }*/
 
-        static public string AttributValueToString(float value)
+        /*static public string AttributValueToString(float value)
         {
             string symbol = "";
             if (value < 0f) { symbol += "-"; value *= -1f; }
@@ -65,12 +65,21 @@ namespace ParticleStormControl
             //if (value > 0.9f) result += symbol;
 
             return result;
-        }
+        } */
+
+        #region propertie discriptors
+        // IMPORTANT: The number '+' for each virus should add to the same sum. This is to imply that all virusses are equally strong. ;)
+        // Currently the sum is 10
+        public static readonly string[] DiscriptorMass = new string[] { "++", "++++", "+", "++++" };
+        public static readonly string[] DiscriptorSpeed = new string[] { "+++", "+", "++", "++++" };
+        public static readonly string[] DiscriptorHealth = new string[] { "+++", "+++", "++++", "+" };
+        public static readonly string[] DiscriptorDisciplin = new string[] { "++", "++", "+++", "+" };
+        #endregion
         // attributs
-        public static readonly float[] mass_byVirus = new float[] { 0.5f, 0.6f, 0.075f, 1.0f };
-        public static readonly float[] speed_byVirus = new float[] { 0.44f, -0.42f, 0.3f, 1.0f };
-        public static readonly float[] health_byVirus = new float[] { 0.5f, 0.35f, 1.0f, -0.4f };
-        public static readonly float[] disciplin_byVirus = new float[] { 0.44f, 0.15f, 0.65f, 0.5f };
+        private static readonly float[] mass_byVirus = new float[] { 0.5f, 0.63f, 0.075f, 1.0f };
+        private static readonly float[] speed_byVirus = new float[] { 0.44f, -0.42f, 0.3f, 1.0f };
+        private static readonly float[] health_byVirus = new float[] { 0.5f, 0.35f, 1.0f, -0.4f };
+        private static readonly float[] disciplin_byVirus = new float[] { 0.44f, 0.25f, 0.65f, 0.5f };
         
         // speed stuff
         private const float speedConstant = 0.13f;
@@ -224,8 +233,8 @@ namespace ParticleStormControl
 
         static public readonly String[] ControlNames = new String[]
         {
-            "WASD + SHIFT",
-            "Arrows + CTRL",
+            "WASD + SPACE",
+            "Arrows + ENTER",
             "Gamepad 1",
             "Gamepad 2",
             "Gamepad 3",

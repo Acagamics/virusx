@@ -160,7 +160,7 @@ float4 PS_HIV(VertexShaderOutput input) : COLOR0
 	float circle = distSqInv - distSqInvSq*3.0;
 	float sticksSq = sticks*sticks;
 	float plates = saturate(circle * 15.0 * sticksSq);
-	float virus = saturate(saturate(plates + sticksSq * distSqInv) + distSqInvSq) - distSqInvSq*0.5;
+	float virus = saturate(saturate(plates + sticksSq * distSqInv) + distSqInvSq*1.5) - distSqInvSq*0.6;
 
 	clip(virus - 0.001f);
 

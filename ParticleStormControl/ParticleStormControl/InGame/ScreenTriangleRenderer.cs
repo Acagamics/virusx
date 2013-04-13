@@ -46,8 +46,8 @@ namespace ParticleStormControl
             screenTriangleVertexBuffer = new VertexBuffer(graphicsDevice, ScreenAlignedTriangleVertex.VertexDeclaration, 3, BufferUsage.WriteOnly);
             ScreenAlignedTriangleVertex[] screenTriangleVertices = new ScreenAlignedTriangleVertex[3];
             screenTriangleVertices[0].PretransformedPosition = new Vector2(-1.0f, -1.0f);
-            screenTriangleVertices[1].PretransformedPosition = new Vector2(3.0f, -1.0f);
-            screenTriangleVertices[2].PretransformedPosition = new Vector2(-1.0f, 3.0f);
+            screenTriangleVertices[1].PretransformedPosition = new Vector2( 3.0f, -1.0f);
+            screenTriangleVertices[2].PretransformedPosition = new Vector2(-1.0f,  3.0f);
             screenTriangleVertexBuffer.SetData<ScreenAlignedTriangleVertex>(screenTriangleVertices);
 
             initalised = true;

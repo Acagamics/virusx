@@ -312,6 +312,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gruppe1.jpg">
+      <Name>Gruppe1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="sound\09 Beach.mp3">
       <Name>09 Beach</Name>
       <Importer>Mp3Importer</Importer>

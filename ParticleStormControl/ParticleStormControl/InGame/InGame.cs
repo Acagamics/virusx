@@ -27,10 +27,6 @@ namespace ParticleStormControl
         /// Statistics
         /// </summary>
         public Statistics GameStatistics { get { if (level == null) return null; return level.GameStatistics; } }
-        /// <summary>
-        /// time interval for collecting statistical data
-        /// </summary>
-        private const float timeBetweenUpdates = 0.1f;
 
         private Menu.Menu menu;
 
@@ -50,6 +46,8 @@ namespace ParticleStormControl
 
         public GameState State { get; private set; }
         private int winPlayerIndex = -1;
+
+        
 
         /// <summary>
         /// without this timer, the player would instantly die because of 0 particles
@@ -123,7 +121,7 @@ namespace ParticleStormControl
             particleRenderer = new ParticleRenderer(graphicsDevice, content, players.Length);
 
             // init statistics
-            level.GameStatistics = new Statistics(1f, Settings.Instance.NumPlayers);
+            level.GameStatistics = new Statistics(Settings.Instance.NumPlayers, 4400, (uint)level.SpawnPoints.Count);
 
             State = GameState.Playing;
             System.GC.Collect();
@@ -206,7 +204,9 @@ namespace ParticleStormControl
                 {
                     try
                     {
+                        bool alive = players[(int)index].Alive;
                         players[(int)index].UpdateCPUPart(passedFrameTime, level.SpawnPoints, playerCantDie);
+                        if (alive && !players[(int)index].Alive) GameStatistics.playerDied((int)index);
                     }
                     catch(Exception exp)
                     {

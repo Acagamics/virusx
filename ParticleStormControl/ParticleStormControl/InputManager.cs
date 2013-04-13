@@ -424,8 +424,8 @@ namespace ParticleStormControl
                 case ControlType.GAMEPAD1: return (currentGamePadStates[1].IsButtonDown(Buttons.A) && oldGamePadStates[1].IsButtonUp(Buttons.A));
                 case ControlType.GAMEPAD2: return (currentGamePadStates[2].IsButtonDown(Buttons.A) && oldGamePadStates[2].IsButtonUp(Buttons.A));
                 case ControlType.GAMEPAD3: return (currentGamePadStates[3].IsButtonDown(Buttons.A) && oldGamePadStates[3].IsButtonUp(Buttons.A));
-                case ControlType.KEYBOARD0: return (currentKeyboardState.IsKeyDown(Keys.E) && oldKeyboardState.IsKeyUp(Keys.E));
-                case ControlType.KEYBOARD1: return (currentKeyboardState.IsKeyDown(Keys.RightShift) && oldKeyboardState.IsKeyUp(Keys.RightShift));
+                case ControlType.KEYBOARD0: return (currentKeyboardState.IsKeyDown(Keys.Space) && oldKeyboardState.IsKeyUp(Keys.Space));
+                case ControlType.KEYBOARD1: return (currentKeyboardState.IsKeyDown(Keys.Enter) && oldKeyboardState.IsKeyUp(Keys.Enter));
                 default: return false;
             }
         }
@@ -453,8 +453,8 @@ namespace ParticleStormControl
                 case ControlType.GAMEPAD1: return (currentGamePadStates[1].IsButtonDown(Buttons.B));
                 case ControlType.GAMEPAD2: return (currentGamePadStates[2].IsButtonDown(Buttons.B));
                 case ControlType.GAMEPAD3: return (currentGamePadStates[3].IsButtonDown(Buttons.B));
-                case ControlType.KEYBOARD0: return (currentKeyboardState.IsKeyDown(Keys.LeftShift));
-                case ControlType.KEYBOARD1: return (currentKeyboardState.IsKeyDown(Keys.RightControl));
+                case ControlType.KEYBOARD0: return (currentKeyboardState.IsKeyDown(Keys.V));
+                case ControlType.KEYBOARD1: return (currentKeyboardState.IsKeyDown(Keys.RightShift));
                 default: return false;
             }
         }

@@ -11,8 +11,9 @@ namespace ParticleStormControl.Menu
 {
     class Credits : MenuPage
     {
-        private Texture2D logo;
+        //private Texture2D logo;
         private Texture2D acagamicsLogo;
+        private Texture2D team;
 
         public Credits(Menu menu)
             : base(menu)
@@ -20,8 +21,9 @@ namespace ParticleStormControl.Menu
 
         public override void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
         {
-            logo = content.Load<Texture2D>("logo");
+            //logo = content.Load<Texture2D>("logo");
             acagamicsLogo = content.Load<Texture2D>("acagamicslogo");
+            team = content.Load<Texture2D>("Gruppe1");
         }
 
         public override void Update(GameTime gameTime)
@@ -33,8 +35,9 @@ namespace ParticleStormControl.Menu
 
         public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)
         {
-            spriteBatch.Draw(logo, new Vector2(menu.ScreenWidth- logo.Width + 200, menu.ScreenHeight - logo.Height + 300), Color.White);
+            //spriteBatch.Draw(logo, new Vector2(menu.ScreenWidth- logo.Width + 200, menu.ScreenHeight - logo.Height + 300), Color.White);
             spriteBatch.Draw(acagamicsLogo, new Vector2(menu.ScreenWidth - acagamicsLogo.Width - 50, 50), Color.White);
+            spriteBatch.Draw(team, new Rectangle(menu.ScreenWidth - (team.Width/2) - 105, menu.ScreenHeight - (team.Height / 2) + 100, team.Width / 2, team.Height / 2), Color.White);
 
             SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Andreas Reich", new Vector2(100, 100), false, menu.PixelTexture);
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Programming, Gamplay, Graphics", new Vector2(100, 150), false, menu.PixelTexture);

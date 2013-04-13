@@ -275,16 +275,16 @@ namespace ParticleStormControl.Menu
                     int descpX1 = descpX0 + backgroundLength / 2;
                     float descpY = boxHeight - textBoxHeight * 2;
 
-                    string symbols = Player.AttributValueToString(Player.speed_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
+                    string symbols = Player.DiscriptorSpeed[Settings.Instance.PlayerVirusIndices[i]];//. AttributValueToString(Player.speed_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Speed", origin + new Vector2(descpX0, descpY), false, menu.PixelTexture, backgroundLength);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, descpY), false, menu.PixelTexture, -1);
-                    symbols = Player.AttributValueToString(Player.mass_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
+                    symbols = Player.DiscriptorMass[Settings.Instance.PlayerVirusIndices[i]];//Player.AttributValueToString(Player.mass_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Mass", origin + new Vector2(descpX0, descpY + textBoxHeight), false, menu.PixelTexture, backgroundLength);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, descpY + textBoxHeight), false, menu.PixelTexture, -1);
-                    symbols = Player.AttributValueToString(Player.disciplin_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
+                    symbols = Player.DiscriptorDisciplin[Settings.Instance.PlayerVirusIndices[i]];//Player.AttributValueToString(Player.disciplin_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Discipline", origin + new Vector2(descpX1, descpY), false, menu.PixelTexture, -1);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, descpY), false, menu.PixelTexture, -1);
-                    symbols = Player.AttributValueToString(Player.health_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
+                    symbols = Player.DiscriptorHealth[Settings.Instance.PlayerVirusIndices[i]];//Player.AttributValueToString(Player.health_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Health", origin + new Vector2(descpX1, descpY + textBoxHeight), false, menu.PixelTexture, -1);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, descpY + textBoxHeight), false, menu.PixelTexture, -1);
                    

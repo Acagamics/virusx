@@ -62,19 +62,7 @@ namespace ParticleStormControl
             graphics.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
 #endif
 
-     /*   graphics.DeviceReset += (x, y) =>
-                {
-                    //ApplyChangedGraphicsSettings();
-                    Debugger.Break();
-                }; */
-
             graphics.SynchronizeWithVerticalRetrace = true;
-            /* too high framerates kill the particle behaviour!
-            // no vsync if statistics are wanted
-#if SHOW_STATISTICS
-            graphics.SynchronizeWithVerticalRetrace = false;
-#endif
-             * */
 
             Random.InitRandom((uint)DateTime.Now.Millisecond);
 
@@ -93,7 +81,7 @@ namespace ParticleStormControl
             Content.RootDirectory = "Content";
             Window.AllowUserResizing = false;
             Window.ClientSizeChanged += new EventHandler<EventArgs>(WindowClientSizeChanged);
-            Window.Title = "Particle Storm Control ~Deluxe~";
+            Window.Title = "VirusStorm";
         }
 
         void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
@@ -146,7 +134,7 @@ namespace ParticleStormControl
 
             menu.PageChangingEvent += OnMenuPageChanged;
             menu.PageChangingEvent += inGame.OnMenuPageChanged;
-            
+
             base.Initialize();
         }
 

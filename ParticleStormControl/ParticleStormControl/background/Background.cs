@@ -13,14 +13,20 @@ namespace ParticleStormControl
     {
         private BackgroundParticles backgroundParticles;
 
+        // quad 
         private VertexBuffer quadVertexBuffer;
+
+        // precomputed background texture
         private RenderTarget2D backgroundTexture;
         private Effect backgroundShader;
 
+        // texture with cell colors
         private Texture2D cellColorTexture;
 
+        // last settings
         private List<Vector2> cellPositions = new List<Vector2>();
         private Vector2 relativeCoordMax;
+        private Rectangle areaInPixel;
 
         public int NumBackgroundCells { get { return cellPositions.Count;  } }
 
@@ -31,6 +37,8 @@ namespace ParticleStormControl
 
             quadVertexBuffer = new VertexBuffer(device, ScreenTriangleRenderer.ScreenAlignedTriangleVertex.VertexDeclaration, 4, BufferUsage.WriteOnly);
             quadVertexBuffer.SetData(new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) });
+
+        //    ParticleStormControl.DeviceLostEvent += () => { Resize(device, areaInPixel, relativeCoordMax); };
         }
 
         public void Generate(GraphicsDevice device, List<Vector2> cellPositions, Vector2 relativeMax)
@@ -74,8 +82,8 @@ namespace ParticleStormControl
             backgroundShader.Parameters["PosOffset"].SetValue(posOffset + new Vector2(-0.5f / (float)device.Viewport.Width, 0.5f / (float)device.Viewport.Height));   // + half pixel correction
             backgroundShader.Parameters["RelativeMax"].SetValue(Vector2.One);
 
-             using (var file = new System.IO.FileStream("background.png", System.IO.FileMode.Create))
-                backgroundTexture.SaveAsPng(file, backgroundTexture.Width, backgroundTexture.Height);
+    //         using (var file = new System.IO.FileStream("background.png", System.IO.FileMode.Create))
+    //            backgroundTexture.SaveAsPng(file, backgroundTexture.Width, backgroundTexture.Height);
         }
 
         /// <summary>
@@ -84,7 +92,7 @@ namespace ParticleStormControl
         /// </summary>
         public void Resize(GraphicsDevice device, Rectangle areaInPixel, Vector2 relativeCoordMax)
         {
-            Resize(device, areaInPixel, this.cellPositions, this.relativeCoordMax);
+            Resize(device, areaInPixel, this.cellPositions, relativeCoordMax);
         }
 
         /// <summary>
@@ -93,6 +101,7 @@ namespace ParticleStormControl
         public void Resize(GraphicsDevice device, Rectangle areaInPixel, List<Vector2> cellPositions, Vector2 relativeCoordMax)
         {
             this.relativeCoordMax = relativeCoordMax;
+            this.areaInPixel = areaInPixel;
 
             // resize background particles
             backgroundParticles.Resize(device.Viewport.Width, device.Viewport.Height, new Point(areaInPixel.Width, areaInPixel.Height), areaInPixel.Location, relativeCoordMax);
@@ -103,6 +112,7 @@ namespace ParticleStormControl
             {
                 if (backgroundTexture != null) backgroundTexture.Dispose();
                 backgroundTexture = new RenderTarget2D(device, areaInPixel.Width, areaInPixel.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+                backgroundTexture.ContentLost += (x, y) => { Resize(device, areaInPixel, relativeCoordMax); };
             }
 
             // resize background and regenerate
@@ -127,6 +137,7 @@ namespace ParticleStormControl
 
         public void Draw(GraphicsDevice device, float totalTimeSeconds)
         {
+
             // background particles
             device.BlendState = BlendState.NonPremultiplied;
             backgroundParticles.Draw(device, totalTimeSeconds);
