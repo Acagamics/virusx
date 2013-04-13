@@ -165,7 +165,16 @@ namespace ParticleStormControl
                 }
                 else
                     waitingForReconnect[i] = currentGamePadStates[i].IsConnected;
+
+                // rumble
+                rumbleTime[i] -= timeSinceLastCall;
+                if (rumbleTime[i] <= 0f)
+                {
+                    rumbleTime[i] = 0f;
+                    GamePad.SetVibration((PlayerIndex)i, 0f, 0f);
+                }
             }
+
         }
 
         #region Game-Specific Commands
@@ -580,6 +589,23 @@ namespace ParticleStormControl
             return false;
         }
 
+        #endregion
+
+        #region rumble
+
+        public bool ActivateRumble { get; set; }
+        private float[] rumbleTime = new float[] { 0.0f, 0.0f, 0.0f, 0.0f };
+        public void StartRumble(int playerIndex, float time, float strenght)
+        {
+            if (!ActivateRumble) return;
+            switch (getControlTypeForPlayer[(int)playerIndex])
+            {
+                case ControlType.GAMEPAD0: GamePad.SetVibration(PlayerIndex.One, strenght, strenght); rumbleTime[0] = time; break;
+                case ControlType.GAMEPAD1: GamePad.SetVibration(PlayerIndex.Two, strenght, strenght); rumbleTime[1] = time; break;
+                case ControlType.GAMEPAD2: GamePad.SetVibration(PlayerIndex.Three, strenght, strenght); rumbleTime[2] = time; break;
+                case ControlType.GAMEPAD3: GamePad.SetVibration(PlayerIndex.Four, strenght, strenght); rumbleTime[3] = time; break;
+            }
+        }
         #endregion
     }
 }
