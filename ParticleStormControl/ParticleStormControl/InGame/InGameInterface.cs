@@ -34,10 +34,16 @@ namespace ParticleStormControl
         {
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
 
-            Rectangle[] itemDisplayRectangles = { new Rectangle(levelPixelOffset.X, levelPixelOffset.Y + levelPixelSize.Y - itemBox.Height, itemBox.Width, itemBox.Height),
-                                                  new Rectangle(levelPixelOffset.X + levelPixelSize.X - itemBox.Width, levelPixelOffset.Y, itemBox.Width, itemBox.Height),
-                                                  new Rectangle(levelPixelOffset.X + levelPixelSize.X - itemBox.Width, levelPixelOffset.Y + levelPixelSize.Y - itemBox.Height, itemBox.Width, itemBox.Height),
-                                                  new Rectangle(levelPixelOffset.X, levelPixelOffset.Y, itemBox.Width, itemBox.Height) };
+            Point[] corners = { new Point(levelPixelOffset.X, levelPixelOffset.Y + levelPixelSize.Y),
+                                new Point(levelPixelOffset.X + levelPixelSize.X, levelPixelOffset.Y),
+                                new Point(levelPixelOffset.X + levelPixelSize.X, levelPixelOffset.Y + levelPixelSize.Y),
+                                new Point(levelPixelOffset.X, levelPixelOffset.Y)
+                              };
+            Rectangle[] itemDisplayRectangles = { new Rectangle(corners[0].X, corners[0].Y - itemBox.Height, itemBox.Width, itemBox.Height),
+                                                  new Rectangle(corners[1].X - itemBox.Width, corners[1].Y, itemBox.Width, itemBox.Height),
+                                                  new Rectangle(corners[2].X - itemBox.Width, corners[2].Y - itemBox.Height, itemBox.Width, itemBox.Height),
+                                                  new Rectangle(corners[3].X, corners[3].Y, itemBox.Width, itemBox.Height) };
+ 
             SpriteEffects[] flips = { SpriteEffects.None, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, SpriteEffects.FlipHorizontally, SpriteEffects.FlipVertically };
 
             for (int i = 0; i < players.Length; ++i)
@@ -50,21 +56,25 @@ namespace ParticleStormControl
                     //Vector2 halfBoxSize = new Vector2(itemBox.Width, itemBox.Height);
                     spriteBatch.Draw(itemBox, itemDisplayRectangles[i], null, color, 0.0f, Vector2.Zero, flips[i], 0);
 
-                    DrawItem(spriteBatch, players[i].ItemSlot, itemDisplayRectangles[i], color, Item.ROTATION_SPEED * totalTimeSeconds);
+                    DrawItem(spriteBatch, players[i].ItemSlot, itemDisplayRectangles[i], corners[i], color, Item.ROTATION_SPEED * totalTimeSeconds);
                 }
             }
             spriteBatch.End();
         }
 
-        private void DrawItem(SpriteBatch spriteBatch, Item.ItemType type, Rectangle destination, Color color, float rotation)
+        private void DrawItem(SpriteBatch spriteBatch, Item.ItemType type, Rectangle destination, Point corner, Color color, float rotation)
         {
-            const int SIZE_OFFSET = 20;
+            const int SIZE_OFFSET = 60;
 
             Rectangle itemRect = destination;
-            itemRect.Offset(SIZE_OFFSET / 2, SIZE_OFFSET / 2);
-            itemRect.Width -= SIZE_OFFSET;
-            itemRect.Height -= SIZE_OFFSET;
+            itemRect.Inflate(-SIZE_OFFSET / 2, -SIZE_OFFSET / 2);
+            // drag to corner
+            itemRect.Offset(SIZE_OFFSET / 3 * Math.Sign(corner.X - itemRect.Center.X),
+                            SIZE_OFFSET / 3 * Math.Sign(corner.Y - itemRect.Center.Y));
+
+            // centered for rotation
             itemRect.Offset(itemRect.Width / 2, itemRect.Height / 2);
+            
             switch (type)
             {
                 case Item.ItemType.DANGER_ZONE:
