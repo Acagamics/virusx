@@ -91,7 +91,7 @@ namespace ParticleStormControl.Menu
         /// <param name="width"></param>
         public void DrawTexture(SpriteBatch spriteBatch, Texture2D texture, Rectangle destinationRectangle, Rectangle sourceRectangle, bool selected, Texture2D background, int width = 0)
         {
-            DrawBackground(spriteBatch, new Vector2(destinationRectangle.X, destinationRectangle.Y), selected ? selectedColor : normalColor, background, new Vector2(sourceRectangle.Width, sourceRectangle.Height), false, width);
+            DrawBackground(spriteBatch, new Vector2(destinationRectangle.X, destinationRectangle.Y), selected ? normalColor : selectedColor, background, new Vector2(sourceRectangle.Width, sourceRectangle.Height), false, width);
          //   destinationRectangle.Offset(4, 4);
             spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, Color.White);
         }
@@ -102,7 +102,7 @@ namespace ParticleStormControl.Menu
         /// </summary>
         public void DrawTexture_NoScalingNoPadding(SpriteBatch spriteBatch, Texture2D texture, Rectangle backgroundRectangle, Rectangle sourceRectangle, bool selected, Texture2D background, int width = 0)
         {
-            DrawBackgroundNoPadding(spriteBatch, backgroundRectangle, selected ? selectedColor : normalColor, background, false, width);
+            DrawBackgroundNoPadding(spriteBatch, backgroundRectangle, selected ? normalColor : selectedColor, background, false, width);
             Rectangle destinationRectangle = new Rectangle();
             destinationRectangle.Width = sourceRectangle.Width;
             destinationRectangle.Height = sourceRectangle.Height;

@@ -108,7 +108,7 @@ namespace ParticleStormControl
         public float Mass
         { get { return -2*mass_byVirus[virusIndex]; } }
 
-        public float Health
+        public float HealthStart
         { get { return ((health_byVirus[virusIndex] * 0.5f) + 1.5f) * healthConstant; } }
 
         // discilplin constant - higher means that the particles will move more straight in player's direction
@@ -482,6 +482,10 @@ namespace ParticleStormControl
             particleProcessing.Parameters["NoiseToMovementFactor"].SetValue(timeInterval /* NoiseToMovementFactor */ * Disciplin );//* Speed);
             particleProcessing.Parameters["NoiseTexture"].SetValue(noiseTexture);
 
+            particleProcessing.Parameters["MaxHealth"].SetValue(HealthStart);
+
+            
+
             device.BlendState = BlendState.Opaque;
             particleProcessing.CurrentTechnique = particleProcessing.Techniques[0];
             particleProcessing.CurrentTechnique.Passes[0].Apply();
@@ -546,7 +550,7 @@ namespace ParticleStormControl
                             int vertexIndex = numSpawns * 2;
                             spawnVerticesRAMBuffer[vertexIndex].particlePosition = spawn.Position;
                             spawnVerticesRAMBuffer[vertexIndex].movement = movement;
-                            spawnVerticesRAMBuffer[vertexIndex].health = Health;
+                            spawnVerticesRAMBuffer[vertexIndex].health = HealthStart;
                             ++numSpawns;
                         }
                     }

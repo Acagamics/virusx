@@ -91,9 +91,16 @@ namespace ParticleStormControl.Menu
 
         public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)
         {
-            int pad = 30; // padding from left
-            int col = 150; // width of the columns
+            const int SIDE_PADDING = 30; // padding from left
+            const int COLUMN_WIDTH = 145; // width of the columns WITH PADDING!
+            const int COLUMN_PADDING = 20;
             
+
+            // zentrieren
+            int pad = (menu.ScreenWidth - (captions.Count + 1) * COLUMN_WIDTH + SIDE_PADDING * 2 - COLUMN_PADDING) / 2;
+
+            // header um eins verschoben
+
             // draw winning string
             string text = Player.ColorNames[PlayerColorIndices[WinPlayerIndex]] + " wins!";
             int width = (int)menu.FontHeading.MeasureString(text).X;
@@ -102,23 +109,23 @@ namespace ParticleStormControl.Menu
             // draw all captions
             for (int i = 0; i < captions.Count; i++)
             {
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, captions[i], new Vector2(pad + col * i, 150), false, menu.PixelTexture, col - 20);
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, captions[i], new Vector2(pad + COLUMN_WIDTH * (i + 1), 150), false, menu.PixelTexture, COLUMN_WIDTH - COLUMN_PADDING);
             }
 
             // fill table with values
             for (int i = 0; i < values.Length; i++)
             {
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, Player.ColorNames[PlayerColorIndices[i]], new Vector2(pad, 210 + 60 * i), Player.Colors[PlayerColorIndices[i]], menu.PixelTexture, col - 20);
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, Player.ColorNames[PlayerColorIndices[i]], new Vector2(pad, 210 + 60 * i), Player.Colors[PlayerColorIndices[i]], menu.PixelTexture, COLUMN_WIDTH - COLUMN_PADDING);
                 for (int j = 0; j < values[0].Count; j++)
                 {
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, values[i][j], new Vector2(pad + col * (j+1), 210 + 60 * i), false, menu.PixelTexture, col - 20);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, values[i][j], new Vector2(pad + COLUMN_WIDTH * (j + 1), 210 + 60 * i), false, menu.PixelTexture, COLUMN_WIDTH - COLUMN_PADDING);
                 }
             }
 
             // draw diagrams
             int yPos = 220 + 60 * values.Length;
             int height = Settings.Instance.ResolutionY - 400 - 60 * values.Length;
-            int maxWidth = Settings.Instance.ResolutionX - 160;
+            int maxWidth = Settings.Instance.ResolutionX - SIDE_PADDING * 2;
             switch (currentDiagramType)
             {
                 case DiagramType.DOMINATION:
@@ -159,11 +166,17 @@ namespace ParticleStormControl.Menu
         private void DrawDiagram(string description, SpriteBatch spriteBatch, Func<int, int, float> heightFunction, float frameTimeInterval, int maxWidth, int heightVal, int yPos)
         {
             Rectangle area;
-            int stepWidth = (int)maxWidth / statistics.Steps;
+
+            const int ARROW_SIZE = 50;
+            const int ARROW_PADDING = 20;
+
+            int stepWidth = (int)(maxWidth - ARROW_SIZE * 2 - ARROW_PADDING * 2) / statistics.Steps;
             area.Width = stepWidth * statistics.Steps + 20;
             area.Height = heightVal;
             area.X = (menu.ScreenWidth-area.Width) / 2;
             area.Y = yPos + (int)menu.FontHeading.MeasureString(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType]).Y + SimpleButton.PADDING;
+
+
 
             // draw heading
             SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, description,
@@ -191,6 +204,7 @@ namespace ParticleStormControl.Menu
                     spriteBatch.Draw(menu.PixelTexture, rect, Player.Colors[PlayerColorIndices[playerIndex]]);
                 }
 
+                // this ehm.. could be a single quad
                 if (offset < area.Height)
                 {
                     int height = area.Height - offset;
@@ -202,7 +216,7 @@ namespace ParticleStormControl.Menu
             // hide rounding errors ...
             Rectangle rouningHide = area;
             rouningHide.Y = rouningHide.Top-10;
-            rouningHide.Height = 12;
+            rouningHide.Height = 13;
             spriteBatch.Draw(menu.PixelTexture, rouningHide, Color.Black);
 
             // draw items
@@ -266,12 +280,11 @@ namespace ParticleStormControl.Menu
             }
 
             // arrows
-            int ARROW_SIZE = 50;
             int arrowY = area.Y + (area.Height - ARROW_SIZE) / 2;//boxHeight / 2 - ARROW_SIZE;
-            SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Left - ARROW_SIZE - 20, arrowY, ARROW_SIZE, ARROW_SIZE),
-                                                                new Rectangle(0 + (InputManager.Instance.AnyLeftButtonDown() ? 32 : 0), 0, 16, 16), InputManager.Instance.AnyLeftButtonDown(), menu.PixelTexture);
-            SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Right + 20, arrowY, ARROW_SIZE, ARROW_SIZE),
-                                                                new Rectangle(16 + (InputManager.Instance.AnyRightButtonDown() ? 32 : 0), 0, 16, 16), InputManager.Instance.AnyRightButtonDown(), menu.PixelTexture);
+            SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Left - ARROW_SIZE - ARROW_PADDING, arrowY, ARROW_SIZE, ARROW_SIZE),
+                                                                new Rectangle(0 + (!InputManager.Instance.AnyLeftButtonDown() ? 32 : 0), 0, 16, 16), !InputManager.Instance.AnyLeftButtonDown(), menu.PixelTexture);
+            SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Right + ARROW_PADDING, arrowY, ARROW_SIZE, ARROW_SIZE),
+                                                                new Rectangle(16 + (!InputManager.Instance.AnyRightButtonDown() ? 32 : 0), 0, 16, 16), !InputManager.Instance.AnyRightButtonDown(), menu.PixelTexture);
 
         }
 
