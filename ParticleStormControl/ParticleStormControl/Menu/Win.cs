@@ -125,7 +125,7 @@ namespace ParticleStormControl.Menu
             // draw diagrams
             int yPos = 220 + 60 * values.Length;
             int height = Settings.Instance.ResolutionY - 400 - 60 * values.Length;
-            int maxWidth = 50 * 2 + 20 * 2 + 10; //Settings.Instance.ResolutionX - SIDE_PADDING * 2;
+            int maxWidth = Settings.Instance.ResolutionX - SIDE_PADDING * 2;
             switch (currentDiagramType)
             {
                 case DiagramType.DOMINATION:
@@ -174,7 +174,7 @@ namespace ParticleStormControl.Menu
             int stepWidth = Math.Max(1, diagramAreaMaxWidth / statistics.Steps);
             int startStep;
             if (stepWidth == 1)
-                startStep = (int)((float)(statistics.Steps - diagramAreaMaxWidth) / stepWidth + 0.5f);   // if a step is only a pixel...
+                startStep = (int)((float)(statistics.Steps - diagramAreaMaxWidth) / stepWidth + 0.5f);   // if a step is only a pixel... DAMDAM
             else
                 startStep = 0;
             area.Width = stepWidth * (statistics.Steps - startStep) + 20;
