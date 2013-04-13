@@ -41,7 +41,7 @@ namespace ParticleStormControl.Menu
         }
 
         // if changed to main menu without saving
-        public override void OnActivated(Menu.Page oldPage)
+        public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
             fullscreen = Settings.Instance.Fullscreen;
             sound = Settings.Instance.Sound;
@@ -112,7 +112,7 @@ namespace ParticleStormControl.Menu
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch, float timeInterval)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Options", new Vector2(100, 100), false, menu.TexPixel);
 

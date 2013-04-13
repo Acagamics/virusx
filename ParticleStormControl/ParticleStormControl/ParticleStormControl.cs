@@ -31,7 +31,7 @@ namespace ParticleStormControl
     /// </summary>
     public class ParticleStormControl : Microsoft.Xna.Framework.Game
     {
-        public const string VERSION = "virusstorm XX.04.2013";
+        public const string VERSION = "version 1.0 - 13.04.2013";
 
         private bool showStatistics = false;
      
@@ -81,7 +81,7 @@ namespace ParticleStormControl
             Content.RootDirectory = "Content";
             Window.AllowUserResizing = false;
             Window.ClientSizeChanged += new EventHandler<EventArgs>(WindowClientSizeChanged);
-            Window.Title = "VirusStorm";
+            Window.Title = "Virus X";
         }
 
         void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
@@ -219,7 +219,7 @@ namespace ParticleStormControl
             if (inGame.State == global::ParticleStormControl.InGame.GameState.Inactive)
                 background.Draw(GraphicsDevice, (float)gameTime.TotalGameTime.TotalSeconds);
             inGame.Draw_Backbuffer(gameTime, spriteBatch);
-            menu.Draw((float)gameTime.ElapsedGameTime.TotalSeconds, spriteBatch);
+            menu.Draw(gameTime, spriteBatch);
 
             // show statistics
             if (showStatistics)

@@ -11,9 +11,9 @@ namespace ParticleStormControl.Menu
         {
             this.menu = menu;
         }
-        public virtual void OnActivated(Menu.Page oldPage) { }
+        public virtual void OnActivated(Menu.Page oldPage, GameTime gameTime) { }
         public abstract void LoadContent(ContentManager content);
         public abstract void Update(GameTime gameTime);
-        public abstract void Draw(SpriteBatch spriteBatch, float frameTimeInterval);
+        public abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime);
     }
 }

@@ -107,6 +107,7 @@
     <Content Include="background\nucleus_outer.png" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
+    <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

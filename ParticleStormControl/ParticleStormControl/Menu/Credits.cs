@@ -11,17 +11,24 @@ namespace ParticleStormControl.Menu
 {
     class Credits : MenuPage
     {
-        //private Texture2D logo;
+        private Texture2D logo;
         private Texture2D acagamicsLogo;
         private Texture2D team;
+
+        private TimeSpan entry;
 
         public Credits(Menu menu)
             : base(menu)
         { }
 
+        public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
+        {
+            entry = gameTime.TotalGameTime;
+        }
+
         public override void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
         {
-            //logo = content.Load<Texture2D>("logo");
+            logo = content.Load<Texture2D>("logoNew");
             acagamicsLogo = content.Load<Texture2D>("acagamicslogo");
             team = content.Load<Texture2D>("Gruppe1");
         }
@@ -29,27 +36,56 @@ namespace ParticleStormControl.Menu
         public override void Update(GameTime gameTime)
         {
             // back to main menu
-            if (InputManager.Instance.PauseButton() || InputManager.Instance.ContinueButton() || InputManager.Instance.PressedButton(Buttons.B) || InputManager.Instance.PressedButton(Keys.Escape) || InputManager.Instance.ExitButton())
+            if (InputManager.Instance.PauseButton()
+                || InputManager.Instance.ContinueButton()
+                || InputManager.Instance.PressedButton(Buttons.B)
+                || InputManager.Instance.PressedButton(Keys.Escape)
+                || InputManager.Instance.ExitButton()
+                || gameTime.TotalGameTime.Subtract(entry) > TimeSpan.FromSeconds(110))
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
         }
 
-        public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            //spriteBatch.Draw(logo, new Vector2(menu.ScreenWidth- logo.Width + 200, menu.ScreenHeight - logo.Height + 300), Color.White);
             //spriteBatch.Draw(acagamicsLogo, new Vector2(menu.ScreenWidth - acagamicsLogo.Width - 50, 50), Color.White);
-            //spriteBatch.Draw(team, new Rectangle(menu.ScreenWidth - (team.Width/2) - 105, menu.ScreenHeight - (team.Height / 2) + 100, team.Width / 2, team.Height / 2), Color.White);
-
-            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Andreas Reich", new Vector2(100, 100), false, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Programming, Gamplay, Graphics", new Vector2(100, 150), false, menu.TexPixel);
             
-            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Enrico Gebert:", new Vector2(100, 210), false, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Programming, Gamplay, Balancing", new Vector2(100, 260), false, menu.TexPixel);
+            int offset = Settings.Instance.ResolutionY - (int)(gameTime.TotalGameTime.Subtract(entry).TotalMilliseconds / 10);
 
-            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Maria Manneck:", new Vector2(100, 320), false, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "2D Arts, Interface", new Vector2(100, 370), false, menu.TexPixel);
-            
-            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Sebastian Lay:", new Vector2(100, 430), false, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Programming, Interface, Musik/Sound", new Vector2(100, 480), false, menu.TexPixel);
+            spriteBatch.Draw(logo, new Vector2((Settings.Instance.ResolutionX - logo.Width) / 2, (int)Math.Min((Settings.Instance.ResolutionY - logo.Height) / 2, offset)), Color.White);
+
+            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "A game made by", new Vector2(100, offset + 300), false, menu.TexPixel);
+
+            List<string> names = new List<string>() {
+                "Andreas Reich", "Programming, Gamplay, Graphics",
+                "Enrico Gebert", "Programming, Gamplay, Balancing",
+                "Sebastian Lay", "Programming, Interface, Musik/Sound",
+                "Maria Manneck", "2D Arts, Interface"
+            };
+            DrawNames(spriteBatch, names, offset + 500);
+
+            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Sounds/Music", new Vector2(100, offset + 1500), false, menu.TexPixel);
+
+            names = new List<string>() {
+                "Beach - PaulFitzZaland", "soundcloud.com/paulfitzzaland",
+                "Light Switch of doom - CosmicD", "freesound.org/people/CosmicD",
+                "snare - switchy - room", "freesound.org/people/room",
+                "Woosh.01 - Andromadax24", "freesound.org/people/Andromadax24"
+            };
+            DrawNames(spriteBatch, names, offset + 1700);
+
+            spriteBatch.Draw(team, new Rectangle((Settings.Instance.ResolutionX - team.Width) / 2, (Settings.Instance.ResolutionY - team.Height) / 2 + offset + 9001, team.Width, team.Height), Color.White);
+        }
+
+        private void DrawNames(SpriteBatch spriteBatch, List<string> names, int offset)
+        {
+            for (int i = 0; i < names.Count; i++)
+            {
+                int alternate = i % 2 == 1 ? 60 : 0;
+                if(i % 2 == 0)
+                    SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, names[i], new Vector2(100, (int)(i / 2) * 200 + offset + alternate), false, menu.TexPixel);
+                else
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, names[i], new Vector2(100, (int)(i / 2) * 200 + offset + alternate), false, menu.TexPixel);
+            }
         }
     }
 }

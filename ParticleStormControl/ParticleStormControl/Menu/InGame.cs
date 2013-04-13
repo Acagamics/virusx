@@ -14,7 +14,7 @@ namespace ParticleStormControl.Menu
         public InGame(Menu menu) : base(menu)
         {}
 
-        public override void OnActivated(Menu.Page oldPage)
+        public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
             blendIn = GAME_BLEND_DURATION;
         }
@@ -32,7 +32,7 @@ namespace ParticleStormControl.Menu
             blendIn -= (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
-        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, float frameTimeInterval)
+        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, GameTime gameTime)
         {
             if(blendIn > 0.0f)
                 spriteBatch.Draw(menu.TexPixel, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * (blendIn / GAME_BLEND_DURATION));
