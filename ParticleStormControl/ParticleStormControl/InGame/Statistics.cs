@@ -59,6 +59,10 @@ namespace ParticleStormControl
 
         #region absolut statistics
 
+        /// <summary>
+        /// The overall Number of bases in the game
+        /// </summary>
+        public uint OverallNumberOfBases { get; private set; } 
         private ulong[] generatedParticles;
         private uint[] capturedBases; // active
         private uint[] lostBases; // active
@@ -82,12 +86,13 @@ namespace ParticleStormControl
 
         #endregion
 
-        public Statistics(int _playerCount)
+        public Statistics(int _playerCount, uint _overallNumberOfBases)
         {
             steps = 0;
             //stepTime = _stepTime;
             playerCount = _playerCount;
             remainingTime = 0f;
+            OverallNumberOfBases = _overallNumberOfBases;
             init();
         }
 
