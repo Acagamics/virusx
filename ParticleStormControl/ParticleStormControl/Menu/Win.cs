@@ -18,6 +18,8 @@ namespace ParticleStormControl.Menu
         private Texture2D[] itemTextures = new Texture2D[(int)Statistics.StatItems.NUM_STAT_ITEMS]; 
         private const int ITEM_DISPLAY_SIZE = 40;
 
+        private Texture2D playerDiedTexture;
+
         private Texture2D icons;
 
         public int WinPlayerIndex { get; set; }
@@ -70,6 +72,8 @@ namespace ParticleStormControl.Menu
             itemTextures[(int)Statistics.StatItems.WIPEOUT] = content.Load<Texture2D>("items/wipeout");
             itemTextures[(int)Statistics.StatItems.ANTI_BODY] = content.Load<Texture2D>("items/debuff");
 
+            playerDiedTexture = content.Load<Texture2D>("death");
+
             icons = content.Load<Texture2D>("icons");
         }
 
@@ -82,7 +86,7 @@ namespace ParticleStormControl.Menu
                 currentDiagramType = (DiagramType)(((int)currentDiagramType + 1) % (int)DiagramType.NUM_VALUES);
 
             if (InputManager.Instance.AnyLeftButtonPressed())
-                currentDiagramType = (DiagramType)((((int)currentDiagramType - 1) < 0 ? (int)DiagramType.NUM_VALUES-1 : (int)(currentDiagramType)) -1);
+                currentDiagramType = (DiagramType)((((int)currentDiagramType - 1) < 0 ? (int)DiagramType.NUM_VALUES : (int)(currentDiagramType)) -1);
         }
 
         public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)
@@ -162,7 +166,7 @@ namespace ParticleStormControl.Menu
         /// <param name="area"></param>
         private void DrawDiagram(SpriteBatch spriteBatch, Func<int, int, float> heightFunction, float frameTimeInterval, Rectangle area)
         {
-            int stepWidth = (int)((float)area.Width / statistics.Steps + 0.5f);
+            int stepWidth = (int)area.Width / statistics.Steps;
             area.Width = stepWidth * statistics.Steps + 20;
 
             // draw border
@@ -195,10 +199,10 @@ namespace ParticleStormControl.Menu
             }
 
             // draw items
-       /*     for (int step = 1; step < statistics.Steps; step++)    
+            for (int step = 0; step < statistics.Steps; step++)    
             {
                 int offset = 0;
-                for (int playerIndex = statistics.PlayerCount - 1; playerIndex <= 0; playerIndex++)
+                for (int playerIndex = statistics.PlayerCount - 1; playerIndex >= 0; --playerIndex)
                 {
                     float percentage = heightFunction(step, playerIndex);
                     int height = (int)(percentage * area.Height);
@@ -212,31 +216,41 @@ namespace ParticleStormControl.Menu
                     {
                         spriteBatch.Draw(itemTextures[(int)itemUsed],
                             new Rectangle(area.X + step * stepWidth - ITEM_DISPLAY_SIZE / 2,
-                                          area.Bottom + offset + (height - ITEM_DISPLAY_SIZE) / 2, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
+                                          area.Bottom - offset + (height - ITEM_DISPLAY_SIZE) / 2, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
                             Color.White);
                     }
                 }
-            }*/
+            }
 
-            // hide rounding errors ...
+            // draw deaths
+            for (int playerIndex = 0; playerIndex<statistics.PlayerCount; ++playerIndex)
+            {
+                int depthStep = statistics.getDeathStepOfPlayer(playerIndex);
+                if (depthStep >= 0)
+                {
+                    float percentage = (float)depthStep / statistics.Steps;
+                    int xPos = (int)MathHelper.Clamp(area.X + percentage * area.Width - ITEM_DISPLAY_SIZE / 2, area.X, area.X + area.Width - ITEM_DISPLAY_SIZE);
+                    spriteBatch.Draw(playerDiedTexture, new Rectangle(area.X + (int)percentage * area.Width - ITEM_DISPLAY_SIZE / 2,
+                                                      area.Bottom - ITEM_DISPLAY_SIZE + 5, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
+                                            Player.Colors[PlayerColorIndices[playerIndex]]);
+                }
+            }
+
             area.Inflate(10, 10);
-            area.Y = area.Bottom - 12;
-            area.Height = 12;
-            spriteBatch.Draw(menu.PixelTexture, area, Color.Black);
 
             // draw timings
-            const int numSteps = 4;
-            for (int i = 0; i < numSteps; ++i)
+            const int numTimeDisplays = 4;
+            for (int i = 0; i < numTimeDisplays; ++i)
             {
-                float progress = (float)i / (numSteps-1);
-                float time = statistics.Steps * statistics.StepTime * progress;
+                float progress = (float)i / (numTimeDisplays-1);
+                float time = (statistics.Steps * progress + statistics.FirstStep) * statistics.StepTime;
                 string endTimeString = GenerateTimeString(time);
                 float textLen = menu.Font.MeasureString(endTimeString).X;
                 
                 float textOffset;
                 if(i == 0)
                     textOffset = SimpleButton.PADDING;
-                else if (i == numSteps-1)
+                else if (i == numTimeDisplays-1)
                     textOffset = -textLen - SimpleButton.PADDING;
                 else
                     textOffset = -textLen / 2;
@@ -244,6 +258,11 @@ namespace ParticleStormControl.Menu
                 float x = area.X + area.Width * progress + textOffset;
                 SimpleButton.Instance.Draw(spriteBatch, menu.Font, endTimeString, new Vector2(x, area.Y + area.Height + 10), false, menu.PixelTexture);
             }
+
+            // hide rounding errors ...
+            area.Y = area.Top;
+            area.Height = 12;
+            spriteBatch.Draw(menu.PixelTexture, area, Color.Black);
         }
 
         private string GenerateTimeString(float time)
