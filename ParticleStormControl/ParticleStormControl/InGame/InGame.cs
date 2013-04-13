@@ -147,14 +147,12 @@ namespace ParticleStormControl
             inGameInterface = new InGameInterface(content);
             percentageBar = new PercentageBar(content);
 
+            song = content.Load<Song>("sound/09 Beach");
+            MediaPlayer.Volume = 0.5f;
+            MediaPlayer.IsRepeating = true;
             // backgroundmusic
             if (Settings.Instance.Sound)
-            {
-                song = content.Load<Song>("paniq_Godshatter");
-                MediaPlayer.Volume = 0.5f;
-                //MediaPlayer.Play(song);
-                MediaPlayer.IsRepeating = true;
-            }
+                MediaPlayer.Play(song);
         }
 
 
@@ -166,6 +164,12 @@ namespace ParticleStormControl
         public void Update(GameTime gameTime)
         {
             float passedFrameTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (Settings.Instance.Sound && MediaPlayer.State == MediaState.Stopped)
+                MediaPlayer.Play(song);
+            else if (!Settings.Instance.Sound && MediaPlayer.State == MediaState.Playing)
+                MediaPlayer.Stop();
+
 
             // playing
             if (State == GameState.Playing)
