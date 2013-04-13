@@ -236,8 +236,20 @@ namespace ParticleStormControl.Menu
                     if (itemUsed != null)
                     {
                         int y = (int)MathHelper.Clamp(area.Bottom - offset + (height - ITEM_DISPLAY_SIZE) / 2, area.Y, area.Y + area.Height - ITEM_DISPLAY_SIZE);
+                        int x = area.X + step * stepWidth - ITEM_DISPLAY_SIZE / 2;
+
+                        if ((Statistics.StatItems)itemUsed == Statistics.StatItems.MUTATION)
+                        {
+                            if (Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime + step > statistics.Steps)  // never happen?
+                                continue;
+                            x += (int)(stepWidth * ((float)Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime - 0.5f));
+                        }
+
+                        x = (int)MathHelper.Clamp(x, area.X, area.X + area.Width - ITEM_DISPLAY_SIZE);
+
+
                         spriteBatch.Draw(itemTextures[(int)itemUsed],
-                            new Rectangle(area.X + step * stepWidth - ITEM_DISPLAY_SIZE / 2, y, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
+                            new Rectangle(x, y, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
                             Color.White);
                     }
                 }

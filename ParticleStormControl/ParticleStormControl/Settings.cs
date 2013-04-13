@@ -50,9 +50,19 @@ namespace ParticleStormControl
 
         #region Misc
 
-        bool sound = true;
+        private bool sound = true;
         public bool Sound { get { return sound; } set { sound = value; } }
-        
+
+        private bool music = true;
+        public bool Music { get { return music; } set { music = value; } }
+
+        private bool forceFeedback = true;
+        public bool ForceFeedback
+        {
+            get { return forceFeedback; }
+            set { InputManager.Instance.ActivateRumble = value; forceFeedback = value; }
+        }
+
         #endregion
 
         public Color GetPlayerColor(int playerIndex)
@@ -67,6 +77,10 @@ namespace ParticleStormControl
         public void ResetPlayerSettingsToDefault()
         {
             numPlayers = 0;
+            ForceFeedback = true;
+            Sound = true;
+            Music = true;
+
 #if XBOX
             for (int i = 0; i < 4; ++i)
                 numPlayers += GamePad.GetState((PlayerIndex)i).IsConnected ? 1 : 0;
@@ -120,23 +134,18 @@ namespace ParticleStormControl
                         {
                             case "display":
                                 fullscreen = Convert.ToBoolean(xmlConfigReader.GetAttribute("fullscreen"));
-                                sound = Convert.ToBoolean(xmlConfigReader.GetAttribute("sound"));
                                 resolutionX = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionX"));
                                 resolutionY = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionY"));
                                 break;
 
-                                /* we don't need you anymore
-                            case "player":
-                                numPlayers = Convert.ToInt32(xmlConfigReader.GetAttribute("numPlayers"));
-                                for (int i = 0; i < 4; ++i)
-                                {
-                                    Enum.TryParse(xmlConfigReader.GetAttribute("controls" + i.ToString()), out playerControls[i]);
-                                    playerColorIndices[i] = Convert.ToInt32(xmlConfigReader.GetAttribute("color" + i.ToString()));
-                                    playerVirusIndices[i] = Convert.ToInt32(xmlConfigReader.GetAttribute("virus" + i.ToString()));
-                                }
-
+                            case "sound":
+                                Sound = Convert.ToBoolean(xmlConfigReader.GetAttribute("sound_on"));
+                                Music = Convert.ToBoolean(xmlConfigReader.GetAttribute("music_on"));
                                 break;
-                                 */
+
+                            case "input":
+                                ForceFeedback = Convert.ToBoolean(xmlConfigReader.GetAttribute("forcefeedback"));
+                                break;
                         }
                     }
                 }
@@ -169,8 +178,6 @@ namespace ParticleStormControl
             settingsXML.WriteStartElement("settings");
 
             settingsXML.WriteStartElement("display");
-            settingsXML.WriteStartAttribute("sound");
-            settingsXML.WriteValue(sound);
             settingsXML.WriteStartAttribute("fullscreen");
             settingsXML.WriteValue(fullscreen);
             settingsXML.WriteStartAttribute("resolutionX");
@@ -179,20 +186,16 @@ namespace ParticleStormControl
             settingsXML.WriteValue(resolutionY);
             settingsXML.WriteEndElement();
 
-            settingsXML.WriteStartElement("player");
-            settingsXML.WriteStartAttribute("numPlayers");
-            settingsXML.WriteValue(numPlayers);
+            settingsXML.WriteStartElement("sound");
+            settingsXML.WriteStartAttribute("sound_on");
+            settingsXML.WriteValue(Sound);
+            settingsXML.WriteStartAttribute("music_on");
+            settingsXML.WriteValue(Music);
+            settingsXML.WriteEndElement();
 
-            for (int i = 0; i < 4; ++i)
-            {
-                settingsXML.WriteStartAttribute("controls" + i);
-                settingsXML.WriteValue(playerControls[i].ToString());
-                settingsXML.WriteStartAttribute("color" + i);
-                settingsXML.WriteValue(playerColorIndices[i].ToString());
-                settingsXML.WriteStartAttribute("virus" + i);
-                settingsXML.WriteValue(playerVirusIndices[i].ToString());
-            }
-
+            settingsXML.WriteStartElement("input");
+            settingsXML.WriteStartAttribute("forcefeedback");
+            settingsXML.WriteValue(ForceFeedback);
             settingsXML.WriteEndElement();
 
             settingsXML.WriteEndElement();

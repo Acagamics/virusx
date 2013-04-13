@@ -468,7 +468,7 @@ namespace ParticleStormControl
 
         private ulong getDominationPercentage(int playerIndex, int step)
         {
-            return healthInStep[playerIndex][step] + possessingBasesInStep[playerIndex][step] * 1000 + particlesInStep[playerIndex][step];
+            return healthInStep[playerIndex][step] + possessingBasesInStep[playerIndex][step] * 100000 + particlesInStep[playerIndex][step];
         }
 
         public void itemUsed(int playerIndex, Item.ItemType _item)

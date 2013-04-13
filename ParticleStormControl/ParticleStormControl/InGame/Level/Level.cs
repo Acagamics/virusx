@@ -99,7 +99,7 @@ namespace ParticleStormControl
         private SoundEffect switchSound;
         private bool switchCountdownActive = false;
         private float switchCountdownTimer;
-        private const float switchCountdownLength = 6.0f;
+        public const float SWITCH_COUNTDOWN_LENGTH = 6.0f;
         private SpriteFont fontCountdownLarge;
 
         private Texture2D wipeoutExplosionTexture;
@@ -728,7 +728,7 @@ namespace ParticleStormControl
                     break;
 
                 case Item.ItemType.MUTATION:
-                    switchCountdownTimer = switchCountdownLength;
+                    switchCountdownTimer = SWITCH_COUNTDOWN_LENGTH;
                     switchCountdownActive = true;
                     break;
 

@@ -594,6 +594,7 @@ namespace ParticleStormControl
         #region rumble
 
         public bool ActivateRumble { get; set; }
+
         private float[] rumbleTime = new float[] { 0.0f, 0.0f, 0.0f, 0.0f };
         public void StartRumble(int playerIndex, float time, float strenght)
         {

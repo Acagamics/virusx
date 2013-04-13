@@ -163,9 +163,9 @@ namespace ParticleStormControl
         {
             float passedFrameTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (Settings.Instance.Sound && MediaPlayer.State == MediaState.Stopped)
+            if (Settings.Instance.Music && MediaPlayer.State == MediaState.Stopped)
                 MediaPlayer.Play(song);
-            else if (!Settings.Instance.Sound && MediaPlayer.State == MediaState.Playing)
+            else if (!Settings.Instance.Music && MediaPlayer.State == MediaState.Playing)
                 MediaPlayer.Stop();
 
 
