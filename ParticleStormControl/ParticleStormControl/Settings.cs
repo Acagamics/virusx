@@ -80,6 +80,7 @@ namespace ParticleStormControl
             ForceFeedback = true;
             Sound = true;
             Music = true;
+
 #if XBOX
             for (int i = 0; i < 4; ++i)
                 numPlayers += GamePad.GetState((PlayerIndex)i).IsConnected ? 1 : 0;
