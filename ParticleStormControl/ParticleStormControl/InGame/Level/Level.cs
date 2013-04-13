@@ -19,6 +19,7 @@ namespace ParticleStormControl
     {
         // statistics
         public Statistics GameStatistics { get; set; }
+        private bool dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug = true;
 
         private List<MapObject> mapObjects = new List<MapObject>();
         private List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
@@ -444,11 +445,15 @@ namespace ParticleStormControl
             // statistics
             if (GameStatistics.UpdateTimer(frameTimeSeconds))
             {
-                for (int i = 0; i < players.Length; ++i)
+                if (!dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug)
                 {
-                    GameStatistics.setParticlesAndHealthAndPossesingBases(i, (uint)players[i].NumParticlesAlive, (uint)players[i].TotalHealth, (uint)possesingBases[i]);
+                    for (int i = 0; i < players.Length; ++i)
+                    {
+                        GameStatistics.setParticlesAndHealthAndPossesingBases(i, (uint)players[i].NumParticlesAlive, (uint)players[i].TotalHealth, (uint)possesingBases[i]);
+                    }
+                    GameStatistics.UpdateDomination();
                 }
-                GameStatistics.UpdateDomination();
+                else dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug = false;
             }
 
             // background colors

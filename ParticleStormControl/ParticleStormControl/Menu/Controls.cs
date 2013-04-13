@@ -52,9 +52,9 @@ namespace ParticleStormControl.Menu
                 {
                     if (data[i, j] != null)
                         if(i == 0 || j == 0)
-                            SimpleButton.Instance.Draw(spriteBatch, menu.Font, data[i, j], new Vector2(left + j * (column + gap), top + i * row), false, menu.TexPixel, column);
-                        else
                             SimpleButton.Instance.Draw(spriteBatch, menu.Font, data[i, j], new Vector2(left + j * (column + gap), top + i * row), Color.White, Color.Black, menu.TexPixel, column);
+                        else
+                            SimpleButton.Instance.Draw(spriteBatch, menu.Font, data[i, j], new Vector2(left + j * (column + gap), top + i * row), false, menu.TexPixel, column);
                 }
             }
 
@@ -64,24 +64,23 @@ namespace ParticleStormControl.Menu
             SimpleButton.Instance.DrawTexture_NoScalingNoPadding(
                 spriteBatch,
                 menu.TexLeftThumbstick,
-                new Rectangle(left + 3 * (column + gap) - SimpleButton.PADDING, top + 1 * row - SimpleButton.PADDING, column, row * 3 + fontHeight), //new Rectangle(left + 3 * (column + gap) - SimpleButton.PADDING + (column - menu.TexLeftThumbstick.Width) / 2, top + 1 * row - SimpleButton.PADDING + (row * 4 - gap - menu.TexLeftThumbstick.Height) / 2, menu.TexLeftThumbstick.Width, menu.TexLeftThumbstick.Height),
+                new Rectangle(left + 3 * (column + gap) - SimpleButton.PADDING, top + 1 * row - SimpleButton.PADDING, column, row * 3 + fontHeight),
                 menu.TexLeftThumbstick.Bounds,
-                true,
-                menu.TexPixel,
-                column);
+                false,
+                menu.TexPixel);
             SimpleButton.Instance.DrawTexture_NoScalingNoPadding(
                 spriteBatch,
                 menu.TexA,
                 new Rectangle(left + 3 * (column + gap) - SimpleButton.PADDING, top + 5 * row - SimpleButton.PADDING, column, fontHeight),
                 menu.TexA.Bounds,
-                true,
+                false,
                 menu.TexPixel);
             SimpleButton.Instance.DrawTexture_NoScalingNoPadding(
                 spriteBatch,
                 menu.TexB,
                 new Rectangle(left + 3 * (column + gap) - SimpleButton.PADDING, top + 6 * row - SimpleButton.PADDING, column, fontHeight),
                 menu.TexB.Bounds,
-                true,
+                false,
                 menu.TexPixel);
 
             // back button

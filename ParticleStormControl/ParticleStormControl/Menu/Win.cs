@@ -91,9 +91,16 @@ namespace ParticleStormControl.Menu
 
         public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)
         {
-            int pad = 250; // padding from left
-            int col = 150; // width of the columns
+            const int SIDE_PADDING = 30; // padding from left
+            const int COLUMN_WIDTH = 145; // width of the columns WITH PADDING!
+            const int COLUMN_PADDING = 20;
             
+
+            // zentrieren
+            int pad = (menu.ScreenWidth - (captions.Count + 1) * COLUMN_WIDTH + SIDE_PADDING * 2 - COLUMN_PADDING) / 2;
+
+            // header um eins verschoben
+
             // draw winning string
             string text = Player.ColorNames[PlayerColorIndices[WinPlayerIndex]] + " wins!";
             int width = (int)menu.FontHeading.MeasureString(text).X;
@@ -102,52 +109,44 @@ namespace ParticleStormControl.Menu
             // draw all captions
             for (int i = 0; i < captions.Count; i++)
             {
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, captions[i], new Vector2(pad + col * i, 150), false, menu.TexPixel, col - 20);
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, captions[i], new Vector2(pad + COLUMN_WIDTH * (i + 1), 150), false, menu.TexPixel, COLUMN_WIDTH - COLUMN_PADDING);
             }
 
             // fill table with values
             for (int i = 0; i < values.Length; i++)
             {
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, Player.ColorNames[PlayerColorIndices[i]], new Vector2(100, 210 + 60 * i), Player.Colors[PlayerColorIndices[i]], menu.TexPixel, col - 20);
-                 for (int j = 0; j < values[0].Count; j++)
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, Player.ColorNames[PlayerColorIndices[i]], new Vector2(pad, 210 + 60 * i), Player.Colors[PlayerColorIndices[i]], menu.TexPixel, COLUMN_WIDTH - COLUMN_PADDING);
+                for (int j = 0; j < values[0].Count; j++)
                 {
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, values[i][j], new Vector2(pad + col * j, 210 + 60 * i), false, menu.TexPixel, col - 20);
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, values[i][j], new Vector2(pad + COLUMN_WIDTH * (j + 1), 210 + 60 * i), false, menu.TexPixel, COLUMN_WIDTH - COLUMN_PADDING);
                 }
             }
 
             // draw diagrams
-            int descriptionY = 220 + 60 * values.Length;
-            Rectangle diagramArea = new Rectangle(130, descriptionY + (int)menu.FontHeading.MeasureString(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType]).Y + SimpleButton.PADDING, 
-                                                    Settings.Instance.ResolutionX - 260, Settings.Instance.ResolutionY - 400 - 60 * values.Length);
-            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, DIAGRAM_DESCRIPTIONS[(int)currentDiagramType],
-                                        new Vector2(140, descriptionY), false, menu.TexPixel);
+            int yPos = 220 + 60 * values.Length;
+            int height = Settings.Instance.ResolutionY - 400 - 60 * values.Length;
+            int maxWidth = Settings.Instance.ResolutionX - SIDE_PADDING * 2;
             switch (currentDiagramType)
             {
                 case DiagramType.DOMINATION:
-                    DrawDiagram(spriteBatch, (step, player) => statistics.getDominationInStep(player, step), frameTimeInterval, diagramArea);
+                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => statistics.getDominationInStep(player, step),
+                                                    frameTimeInterval, maxWidth, height, yPos);
                     break;
                 case DiagramType.HEALTH:
-                    DrawDiagram(spriteBatch, (step, player) => statistics.getHealthInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
-                                                        (float)statistics.getHealthInStep(player, step) / statistics.getHealthInStep(step), 
-                                                                    frameTimeInterval, diagramArea);
+                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => statistics.getHealthInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
+                                                        (float)statistics.getHealthInStep(player, step) / statistics.getHealthInStep(step),
+                                                                     frameTimeInterval, maxWidth, height, yPos);
                     break;
                 case DiagramType.MASS:
-                    DrawDiagram(spriteBatch, (step, player) => statistics.getParticlesInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
-                                                        (float)statistics.getParticlesInStep(player, step) / statistics.getParticlesInStep(step), 
-                                                                    frameTimeInterval, diagramArea);
+                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => statistics.getParticlesInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
+                                                        (float)statistics.getParticlesInStep(player, step) / statistics.getParticlesInStep(step),
+                                                                     frameTimeInterval, maxWidth, height, yPos);
                     break;
                 case DiagramType.SPAWN_POINTS:
-                    DrawDiagram(spriteBatch, (step, player) => (float)statistics.getPossessingBasesInStep(player, step) / statistics.OverallNumberOfBases, 
-                                                                    frameTimeInterval, diagramArea);
+                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => (float)statistics.getPossessingBasesInStep(player, step) / statistics.OverallNumberOfBases,
+                                                                     frameTimeInterval, maxWidth, height, yPos);
                     break;
             }
-                // arrows
-            int ARROW_SIZE = 50;
-            int arrowY = diagramArea.Y + (diagramArea.Height - ARROW_SIZE) / 2;//boxHeight / 2 - ARROW_SIZE;
-            SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(50, arrowY, ARROW_SIZE, ARROW_SIZE),
-                                                                new Rectangle(0 + (InputManager.Instance.AnyLeftButtonDown() ? 32 : 0), 0, 16, 16), InputManager.Instance.AnyLeftButtonDown(), menu.TexPixel);
-            SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(Settings.Instance.ResolutionX - 50 - ARROW_SIZE, arrowY, ARROW_SIZE, ARROW_SIZE),
-                                                                new Rectangle(16 + (InputManager.Instance.AnyRightButtonDown() ? 32 : 0), 0, 16, 16), InputManager.Instance.AnyRightButtonDown(), menu.TexPixel);
 
             // continue button
             text = "continue";
@@ -164,16 +163,31 @@ namespace ParticleStormControl.Menu
         /// <param name="heightFunction">function returning a height for a given (1st para) step from a given (2nd para) player. Sum of heights in a step should be one!</param>
         /// <param name="frameTimeInterval"></param>
         /// <param name="area"></param>
-        private void DrawDiagram(SpriteBatch spriteBatch, Func<int, int, float> heightFunction, float frameTimeInterval, Rectangle area)
+        private void DrawDiagram(string description, SpriteBatch spriteBatch, Func<int, int, float> heightFunction, float frameTimeInterval, int maxWidth, int heightVal, int yPos)
         {
-            int stepWidth = (int)area.Width / statistics.Steps;
+            Rectangle area;
+
+            const int ARROW_SIZE = 50;
+            const int ARROW_PADDING = 20;
+
+            int stepWidth = (int)(maxWidth - ARROW_SIZE * 2 - ARROW_PADDING * 2) / statistics.Steps;
             area.Width = stepWidth * statistics.Steps + 20;
+            area.Height = heightVal;
+            area.X = (menu.ScreenWidth-area.Width) / 2;
+            area.Y = yPos + (int)menu.FontHeading.MeasureString(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType]).Y + SimpleButton.PADDING;
+
+
+
+            // draw heading
+            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, description,
+                                       new Vector2(area.X + SimpleButton.PADDING, yPos),
+                                       false, menu.TexPixel);
 
             // draw border
             spriteBatch.Draw(menu.TexPixel, area, Color.Black);
             area.Inflate(-10, -10);
 
-            // if this stuff slows down the whole game.... suprise suprise, let's optimize! ;P
+            // if this stuff could slow down the whole game.... suprise suprise, let's optimize! ;P
 
             // draw amount of particles per player and step
             for (int step = 0; step < statistics.Steps; step++)     
@@ -190,6 +204,7 @@ namespace ParticleStormControl.Menu
                     spriteBatch.Draw(menu.TexPixel, rect, Player.Colors[PlayerColorIndices[playerIndex]]);
                 }
 
+                // this ehm.. could be a single quad
                 if (offset < area.Height)
                 {
                     int height = area.Height - offset;
@@ -201,7 +216,7 @@ namespace ParticleStormControl.Menu
             // hide rounding errors ...
             Rectangle rouningHide = area;
             rouningHide.Y = rouningHide.Top-10;
-            rouningHide.Height = 12;
+            rouningHide.Height = 13;
             spriteBatch.Draw(menu.TexPixel, rouningHide, Color.Black);
 
             // draw items
@@ -220,9 +235,9 @@ namespace ParticleStormControl.Menu
                     Statistics.StatItems? itemUsed = statistics.getFirstUsedItemInStep(playerIndex, step);
                     if (itemUsed != null)
                     {
-                        int yPos = (int)MathHelper.Clamp(area.Bottom - offset + (height - ITEM_DISPLAY_SIZE) / 2, area.Y, area.Y + area.Height - ITEM_DISPLAY_SIZE);
+                        int y = (int)MathHelper.Clamp(area.Bottom - offset + (height - ITEM_DISPLAY_SIZE) / 2, area.Y, area.Y + area.Height - ITEM_DISPLAY_SIZE);
                         spriteBatch.Draw(itemTextures[(int)itemUsed],
-                            new Rectangle(area.X + step * stepWidth - ITEM_DISPLAY_SIZE / 2, yPos, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
+                            new Rectangle(area.X + step * stepWidth - ITEM_DISPLAY_SIZE / 2, y, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
                             Color.White);
                     }
                 }
@@ -263,6 +278,14 @@ namespace ParticleStormControl.Menu
                 float x = area.X + area.Width * progress + textOffset;
                 SimpleButton.Instance.Draw(spriteBatch, menu.Font, endTimeString, new Vector2(x, area.Y + area.Height + 10), false, menu.TexPixel);
             }
+
+            // arrows
+            int arrowY = area.Y + (area.Height - ARROW_SIZE) / 2;//boxHeight / 2 - ARROW_SIZE;
+            SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Left - ARROW_SIZE - ARROW_PADDING, arrowY, ARROW_SIZE, ARROW_SIZE),
+                                                                new Rectangle(0 + (!InputManager.Instance.AnyLeftButtonDown() ? 32 : 0), 0, 16, 16), !InputManager.Instance.AnyLeftButtonDown(), menu.TexPixel);
+            SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Right + ARROW_PADDING, arrowY, ARROW_SIZE, ARROW_SIZE),
+                                                                new Rectangle(16 + (!InputManager.Instance.AnyRightButtonDown() ? 32 : 0), 0, 16, 16), !InputManager.Instance.AnyRightButtonDown(), menu.TexPixel);
+
         }
 
         private string GenerateTimeString(float time)

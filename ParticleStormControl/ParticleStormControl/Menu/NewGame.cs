@@ -265,7 +265,7 @@ namespace ParticleStormControl.Menu
                     string playerReadyText = playerReady[i] ? "ready!" : "not ready";
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, playerReadyText, origin + new Vector2(SIDE_PADDING + ARROW_SIZE, readyHeight), playerReady[i], menu.TexPixel);
                     SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X + SIDE_PADDING - SimpleButton.PADDING,
-                                            (int)origin.Y + readyHeight - SimpleButton.PADDING, ARROW_SIZE, ARROW_SIZE), new Rectangle(playerReady[i] ? 48 : 0, 32, 16, 16), playerReady[i], menu.TexPixel);
+                                            (int)origin.Y + readyHeight - SimpleButton.PADDING, ARROW_SIZE, ARROW_SIZE), new Rectangle(playerReady[i] ? 48 : 0, 32, 16, 16), !playerReady[i], menu.TexPixel);
 
                     // description
                     int descpStrLen = (int)menu.Font.MeasureString("Discipline").X + 7;
@@ -329,8 +329,10 @@ namespace ParticleStormControl.Menu
                     
                     // arrows left & right
                     int arrowY = (int)readyHeight - ARROW_SIZE;//boxHeight / 2 - ARROW_SIZE;
-                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE), new Rectangle(0 + isActive(InputManager.ControlActions.LEFT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.LEFT, i), menu.TexPixel);
-                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X + boxWidth - ARROW_SIZE, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE), new Rectangle(16 + isActive(InputManager.ControlActions.RIGHT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.RIGHT, i), menu.TexPixel);
+                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE), 
+                                                new Rectangle(0 + isActive(InputManager.ControlActions.LEFT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.LEFT, i), menu.TexPixel);
+                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X + boxWidth - ARROW_SIZE, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE), 
+                                                new Rectangle(16 + isActive(InputManager.ControlActions.RIGHT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.RIGHT, i), menu.TexPixel);
                 }
                 else
                 {
@@ -392,7 +394,7 @@ namespace ParticleStormControl.Menu
 
         private int isActive(InputManager.ControlActions action, int index, int offset)
         {
-            return isActive(action, index) ? offset : 0;
+            return isActive(action, index) ? 0 : offset;
         }
 
         private void startCountdown()
