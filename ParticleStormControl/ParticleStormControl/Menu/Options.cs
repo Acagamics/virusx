@@ -15,6 +15,8 @@ namespace ParticleStormControl.Menu
         Texture2D logo;
         bool fullscreen = Settings.Instance.Fullscreen;
         bool sound = Settings.Instance.Sound;
+        bool music = Settings.Instance.Music;
+        bool forceFeedback = Settings.Instance.ForceFeedback;
 
         struct Resolution
         {
@@ -28,6 +30,8 @@ namespace ParticleStormControl.Menu
             RESOLUTION,
             FULLSCREEN,
             SOUND,
+            MUSIC,
+            FORCEFEEDBACK,
             BACK,
             EXIT,
 
@@ -82,6 +86,7 @@ namespace ParticleStormControl.Menu
             selectedButton = (Button)(selectionInt);
 
             // button selected
+            bool changedOne = (InputManager.Instance.AnyLeftButtonPressed() || InputManager.Instance.AnyRightButtonPressed() || InputManager.Instance.ContinueButton());
             if (InputManager.Instance.ContinueButton() && selectedButton == Button.EXIT || InputManager.Instance.PressedButton(Keys.Escape) || InputManager.Instance.PressedButton(Buttons.B) || InputManager.Instance.ExitButton())
             {
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
@@ -90,20 +95,30 @@ namespace ParticleStormControl.Menu
             {
                 Settings.Instance.Fullscreen = fullscreen;
                 Settings.Instance.Sound = sound;
+                Settings.Instance.Music = music;
+                Settings.Instance.ForceFeedback = forceFeedback;
                 Settings.Instance.ResolutionX = availableResolutions[activeResolution].width;
                 Settings.Instance.ResolutionY = availableResolutions[activeResolution].height;
                 menu.ApplyChangedGraphicsSettings();
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
             }
-            else if (selectedButton == Button.FULLSCREEN && (InputManager.Instance.AnyLeftButtonPressed() || InputManager.Instance.AnyRightButtonPressed() || InputManager.Instance.ContinueButton()))
+            else if (changedOne && selectedButton == Button.FULLSCREEN)
             {
                 fullscreen = !fullscreen;
             }
-            else if (selectedButton == Button.SOUND && (InputManager.Instance.AnyLeftButtonPressed() || InputManager.Instance.AnyRightButtonPressed() || InputManager.Instance.ContinueButton()))
+            else if (changedOne && selectedButton == Button.SOUND)
             {
                 sound = !sound;
             }
-            else if (selectedButton == Button.RESOLUTION)
+            else if (changedOne && selectedButton == Button.MUSIC)
+            {
+                music = !music;
+            }
+            else if (changedOne && selectedButton == Button.FORCEFEEDBACK)
+            {
+                forceFeedback = !forceFeedback;
+            }
+            else if (changedOne && selectedButton == Button.RESOLUTION)
             {
                 if (InputManager.Instance.AnyRightButtonPressed())
                     activeResolution = activeResolution == availableResolutions.Count - 1 ? 0 : (activeResolution + 1);
@@ -125,14 +140,26 @@ namespace ParticleStormControl.Menu
             else
                 SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 280), Color.Red, menu.TexPixel);
 
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Music and Sounds", new Vector2(100, 340), selectedButton == Button.SOUND, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Sounds", new Vector2(100, 340), selectedButton == Button.SOUND, menu.TexPixel);
             if (sound)
                 SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 340), Color.Green, menu.TexPixel);
             else
                 SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 340), Color.Red, menu.TexPixel);
 
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Save and Exit", new Vector2(100, 460), selectedButton == Button.BACK, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Cancel", new Vector2(100, 520), selectedButton == Button.EXIT, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Music", new Vector2(100, 400), selectedButton == Button.MUSIC, menu.TexPixel);
+            if (music)
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 400), Color.Green, menu.TexPixel);
+            else
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 400), Color.Red, menu.TexPixel);
+
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Rumble", new Vector2(100, 460), selectedButton == Button.FORCEFEEDBACK, menu.TexPixel);
+            if (forceFeedback)
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 460), Color.Green, menu.TexPixel);
+            else
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 460), Color.Red, menu.TexPixel);
+
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Save and Exit", new Vector2(100, 580), selectedButton == Button.BACK, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Cancel", new Vector2(100, 640), selectedButton == Button.EXIT, menu.TexPixel);
         }
     }
 }
