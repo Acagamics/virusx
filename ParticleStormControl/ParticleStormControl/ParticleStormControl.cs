@@ -221,7 +221,6 @@ namespace ParticleStormControl
             inGame.Draw_Backbuffer(gameTime, spriteBatch);
             menu.Draw((float)gameTime.ElapsedGameTime.TotalSeconds, spriteBatch);
 
-
             // show statistics
             if (showStatistics)
             {
@@ -251,7 +250,7 @@ namespace ParticleStormControl
                 }
 
                 spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, statistic, new Vector2(5, 5), Color.FromNonPremultiplied(0, 0, 0, 128), menu.PixelTexture);
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, statistic, new Vector2(5, 5), Color.FromNonPremultiplied(0, 0, 0, 128), menu.TexPixel);
                 spriteBatch.End();
             }
 

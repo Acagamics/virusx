@@ -537,7 +537,7 @@ namespace ParticleStormControl
                         case ControlActions.RIGHT:
                             return down ? IsButtonDown(Keys.D) : PressedButton(Keys.D);
                         case ControlActions.HOLD:
-                            return down ? IsButtonDown(Keys.LeftShift) : PressedButton(Keys.LeftShift);
+                            return down ? IsButtonDown(Keys.V) : PressedButton(Keys.V);
                         case ControlActions.ACTION:
                             return down ? IsButtonDown(Keys.Space) : PressedButton(Keys.Space);
 	                }
@@ -554,7 +554,7 @@ namespace ParticleStormControl
                         case ControlActions.RIGHT:
                             return down ? IsButtonDown(Keys.Right) : PressedButton(Keys.Right);
                         case ControlActions.HOLD:
-                            return down ? IsButtonDown(Keys.RightControl) : PressedButton(Keys.RightControl);
+                            return down ? IsButtonDown(Keys.RightShift) : PressedButton(Keys.RightShift);
                         case ControlActions.ACTION:
                             return down ? IsButtonDown(Keys.Enter) : PressedButton(Keys.Enter);
                     }

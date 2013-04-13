@@ -18,6 +18,7 @@ namespace ParticleStormControl.Menu
             CREDITS,
             OPTIONS,
             PAUSED,
+            CONTROLS,
 
             INGAME,
             WIN,
@@ -41,11 +42,22 @@ namespace ParticleStormControl.Menu
         public SoundEffect SoundEffect { get { return soundEffect; } }
         #endregion
 
+        #region Textures
+        public Texture2D TexPixel { get { return texPixel; } }
+        private Texture2D texPixel;
+
+        public Texture2D TexLeftThumbstick { get { return texLeftThumbstick; } }
+        private Texture2D texLeftThumbstick;
+
+        public Texture2D TexA { get { return texA; } }
+        private Texture2D texA;
+
+        public Texture2D TexB { get { return texB; } }
+        private Texture2D texB;
+
         public int ScreenWidth { get { return game.GraphicsDevice.Viewport.Width; } }
         public int ScreenHeight { get { return game.GraphicsDevice.Viewport.Height; } }
-
-        public Texture2D PixelTexture { get { return pixelTexture; } }
-        private Texture2D pixelTexture;
+        #endregion
 
         private Page activePage = Page.MAINMENU;
         public Page ActivePage
@@ -72,6 +84,7 @@ namespace ParticleStormControl.Menu
             pages[(int)Page.WIN] = new Win(this);
             pages[(int)Page.INGAME] = new InGame(this);
             pages[(int)Page.CREDITS] = new Credits(this);
+            pages[(int)Page.CONTROLS] = new Controls(this);
         }
 
         public void LoadContent(ContentManager content)
@@ -79,7 +92,10 @@ namespace ParticleStormControl.Menu
             font = content.Load<SpriteFont>("fonts/font");
             fontHeading = content.Load<SpriteFont>("fonts/fontHeading");
             fontCountdown = content.Load<SpriteFont>("fonts/fontCountdown");
-            pixelTexture = content.Load<Texture2D>("pix");
+            texPixel = content.Load<Texture2D>("pix");
+            texLeftThumbstick = content.Load<Texture2D>("ButtonImages/xboxControllerLeftThumbstick");
+            texA = content.Load<Texture2D>("ButtonImages/xboxControllerButtonA");
+            texB = content.Load<Texture2D>("ButtonImages/xboxControllerButtonB");
             soundEffect = content.Load<SoundEffect>("sound/room__snare-switchy");
             foreach (MenuPage page in pages)
             {
