@@ -16,7 +16,7 @@ namespace ParticleStormControl.Menu
         private List<String>[] values;
 
         private Texture2D[] itemTextures = new Texture2D[(int)Statistics.StatItems.NUM_STAT_ITEMS]; 
-        private const int ITEM_DISPLAY_SIZE = 40;
+        private const int ITEM_DISPLAY_SIZE = 30;
 
         private Texture2D playerDiedTexture;
 
@@ -198,6 +198,12 @@ namespace ParticleStormControl.Menu
                 }
             }
 
+            // hide rounding errors ...
+            Rectangle rouningHide = area;
+            rouningHide.Y = rouningHide.Top-10;
+            rouningHide.Height = 12;
+            spriteBatch.Draw(menu.PixelTexture, rouningHide, Color.Black);
+
             // draw items
             for (int step = 0; step < statistics.Steps; step++)    
             {
@@ -214,9 +220,9 @@ namespace ParticleStormControl.Menu
                     Statistics.StatItems? itemUsed = statistics.getFirstUsedItemInStep(playerIndex, step);
                     if (itemUsed != null)
                     {
+                        int yPos = (int)MathHelper.Clamp(area.Bottom - offset + (height - ITEM_DISPLAY_SIZE) / 2, area.Y, area.Y + area.Height - ITEM_DISPLAY_SIZE);
                         spriteBatch.Draw(itemTextures[(int)itemUsed],
-                            new Rectangle(area.X + step * stepWidth - ITEM_DISPLAY_SIZE / 2,
-                                          area.Bottom - offset + (height - ITEM_DISPLAY_SIZE) / 2, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
+                            new Rectangle(area.X + step * stepWidth - ITEM_DISPLAY_SIZE / 2, yPos, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
                             Color.White);
                     }
                 }
@@ -230,8 +236,7 @@ namespace ParticleStormControl.Menu
                 {
                     float percentage = (float)depthStep / statistics.Steps;
                     int xPos = (int)MathHelper.Clamp(area.X + percentage * area.Width - ITEM_DISPLAY_SIZE / 2, area.X, area.X + area.Width - ITEM_DISPLAY_SIZE);
-                    spriteBatch.Draw(playerDiedTexture, new Rectangle(area.X + (int)percentage * area.Width - ITEM_DISPLAY_SIZE / 2,
-                                                      area.Bottom - ITEM_DISPLAY_SIZE + 5, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
+                    spriteBatch.Draw(playerDiedTexture, new Rectangle(xPos, area.Bottom - ITEM_DISPLAY_SIZE + 5, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
                                             Player.Colors[PlayerColorIndices[playerIndex]]);
                 }
             }
@@ -258,11 +263,6 @@ namespace ParticleStormControl.Menu
                 float x = area.X + area.Width * progress + textOffset;
                 SimpleButton.Instance.Draw(spriteBatch, menu.Font, endTimeString, new Vector2(x, area.Y + area.Height + 10), false, menu.PixelTexture);
             }
-
-            // hide rounding errors ...
-            area.Y = area.Top;
-            area.Height = 12;
-            spriteBatch.Draw(menu.PixelTexture, area, Color.Black);
         }
 
         private string GenerateTimeString(float time)
