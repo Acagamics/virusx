@@ -30,7 +30,7 @@ namespace ParticleStormControl.Menu
         public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)
         {
             string[,] data = {
-                                 { null,                 "Keyboard 0",   "Keyboard 1",   "Gamepad" },
+                                 { null,                 "Keyboard 1",   "Keyboard 2",   "Gamepad" },
                                  { "Up",                 "W",            "Arrow Up",     null },
                                  { "Left",               "A",            "Arrow Left",   null },
                                  { "Down",               "S",            "Arrow Down",   null },

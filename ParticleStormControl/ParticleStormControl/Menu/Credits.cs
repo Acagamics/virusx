@@ -36,8 +36,8 @@ namespace ParticleStormControl.Menu
         public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)
         {
             //spriteBatch.Draw(logo, new Vector2(menu.ScreenWidth- logo.Width + 200, menu.ScreenHeight - logo.Height + 300), Color.White);
-            spriteBatch.Draw(acagamicsLogo, new Vector2(menu.ScreenWidth - acagamicsLogo.Width - 50, 50), Color.White);
-            spriteBatch.Draw(team, new Rectangle(menu.ScreenWidth - (team.Width/2) - 105, menu.ScreenHeight - (team.Height / 2) + 100, team.Width / 2, team.Height / 2), Color.White);
+            //spriteBatch.Draw(acagamicsLogo, new Vector2(menu.ScreenWidth - acagamicsLogo.Width - 50, 50), Color.White);
+            //spriteBatch.Draw(team, new Rectangle(menu.ScreenWidth - (team.Width/2) - 105, menu.ScreenHeight - (team.Height / 2) + 100, team.Width / 2, team.Height / 2), Color.White);
 
             SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Andreas Reich", new Vector2(100, 100), false, menu.TexPixel);
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Programming, Gamplay, Graphics", new Vector2(100, 150), false, menu.TexPixel);
@@ -49,9 +49,7 @@ namespace ParticleStormControl.Menu
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "2D Arts, Interface", new Vector2(100, 370), false, menu.TexPixel);
             
             SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Sebastian Lay:", new Vector2(100, 430), false, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Programming, Interface, Musik/Sound", new Vector2(100, 480), false, menu.TexPixel);            
-
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "I like that!", new Vector2(100, 650), true, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Programming, Interface, Musik/Sound", new Vector2(100, 480), false, menu.TexPixel);
         }
     }
 }

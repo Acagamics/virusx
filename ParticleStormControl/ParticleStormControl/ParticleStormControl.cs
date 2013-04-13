@@ -157,7 +157,7 @@ namespace ParticleStormControl
             Vector2 relativeMax = new Vector2(GraphicsDevice.Viewport.AspectRatio, 1.0f);
             List<Vector2> cellPositions = Level.GenerateCellPositions(7, 4, 0.09f, Vector2.Zero, relativeMax);
             background.Resize(GraphicsDevice, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), cellPositions, relativeMax);
-            background.UpdateColors(Enumerable.Repeat(Color.DimGray, cellPositions.Count).ToArray()); 
+            background.UpdateColors(Enumerable.Repeat(Color.White, cellPositions.Count).ToArray()); 
         }
         
         /// <summary>
