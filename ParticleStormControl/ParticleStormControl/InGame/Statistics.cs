@@ -55,6 +55,21 @@ namespace ParticleStormControl
         public int Steps { get { return steps; } }
         private float remainingTime;
 
+        private int lastStep;
+        /// <summary>
+        /// the highest time step if you multiply this with the StepTime you get the overall time for the game
+        /// </summary>
+        public int LastStep { get { return lastStep; } }
+        /// <summary>
+        /// the first time point for which statistical data is available. Multiplay this with StepTime and you get the start time of the statistics
+        /// </summary>
+        public int FirstStep { get { return LastStep - Steps; } }
+
+        private int maxStoredSteps;
+        /// <summary>
+        /// The maximum number of steps which will be stored. If the game takes longer, the data from the beginning of the game will be deletet
+        /// </summary>
+        public int MaxStoredSteps { get { return maxStoredSteps; } }
         #endregion
 
         #region absolut statistics
@@ -72,6 +87,8 @@ namespace ParticleStormControl
         private uint[] usedItems; // active ; split for every item
         private uint[] killedEnemies;
 
+        private int[] deathStep;
+
         #endregion
 
         #region time depend statistics
@@ -86,12 +103,13 @@ namespace ParticleStormControl
 
         #endregion
 
-        public Statistics(int _playerCount, uint _overallNumberOfBases)
+        public Statistics(int _playerCount, int _maxStoredSteps, uint _overallNumberOfBases)
         {
-            steps = 0;
+            steps = lastStep = 0;
             //stepTime = _stepTime;
             playerCount = _playerCount;
             remainingTime = 0f;
+            maxStoredSteps = _maxStoredSteps;
             OverallNumberOfBases = _overallNumberOfBases;
             init();
         }
@@ -105,6 +123,7 @@ namespace ParticleStormControl
             collectedItems = new uint[playerCount];
             usedItems = new uint[playerCount];
             killedEnemies = new uint[playerCount];
+            deathStep = new int[playerCount];
             
             dominationInStep = new List<float>[playerCount];
 
@@ -133,6 +152,7 @@ namespace ParticleStormControl
             if (remainingTime <= 0f)
             {
                 remainingTime = stepTime;
+                lastStep++;
                 return true;
             }
             else
@@ -144,48 +164,49 @@ namespace ParticleStormControl
 
         #region getter for statistics
 
+        public int getDeathStepOfPlayer(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? deathStep[playerIndex] : 0 : 0; }
         /// <summary>
         /// Not tracked yet. The total amount of generated particles
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public ulong getGeneratedParticles(int playerIndex) { return playerIndex < playerCount ? generatedParticles[playerIndex] : 0; }
+        public ulong getGeneratedParticles(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? generatedParticles[playerIndex] : 0 : 0; }
         /// <summary>
         /// The total amount of captuered bases/spawnPoints.
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public uint getCapturedBases(int playerIndex) { return playerIndex < playerCount ? capturedBases[playerIndex] : 0; }
+        public uint getCapturedBases(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? capturedBases[playerIndex] : 0 : 0; }
         /// <summary>
         /// The total amount of lost bases/spawnPoints
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public uint getLostBases(int playerIndex) { return playerIndex < playerCount ? lostBases[playerIndex] : 0; }
+        public uint getLostBases(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? lostBases[playerIndex] : 0 : 0; }
         /// <summary>
         /// The amount of won matches
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public uint getWonMatches(int playerIndex) { return playerIndex < playerCount ? wonMatches[playerIndex] : 0; }
+        public uint getWonMatches(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? wonMatches[playerIndex] : 0 : 0; }
         /// <summary>
         /// the total amount of collected items
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public uint getCollectedItems(int playerIndex) { return playerIndex < playerCount ? collectedItems[playerIndex] : 0; }
+        public uint getCollectedItems(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? collectedItems[playerIndex] : 0 : 0; }
         /// <summary>
         /// the total amount of used items
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public uint getUsedItems(int playerIndex) { return playerIndex < playerCount ? usedItems[playerIndex] : 0; }
+        public uint getUsedItems(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? usedItems[playerIndex] : 0 : 0; }
         /// <summary>
         /// Not tracked yet. The amount of killed enemys
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public uint getKilledEnemies(int playerIndex) { return playerIndex < playerCount ? killedEnemies[playerIndex] : 0; }
+        public uint getKilledEnemies(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? killedEnemies[playerIndex] : 0 : 0; }
 
         /// <summary>
         /// The domination value per TimeStep. It is a value between 0 and 1. Zero means no domination (death) and 1 means complete domination (winning player).
@@ -194,26 +215,26 @@ namespace ParticleStormControl
         /// <param name="playerIndex"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public float getDominationInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? dominationInStep[playerIndex][step] : 0) : 0; }
+        public float getDominationInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? playerIndex >= 0 ? dominationInStep[playerIndex][step] : 0 : 0) : 0; }
         
         /// <summary>
         /// The maximum number of particles a player possessed in a game
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public uint getMaxSimultaneousParticles(int playerIndex) { return playerIndex < playerCount ? maxSimultaneousParticles[playerIndex] : 0; }
+        public uint getMaxSimultaneousParticles(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? maxSimultaneousParticles[playerIndex] : 0 : 0; }
         /// <summary>
         /// The average number of particles in a game
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public uint getAverageParticles(int playerIndex) { return playerIndex < playerCount ? averageParticles[playerIndex] : 0; }
+        public uint getAverageParticles(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? averageParticles[playerIndex] : 0 : 0; }
         /// <summary>
         /// The average healt in a game
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public uint getAverageHealth(int playerIndex) { return playerIndex < playerCount ? averageHealth[playerIndex] : 0; }
+        public uint getAverageHealth(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? averageHealth[playerIndex] : 0 : 0; }
         /// <summary>
         /// the number of particles possessed by all players in a specific time step
         /// </summary>
@@ -234,14 +255,14 @@ namespace ParticleStormControl
         /// <param name="playerIndex"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public uint getParticlesInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? particlesInStep[playerIndex][step] : 0) : 0; }
+        public uint getParticlesInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? playerIndex >= 0 ? particlesInStep[playerIndex][step] : 0 : 0) : 0; }
         /// <summary>
         /// the health a player had in a specific time step
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public uint getHealthInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? healthInStep[playerIndex][step] : 0) : 0; }
+        public uint getHealthInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? playerIndex >= 0 ? healthInStep[playerIndex][step] : 0 : 0) : 0; }
         /// <summary>
         /// the number of particles possessed by all players in a specific time step
         /// </summary>
@@ -262,7 +283,7 @@ namespace ParticleStormControl
         /// <param name="playerIndex"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public uint getPossessingBasesInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? possessingBasesInStep[playerIndex][step] : 0) : 0; }
+        public uint getPossessingBasesInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? playerIndex >= 0 ? possessingBasesInStep[playerIndex][step] : 0 : 0) : 0; }
         
         /// <summary>
         /// a List of all items a player used/activated in a specific time step. The List is empty if the player has not used/activated any item.
@@ -310,6 +331,8 @@ namespace ParticleStormControl
         #endregion
 
         #region collecting statistics
+
+        public void playerDied(int playerIndex) { if (playerIndex < 0 || playerIndex >= playerCount) return; deathStep[playerIndex] = lastStep; }
 
         public void addGeneratedParticles(int playerIndex, int particles = 1)
         {
@@ -360,11 +383,12 @@ namespace ParticleStormControl
             else killedEnemies[playerIndex] -= (uint)enemies;
         }
 
-        public void setParticlesAndHealth(int playerIndex, uint particles, uint health)
+        public void setParticlesAndHealthAndPossesingBases(int playerIndex, uint particles, uint health, uint bases)
         {
             if (playerIndex < 0 || playerIndex >= playerCount) return;
             particlesInStep[playerIndex].Add(particles);
             healthInStep[playerIndex].Add(health);
+            possessingBasesInStep[playerIndex].Add((uint)bases);
 
             if (particles >= maxSimultaneousParticles[playerIndex])
                 maxSimultaneousParticles[playerIndex] = particles;
@@ -374,10 +398,16 @@ namespace ParticleStormControl
             if (steps < particlesInStep[playerIndex].Count) steps = particlesInStep[playerIndex].Count;
         }
 
-        public void setPossessingBases(int playerIndex, uint bases)
+        private void reduceAllListsByOne()
         {
-            if (playerIndex < 0 || playerIndex >= playerCount) return;
-            possessingBasesInStep[playerIndex].Add((uint)bases);
+            for (int i = 0; i < playerCount; ++i)
+            {
+                particlesInStep[i].RemoveAt(0);
+                healthInStep[i].RemoveAt(0);
+                dominationInStep[i].RemoveAt(0);
+                possessingBasesInStep[i].RemoveAt(0);
+            }
+
         }
 
         private void computeAverage(int playerIndex)
@@ -385,7 +415,12 @@ namespace ParticleStormControl
             ulong overallParticles = 0;
             ulong overallHealth = 0;
 
-            foreach (uint i in particlesInStep[playerIndex])
+            for (int i = 0; i < steps; ++i)
+            {
+                overallParticles += (ulong)particlesInStep[playerIndex][i];
+                overallHealth += (ulong)healthInStep[playerIndex][i];
+            }
+            /*foreach (uint i in particlesInStep[playerIndex])
             {
                 overallParticles += (ulong)i;
             }
@@ -393,7 +428,7 @@ namespace ParticleStormControl
             foreach (uint i in healthInStep[playerIndex])
             {
                 overallHealth += (ulong)i;
-            }
+            }*/
 
             averageParticles[playerIndex] = (uint)(overallParticles / (ulong)particlesInStep[playerIndex].Count);
             averageHealth[playerIndex] = (uint)(overallHealth / (ulong)healthInStep[playerIndex].Count);
@@ -414,6 +449,12 @@ namespace ParticleStormControl
             {
                 percentage = (float)((double)getDominationPercentage(i, currentStep) / overall);
                 dominationInStep[i].Add(percentage);
+            }
+
+            if (steps == maxStoredSteps)
+            {
+                steps--;
+                reduceAllListsByOne();
             }
         }
 

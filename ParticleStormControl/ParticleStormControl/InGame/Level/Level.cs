@@ -442,8 +442,7 @@ namespace ParticleStormControl
             {
                 for (int i = 0; i < players.Length; ++i)
                 {
-                    GameStatistics.setParticlesAndHealth(i, (uint)players[i].NumParticlesAlive, (uint)players[i].TotalHealth);
-                    GameStatistics.setPossessingBases(i, possesingBases[i]);
+                    GameStatistics.setParticlesAndHealthAndPossesingBases(i, (uint)players[i].NumParticlesAlive, (uint)players[i].TotalHealth, (uint)possesingBases[i]);
                 }
                 GameStatistics.UpdateDomination();
             }

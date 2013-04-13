@@ -121,7 +121,7 @@ namespace ParticleStormControl
             particleRenderer = new ParticleRenderer(graphicsDevice, content, players.Length);
 
             // init statistics
-            level.GameStatistics = new Statistics(Settings.Instance.NumPlayers, (uint)level.SpawnPoints.Count);
+            level.GameStatistics = new Statistics(Settings.Instance.NumPlayers, 4400, (uint)level.SpawnPoints.Count);
 
             State = GameState.Playing;
             System.GC.Collect();
@@ -200,7 +200,9 @@ namespace ParticleStormControl
                 {
                     try
                     {
+                        bool alive = players[(int)index].Alive;
                         players[(int)index].UpdateCPUPart(passedFrameTime, level.SpawnPoints, playerCantDie);
+                        if (alive && !players[(int)index].Alive) GameStatistics.playerDied((int)index);
                     }
                     catch(Exception exp)
                     {
