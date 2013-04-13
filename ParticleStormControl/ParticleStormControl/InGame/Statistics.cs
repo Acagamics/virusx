@@ -334,7 +334,13 @@ namespace ParticleStormControl
 
         #region collecting statistics
 
-        public void playerDied(int playerIndex) { if (playerIndex >= 0 && playerIndex < PlayerCount) deathStep[playerIndex] = lastStep; }
+        public void playerDied(int playerIndex)
+        {
+            if (playerIndex >= 0 && playerIndex < PlayerCount)
+            {
+                deathStep[playerIndex] = lastStep;
+            }
+        }
 
         public void addGeneratedParticles(int playerIndex, int particles = 1)
         {

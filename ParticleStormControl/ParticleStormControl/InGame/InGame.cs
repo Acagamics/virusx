@@ -300,12 +300,13 @@ namespace ParticleStormControl
             if (State == GameState.Inactive)
                 return;
 
-            float timeSinceLastFrame = (float)gameTime.TotalGameTime.TotalSeconds;
+            float totalGameTime = (float)gameTime.TotalGameTime.TotalSeconds;
+            float timeSinceLastFrame = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // draw level
-            level.Draw(timeSinceLastFrame, spriteBatch.GraphicsDevice, players);
+            level.Draw(totalGameTime, spriteBatch.GraphicsDevice, players);
 
-            inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, timeSinceLastFrame);
+            inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, totalGameTime);
 
             // debug draw damagemap
 #if DAMAGEMAP_DEBUGGING
@@ -315,7 +316,7 @@ namespace ParticleStormControl
 #endif
 
             // draw the percentage bar
-            percentageBar.Draw(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, timeSinceLastFrame);
+            percentageBar.Draw(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, totalGameTime);
 
             // reading player gpu results
             for (int i = 0; i < players.Length; ++i)
