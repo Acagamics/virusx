@@ -108,11 +108,11 @@ namespace ParticleStormControl
 
             // resize background texture if necessary
             backgroundShader.Parameters["BackgroundTexture"].SetValue((Texture2D)null);
-            if (backgroundTexture == null || backgroundTexture.Width != areaInPixel.Width || backgroundTexture.Height != areaInPixel.Height)
+            if (backgroundTexture == null || backgroundTexture.IsContentLost || backgroundTexture.Width != areaInPixel.Width || backgroundTexture.Height != areaInPixel.Height)
             {
-                if (backgroundTexture != null) backgroundTexture.Dispose();
+                if (backgroundTexture != null)
+                    backgroundTexture.Dispose();
                 backgroundTexture = new RenderTarget2D(device, areaInPixel.Width, areaInPixel.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-                backgroundTexture.ContentLost += (x, y) => { Resize(device, areaInPixel, relativeCoordMax); };
             }
 
             // resize background and regenerate
@@ -137,6 +137,8 @@ namespace ParticleStormControl
 
         public void Draw(GraphicsDevice device, float totalTimeSeconds)
         {
+            if (backgroundTexture.IsContentLost)
+                Resize(device, areaInPixel, relativeCoordMax);
 
             // background particles
             device.BlendState = BlendState.NonPremultiplied;
@@ -148,6 +150,9 @@ namespace ParticleStormControl
             device.SetVertexBuffer(quadVertexBuffer);
             backgroundShader.CurrentTechnique.Passes[0].Apply();
             device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+
+            // just to be safe - this target could get lost!
+            backgroundShader.Parameters["BackgroundTexture"].SetValue((Texture2D)null);
         }
     }
 }
