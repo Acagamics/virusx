@@ -57,6 +57,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ButtonImages\xboxControllerButtonA.tga">
+      <Name>xboxControllerButtonA</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="ButtonImages\xboxControllerButtonB.tga">
+      <Name>xboxControllerButtonB</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="ButtonImages\xboxControllerLeftThumbstick.tga">
+      <Name>xboxControllerLeftThumbstick</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="fonts\font.spritefont">
       <Name>font</Name>
       <Importer>FontDescriptionImporter</Importer>

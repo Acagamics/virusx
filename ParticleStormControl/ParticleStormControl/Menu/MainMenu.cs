@@ -16,6 +16,7 @@ namespace ParticleStormControl.Menu
         enum Button
         {
             NEWGAME,
+            CONTROLS,
             OPTIONS,
             CREDITS,
             END,
@@ -63,6 +64,10 @@ namespace ParticleStormControl.Menu
                         menu.ChangePage(Menu.Page.NEWGAME, gameTime);
                         break;
 
+                    case Button.CONTROLS:
+                        menu.ChangePage(Menu.Page.CONTROLS, gameTime);
+                        break;
+
                     case Button.OPTIONS:
                         menu.ChangePage(Menu.Page.OPTIONS, gameTime);
                         break;
@@ -82,10 +87,11 @@ namespace ParticleStormControl.Menu
         {
             //SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "< insert logo here >", new Vector2(100, 100), false, menu.PixelTexture);
             spriteBatch.Draw(logo, new Rectangle(menu.ScreenWidth - (int)(logo.Width*1.2f),(int)(logo.Height*0.2f), logo.Width,logo.Height), Color.White);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "New Game", new Vector2(100, 220), selectedButton == Button.NEWGAME, menu.PixelTexture);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Options", new Vector2(100, 280), selectedButton == Button.OPTIONS, menu.PixelTexture);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Credits", new Vector2(100, 340), selectedButton == Button.CREDITS, menu.PixelTexture);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Exit Game", new Vector2(100, 400), selectedButton == Button.END, menu.PixelTexture);
+            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "New Game", new Vector2(100, 270), selectedButton == Button.NEWGAME, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Controls", new Vector2(100, 340), selectedButton == Button.CONTROLS, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Options", new Vector2(100, 400), selectedButton == Button.OPTIONS, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Credits", new Vector2(100, 460), selectedButton == Button.CREDITS, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Exit Game", new Vector2(100, 520), selectedButton == Button.END, menu.TexPixel);
 
             spriteBatch.DrawString(menu.Font, ParticleStormControl.VERSION, new Vector2(menu.ScreenWidth - 200, menu.ScreenHeight - 50), Color.Black);
         }

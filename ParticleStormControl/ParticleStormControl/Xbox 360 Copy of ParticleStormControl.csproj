@@ -78,6 +78,7 @@
     <Compile Include="InGame\Statistics.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="InGame\Level\CapturableObject.cs" />
+    <Compile Include="Menu\Controls.cs" />
     <Compile Include="Menu\Credits.cs" />
     <Compile Include="Menu\InGame.cs" />
     <Compile Include="Menu\Options.cs" />

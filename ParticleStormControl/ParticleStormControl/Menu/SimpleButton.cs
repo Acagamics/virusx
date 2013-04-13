@@ -43,7 +43,7 @@ namespace ParticleStormControl.Menu
             spriteBatch.DrawString(font, label, position, selected ? selectedColor : normalColor);
 
             if (IsAnimated() && selected)
-                DrawBackground(spriteBatch, position, normalColor, texture, font.MeasureString(label), true);
+                DrawBackground(spriteBatch, position, normalColor, texture, font.MeasureString(label), true, width);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace ParticleStormControl.Menu
         /// <param name="width"></param>
         public void DrawTexture(SpriteBatch spriteBatch, Texture2D texture, Rectangle destinationRectangle, Rectangle sourceRectangle, bool selected, Texture2D background, int width = 0)
         {
-            DrawBackground(spriteBatch, new Vector2(destinationRectangle.X, destinationRectangle.Y), selected ? selectedColor : normalColor, background, new Vector2(sourceRectangle.Width, sourceRectangle.Height), false, width);
+            DrawBackground(spriteBatch, new Vector2(destinationRectangle.X, destinationRectangle.Y), selected ? selectedColor : normalColor, background, new Vector2(destinationRectangle.Width, destinationRectangle.Height), false, width);
          //   destinationRectangle.Offset(4, 4);
             spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, Color.White);
         }

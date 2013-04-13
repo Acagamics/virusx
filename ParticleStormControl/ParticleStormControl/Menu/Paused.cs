@@ -36,7 +36,7 @@ namespace ParticleStormControl.Menu
 
         public override void Draw(SpriteBatch spriteBatch, float frameTimeInterval)
         {
-            spriteBatch.Draw(menu.PixelTexture, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * 0.5f);
+            spriteBatch.Draw(menu.TexPixel, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * 0.5f);
             Vector2 stringSizePaused = menu.Font.MeasureString("PAUSED");
             Vector2 positionPaused = (new Vector2(menu.ScreenWidth, menu.ScreenHeight) - stringSizePaused) / 2;
 

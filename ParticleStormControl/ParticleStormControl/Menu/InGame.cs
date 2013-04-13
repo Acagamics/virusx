@@ -35,7 +35,7 @@ namespace ParticleStormControl.Menu
         public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, float frameTimeInterval)
         {
             if(blendIn > 0.0f)
-                spriteBatch.Draw(menu.PixelTexture, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * (blendIn / GAME_BLEND_DURATION));
+                spriteBatch.Draw(menu.TexPixel, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * (blendIn / GAME_BLEND_DURATION));
         }
     }
 }
