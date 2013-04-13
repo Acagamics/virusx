@@ -247,7 +247,7 @@ namespace ParticleStormControl.Menu
                 {
                     // text
                     SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, Player.VirusNames[Settings.Instance.PlayerVirusIndices[i]].ToString(),
-                                                    origin + new Vector2(SIDE_PADDING, 0),false, menu.TexPixel);
+                                                    origin + new Vector2(SIDE_PADDING, 0), playerReady[i], menu.TexPixel);
 
                     // controlls
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, Player.ControlNames[(int)Settings.Instance.PlayerControls[i]].ToString(),

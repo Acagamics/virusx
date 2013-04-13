@@ -50,13 +50,13 @@ namespace ParticleStormControl
 
         #region Misc
 
-        bool sound = true;
+        private bool sound = true;
         public bool Sound { get { return sound; } set { sound = value; } }
 
-        bool music = true;
+        private bool music = true;
         public bool Music { get { return music; } set { music = value; } }
 
-        bool forceFeedback = true;
+        private bool forceFeedback = true;
         public bool ForceFeedback
         {
             get { return forceFeedback; }
