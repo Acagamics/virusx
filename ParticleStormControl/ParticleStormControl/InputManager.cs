@@ -160,6 +160,16 @@ namespace ParticleStormControl
                 if (WasThumbstickUpPressed(i))
                     thumbStickButtonUpTimer[i] = 0.0f;
 
+                if (!IsThumbstickLeft_Down(i))
+                    thumbStickButtonLeftTimer[i] = THUMBSTICK_DIRECTION_TRESHHOLD;
+                if (!IsThumbstickRight_Down(i))
+                    thumbStickButtonRightTimer[i] = THUMBSTICK_DIRECTION_TRESHHOLD;
+                if (!IsThumbstickUp_Down(i))
+                    thumbStickButtonUpTimer[i] = THUMBSTICK_DIRECTION_TRESHHOLD;
+                if (!IsThumbstickDown_Down(i))
+                    thumbStickButtonDownTimer[i] = THUMBSTICK_DIRECTION_TRESHHOLD;
+                
+
                 oldGamePadStates[i] = currentGamePadStates[i];
                 currentGamePadStates[i] = GamePad.GetState((PlayerIndex)i);
 
@@ -210,7 +220,7 @@ namespace ParticleStormControl
             return PressedButton(Keys.Escape) || PressedButton(Buttons.Back);
         }
 
-        private const float THUMBSTICK_DIRECTION_TRESHHOLD = 0.7f;
+        private const float THUMBSTICK_DIRECTION_TRESHHOLD = 0.65f;
         private const float THUMBSTICK_DIRECTION_PAUSE_SECONDS = 0.2f;
 
         private float[] thumbStickButtonDownTimer = new float[4];

@@ -543,7 +543,7 @@ namespace ParticleStormControl
                         spawn.SpawnTimeAccum -= numSpawned / f; // don't miss anything!
                         for (int i = 0; i < numSpawned; ++i)
                         {
-                            if (currentSpawnNumber == MAX_SPAWNS_PER_FRAME || NumParticlesAlive + currentSpawnNumber == MAX_PARTICLES-1)
+                            if (currentSpawnNumber == MAX_SPAWNS_PER_FRAME || NumParticlesAlive + currentSpawnNumber == MAX_PARTICLES-2)
                                 break;
 
                             // random movement
