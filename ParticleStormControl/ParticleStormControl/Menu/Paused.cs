@@ -84,7 +84,7 @@ namespace ParticleStormControl.Menu
 
                     // find out player color
                     int playerIndex = i;
-                    for(; playerIndex<Player.MaxNumPlayers; ++playerIndex)
+                    for(; playerIndex<Player.MAX_NUM_PLAYERS; ++playerIndex)
                     {
                         if (Settings.Instance.PlayerControls[playerIndex] == InputManager.ControlType.GAMEPAD0 + i)
                             break;

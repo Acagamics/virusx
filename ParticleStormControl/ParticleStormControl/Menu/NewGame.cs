@@ -245,7 +245,7 @@ namespace ParticleStormControl.Menu
                                                     origin + new Vector2(SIDE_PADDING, 0), playerReady[i], menu.TexPixel);
 
                     // controlls
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, Player.ControlNames[(int)Settings.Instance.PlayerControls[i]].ToString(),
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, InputManager.CONTROL_NAMES[(int)Settings.Instance.PlayerControls[i]].ToString(),
                                                     origin + new Vector2(SIDE_PADDING, textBoxHeight*2 + SimpleButton.PADDING * 2), false, menu.TexPixel);
 
                     /*

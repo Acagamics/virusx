@@ -67,7 +67,7 @@ namespace ParticleStormControl
 
             if (!explosionTimer.IsRunning)
             {
-                float[] damage = new float[Player.MaxNumPlayers+1];
+                float[] damage = new float[Player.MAX_NUM_PLAYERS+1];
                 for (int i = 0; i < damage.Length; ++i)
                 {
                     damage[i] = 0.0f;
@@ -76,20 +76,20 @@ namespace ParticleStormControl
                 {
                     for (int x = damageMap_MinX; x <= damageMap_MaxX; ++x)
                     {
-                        for (int i = 0; i < Player.MaxNumPlayers; ++i)
+                        for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
                         {
                             damage[i] += damageMap.GetPlayerDamageAt(x, y, i);
-                            damage[Player.MaxNumPlayers] += damageMap.GetPlayerDamageAt(x, y, i);
+                            damage[Player.MAX_NUM_PLAYERS] += damageMap.GetPlayerDamageAt(x, y, i);
                         }
                     }
                 }
-                PossessingPercentage += damage[Player.MaxNumPlayers]*damageFactor*timeInterval;
+                PossessingPercentage += damage[Player.MAX_NUM_PLAYERS]*damageFactor*timeInterval;
 
                 if (PossessingPercentage >= 1.0f)
                 {
                     float maxDmg = damage[0];
                     CapturingPlayer = 0;
-                    for (int i = 1; i < Player.MaxNumPlayers; ++i)
+                    for (int i = 1; i < Player.MAX_NUM_PLAYERS; ++i)
                     {
                         if (maxDmg < damage[i])
                         {

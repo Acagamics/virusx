@@ -16,6 +16,18 @@ namespace ParticleStormControl
         #endregion
 
         #region enumerations
+
+        static public readonly String[] CONTROL_NAMES = new String[]
+        {
+            "WASD + SPACE",
+            "Arrows + ENTER",
+            "Gamepad 1",
+            "Gamepad 2",
+            "Gamepad 3",
+            "Gamepad 4",
+            "No Control"
+        };
+
         /// <summary>
         /// Contains all possible control types of the game.
         /// </summary>

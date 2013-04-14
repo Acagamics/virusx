@@ -27,6 +27,9 @@ namespace ParticleStormControl.Menu
         public int[] PlayerColorIndices { get; set; }
 
         const float DURATION_CONTINUE_UNAVAILABLE = 1.0f;
+        /// <summary>
+        /// if smaller than 0, continue button is available
+        /// </summary>
         float timeUntilContinueIsAvailable;
 
         enum DiagramType
@@ -202,6 +205,9 @@ namespace ParticleStormControl.Menu
 
             // if this stuff could slow down the whole game.... suprise suprise, let's optimize! ;P
 
+            // gray background
+            spriteBatch.Draw(menu.TexPixel, area, Color.Gray);
+
             // draw amount of particles per player and step
             for (int step = startStep; step < statistics.Steps; step++)     
             {
@@ -215,14 +221,6 @@ namespace ParticleStormControl.Menu
 
                     Rectangle rect = new Rectangle(area.X + (step - startStep) * stepWidth, area.Bottom - offset, stepWidth, height);
                     spriteBatch.Draw(menu.TexPixel, rect, Player.Colors[PlayerColorIndices[playerIndex]]);
-                }
-
-                // this ehm.. could be a single quad
-                if (offset < area.Height)
-                {
-                    int height = area.Height - offset;
-                    Rectangle rect = new Rectangle(area.X + (step - startStep) * stepWidth, area.Top, stepWidth, height);
-                    spriteBatch.Draw(menu.TexPixel, rect, Color.Gray);
                 }
             }
 

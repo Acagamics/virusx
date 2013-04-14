@@ -47,7 +47,7 @@ namespace ParticleStormControl
 
         private Effect particleEffect;
 
-        private static readonly Vector2 RENDERING_SIZE_CONSTANT = new Vector2(0.009f / Level.RELATIVECOR_ASPECT_RATIO, 0.009f) / Player.healthConstant;
+        private static readonly Vector2 RENDERING_SIZE_CONSTANT = new Vector2(0.009f / Level.RELATIVECOR_ASPECT_RATIO, 0.009f) / Player.HEALTH_CONSTANT;
         private const float minimumHealth = 5.0f;  // added to the health in rendering shader
 
         public ParticleRenderer(GraphicsDevice device, ContentManager content, int numPlayers)
@@ -56,7 +56,7 @@ namespace ParticleStormControl
             instanceVertexBuffer = new VertexBuffer[numPlayers];
 
             particleEffect = content.Load<Effect>("shader/particleRendering");
-            particleEffect.Parameters["TextureSize"].SetValue(Player.maxParticlesSqrt);
+            particleEffect.Parameters["TextureSize"].SetValue(Player.MAX_PARTICLES_SQRT);
             particleEffect.Parameters["HealthToSizeScale"].SetValue(RENDERING_SIZE_CONSTANT);
             particleEffect.Parameters["MinHealth"].SetValue(minimumHealth);
             particleEffect.Parameters["RelativeMax"].SetValue(Level.RELATIVE_MAX);
@@ -76,7 +76,7 @@ namespace ParticleStormControl
 
             for (int i = 0; i < numPlayers; ++i)
             {
-                instanceVertexBuffer[i] = new VertexBuffer(device, vertex2dInstance.VertexDeclaration, Player.maxParticles, BufferUsage.WriteOnly);
+                instanceVertexBuffer[i] = new VertexBuffer(device, vertex2dInstance.VertexDeclaration, Player.MAX_PARTICLES, BufferUsage.WriteOnly);
                 instanceVertexBufferBinding[i] = new VertexBufferBinding(instanceVertexBuffer[i], 0, 1);
             }
 
@@ -85,10 +85,10 @@ namespace ParticleStormControl
 
         private void UpdateVertexBuffers(int numPlayers)
         {
-            vertex2dInstance[] vertexStructBuffer = new vertex2dInstance[Player.maxParticles];
+            vertex2dInstance[] vertexStructBuffer = new vertex2dInstance[Player.MAX_PARTICLES];
             for (int playerIndex = 0; playerIndex < numPlayers; ++playerIndex)
             {
-                for (int particleIndex = 0; particleIndex < Player.maxParticles; particleIndex++)
+                for (int particleIndex = 0; particleIndex < Player.MAX_PARTICLES; particleIndex++)
                     vertexStructBuffer[particleIndex].Index = particleIndex;
                 instanceVertexBuffer[playerIndex].SetData<vertex2dInstance>(vertexStructBuffer);
             }

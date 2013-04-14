@@ -1,18 +1,14 @@
-﻿//#define ALL_CURSORS_IN_CENTER_POSITION
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Graphics.PackedVector;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ParticleStormControl
 {
     public class Player
     {
-        public const int MaxNumPlayers = 4;
+        public const int MAX_NUM_PLAYERS = 4;
 
         #region Viruses
         
@@ -88,37 +84,50 @@ namespace ParticleStormControl
         public static readonly string[] DiscriptorHealth = new string[] { "+++", "+++", "++++", "+" };
         public static readonly string[] DiscriptorDisciplin = new string[] { "++", "++", "+++", "+" };
         #endregion
+
         // attributs
-        private static readonly float[] mass_byVirus = new float[] { 0.5f, 0.63f, 0.075f, 1.1f };
-        private static readonly float[] speed_byVirus = new float[] { 0.44f, -0.42f, 0.3f, 1.0f };
-        private static readonly float[] health_byVirus = new float[] { 0.5f, 0.35f, 1.0f, -0.4f };
-        private static readonly float[] disciplin_byVirus = new float[] { 0.44f, 0.25f, 0.65f, 0.51f };
+        private static readonly float[] MASS_byVirus = new float[] { 0.5f, 0.63f, 0.075f, 1.1f };
+        private static readonly float[] SPEED_byVirus = new float[] { 0.44f, -0.42f, 0.3f, 1.0f };
+        private static readonly float[] HEALTH_byVirus = new float[] { 0.5f, 0.35f, 1.0f, -0.4f };
+        private static readonly float[] DISCIPLIN_byVirus = new float[] { 0.44f, 0.25f, 0.65f, 0.51f };
        
         // speed stuff
-        private const float speedConstant = 0.18f; // 0.13f;
-        private const float speedSettingFactor = 0.08f;
+        private const float SPEED_CONSTANT = 0.18f; // 0.13f;
+        private const float SPEED_SETTING_FACTOR = 0.08f;
 
         public float Speed
-        { get { return speedConstant + speedSettingFactor * speed_byVirus[virusIndex]; } }
+        { get { return SPEED_CONSTANT + SPEED_SETTING_FACTOR * SPEED_byVirus[virusIndex]; } }
 
         // life stuff
-        public const float healthConstant = 15.0f;
+        public const float HEALTH_CONSTANT = 15.0f;
         public const float healthSettingFactor = 15.0f;
 
+        /// <summary>
+        /// returns a mass constant that implies how many particles are spawned per base
+        /// </summary>
         public float Mass
-        { get { return -2*mass_byVirus[virusIndex]; } }
+        { get { return -2*MASS_byVirus[virusIndex]; } }
 
+        // spawn stuff!
+        private const float SPAWN_CONSTANT = 18.0f;  // higher means LESS!
+        private const float SPAWN_SETTING_FACTOR = 5.0f;  // remeber that high mass means mass_health=-1.0f
+
+        /// <summary>
+        /// returns the health of new particles
+        /// </summary>
         public float HealthStart
-        { get { return ((health_byVirus[virusIndex] * 0.5f) + 1.5f) * healthConstant; } }
+        { get { return ((HEALTH_byVirus[virusIndex] * 0.5f) + 1.5f) * HEALTH_CONSTANT; } }
 
-        // discilplin constant - higher means that the particles will move more straight in player's direction
-        private const float disciplinConstant = 0.19f;// 0.15f;
+        /// <summary>
+        /// discilplin constant - higher means that the particles will move more straight in player's direction
+        /// </summary>
+        private const float DISCIPLIN_CONSTANT = 0.19f;// 0.15f;
 
         public float Disciplin
-        { get { return 1-disciplin_byVirus[virusIndex]; } }
+        { get { return 1-DISCIPLIN_byVirus[virusIndex]; } }
 
         // attacking constant
-        private const float attackingPerSecond = 30.0f;
+        private const float ATTACKING_PER_SECOND = 30.0f;
 
         #endregion
 
@@ -129,8 +138,8 @@ namespace ParticleStormControl
         /// <summary>
         /// size of particle-data rendertargets and textures
         /// </summary>
-        public const int maxParticlesSqrt = 128;
-        public const int maxParticles = maxParticlesSqrt * maxParticlesSqrt;
+        public const int MAX_PARTICLES_SQRT = 128;
+        public const int MAX_PARTICLES = MAX_PARTICLES_SQRT * MAX_PARTICLES_SQRT;
 
         // info texture:
         // X: Health
@@ -147,9 +156,9 @@ namespace ParticleStormControl
         private RenderTarget2D[] movementTexture = new RenderTarget2D[2];
         private RenderTargetBinding[][] renderTargetBindings;
 
-        private float[] particleHelath = new float[maxParticlesSqrt * maxParticlesSqrt];
+        private float[] particleHelath = new float[MAX_PARTICLES_SQRT * MAX_PARTICLES_SQRT];
 
-        Effect particleProcessing;
+        private Effect particleProcessing;
 
         public int NumParticlesAlive
         { get; private set; }
@@ -159,11 +168,18 @@ namespace ParticleStormControl
 
         #region spawning
 
-        private const int maxSpawnsPerFrame = 32;
-        private int numSpawns = 0;
+        /// <summary>
+        /// maximum number of particles spawned in a single frame
+        /// </summary>
+        private const int MAX_SPAWNS_PER_FRAME = 32;
+
+        /// <summary>
+        /// num spawns last frame
+        /// </summary>
+        private int currentSpawnNumber = 0;
 
         public int CurrentSpawnNumber
-        { get { return numSpawns; } }
+        { get { return currentSpawnNumber; } }
 
         /// <summary>
         /// vertex for a particle spawn
@@ -188,10 +204,6 @@ namespace ParticleStormControl
             { get { return vertexDeclaration; } }
         }
 
-        // spawn stuff!
-        private const float spawnConstant = 18.0f;  // higher means LESS!
-        private const float spawnSettingFactor = 5.0f;  // remeber that high mass means mass_health=-1.0f
-
         /// <summary>
         /// vertexbuffer that holds all current spawn vertices - per spawn are 2 needed since they are rendered als tiny lines (pixels are not allowed in xna)
         /// </summary>
@@ -201,7 +213,7 @@ namespace ParticleStormControl
         /// Buffer for accumulating new vertices
         /// after finished updating all new particles will be writtten to the spawnVertexBuffer
         /// </summary>
-        private SpawnVertex[] spawnVerticesRAMBuffer = new SpawnVertex[maxSpawnsPerFrame*2];
+        private SpawnVertex[] spawnVerticesRAMBuffer = new SpawnVertex[MAX_SPAWNS_PER_FRAME*2];
 
         #endregion
 
@@ -243,18 +255,6 @@ namespace ParticleStormControl
         #endregion
 
         #region Control
-
-        static public readonly String[] ControlNames = new String[]
-        {
-            "WASD + SPACE",
-            "Arrows + ENTER",
-            "Gamepad 1",
-            "Gamepad 2",
-            "Gamepad 3",
-            "Gamepad 4",
-            "No Control"
-        };
-
 
         public InputManager.ControlType Controls
         {
@@ -331,7 +331,7 @@ namespace ParticleStormControl
         #region random
 
         readonly Random random = new Random();
-        private float NoiseToMovementFactor { get { return 15 * disciplinConstant; } }
+        private float NoiseToMovementFactor { get { return 15 * DISCIPLIN_CONSTANT; } }
 
         #endregion
 
@@ -386,20 +386,20 @@ namespace ParticleStormControl
 
             cursorPosition = cursorStartPositions[(int)playerIndex];
 
-            for (int i = 0; i < maxParticles; ++i)
+            for (int i = 0; i < MAX_PARTICLES; ++i)
                 particleHelath[i] = -1.0f;
 
             // create rendertargets (they are pingponging ;) )
-            positionTargets[0] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            positionTargets[1] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            infoTargets[0] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            infoTargets[1] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            movementTexture[0] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            movementTexture[1] = new RenderTarget2D(device, maxParticlesSqrt, maxParticlesSqrt, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            positionTargets[0] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            positionTargets[1] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            infoTargets[0] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            infoTargets[1] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            movementTexture[0] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            movementTexture[1] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
             renderTargetBindings = new RenderTargetBinding[][] { new RenderTargetBinding[] { positionTargets[0], movementTexture[0], infoTargets[0] }, 
                                                                 new RenderTargetBinding[] { positionTargets[1], movementTexture[1], infoTargets[1] } };
             particleProcessing = content.Load<Effect>("shader/particleProcessing");
-            particleProcessing.Parameters["halfPixelCorrection"].SetValue(new Vector2(-0.5f / maxParticlesSqrt, 0.5f / maxParticlesSqrt));
+            particleProcessing.Parameters["halfPixelCorrection"].SetValue(new Vector2(-0.5f / MAX_PARTICLES_SQRT, 0.5f / MAX_PARTICLES_SQRT));
             particleProcessing.Parameters["RelativeCorMax"].SetValue(Level.RELATIVE_MAX);
 
             // reset data
@@ -407,7 +407,7 @@ namespace ParticleStormControl
 
             // spawn vb
             spawnVertexBuffer = new DynamicVertexBuffer(device, SpawnVertex.VertexDeclaration, 
-                                                            maxSpawnsPerFrame * 2, BufferUsage.WriteOnly);
+                                                            MAX_SPAWNS_PER_FRAME * 2, BufferUsage.WriteOnly);
         }
 
         /// <summary>
@@ -459,8 +459,8 @@ namespace ParticleStormControl
                 return;
 
             // update spawn vb if necessary
-            if(numSpawns > 0)
-                spawnVertexBuffer.SetData<SpawnVertex>(spawnVerticesRAMBuffer, 0, numSpawns*2);
+            if(currentSpawnNumber > 0)
+                spawnVertexBuffer.SetData<SpawnVertex>(spawnVerticesRAMBuffer, 0, currentSpawnNumber*2);
 
             device.Textures[0] = null;
             device.Textures[1] = null;
@@ -476,10 +476,10 @@ namespace ParticleStormControl
             particleProcessing.Parameters["Health"].SetValue(HealthTexture);
 
             particleProcessing.Parameters["particleAttractionPosition"].SetValue(particleAttractionPosition);
-            particleProcessing.Parameters["MovementChangeFactor"].SetValue(disciplinConstant * timeInterval / (Disciplin*0.1f));//Speed);
+            particleProcessing.Parameters["MovementChangeFactor"].SetValue(DISCIPLIN_CONSTANT * timeInterval / (Disciplin*0.1f));//Speed);
             particleProcessing.Parameters["TimeInterval"].SetValue(timeInterval);
             particleProcessing.Parameters["DamageMap"].SetValue(damageMapTexture);
-            particleProcessing.Parameters["DamageFactor"].SetValue(DamageMapMask[Index] * (attackingPerSecond * timeInterval * 255));
+            particleProcessing.Parameters["DamageFactor"].SetValue(DamageMapMask[Index] * (ATTACKING_PER_SECOND * timeInterval * 255));
 
             particleProcessing.Parameters["MovementFactor"].SetValue(Speed * timeInterval);
 
@@ -498,12 +498,12 @@ namespace ParticleStormControl
 
             #region spawn
 
-            if(numSpawns > 0)
+            if(currentSpawnNumber > 0)
             {
                 particleProcessing.CurrentTechnique = particleProcessing.Techniques[1];
                 particleProcessing.CurrentTechnique.Passes[0].Apply();
                 device.SetVertexBuffer(spawnVertexBuffer);
-                device.DrawPrimitives(PrimitiveType.LineList, 0, numSpawns);
+                device.DrawPrimitives(PrimitiveType.LineList, 0, currentSpawnNumber);
             }
 
             #endregion
@@ -528,14 +528,14 @@ namespace ParticleStormControl
             }
 
             // compute spawnings
-            numSpawns = 0;
+            currentSpawnNumber = 0;
             int numSpawnPoints = 0;
             foreach (SpawnPoint spawn in spawnPoints)
             {
                 if (spawn.PossessingPlayer == (int)playerIndex)
                 {
                     spawn.SpawnTimeAccum += timeInterval;
-                    float f = spawn.SpawnSize / (spawnConstant + spawnSettingFactor * Mass);//Mass_health);
+                    float f = spawn.SpawnSize / (SPAWN_CONSTANT + SPAWN_SETTING_FACTOR * Mass);//Mass_health);
                     int numSpawned = (int)(spawn.SpawnTimeAccum * f);
 
                     if (numSpawned > 0)
@@ -543,7 +543,7 @@ namespace ParticleStormControl
                         spawn.SpawnTimeAccum -= numSpawned / f; // don't miss anything!
                         for (int i = 0; i < numSpawned; ++i)
                         {
-                            if (numSpawns == maxSpawnsPerFrame || NumParticlesAlive + numSpawns == maxParticles-1)
+                            if (currentSpawnNumber == MAX_SPAWNS_PER_FRAME || NumParticlesAlive + currentSpawnNumber == MAX_PARTICLES-1)
                                 break;
 
                             // random movement
@@ -551,11 +551,11 @@ namespace ParticleStormControl
                             movement.Normalize();
 
                             // add only the first vertex, second is copied later!
-                            int vertexIndex = numSpawns * 2;
+                            int vertexIndex = currentSpawnNumber * 2;
                             spawnVerticesRAMBuffer[vertexIndex].particlePosition = spawn.Position;
                             spawnVerticesRAMBuffer[vertexIndex].movement = movement;
                             spawnVerticesRAMBuffer[vertexIndex].health = HealthStart;
-                            ++numSpawns;
+                            ++currentSpawnNumber;
                         }
                     }
                     ++numSpawnPoints;
@@ -568,7 +568,7 @@ namespace ParticleStormControl
             int biggestAliveIndex = 0;
             NumParticlesAlive = 0;
             int currentSpawn = 0;
-            int imax = (int)MathHelper.Clamp(HighestUsedParticleIndex + numSpawns + 1, 0, maxParticles);
+            int imax = (int)MathHelper.Clamp(HighestUsedParticleIndex + currentSpawnNumber + 1, 0, MAX_PARTICLES);
             for (int i = 0; i < imax; ++i)
             {
                 float particleHealth = particleHelath[i];
@@ -578,13 +578,13 @@ namespace ParticleStormControl
                     ++NumParticlesAlive;
                     biggestAliveIndex = i;
                 }
-                else if (currentSpawn < numSpawns)
+                else if (currentSpawn < currentSpawnNumber)
                 {
-                    float x = (float)(i % maxParticlesSqrt) / maxParticlesSqrt;
-                    float y = (float)(i / maxParticlesSqrt) / maxParticlesSqrt;
+                    float x = (float)(i % MAX_PARTICLES_SQRT) / MAX_PARTICLES_SQRT;
+                    float y = (float)(i / MAX_PARTICLES_SQRT) / MAX_PARTICLES_SQRT;
                     spawnVerticesRAMBuffer[currentSpawn*2].texturePosition = new Vector2(x * 2.0f - 1.0f, (1.0f - y) * 2.0f - 1.0f);
                     spawnVerticesRAMBuffer[currentSpawn * 2 + 1] = spawnVerticesRAMBuffer[currentSpawn * 2]; // copytime!
-                    spawnVerticesRAMBuffer[currentSpawn * 2 + 1].texturePosition.X += 0.5f / maxParticlesSqrt;
+                    spawnVerticesRAMBuffer[currentSpawn * 2 + 1].texturePosition.X += 0.5f / MAX_PARTICLES_SQRT;
 
                     ++currentSpawn;
 

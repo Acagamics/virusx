@@ -76,25 +76,25 @@ namespace ParticleStormControl
         public override void ApplyDamage(DamageMap damageMap, float timeInterval)
         {
             float[] damage = new float[4];
-            for (int i = 0; i < Player.MaxNumPlayers; ++i)
+            for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
                 damage[i] = 0.0f;
 
             for (int y = damageMap_MinY; y <= damageMap_MaxY; ++y)
             {
                 for (int x = damageMap_MinX; x <= damageMap_MaxX; ++x)
                 {
-                    for (int i = 0; i < Player.MaxNumPlayers; ++i)
+                    for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
                         damage[i] += damageMap.GetPlayerDamageAt(x, y, i);
                 }
             }
 
-            for (int i = 0; i < Player.MaxNumPlayers; ++i)
+            for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
                 damage[i] *= damageFactor*timeInterval;
 
             // nobody owns this
             if (PossessingPlayer == -1)
             {
-                for (int i = 0; i < Player.MaxNumPlayers; ++i)
+                for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
                 {
                     if (CapturingPlayer == i)
                         PossessingPercentage += damage[i];
@@ -118,7 +118,7 @@ namespace ParticleStormControl
             // owned
             else
             {
-                for (int i = 0; i < Player.MaxNumPlayers; ++i)
+                for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
                 {
                     if (PossessingPlayer == i)
                         PossessingPercentage += damage[i] * defenseFactor;
@@ -142,7 +142,7 @@ namespace ParticleStormControl
             PossessingPercentage = 0.0f;
             CapturingPlayer = -1;
             float maxDamage = 0.0f;
-            for (int i = 0; i < Player.MaxNumPlayers; ++i)
+            for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
             {
                 if (damage[i] > maxDamage)
                 {
