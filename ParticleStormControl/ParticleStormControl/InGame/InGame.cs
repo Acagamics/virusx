@@ -306,7 +306,7 @@ namespace ParticleStormControl
             // draw level
             level.Draw(totalGameTime, spriteBatch.GraphicsDevice, players);
 
-            inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, totalGameTime);
+            inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime);
 
             // debug draw damagemap
 #if DAMAGEMAP_DEBUGGING
@@ -316,7 +316,7 @@ namespace ParticleStormControl
 #endif
 
             // draw the percentage bar
-            percentageBar.Draw(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, totalGameTime);
+            percentageBar.Draw(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset);
 
             // reading player gpu results
             for (int i = 0; i < players.Length; ++i)
