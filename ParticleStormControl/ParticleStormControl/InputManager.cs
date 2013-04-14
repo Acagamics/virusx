@@ -336,11 +336,9 @@ namespace ParticleStormControl
 
                 case ControlType.KEYBOARD1:
                     return PressedButton(Keys.Right);
-                    break;
 
                 case ControlType.KEYBOARD0:
                     return PressedButton(Keys.D);
-                    break;
             }
 
             return false;
