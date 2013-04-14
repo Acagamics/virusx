@@ -26,6 +26,9 @@ namespace ParticleStormControl.Menu
         public bool[] ConnectedPlayers { get; set; }
         public int[] PlayerColorIndices { get; set; }
 
+        const float DURATION_CONTINUE_UNAVAILABLE = 1.0f;
+        float timeUntilContinueIsAvailable;
+
         enum DiagramType
         {
             DOMINATION,
@@ -63,6 +66,8 @@ namespace ParticleStormControl.Menu
                     counter++;
                 }
             }
+
+            timeUntilContinueIsAvailable = DURATION_CONTINUE_UNAVAILABLE;
         }
 
         public override void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
@@ -79,7 +84,7 @@ namespace ParticleStormControl.Menu
 
         public override void Update(GameTime gameTime)
         {
-            if (InputManager.Instance.WasContinueButtonPressed())
+            if (InputManager.Instance.WasContinueButtonPressed() && timeUntilContinueIsAvailable < 0.0f)
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
             if (InputManager.Instance.AnyRightButtonPressed())
@@ -87,6 +92,8 @@ namespace ParticleStormControl.Menu
 
             if (InputManager.Instance.AnyLeftButtonPressed())
                 currentDiagramType = (DiagramType)((((int)currentDiagramType - 1) < 0 ? (int)DiagramType.NUM_VALUES : (int)(currentDiagramType)) -1);
+
+            timeUntilContinueIsAvailable -= (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -151,8 +158,8 @@ namespace ParticleStormControl.Menu
             // continue button
             text = "continue";
             width = (int)menu.Font.MeasureString(text).X;
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, text, new Vector2((int)((Settings.Instance.ResolutionX - width) * 0.5f), 
-                                                                                    Settings.Instance.ResolutionY - 80), true, menu.TexPixel);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, text, new Vector2((int)((Settings.Instance.ResolutionX - width) * 0.5f),
+                                                                                    Settings.Instance.ResolutionY - 80), timeUntilContinueIsAvailable < 0.0f, menu.TexPixel);
         }
 
 
