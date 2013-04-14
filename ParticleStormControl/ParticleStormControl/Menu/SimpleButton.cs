@@ -22,7 +22,7 @@ namespace ParticleStormControl.Menu
         private readonly Color normalColor = Color.White;
 
         public const int PADDING = 10;
-        private TimeSpan animationDuration = TimeSpan.FromMilliseconds(200);
+        private TimeSpan animationDuration = TimeSpan.FromMilliseconds(0);
         private TimeSpan lastChange = new TimeSpan();
         private TimeSpan currentTime = new TimeSpan();
 
