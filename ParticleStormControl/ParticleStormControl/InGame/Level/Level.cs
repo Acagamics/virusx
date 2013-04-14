@@ -117,7 +117,7 @@ namespace ParticleStormControl
         /// item possebilities [0] = no item; [5] = no item; [1] = antibody; [2] = dangerZone; [3] = mutate; [4] = wipeout
         /// every value is [i-1] + possebility
         /// </summary>
-        private static readonly float[] itemPossibilities = new float[] { 0.0f, 0.25f, 0.40f, 0.55f, 0.75f, 1.0f };
+        private static readonly float[] itemPossibilities = new float[] { 0.0f, 0.25f, 0.45f, 0.60f, 0.73f, 1.0f };
 
         #endregion
         

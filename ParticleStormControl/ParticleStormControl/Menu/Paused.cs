@@ -18,6 +18,11 @@ namespace ParticleStormControl.Menu
         }
         Buttons currentButton = Buttons.CONTINUE;
 
+        /// <summary>
+        /// player that controlls this menu
+        /// </summary>
+        public int ControllingPlayer { get; set; }
+
         public Paused(Menu menu)
             : base(menu)
         { }
@@ -26,10 +31,28 @@ namespace ParticleStormControl.Menu
         {
         }
 
+        public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
+        {
+            base.OnActivated(oldPage, gameTime);
+
+            // who controlls if nobody pressed?
+            if (InputManager.Instance.IsWaitingForReconnect())
+            {
+                ControllingPlayer = 0;
+                while (ControllingPlayer < Settings.Instance.NumPlayers &&
+                    InputManager.Instance.IsWaitingForReconnect(Settings.Instance.PlayerControls[ControllingPlayer]))
+                {
+                    ++ControllingPlayer;
+                }
+                if (ControllingPlayer >= Settings.Instance.NumPlayers)
+                    ControllingPlayer = 0;
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
             // back to game
-            if (InputManager.Instance.WasPauseButtonPressed())
+            if (InputManager.Instance.WasPauseButtonPressed(Settings.Instance.PlayerControls[ControllingPlayer]))
             {
                 // reset wait for reconnect settings - not connected pads will now be ignored
                 InputManager.Instance.ResetWaitingForReconnect();
@@ -41,7 +64,7 @@ namespace ParticleStormControl.Menu
           //      menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
             // selected?
-            if (InputManager.Instance.WasContinueButtonPressed())
+            if (InputManager.Instance.WasContinueButtonPressed(Settings.Instance.PlayerControls[ControllingPlayer]))
             {
                 InputManager.Instance.ResetWaitingForReconnect();
                 if(currentButton == Buttons.CONTINUE)
@@ -51,7 +74,8 @@ namespace ParticleStormControl.Menu
             }
 
             // changed option
-            if (InputManager.Instance.AnyRightButtonPressed() || InputManager.Instance.AnyLeftButtonPressed())
+            if (InputManager.Instance.WasRightButtonPressed(Settings.Instance.PlayerControls[ControllingPlayer]) ||
+                InputManager.Instance.WasLeftButtonPressed(Settings.Instance.PlayerControls[ControllingPlayer]))
                 currentButton = currentButton == Buttons.CONTINUE ? Buttons.QUIT_TO_MAINMENU : Buttons.CONTINUE;
         }
 
@@ -90,7 +114,7 @@ namespace ParticleStormControl.Menu
                         if (Settings.Instance.PlayerControls[playerIndex] == InputManager.ControlType.GAMEPAD0 + i)
                             break;
                     }
-                    if(Settings.Instance.PlayerColorIndices[playerIndex] >=0)
+                    if (playerIndex<Player.MAX_NUM_PLAYERS && Settings.Instance.PlayerColorIndices[playerIndex] >= 0)
                         spriteBatch.DrawString(menu.Font, message, position, Player.Colors[Settings.Instance.PlayerColorIndices[playerIndex]]);
  
 

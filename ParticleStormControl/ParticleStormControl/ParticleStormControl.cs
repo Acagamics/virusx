@@ -198,7 +198,6 @@ namespace ParticleStormControl
 
             if (InputManager.Instance.PressedButton(Keys.F1))
                 showStatistics = !showStatistics;
-
         }
 
         /// <summary>
@@ -255,6 +254,42 @@ namespace ParticleStormControl
             }
 
             base.Draw(gameTime);
+
+            // screenshots
+#if WINDOWS
+            if (InputManager.Instance.PressedButton(Keys.PrintScreen))
+            {
+                int w = GraphicsDevice.PresentationParameters.BackBufferWidth;
+                int h = GraphicsDevice.PresentationParameters.BackBufferHeight;
+
+                // pull the picture from the buffer
+                int[] backBuffer = new int[w * h];
+                GraphicsDevice.GetBackBufferData(backBuffer);
+
+                // copy into a texture
+                using (Texture2D texture = new Texture2D(GraphicsDevice, w, h, false, GraphicsDevice.PresentationParameters.BackBufferFormat))
+                {
+                    // yeah this sucks.. but is the official solution
+                    texture.SetData(backBuffer);
+
+                    // find
+                    string filename;
+                    int screenshot = 0;
+                    do
+                    {
+                        ++screenshot;
+                        filename = "Screenshot" + screenshot + ".jpg";
+                    } while (System.IO.File.Exists(filename));
+
+                    // save to disk
+                    using (var stream = System.IO.File.OpenWrite(filename))
+                    {
+                        texture.SaveAsJpeg(stream, w, h);
+                        stream.Close();
+                    }
+                }
+            }
+#endif
         }
     }
 }

@@ -110,7 +110,27 @@ namespace ParticleStormControl
         /// <returns>true if waiting</returns>
         public bool IsWaitingForReconnect()
         {
-            return waitingForReconnect.Any(x => x);
+            for (int controller = 0; controller < waitingForReconnect.Length; ++controller)
+            {
+                if (waitingForReconnect[controller])
+                {
+                    // relevant? ask settings
+                    bool relevant = false;
+                    for (int player = 0; player < Settings.Instance.NumPlayers; ++player)
+                    {
+                        if (Settings.Instance.PlayerControls[player] == ControlType.GAMEPAD0 + controller)
+                        {
+                            relevant = true;
+                            break;
+                        }
+                    }
+                    if(!relevant)
+                        waitingForReconnect[controller] = false;
+                    else
+                        return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -127,6 +147,14 @@ namespace ParticleStormControl
             return waitingForReconnect[controller];
         }
 
+        public bool IsWaitingForReconnect(ControlType controlType)
+        {
+            if (controlType != ControlType.KEYBOARD0 || controlType != ControlType.KEYBOARD1)
+                return IsWaitingForReconnect((int)controlType - (int)ControlType.GAMEPAD0);
+            else
+                return false;
+        }
+
         /// <summary>
         /// clears the waiting-for-reconnect table
         /// </summary>
@@ -141,23 +169,34 @@ namespace ParticleStormControl
             oldKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
 
-            thumbStickButtonDownTimer += timeSinceLastCall;
-            thumbStickButtonUpTimer += timeSinceLastCall;
-            thumbStickButtonLeftTimer += timeSinceLastCall;
-            thumbStickButtonRightTimer += timeSinceLastCall;
 
             // controller
             for (int i = 0; i < 4; ++i)
             {
+                thumbStickButtonDownTimer[i] += timeSinceLastCall;
+                thumbStickButtonUpTimer[i] += timeSinceLastCall;
+                thumbStickButtonLeftTimer[i] += timeSinceLastCall;
+                thumbStickButtonRightTimer[i] += timeSinceLastCall;
+
                 // pressed
                 if (WasThumbstickLeftPressed(i))
-                    thumbStickButtonLeftTimer = 0.0f;
+                    thumbStickButtonLeftTimer[i] = 0.0f;
                 if (WasThumbstickRightPressed(i))
-                    thumbStickButtonRightTimer = 0.0f;
+                    thumbStickButtonRightTimer[i] = 0.0f;
                 if (WasThumbstickDownPressed(i))
-                    thumbStickButtonDownTimer = 0.0f;
+                    thumbStickButtonDownTimer[i] = 0.0f;
                 if (WasThumbstickUpPressed(i))
-                    thumbStickButtonUpTimer = 0.0f;
+                    thumbStickButtonUpTimer[i] = 0.0f;
+
+                if (!IsThumbstickLeft_Down(i))
+                    thumbStickButtonLeftTimer[i] = THUMBSTICK_DIRECTION_TRESHHOLD;
+                if (!IsThumbstickRight_Down(i))
+                    thumbStickButtonRightTimer[i] = THUMBSTICK_DIRECTION_TRESHHOLD;
+                if (!IsThumbstickUp_Down(i))
+                    thumbStickButtonUpTimer[i] = THUMBSTICK_DIRECTION_TRESHHOLD;
+                if (!IsThumbstickDown_Down(i))
+                    thumbStickButtonDownTimer[i] = THUMBSTICK_DIRECTION_TRESHHOLD;
+                
 
                 oldGamePadStates[i] = currentGamePadStates[i];
                 currentGamePadStates[i] = GamePad.GetState((PlayerIndex)i);
@@ -191,6 +230,23 @@ namespace ParticleStormControl
 
         #region Game-Specific Commands
 
+        public bool WasPauseButtonPressed(ControlType control)
+        {
+            switch (control)
+            {
+                case ControlType.KEYBOARD0:
+                case ControlType.KEYBOARD1:
+                    return PressedButton(Keys.P);
+
+                case ControlType.GAMEPAD0:
+                case ControlType.GAMEPAD1:
+                case ControlType.GAMEPAD2:
+                case ControlType.GAMEPAD3:
+                    return PressedButton(Buttons.Start, control - ControlType.GAMEPAD0);
+            }
+            return false;
+        }
+
         public bool WasPauseButtonPressed()
         {
             return PressedButton(Keys.P) || PressedButton(Buttons.Start);
@@ -204,18 +260,37 @@ namespace ParticleStormControl
                     PressedButton(Buttons.Start);
         }
 
+        public bool WasContinueButtonPressed(ControlType control)
+        {
+            switch (control)
+            {
+                case ControlType.KEYBOARD1:
+                    return PressedButton(Keys.Enter);
+                case ControlType.KEYBOARD0:
+                    return PressedButton(Keys.Space);
+
+                case ControlType.GAMEPAD0:
+                case ControlType.GAMEPAD1:
+                case ControlType.GAMEPAD2:
+                case ControlType.GAMEPAD3:
+                    return PressedButton(Buttons.A, control - ControlType.GAMEPAD0) ||
+                           PressedButton(Buttons.Start, control - ControlType.GAMEPAD0);
+            }
+            return false;
+        }
+
         public bool WasExitButtonPressed()
         {
             return PressedButton(Keys.Escape) || PressedButton(Buttons.Back);
         }
 
-        private const float THUMBSTICK_DIRECTION_TRESHHOLD = 0.7f;
+        private const float THUMBSTICK_DIRECTION_TRESHHOLD = 0.65f;
         private const float THUMBSTICK_DIRECTION_PAUSE_SECONDS = 0.2f;
 
-        private float thumbStickButtonDownTimer = THUMBSTICK_DIRECTION_TRESHHOLD;
-        private float thumbStickButtonUpTimer = THUMBSTICK_DIRECTION_TRESHHOLD;
-        private float thumbStickButtonLeftTimer = THUMBSTICK_DIRECTION_TRESHHOLD;
-        private float thumbStickButtonRightTimer = THUMBSTICK_DIRECTION_TRESHHOLD;
+        private float[] thumbStickButtonDownTimer = new float[4];
+        private float[] thumbStickButtonUpTimer = new float[4];
+        private float[] thumbStickButtonLeftTimer = new float[4];
+        private float[] thumbStickButtonRightTimer = new float[4];
 
         public bool AnyDownButtonPressed()
         {
@@ -247,6 +322,48 @@ namespace ParticleStormControl
             }
 
             return PressedButton(Buttons.DPadLeft) || PressedButton(Keys.Left);
+        }
+
+        public bool WasRightButtonPressed(ControlType control)
+        {
+            switch (control)
+            {
+                case ControlType.GAMEPAD0:
+                case ControlType.GAMEPAD1:
+                case ControlType.GAMEPAD2:
+                case ControlType.GAMEPAD3:
+                    return PressedButton(Buttons.DPadRight, control - ControlType.GAMEPAD0) || WasThumbstickRightPressed(control - ControlType.GAMEPAD0);
+
+                case ControlType.KEYBOARD1:
+                    return PressedButton(Keys.Right);
+
+                case ControlType.KEYBOARD0:
+                    return PressedButton(Keys.D);
+            }
+
+            return false;
+        }
+
+        public bool WasLeftButtonPressed(ControlType control)
+        {
+            switch (control)
+            {
+                case ControlType.GAMEPAD0:
+                case ControlType.GAMEPAD1:
+                case ControlType.GAMEPAD2:
+                case ControlType.GAMEPAD3:
+                    return PressedButton(Buttons.DPadLeft, control - ControlType.GAMEPAD0) || WasThumbstickLeftPressed(control - ControlType.GAMEPAD0);
+
+                case ControlType.KEYBOARD1:
+                    PressedButton(Keys.Left);
+                    break;
+
+                case ControlType.KEYBOARD0:
+                    PressedButton(Keys.A);
+                    break;
+            }
+
+            return false;
         }
 
         public bool AnyRightButtonPressed()
@@ -430,23 +547,26 @@ namespace ParticleStormControl
         }
         public bool WasThumbstickLeftPressed(int controller)
         {
-            return currentGamePadStates[controller].ThumbSticks.Left.X < -THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonLeftTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
+            return currentGamePadStates[controller].ThumbSticks.Left.X < -THUMBSTICK_DIRECTION_TRESHHOLD && 
+                        thumbStickButtonLeftTimer[controller] > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
         }
 
         public bool WasThumbstickRightPressed(int controller)
         {
-            return currentGamePadStates[controller].ThumbSticks.Left.X > THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonRightTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
+            return currentGamePadStates[controller].ThumbSticks.Left.X > THUMBSTICK_DIRECTION_TRESHHOLD &&
+                        thumbStickButtonRightTimer[controller] > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
         }
 
         public bool WasThumbstickUpPressed(int controller)
         {
-            return currentGamePadStates[controller].ThumbSticks.Left.Y > THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonUpTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
+            return currentGamePadStates[controller].ThumbSticks.Left.Y > THUMBSTICK_DIRECTION_TRESHHOLD &&
+                         thumbStickButtonUpTimer[controller] > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
         }
 
         public bool WasThumbstickDownPressed(int controller)
         {
-            return currentGamePadStates[controller].ThumbSticks.Left.Y < -THUMBSTICK_DIRECTION_TRESHHOLD && 
-                        thumbStickButtonDownTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
+            return currentGamePadStates[controller].ThumbSticks.Left.Y < -THUMBSTICK_DIRECTION_TRESHHOLD &&
+                        thumbStickButtonDownTimer[controller] > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
         }
 
         #endregion
