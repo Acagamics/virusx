@@ -442,21 +442,21 @@ namespace ParticleStormControl
             averageHealth[playerIndex] = (uint)(overallHealth / (ulong)healthInStep[playerIndex].Count);
         }
 
-        public void UpdateDomination()
+        public void UpdateDomination(Player[] players)
         {
-            int currentStep = steps - 1;
-            ulong overall = 0;
+            //int currentStep = steps - 1;
+            //ulong overall = 0;
 
-            for (int i = 0; i < playerCount; ++i)
+           /* for (int i = 0; i < playerCount; ++i)
             {
                 overall += getDominationPercentage(i,currentStep);
-            }
+            }*/
 
-            float percentage = 0f;
+            float [] percentage = ComputeDomination(players);
             for (int i = 0; i < playerCount; ++i)
             {
-                percentage = (float)((double)getDominationPercentage(i, currentStep) / overall);
-                dominationInStep[i].Add(percentage);
+                //percentage = (float)((double)getDominationPercentage(i, currentStep) / overall);
+                dominationInStep[i].Add(percentage[i]);
             }
 
             if (steps == maxStoredSteps)
@@ -466,9 +466,36 @@ namespace ParticleStormControl
             }
         }
 
-        private ulong getDominationPercentage(int playerIndex, int step)
+        /*private ulong getDominationPercentage(int playerIndex, int step)
         {
             return healthInStep[playerIndex][step] + possessingBasesInStep[playerIndex][step] * 100000 + particlesInStep[playerIndex][step];
+        }*/
+
+        public static float[] ComputeDomination(Player[] players)
+        {
+            float[] result = new float[players.Length];// + 1]; result[players.Length] = 0.0f;
+            float overallHealth = 0.0f;
+            ulong overallParticles = 0;
+            float overallBaseSizes = 0.0f;
+            uint overallBases = 0;
+            for (int i = 0; i < players.Length; ++i)
+            {
+                overallBaseSizes += players[i].PossessingBasesOverallSize;
+                overallParticles += (ulong)players[i].NumParticlesAlive;
+                overallHealth += players[i].TotalHealth;
+                overallBases += players[i].PossessingBases;
+            }
+
+            for (int i = 0; i < players.Length; ++i)
+            {
+                result[i] = (((players[i].PossessingBasesOverallSize / overallBaseSizes)*2f)
+                    + (float)players[i].NumParticlesAlive / overallParticles
+                    + players[i].TotalHealth / overallHealth
+                    + (float)players[i].PossessingBases / overallBases) / 5f;
+                //result[players.Length] += result[i];
+            }
+            
+            return result;
         }
 
         public void itemUsed(int playerIndex, Item.ItemType _item)

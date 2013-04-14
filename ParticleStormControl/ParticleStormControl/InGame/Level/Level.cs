@@ -347,7 +347,8 @@ namespace ParticleStormControl
         {
             // statistics
             uint[] possesingBases = new uint[players.Length];
-            for (int i = 0; i < possesingBases.Length; ++i) possesingBases[i] = 0;
+            float[] possesingBasesOverallSize = new float[players.Length];
+            for (int i = 0; i < possesingBases.Length; ++i) { possesingBases[i] = 0; possesingBasesOverallSize[i] = 0.0f; }
             // update
             foreach (MapObject mapObject in mapObjects)
             {
@@ -366,13 +367,17 @@ namespace ParticleStormControl
                 {
                     SpawnPoint sp = mapObject as SpawnPoint;
                     if (sp.PossessingPlayer != -1)
+                    {
                         possesingBases[sp.PossessingPlayer]++;
+                        possesingBasesOverallSize[sp.PossessingPlayer] += sp.Size;
+                    }
                 }
             }
 
             for (int i = 0; i < players.Length; ++i)
             {
-                players[i].PossingBases = possesingBases[i];
+                players[i].PossessingBases = possesingBases[i];
+                players[i].PossessingBasesOverallSize = possesingBasesOverallSize[i];
             }
 
             // remove dead objects
@@ -459,7 +464,7 @@ namespace ParticleStormControl
                     {
                         GameStatistics.setParticlesAndHealthAndPossesingBases(i, (uint)players[i].NumParticlesAlive, (uint)players[i].TotalHealth, (uint)possesingBases[i]);
                     }
-                    GameStatistics.UpdateDomination();
+                    GameStatistics.UpdateDomination(players);
                 }
                 else dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug = false;
             }

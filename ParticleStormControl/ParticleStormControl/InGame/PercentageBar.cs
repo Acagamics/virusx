@@ -32,17 +32,18 @@ namespace ParticleStormControl
         {
             spriteBatch.Begin();
 
-            int sum = 0;
+            /*int sum = 0;
             for (int i = 0; i < players.Length; i++)
             {
                 sum += GetPercent(players, i);
-            }
-
+            }*/
+            float[] domination = Statistics.ComputeDomination(players);
             // only colors
             int offset = 0;
             for (int i = 0; i < players.Length; i++)
             {
-                int width = (int)(GetPercent(players, i) / (float)sum * levelPixelSize.X);
+                //int width = (int)(GetPercent(players, i) / (float)sum * levelPixelSize.X);
+                int width = (int)(domination[i] * levelPixelSize.X);
                 spriteBatch.Draw(pixel, new Rectangle(levelPixelOffset.X + offset, levelPixelOffset.Y - HEIGHT, width, HEIGHT), players[i].Color);
                 offset += width;
             }
@@ -56,9 +57,9 @@ namespace ParticleStormControl
             spriteBatch.End();
         }
 
-        private int GetPercent(Player[] players, int index)
+        /*private int GetPercent(Player[] players, int index)
         {
-            return (int)players[index].TotalHealth+players[index].NumParticlesAlive+(100000*(int)players[index].PossingBases);
-        }
+            return (int)players[index].TotalHealth+players[index].NumParticlesAlive+(100000*(int)players[index].PossessingBases);
+        }*/
     }
 }

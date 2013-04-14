@@ -367,7 +367,11 @@ namespace ParticleStormControl
         /// <summary>
         /// for the percentage bar
         /// </summary>
-        public uint PossingBases { get; set; }
+        public uint PossessingBases { get; set; }
+        /// <summary>
+        /// for the percentage bar
+        /// </summary>
+        public float PossessingBasesOverallSize { get; set; }
 
         #endregion
 
