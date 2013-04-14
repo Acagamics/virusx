@@ -35,9 +35,17 @@ namespace ParticleStormControl.Menu
             }
 
             // controller disconnect -> pause
-            if (InputManager.Instance.PressedButton(Microsoft.Xna.Framework.Input.Keys.Escape) || 
-                InputManager.Instance.WasPauseButtonPressed() || InputManager.Instance.IsWaitingForReconnect())
-                menu.ChangePage(Menu.Page.PAUSED, gameTime);
+            for (int i = 0; i < Settings.Instance.NumPlayers; ++i)
+            {
+                if (InputManager.Instance.IsWaitingForReconnect())
+                    menu.ChangePage(Menu.Page.PAUSED, gameTime);
+
+                if (InputManager.Instance.WasPauseButtonPressed(Settings.Instance.PlayerControls[i]))
+                {
+                    ((Paused)menu.GetPage(Menu.Page.PAUSED)).ControllingPlayer = i;
+                    menu.ChangePage(Menu.Page.PAUSED, gameTime);
+                }
+            }
 
             blendIn -= (float)gameTime.ElapsedGameTime.TotalSeconds;
         }

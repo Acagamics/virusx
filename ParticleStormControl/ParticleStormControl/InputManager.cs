@@ -110,22 +110,22 @@ namespace ParticleStormControl
         /// <returns>true if waiting</returns>
         public bool IsWaitingForReconnect()
         {
-            for (int i = 0; i < waitingForReconnect.Length; ++i)
+            for (int controller = 0; controller < waitingForReconnect.Length; ++controller)
             {
-                if (waitingForReconnect[i])
+                if (waitingForReconnect[controller])
                 {
                     // relevant? ask settings
                     bool relevant = false;
                     for (int player = 0; player < Settings.Instance.NumPlayers; ++player)
                     {
-                        if (Settings.Instance.PlayerControls[player] == ControlType.GAMEPAD0 + i)
+                        if (Settings.Instance.PlayerControls[player] == ControlType.GAMEPAD0 + controller)
                         {
                             relevant = true;
                             break;
                         }
                     }
                     if(!relevant)
-                        waitingForReconnect[i] = false;
+                        waitingForReconnect[controller] = false;
                     else
                         return true;
                 }
@@ -145,6 +145,14 @@ namespace ParticleStormControl
                 throw new Exception("There are only controller 0-3 - can't access controller " + controller);
 #endif
             return waitingForReconnect[controller];
+        }
+
+        public bool IsWaitingForReconnect(ControlType controlType)
+        {
+            if (controlType != ControlType.KEYBOARD0 || controlType != ControlType.KEYBOARD1)
+                return IsWaitingForReconnect((int)controlType - (int)ControlType.GAMEPAD0);
+            else
+                return false;
         }
 
         /// <summary>
@@ -222,6 +230,23 @@ namespace ParticleStormControl
 
         #region Game-Specific Commands
 
+        public bool WasPauseButtonPressed(ControlType control)
+        {
+            switch (control)
+            {
+                case ControlType.KEYBOARD0:
+                case ControlType.KEYBOARD1:
+                    return PressedButton(Keys.P);
+
+                case ControlType.GAMEPAD0:
+                case ControlType.GAMEPAD1:
+                case ControlType.GAMEPAD2:
+                case ControlType.GAMEPAD3:
+                    return PressedButton(Buttons.Start, control - ControlType.GAMEPAD0);
+            }
+            return false;
+        }
+
         public bool WasPauseButtonPressed()
         {
             return PressedButton(Keys.P) || PressedButton(Buttons.Start);
@@ -233,6 +258,25 @@ namespace ParticleStormControl
                    PressedButton(Keys.Enter) ||
                     PressedButton(Buttons.A) ||
                     PressedButton(Buttons.Start);
+        }
+
+        public bool WasContinueButtonPressed(ControlType control)
+        {
+            switch (control)
+            {
+                case ControlType.KEYBOARD1:
+                    return PressedButton(Keys.Enter);
+                case ControlType.KEYBOARD0:
+                    return PressedButton(Keys.Space);
+
+                case ControlType.GAMEPAD0:
+                case ControlType.GAMEPAD1:
+                case ControlType.GAMEPAD2:
+                case ControlType.GAMEPAD3:
+                    return PressedButton(Buttons.A, control - ControlType.GAMEPAD0) ||
+                           PressedButton(Buttons.Start, control - ControlType.GAMEPAD0);
+            }
+            return false;
         }
 
         public bool WasExitButtonPressed()
@@ -278,6 +322,50 @@ namespace ParticleStormControl
             }
 
             return PressedButton(Buttons.DPadLeft) || PressedButton(Keys.Left);
+        }
+
+        public bool WasRightButtonPressed(ControlType control)
+        {
+            switch (control)
+            {
+                case ControlType.GAMEPAD0:
+                case ControlType.GAMEPAD1:
+                case ControlType.GAMEPAD2:
+                case ControlType.GAMEPAD3:
+                    return PressedButton(Buttons.DPadRight, control - ControlType.GAMEPAD0) || WasThumbstickRightPressed(control - ControlType.GAMEPAD0);
+
+                case ControlType.KEYBOARD1:
+                    return PressedButton(Keys.Right);
+                    break;
+
+                case ControlType.KEYBOARD0:
+                    return PressedButton(Keys.D);
+                    break;
+            }
+
+            return false;
+        }
+
+        public bool WasLeftButtonPressed(ControlType control)
+        {
+            switch (control)
+            {
+                case ControlType.GAMEPAD0:
+                case ControlType.GAMEPAD1:
+                case ControlType.GAMEPAD2:
+                case ControlType.GAMEPAD3:
+                    return PressedButton(Buttons.DPadLeft, control - ControlType.GAMEPAD0) || WasThumbstickLeftPressed(control - ControlType.GAMEPAD0);
+
+                case ControlType.KEYBOARD1:
+                    PressedButton(Keys.Left);
+                    break;
+
+                case ControlType.KEYBOARD0:
+                    PressedButton(Keys.A);
+                    break;
+            }
+
+            return false;
         }
 
         public bool AnyRightButtonPressed()
