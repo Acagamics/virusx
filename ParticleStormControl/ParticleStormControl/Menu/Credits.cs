@@ -36,11 +36,11 @@ namespace ParticleStormControl.Menu
         public override void Update(GameTime gameTime)
         {
             // back to main menu
-            if (InputManager.Instance.PauseButton()
-                || InputManager.Instance.ContinueButton()
+            if (InputManager.Instance.WasPauseButtonPressed()
+                || InputManager.Instance.WasContinueButtonPressed()
                 || InputManager.Instance.PressedButton(Buttons.B)
                 || InputManager.Instance.PressedButton(Keys.Escape)
-                || InputManager.Instance.ExitButton()
+                || InputManager.Instance.WasExitButtonPressed()
                 || gameTime.TotalGameTime.Subtract(entry) > TimeSpan.FromSeconds(110))
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
         }

@@ -179,12 +179,12 @@ namespace ParticleStormControl
 
         #region Game-Specific Commands
 
-        public bool PauseButton()
+        public bool WasPauseButtonPressed()
         {
             return PressedButton(Keys.P) || PressedButton(Buttons.Start);
         }
 
-        public bool ContinueButton()
+        public bool WasContinueButtonPressed()
         {
             return PressedButton(Keys.Space) ||
                    PressedButton(Keys.Enter) ||
@@ -192,7 +192,7 @@ namespace ParticleStormControl
                     PressedButton(Buttons.Start);
         }
 
-        public bool ExitButton()
+        public bool WasExitButtonPressed()
         {
             return PressedButton(Keys.Escape) || PressedButton(Buttons.Back);
         }

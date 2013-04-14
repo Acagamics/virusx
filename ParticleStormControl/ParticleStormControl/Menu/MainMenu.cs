@@ -53,7 +53,7 @@ namespace ParticleStormControl.Menu
             {
                 menu.ChangePage(Menu.Page.NEWGAME, gameTime);
             }
-            else if (InputManager.Instance.ContinueButton())
+            else if (InputManager.Instance.WasContinueButtonPressed())
             {
                 switch (selectedButton)
                 {

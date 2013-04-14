@@ -86,12 +86,12 @@ namespace ParticleStormControl.Menu
             selectedButton = (Button)(selectionInt);
 
             // button selected
-            bool changedOne = (InputManager.Instance.AnyLeftButtonPressed() || InputManager.Instance.AnyRightButtonPressed() || InputManager.Instance.ContinueButton());
-            if (InputManager.Instance.ContinueButton() && selectedButton == Button.EXIT || InputManager.Instance.PressedButton(Keys.Escape) || InputManager.Instance.PressedButton(Buttons.B) || InputManager.Instance.ExitButton())
+            bool changedOne = (InputManager.Instance.AnyLeftButtonPressed() || InputManager.Instance.AnyRightButtonPressed() || InputManager.Instance.WasContinueButtonPressed());
+            if (InputManager.Instance.WasContinueButtonPressed() && selectedButton == Button.EXIT || InputManager.Instance.PressedButton(Keys.Escape) || InputManager.Instance.PressedButton(Buttons.B) || InputManager.Instance.WasExitButtonPressed())
             {
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
             }
-            else if (InputManager.Instance.ContinueButton() && selectedButton == Button.BACK)
+            else if (InputManager.Instance.WasContinueButtonPressed() && selectedButton == Button.BACK)
             {
                 Settings.Instance.Fullscreen = fullscreen;
                 Settings.Instance.Sound = sound;

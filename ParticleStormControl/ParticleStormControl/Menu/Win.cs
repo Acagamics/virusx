@@ -79,7 +79,7 @@ namespace ParticleStormControl.Menu
 
         public override void Update(GameTime gameTime)
         {
-            if (InputManager.Instance.ContinueButton())
+            if (InputManager.Instance.WasContinueButtonPressed())
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
             if (InputManager.Instance.AnyRightButtonPressed())

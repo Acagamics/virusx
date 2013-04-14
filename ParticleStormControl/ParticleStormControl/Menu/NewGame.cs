@@ -95,7 +95,7 @@ namespace ParticleStormControl.Menu
             menu.ChangePage(Menu.Page.INGAME,gameTime);
 #endif
 
-            if (InputManager.Instance.ExitButton())
+            if (InputManager.Instance.WasExitButtonPressed())
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
             TimeSpan oldCountdown = countdown;
