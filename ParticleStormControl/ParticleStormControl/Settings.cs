@@ -34,7 +34,7 @@ namespace ParticleStormControl
         private InputManager.ControlType[] playerControls = new InputManager.ControlType[]{ InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE };
         public InputManager.ControlType[] PlayerControls { get { return playerControls; } }
         private int numPlayers;
-        public int NumPlayers { get { return numPlayers; } set { numPlayers = value; } }
+        public int NumPlayers { get { return numPlayers; } set { if(value <= Player.MAX_NUM_PLAYERS) numPlayers = value; } }
         private int[] playerColorIndices = new int[] { -1, -1, -1, -1 };
         public int[] PlayerColorIndices { get { return playerColorIndices; } }
         private int[] playerVirusIndices = new int[] { 0, 0, 0, 0 };

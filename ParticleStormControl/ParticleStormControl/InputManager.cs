@@ -121,7 +121,7 @@ namespace ParticleStormControl
                         if (Settings.Instance.PlayerControls[player] == ControlType.GAMEPAD0 + controller)
                         {
                             relevant = true;
-                            return false;
+                            break;
                         }
                     }
                     if(!relevant)
