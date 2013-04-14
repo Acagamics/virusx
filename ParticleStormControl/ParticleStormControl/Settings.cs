@@ -65,6 +65,16 @@ namespace ParticleStormControl
 
         #endregion
 
+        public void Reset()
+        {
+            ForceFeedback = true;
+            Sound = true;
+            Music = true;
+            Fullscreen = false;
+            ResolutionX = MINIMUM_SCREEN_WIDTH;
+            ResolutionY = MINIMUM_SCREEN_HEIGHT;
+        }
+
         public Color GetPlayerColor(int playerIndex)
         {
 #if _DEBUG
@@ -77,9 +87,6 @@ namespace ParticleStormControl
         public void ResetPlayerSettingsToDefault()
         {
             numPlayers = 0;
-            ForceFeedback = true;
-            Sound = true;
-            Music = true;
 
 #if XBOX
             for (int i = 0; i < 4; ++i)
@@ -156,6 +163,7 @@ namespace ParticleStormControl
                 // error in xml document - write a new one with standard values
                 try
                 {
+                    Reset();
                     Save();
                 }
                 catch

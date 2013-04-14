@@ -49,6 +49,7 @@ namespace ParticleStormControl.Menu
         {
             fullscreen = Settings.Instance.Fullscreen;
             sound = Settings.Instance.Sound;
+            music = Settings.Instance.Music;
 
             // search.. ehrm.. nearest resolution
             availableResolutions.AddRange(from dispMode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes

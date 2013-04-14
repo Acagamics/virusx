@@ -96,6 +96,7 @@ namespace ParticleStormControl.Menu
             texA = content.Load<Texture2D>("ButtonImages/xboxControllerButtonA");
             texB = content.Load<Texture2D>("ButtonImages/xboxControllerButtonB");
             soundEffect = content.Load<SoundEffect>("sound/room__snare-switchy");
+
             foreach (MenuPage page in pages)
             {
                 if (page != null)

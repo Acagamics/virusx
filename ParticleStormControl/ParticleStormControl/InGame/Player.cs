@@ -26,10 +26,10 @@ namespace ParticleStormControl
         public readonly static string[] VirusNames = { "Influenza A", "Hepatitis B", "Human immunodeficiency", "Epstein-Barr" };
         public readonly static string[] VirusAdditionalInfo = { "It is a highly contagious virus which is a potantial pandemic threat.",
                                                                "Can also lead to cirrhosis and hepatocellular carcinoma.",
-                                                               "Infection with HIV occurs by the transfer of blood, semen, vaginal fluid, pre-ejaculate, or breast milk.",
+                                                               "Infection with HIV occurs by the transfer of blood, semen,\nvaginal fluid, pre-ejaculate, or breast milk.",
                                                                "It is one of the most common viruses in humans." };
         public readonly static string[] VirusClassification = { "Group V; Genus A; Family of Orthomyxoviridae",
-                                                                  "Goup VII; Genus Orthohepadnavirus; Family of Hepadnaviridae",
+                                                                  "Group VII; Genus Orthohepadnavirus; Family of Hepadnaviridae",
                                                                   "Group VI; Genus Lentivirus; Family of Retroviridae",
                                                                   "Group I; Genus of Lymphocryptovirus; Family of" };
         public readonly static string[] VirusShortName = { "H5N1",
@@ -39,7 +39,7 @@ namespace ParticleStormControl
         public readonly static string[] VirusCausedDisease = { "avian influenza (bird flu)",
                                                                  "hepatitis B",
                                                                  "acquired immunodeficiency syndrome (AIDS)",
-                                                                 "Implicated in several diseases that include infectious mononucleosis, multiple sclerosis and Hodgkin lymphoma." };
+                                                                 "Implicated in several diseases that include infectious mononucleosis,\nmultiple sclerosis and Hodgkin lymphoma." };
         
         private int virusIndex;
         public int VirusIndex

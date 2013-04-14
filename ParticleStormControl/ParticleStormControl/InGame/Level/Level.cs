@@ -616,6 +616,13 @@ namespace ParticleStormControl
             // the particles!
             DrawParticles(device);
 
+            // vignetting
+            device.BlendState = VignettingBlend;
+            device.SetVertexBuffer(vignettingQuadVertexBuffer);
+            vignettingShader.CurrentTechnique.Passes[0].Apply();
+            device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+            device.BlendState = BlendState.Opaque;
+
             // alphablended spritebatch stuff
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, scissorTestRasterizerState);
 
@@ -638,13 +645,6 @@ namespace ParticleStormControl
 
 
             spriteBatch.End();
-
-            // vignetting
-            device.BlendState = VignettingBlend;
-            device.SetVertexBuffer(vignettingQuadVertexBuffer);
-            vignettingShader.CurrentTechnique.Passes[0].Apply();
-            device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
-            device.BlendState = BlendState.Opaque;
 
             // rest rasterizer state if not allready happend
             if (device.RasterizerState == scissorTestRasterizerState)

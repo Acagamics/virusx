@@ -149,8 +149,8 @@ namespace ParticleStormControl
             MediaPlayer.Volume = 0.5f;
             MediaPlayer.IsRepeating = true;
             // backgroundmusic
-            if (Settings.Instance.Sound)
-                MediaPlayer.Play(song);
+            //if (Settings.Instance.Music)
+                //MediaPlayer.Play(song);
         }
 
 

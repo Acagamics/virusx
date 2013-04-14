@@ -12,6 +12,7 @@ namespace ParticleStormControl.Menu
     class MainMenu : MenuPage
     {
         Texture2D logo;
+        Texture2D instructions;
 
         enum Button
         {
@@ -34,6 +35,7 @@ namespace ParticleStormControl.Menu
         public override void LoadContent(ContentManager content)
         {
             logo = content.Load<Texture2D>("logoNew");
+            instructions = content.Load<Texture2D>("instructions");
         }
 
         public override void Update(GameTime gameTime)
@@ -94,6 +96,10 @@ namespace ParticleStormControl.Menu
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Viruses", new Vector2(100, 560), selectedButton == Button.VIRUSES, menu.TexPixel);
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Credits", new Vector2(100, 620), selectedButton == Button.CREDITS, menu.TexPixel);
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Exit Game", new Vector2(100, 680), selectedButton == Button.END, menu.TexPixel);
+
+            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "How to Play", new Vector2(Settings.Instance.ResolutionX - instructions.Width - 60, 100), false, menu.TexPixel);
+            int fontHeight = (int)menu.FontHeading.MeasureString("Test").Y;
+            spriteBatch.Draw(instructions, new Rectangle(Settings.Instance.ResolutionX - instructions.Width - 60 - SimpleButton.PADDING, 100 + fontHeight + SimpleButton.PADDING, instructions.Width, instructions.Height), Color.White);
 
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, ParticleStormControl.VERSION, new Vector2(menu.ScreenWidth - SimpleButton.PADDING, menu.ScreenHeight - SimpleButton.PADDING) - menu.Font.MeasureString(ParticleStormControl.VERSION), false, menu.TexPixel);
         }
