@@ -266,16 +266,15 @@ namespace ParticleStormControl
             {
                 case ControlType.KEYBOARD1:
                     return PressedButton(Keys.Enter);
-                    break;
                 case ControlType.KEYBOARD0:
                     return PressedButton(Keys.Space);
-                    break;
 
                 case ControlType.GAMEPAD0:
                 case ControlType.GAMEPAD1:
                 case ControlType.GAMEPAD2:
                 case ControlType.GAMEPAD3:
-                    return PressedButton(Buttons.A, control - ControlType.GAMEPAD0) || PressedButton(Buttons.Start, control - ControlType.GAMEPAD0);
+                    return PressedButton(Buttons.A, control - ControlType.GAMEPAD0) ||
+                           PressedButton(Buttons.Start, control - ControlType.GAMEPAD0);
             }
             return false;
         }
@@ -336,11 +335,11 @@ namespace ParticleStormControl
                     return PressedButton(Buttons.DPadRight, control - ControlType.GAMEPAD0) || WasThumbstickRightPressed(control - ControlType.GAMEPAD0);
 
                 case ControlType.KEYBOARD1:
-                    PressedButton(Keys.Right);
+                    return PressedButton(Keys.Right);
                     break;
 
                 case ControlType.KEYBOARD0:
-                    PressedButton(Keys.D);
+                    return PressedButton(Keys.D);
                     break;
             }
 
