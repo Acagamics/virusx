@@ -142,14 +142,14 @@ namespace ParticleStormControl
 
             // background particles
             device.BlendState = BlendState.NonPremultiplied;
-          //  backgroundParticles.Draw(device, totalTimeSeconds);
+            backgroundParticles.Draw(device, totalTimeSeconds);
 
             // cells
             backgroundShader.Parameters["BackgroundTexture"].SetValue(backgroundTexture);
             backgroundShader.Parameters["CellColorTexture"].SetValue(cellColorTexture);
             device.SetVertexBuffer(quadVertexBuffer);
             backgroundShader.CurrentTechnique.Passes[0].Apply();
-         //   device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+            device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
 
             // just to be safe - this target could get lost!
             backgroundShader.Parameters["BackgroundTexture"].SetValue((Texture2D)null);

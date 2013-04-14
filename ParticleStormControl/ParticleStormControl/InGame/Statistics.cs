@@ -89,6 +89,12 @@ namespace ParticleStormControl
 
         private int[] deathStep;
 
+        public int MaxOverallSimultaneousParticles { get { return maxOverallSimultaneousParticles; } }
+        private int maxOverallSimultaneousParticles;
+
+        public float MaxOverallSimultaneousHealth { get { return maxOverallSimultaneousHealth; } }
+        private float maxOverallSimultaneousHealth;
+
         #endregion
 
         #region time depend statistics
@@ -447,10 +453,9 @@ namespace ParticleStormControl
             //int currentStep = steps - 1;
             //ulong overall = 0;
 
-           /* for (int i = 0; i < playerCount; ++i)
-            {
-                overall += getDominationPercentage(i,currentStep);
-            }*/
+            maxOverallSimultaneousParticles = Math.Max(players.Sum(x => x.NumParticlesAlive), maxOverallSimultaneousParticles);
+            maxOverallSimultaneousHealth = Math.Max(players.Sum(x => x.TotalHealth), maxOverallSimultaneousHealth);
+
 
             float [] percentage = ComputeDomination(players);
             for (int i = 0; i < playerCount; ++i)

@@ -144,12 +144,12 @@ namespace ParticleStormControl.Menu
                     break;
                 case DiagramType.HEALTH:
                     DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => statistics.getHealthInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
-                                                        (float)statistics.getHealthInStep(player, step) / statistics.getHealthInStep(step),
+                                                        (float)statistics.getHealthInStep(player, step) / statistics.MaxOverallSimultaneousHealth, //statistics.getHealthInStep(step),
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.MASS:
                     DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => statistics.getParticlesInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
-                                                        (float)statistics.getParticlesInStep(player, step) / statistics.getParticlesInStep(step),
+                                                        (float)statistics.getParticlesInStep(player, step) / statistics.MaxOverallSimultaneousParticles, //statistics.getParticlesInStep(step),
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.SPAWN_POINTS:
@@ -253,7 +253,7 @@ namespace ParticleStormControl.Menu
                         {
                             if (Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime + step > statistics.Steps - startStep)  // never happen?
                                 continue;
-                            x += (int)(stepWidth * ((float)Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime - 0.5f));
+                            x += stepWidth * (int)(Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime);
                         }
 
                         x = (int)MathHelper.Clamp(x, area.X, area.X + area.Width - ITEM_DISPLAY_SIZE);

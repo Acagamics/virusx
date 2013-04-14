@@ -136,13 +136,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="paniq_Godshatter.mp3">
-      <Name>paniq_Godshatter</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="fonts\fontCountdown.spritefont">
       <Name>fontCountdown</Name>
       <Importer>FontDescriptionImporter</Importer>

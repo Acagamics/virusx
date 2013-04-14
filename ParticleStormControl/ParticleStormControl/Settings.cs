@@ -70,9 +70,20 @@ namespace ParticleStormControl
             ForceFeedback = true;
             Sound = true;
             Music = true;
-            Fullscreen = false;
+            Fullscreen = true;
             ResolutionX = MINIMUM_SCREEN_WIDTH;
             ResolutionY = MINIMUM_SCREEN_HEIGHT;
+
+            // choose best available resolution with "color" as default
+            foreach (var mode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes)
+            {
+                if (mode.Format == SurfaceFormat.Color &&
+                    resolutionX <= mode.Width && resolutionY <= mode.Height)
+                {
+                    resolutionX = mode.Width;
+                    resolutionY = mode.Height;
+                }
+            }
         }
 
         public Color GetPlayerColor(int playerIndex)
@@ -115,20 +126,7 @@ namespace ParticleStormControl
         /// </summary>
         public void ReadSettings()
         {
-            // choose best available resolution with "color" as default
-            foreach (var mode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes)
-            {
-                if (mode.Format == SurfaceFormat.Color)
-                {
-                    resolutionX = Math.Max(resolutionX, mode.Width);
-                    resolutionY = Math.Max(resolutionY, mode.Height);
-                }
-            }
-            if (resolutionX == -1 || resolutionY == -1)
-                throw new Exception("Can't find appropriate resolution - this shouldn't be possible, please contact andreas@acagamics.de");
-
-
-            ResetPlayerSettingsToDefault();
+            Reset();
 #if !XBOX
             try
             {
