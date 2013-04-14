@@ -110,7 +110,27 @@ namespace ParticleStormControl
         /// <returns>true if waiting</returns>
         public bool IsWaitingForReconnect()
         {
-            return waitingForReconnect.Any(x => x);
+            for (int i = 0; i < waitingForReconnect.Length; ++i)
+            {
+                if (waitingForReconnect[i])
+                {
+                    // relevant? ask settings
+                    bool relevant = false;
+                    for (int player = 0; player < Settings.Instance.NumPlayers; ++player)
+                    {
+                        if (Settings.Instance.PlayerControls[player] == ControlType.GAMEPAD0 + i)
+                        {
+                            relevant = true;
+                            return false;
+                        }
+                    }
+                    if(!relevant)
+                        waitingForReconnect[i] = false;
+                    else
+                        return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>

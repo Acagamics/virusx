@@ -168,7 +168,6 @@ namespace ParticleStormControl
             else if (!Settings.Instance.Music && MediaPlayer.State == MediaState.Playing)
                 MediaPlayer.Stop();
 
-
             // playing
             if (State == GameState.Playing)
             {
