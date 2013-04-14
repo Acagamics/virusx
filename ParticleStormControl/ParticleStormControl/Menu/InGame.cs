@@ -11,12 +11,15 @@ namespace ParticleStormControl.Menu
         private float blendIn;
         internal const float GAME_BLEND_DURATION = 0.5f;
 
+        private bool ignoreFirstUpdateStep;
+
         public InGame(Menu menu) : base(menu)
         {}
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
             blendIn = GAME_BLEND_DURATION;
+            ignoreFirstUpdateStep = true;
         }
 
         public override void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
@@ -25,6 +28,12 @@ namespace ParticleStormControl.Menu
 
         public override void Update(GameTime gameTime)
         {
+            if (ignoreFirstUpdateStep)
+            {
+                ignoreFirstUpdateStep = false;
+                return;
+            }
+
             // controller disconnect -> pause
             if (InputManager.Instance.PressedButton(Microsoft.Xna.Framework.Input.Keys.Escape) || InputManager.Instance.WasPauseButtonPressed() || InputManager.Instance.IsWaitingForReconnect())
                 menu.ChangePage(Menu.Page.PAUSED, gameTime);

@@ -18,7 +18,7 @@ namespace ParticleStormControl
         private SpriteFont dieCountdownFont;
 
         private const float TRANSPARENCY = 0.6f;
-
+     
         public InGameInterface(ContentManager content)
         {
             itemBox = content.Load<Texture2D>("itemBox");

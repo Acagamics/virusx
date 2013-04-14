@@ -111,10 +111,10 @@ namespace ParticleStormControl
             remainingTime = 0f;
             maxStoredSteps = _maxStoredSteps;
             OverallNumberOfBases = _overallNumberOfBases;
-            init();
+            Init();
         }
 
-        private void init()
+        private void Init()
         {
             generatedParticles = new ulong[playerCount];
             capturedBases = new uint[playerCount];

@@ -62,7 +62,7 @@ namespace ParticleStormControl.Menu
 
             // paused string
             Vector2 stringSizePaused = menu.FontHeading.MeasureString("PAUSED");
-            Vector2 positionPaused = (new Vector2(menu.ScreenWidth, menu.ScreenHeight-150) - stringSizePaused) / 2;
+            Vector2 positionPaused = (new Vector2(menu.ScreenWidth, menu.ScreenHeight-200) - stringSizePaused) / 2;
             spriteBatch.DrawString(menu.FontHeading, "PAUSED", positionPaused, Color.White);
 
             // continue & mainmenu
@@ -70,25 +70,25 @@ namespace ParticleStormControl.Menu
             float y = positionPaused.Y + 50;
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Continue", new Vector2((menu.ScreenWidth - BUTTON_WIDTH) / 2 - 10, y), currentButton == Buttons.CONTINUE, menu.TexPixel);
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Quit to Menu", new Vector2(menu.ScreenWidth / 2 + 10, y), currentButton == Buttons.QUIT_TO_MAINMENU, menu.TexPixel);
-            y += 60;
+            y += 80;
 
 
             // disconnected message
             int numDisconnectMessages = 0;
             for (int i = 0; i < 4; ++i)
             {
-               // if (InputManager.Instance.IsWaitingForReconnect(i))
+                if (InputManager.Instance.IsWaitingForReconnect(i))
                 {
                     string message = " - gamepad " + (i + 1) + " disconnected! - ";
                     Vector2 position = (new Vector2(menu.ScreenWidth/2, y) - menu.Font.MeasureString(message)/2);
 
                     // find out player color
                     int playerIndex = i;
-                  /*  for(; playerIndex<Player.MaxNumPlayers; ++playerIndex)
+                    for(; playerIndex<Player.MaxNumPlayers; ++playerIndex)
                     {
                         if (Settings.Instance.PlayerControls[playerIndex] == InputManager.ControlType.GAMEPAD0 + i)
                             break;
-                    }*/
+                    }
                     if(Settings.Instance.PlayerColorIndices[playerIndex] >=0)
                         spriteBatch.DrawString(menu.Font, message, position, Player.Colors[Settings.Instance.PlayerColorIndices[playerIndex]]);
  
