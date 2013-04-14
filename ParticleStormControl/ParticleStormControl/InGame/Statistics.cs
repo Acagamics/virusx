@@ -514,7 +514,7 @@ namespace ParticleStormControl
                     result[i] = (((players[i].PossessingBasesOverallSize / overallBaseSizes) * 2f)
                         + (float)players[i].NumParticlesAlive / overallParticles
                         + players[i].TotalHealth / overallHealth
-                        + (float)players[i].PossessingBases / overallBases) / 5f;
+                        + (float)players[i].PossessingBases / overallBases) / dev;
                 }
                 else result[i] = 1f / players.Length;
                 //result[players.Length] += result[i];
