@@ -24,14 +24,14 @@ namespace ParticleStormControl
 
         public readonly static VirusType[] Viruses = { VirusType.H5N1, VirusType.HEPATITISB, VirusType.HIV, VirusType.EPSTEINBARR };
         public readonly static string[] VirusNames = { "Influenza A", "Hepatitis B", "Human immunodeficiency", "Epstein-Barr" };
-        public readonly static string[] VirusAdditionalInfo = { "It is a highly contagious virus which is a potantial pandemic threat.",
+        public readonly static string[] VirusAdditionalInfo = { "It is a highly contagious virus which is a potential pandemic threat.",
                                                                "Can also lead to cirrhosis and hepatocellular carcinoma.",
                                                                "Infection with HIV occurs by the transfer of blood, semen, vaginal fluid, pre-ejaculate, or breast milk.",
                                                                "It is one of the most common viruses in humans." };
         public readonly static string[] VirusClassification = { "Group V; Genus A; Family of Orthomyxoviridae",
-                                                                  "Goup VII; Genus Orthohepadnavirus; Family of Hepadnaviridae",
+                                                                  "Group VII; Genus Orthohepadnavirus; Family of Hepadnaviridae",
                                                                   "Group VI; Genus Lentivirus; Family of Retroviridae",
-                                                                  "Group I; Genus of Lymphocryptovirus; Family of" };
+                                                                  "Group I; Genus of Lymphocryptovirus; Family of Herpesviridae" };
         public readonly static string[] VirusShortName = { "H5N1",
                                                              "HBV",
                                                              "HIV",
