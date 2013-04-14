@@ -87,7 +87,7 @@ namespace ParticleStormControl
 
         // attributs
         private static readonly float[] MASS_byVirus = new float[] { 0.5f, 0.63f, 0.075f, 1.0f };
-        private static readonly float[] SPEED_byVirus = new float[] { 0.44f, -0.40f, 0.3f, 1.1f };
+        private static readonly float[] SPEED_byVirus = new float[] { 0.44f, -0.40f, 0.3f, 1.0f };
         private static readonly float[] HEALTH_byVirus = new float[] { 0.5f, 0.35f, 1.0f, -0.38f };
         private static readonly float[] DISCIPLIN_byVirus = new float[] { 0.44f, 0.25f, 0.65f, 0.55f };
        

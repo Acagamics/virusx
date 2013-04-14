@@ -89,7 +89,7 @@ namespace ParticleStormControl.Menu
                         if (Settings.Instance.PlayerControls[playerIndex] == InputManager.ControlType.GAMEPAD0 + i)
                             break;
                     }
-                    if(Settings.Instance.PlayerColorIndices[playerIndex] >=0)
+                    if (playerIndex<Player.MAX_NUM_PLAYERS && Settings.Instance.PlayerColorIndices[playerIndex] >= 0)
                         spriteBatch.DrawString(menu.Font, message, position, Player.Colors[Settings.Instance.PlayerColorIndices[playerIndex]]);
  
 

@@ -113,6 +113,8 @@ namespace ParticleStormControl
                     players[count] = new Player(i, Settings.Instance.PlayerVirusIndices[i], graphicsDevice, content, noiseWhite2D, Settings.Instance.PlayerColorIndices[i]);
                     players[count].Controls = Settings.Instance.PlayerControls[i];
                     count++;
+                    if (count == Settings.Instance.NumPlayers)
+                        break;
                 }
             }
 
