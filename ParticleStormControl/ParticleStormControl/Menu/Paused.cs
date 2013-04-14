@@ -61,15 +61,15 @@ namespace ParticleStormControl.Menu
             spriteBatch.Draw(menu.TexPixel, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * 0.5f);
 
             // paused string
-            Vector2 stringSizePaused = menu.FontHeading.MeasureString("PAUSED");
-            Vector2 positionPaused = (new Vector2(menu.ScreenWidth, menu.ScreenHeight-200) - stringSizePaused) / 2;
-            spriteBatch.DrawString(menu.FontHeading, "PAUSED", positionPaused, Color.White);
+            Vector2 stringSizePaused = menu.FontCountdown.MeasureString("GAME PAUSED");
+            Vector2 positionPaused = (new Vector2(menu.ScreenWidth, menu.ScreenHeight-230) - stringSizePaused) / 2;
+            spriteBatch.DrawString(menu.FontCountdown, "GAME PAUSED", positionPaused, Color.White);
 
             // continue & mainmenu
-            const int BUTTON_WIDTH = 250;
-            float y = positionPaused.Y + 50;
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Continue", new Vector2((menu.ScreenWidth - BUTTON_WIDTH) / 2 - 10, y), currentButton == Buttons.CONTINUE, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Quit to Menu", new Vector2(menu.ScreenWidth / 2 + 10, y), currentButton == Buttons.QUIT_TO_MAINMENU, menu.TexPixel);
+            const int BUTTON_WIDTH = 150;
+            float y = positionPaused.Y + 150;
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Continue", new Vector2((menu.ScreenWidth) / 2 - 20 - BUTTON_WIDTH, y), currentButton == Buttons.CONTINUE, menu.TexPixel, BUTTON_WIDTH);
+            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Quit to Menu", new Vector2(menu.ScreenWidth / 2 + 20, y), currentButton == Buttons.QUIT_TO_MAINMENU, menu.TexPixel, BUTTON_WIDTH);
             y += 80;
 
 
