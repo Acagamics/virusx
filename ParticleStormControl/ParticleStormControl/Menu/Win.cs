@@ -41,7 +41,7 @@ namespace ParticleStormControl.Menu
 
             NUM_VALUES
         };
-        private static readonly string[] DIAGRAM_DESCRIPTIONS = new string[]{ "Domination", "Total HP", "Number of Viruses", "Number of Cells" };
+        private static readonly string[] DIAGRAM_DESCRIPTIONS = new string[]{ "Domination", "Total HP", "Number of Viruses", "Captured Cells" };
         private DiagramType currentDiagramType;
 
         public Win(Menu menu)

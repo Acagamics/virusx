@@ -488,6 +488,13 @@ namespace ParticleStormControl
 
             for (int i = 0; i < players.Length; ++i)
             {
+                if (overallHealth <= 0.0f)
+                    overallHealth = 1.0f;
+                if (overallParticles <= 0)
+                    overallParticles = 1;
+                if (overallBaseSizes <= 0)
+                    overallBaseSizes = 1;
+
                 result[i] = (((players[i].PossessingBasesOverallSize / overallBaseSizes)*2f)
                     + (float)players[i].NumParticlesAlive / overallParticles
                     + players[i].TotalHealth / overallHealth
