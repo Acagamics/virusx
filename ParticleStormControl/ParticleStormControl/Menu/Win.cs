@@ -184,7 +184,7 @@ namespace ParticleStormControl.Menu
             int stepWidth = Math.Max(1, diagramAreaMaxWidth / statistics.Steps);
             int startStep;
             if (stepWidth == 1)
-                startStep = (int)((float)(statistics.Steps - diagramAreaMaxWidth) / stepWidth + 0.5f);   // if a step is only a pixel... DAMDAM
+                startStep = (statistics.Steps - diagramAreaMaxWidth) / stepWidth + 1;   // if a step is only a pixel... DAMDAM
             else
                 startStep = 0;
             area.Width = stepWidth * (statistics.Steps - startStep) + 20;
