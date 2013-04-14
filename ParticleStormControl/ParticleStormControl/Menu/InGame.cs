@@ -35,7 +35,8 @@ namespace ParticleStormControl.Menu
             }
 
             // controller disconnect -> pause
-            if (InputManager.Instance.PressedButton(Microsoft.Xna.Framework.Input.Keys.Escape) || InputManager.Instance.WasPauseButtonPressed() || InputManager.Instance.IsWaitingForReconnect())
+            if (InputManager.Instance.PressedButton(Microsoft.Xna.Framework.Input.Keys.Escape) || 
+                InputManager.Instance.WasPauseButtonPressed() || InputManager.Instance.IsWaitingForReconnect())
                 menu.ChangePage(Menu.Page.PAUSED, gameTime);
 
             blendIn -= (float)gameTime.ElapsedGameTime.TotalSeconds;
