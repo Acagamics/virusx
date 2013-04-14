@@ -77,6 +77,7 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>NuclexSpriteFontDescriptionProcessor</Processor>
       <SubType>Designer</SubType>
+      <ProcessorParameters_Hinter>AutoHinter</ProcessorParameters_Hinter>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +147,7 @@
       <Name>fontCountdown</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>NuclexSpriteFontDescriptionProcessor</Processor>
+      <ProcessorParameters_Hinter>AutoHinter</ProcessorParameters_Hinter>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -213,6 +215,7 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>NuclexSpriteFontDescriptionProcessor</Processor>
       <SubType>Designer</SubType>
+      <ProcessorParameters_Hinter>AutoHinter</ProcessorParameters_Hinter>
     </Compile>
   </ItemGroup>
   <ItemGroup>
