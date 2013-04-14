@@ -126,14 +126,17 @@ namespace ParticleStormControl.Menu
                 if (!found)
                 {
                     int index = getFreePlayerIndex();
-                    int colorIndex = getNextFreeColorIndex(0);
-                    playerConnected[index] = true;
-                    Settings.Instance.PlayerControls[index] = type;
-                    Settings.Instance.PlayerColorIndices[index] = colorIndex;
-                    Settings.Instance.PlayerVirusIndices[index] = Random.Next(4);
-                    Settings.Instance.NumPlayers++;
-                    Settings.Instance.PlayerConnected[index] = true;
-                    countdown = TimeSpan.FromSeconds(-1);
+                    if (index != -1)
+                    {
+                        int colorIndex = getNextFreeColorIndex(0);
+                        playerConnected[index] = true;
+                        Settings.Instance.PlayerControls[index] = type;
+                        Settings.Instance.PlayerColorIndices[index] = colorIndex;
+                        Settings.Instance.PlayerVirusIndices[index] = Random.Next(4);
+                        Settings.Instance.NumPlayers++;
+                        Settings.Instance.PlayerConnected[index] = true;
+                        countdown = TimeSpan.FromSeconds(-1);
+                    }
                 }
             }
 
@@ -376,12 +379,13 @@ namespace ParticleStormControl.Menu
             return start;
         }
 
+        // if all slots are full -1 is returned
         private int getFreePlayerIndex()
         {
             int i = 0;
-            while (playerConnected[i] && i < 3)
+            while (playerConnected[i] && i < 4)
                 i++;
-            return i;
+            return i == 4 ? -1 : i;
         }
 
         private bool isActive(InputManager.ControlActions action, int index)
