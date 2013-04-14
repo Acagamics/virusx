@@ -15,6 +15,8 @@ namespace ParticleStormControl
         private Texture2D itemMutate;
         private Texture2D itemWipeout;
 
+        private SpriteFont dieCountdownFont;
+
         private const float TRANSPARENCY = 0.6f;
 
         public InGameInterface(ContentManager content)
@@ -23,6 +25,8 @@ namespace ParticleStormControl
             itemDanger = content.Load<Texture2D>("items/danger");
             itemMutate = content.Load<Texture2D>("items/mutate");
             itemWipeout = content.Load<Texture2D>("items/wipeout");
+
+            dieCountdownFont = content.Load<SpriteFont>("fonts/fontHeading");
         }
 
         /// <summary>
@@ -30,7 +34,7 @@ namespace ParticleStormControl
         /// </summary>
         /// <param name="players">player array</param>
         /// <param name="spriteBatch">spritebatch that is NOT already started</param>
-        public void DrawInterface(Player[] players, SpriteBatch spriteBatch, Point levelPixelSize, Point levelPixelOffset, float totalTimeSeconds)
+        public void DrawInterface(Player[] players, SpriteBatch spriteBatch, Point levelPixelSize, Point levelPixelOffset, GameTime gameTime)
         {
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
 
@@ -56,7 +60,18 @@ namespace ParticleStormControl
                     //Vector2 halfBoxSize = new Vector2(itemBox.Width, itemBox.Height);
                     spriteBatch.Draw(itemBox, itemDisplayRectangles[i], null, color, 0.0f, Vector2.Zero, flips[i], 0);
 
-                    DrawItem(spriteBatch, players[i].ItemSlot, itemDisplayRectangles[i], corners[i], color, Item.ROTATION_SPEED * totalTimeSeconds);
+                    DrawItem(spriteBatch, players[i].ItemSlot, itemDisplayRectangles[i], corners[i], color, Item.ROTATION_SPEED * (float)gameTime.TotalGameTime.TotalSeconds);
+
+                    // countdown if this player is dying soon
+                    if(players[i].RemainingTimeAlive <  Player.MAX_TIME_WITHOUT_SPAWNPOINT)
+                    {
+                        string countdownString = ((int)players[i].RemainingTimeAlive).ToString();
+                        Vector2 dragToCorner = new Vector2(itemDisplayRectangles[i].Width / 4 * Math.Sign(corners[i].X - itemDisplayRectangles[i].Center.X),
+                                                           itemDisplayRectangles[i].Height / 4 * Math.Sign(corners[i].Y - itemDisplayRectangles[i].Center.Y));
+                        Vector2 position = new Vector2(itemDisplayRectangles[i].Center.X, itemDisplayRectangles[i].Center.Y) + dragToCorner;
+                        spriteBatch.DrawString(dieCountdownFont, countdownString, position, Color.White, 0.0f, dieCountdownFont.MeasureString(countdownString) / 2, 
+                                                   (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds)*0.2f + 1.4f, SpriteEffects.None, 0);
+                    }
                 }
             }
             spriteBatch.End();

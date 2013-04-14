@@ -353,12 +353,12 @@ namespace ParticleStormControl
                 if (timeWithoutSpawnPoint <= 0.0f)
                     return float.PositiveInfinity;
                 else
-                    return maxTimeWithoutSpawnPoint - timeWithoutSpawnPoint;
+                    return MAX_TIME_WITHOUT_SPAWNPOINT - timeWithoutSpawnPoint;
             }
         }
 
         private float timeWithoutSpawnPoint = 0.0f;
-        private const float maxTimeWithoutSpawnPoint = 15.0f;
+        public const float MAX_TIME_WITHOUT_SPAWNPOINT = 15.0f;
 
         #endregion
 
@@ -667,7 +667,7 @@ namespace ParticleStormControl
                 {
                     timeWithoutSpawnPoint += timeInterval;
 
-                    if (timeWithoutSpawnPoint > maxTimeWithoutSpawnPoint)
+                    if (timeWithoutSpawnPoint > MAX_TIME_WITHOUT_SPAWNPOINT)
                         alive = false;
                 }
                 else

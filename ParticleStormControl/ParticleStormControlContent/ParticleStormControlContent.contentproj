@@ -75,7 +75,7 @@
     <Compile Include="fonts\font.spritefont">
       <Name>font</Name>
       <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
+      <Processor>NuclexSpriteFontDescriptionProcessor</Processor>
       <SubType>Designer</SubType>
     </Compile>
   </ItemGroup>
@@ -145,7 +145,7 @@
     <Compile Include="fonts\fontCountdown.spritefont">
       <Name>fontCountdown</Name>
       <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
+      <Processor>NuclexSpriteFontDescriptionProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -211,7 +211,7 @@
     <Compile Include="fonts\fontHeading.spritefont">
       <Name>fontHeading</Name>
       <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
+      <Processor>NuclexSpriteFontDescriptionProcessor</Processor>
       <SubType>Designer</SubType>
     </Compile>
   </ItemGroup>

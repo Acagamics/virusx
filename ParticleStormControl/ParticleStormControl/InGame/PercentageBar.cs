@@ -28,8 +28,7 @@ namespace ParticleStormControl
         /// <param name="spriteBatch"></param>
         /// <param name="levelPixelSize"></param>
         /// <param name="levelPixelOffset"></param>
-        /// <param name="totalTimeSeconds"></param>
-        public void Draw(Player[] players, SpriteBatch spriteBatch, Point levelPixelSize, Point levelPixelOffset, float totalTimeSeconds)
+        public void Draw(Player[] players, SpriteBatch spriteBatch, Point levelPixelSize, Point levelPixelOffset)
         {
             spriteBatch.Begin();
 
@@ -55,36 +54,6 @@ namespace ParticleStormControl
                 spriteBatch.Draw(bar, new Rectangle(levelPixelOffset.X + bar.Width * i, levelPixelOffset.Y - HEIGHT, bar.Width, HEIGHT), Color.White);
             }
 
-            // test
-            /*for (int i = 0; i <= levelPixelSize.X / bar.Width; i++)
-            {
-                spriteBatch.Draw(bar, new Rectangle(levelPixelOffset.X + bar.Width * i, levelPixelOffset.Y, bar.Width, HEIGHT / 2), new Rectangle(0, 0, bar.Width, bar.Height / 2), Color.White);
-                spriteBatch.Draw(bar, new Rectangle(levelPixelOffset.X + bar.Width * i, levelPixelOffset.Y + levelPixelSize.Y - HEIGHT / 2, bar.Width, HEIGHT / 2), new Rectangle(0, bar.Height / 2, bar.Width, bar.Height / 2), Color.White);
-            }
-
-            for (int i = 0; i <= levelPixelSize.Y / bar.Width + 1; i++)
-            {
-                spriteBatch.Draw(
-                    bar,
-                    new Rectangle(levelPixelOffset.X, levelPixelOffset.Y + bar.Width * i, bar.Width, bar.Height / 2),
-                    new Rectangle(0, 0, bar.Width, bar.Height / 2),
-                    Color.White,
-                    -(float)Math.PI / 2,
-                    Vector2.Zero,
-                    SpriteEffects.None,
-                    0);
-
-                spriteBatch.Draw(
-                    bar,
-                    new Rectangle(levelPixelOffset.X + levelPixelSize.X - HEIGHT / 2, levelPixelOffset.Y + bar.Width * i, bar.Width, bar.Height / 2),
-                    new Rectangle(bar.Height / 2, 0, bar.Width, bar.Height / 2),
-                    Color.White,
-                    -(float)Math.PI / 2,
-                    Vector2.Zero,
-                    SpriteEffects.FlipVertically,
-                    0);
-            }
-            */
             spriteBatch.End();
         }
 
