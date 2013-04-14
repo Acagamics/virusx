@@ -488,17 +488,35 @@ namespace ParticleStormControl
 
             for (int i = 0; i < players.Length; ++i)
             {
+                float dev = 5f;
                 if (overallHealth <= 0.0f)
+                {
                     overallHealth = 1.0f;
+                    dev -= 1f;
+                }
                 if (overallParticles <= 0)
+                {
                     overallParticles = 1;
-                if (overallBaseSizes <= 0)
+                    dev -= 1f;
+                }
+                if (overallBaseSizes <= 0.0f)
+                {
                     overallBaseSizes = 1;
-
-                result[i] = (((players[i].PossessingBasesOverallSize / overallBaseSizes)*2f)
-                    + (float)players[i].NumParticlesAlive / overallParticles
-                    + players[i].TotalHealth / overallHealth
-                    + (float)players[i].PossessingBases / overallBases) / 5f;
+                    dev -= 2f;
+                }
+                if (overallBases <= 0)
+                {
+                    overallBaseSizes = 1;
+                    dev -= 1f;
+                }
+                if (dev > 0.0f)
+                {
+                    result[i] = (((players[i].PossessingBasesOverallSize / overallBaseSizes) * 2f)
+                        + (float)players[i].NumParticlesAlive / overallParticles
+                        + players[i].TotalHealth / overallHealth
+                        + (float)players[i].PossessingBases / overallBases) / 5f;
+                }
+                else result[i] = 1f / players.Length;
                 //result[players.Length] += result[i];
             }
             

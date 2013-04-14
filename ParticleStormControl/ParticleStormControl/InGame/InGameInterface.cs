@@ -69,7 +69,7 @@ namespace ParticleStormControl
                         Vector2 dragToCorner = new Vector2(itemDisplayRectangles[i].Width / 5 * Math.Sign(corners[i].X - itemDisplayRectangles[i].Center.X),
                                                            itemDisplayRectangles[i].Height / 5 * Math.Sign(corners[i].Y - itemDisplayRectangles[i].Center.Y));
                         Vector2 position = new Vector2(itemDisplayRectangles[i].Center.X, itemDisplayRectangles[i].Center.Y) + dragToCorner;
-                        spriteBatch.DrawString(dieCountdownFont, countdownString, position, Color.White, 0.0f, dieCountdownFont.MeasureString(countdownString) / 2, 
+                        spriteBatch.DrawString(dieCountdownFont, countdownString, position, new Color(1f,1f,1f,0.5f), 0.0f, dieCountdownFont.MeasureString(countdownString) / 2, 
                                                    (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds)*0.2f + 1.4f, SpriteEffects.None, 0);
                     }
                 }
