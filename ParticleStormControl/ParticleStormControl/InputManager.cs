@@ -141,23 +141,24 @@ namespace ParticleStormControl
             oldKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
 
-            thumbStickButtonDownTimer += timeSinceLastCall;
-            thumbStickButtonUpTimer += timeSinceLastCall;
-            thumbStickButtonLeftTimer += timeSinceLastCall;
-            thumbStickButtonRightTimer += timeSinceLastCall;
 
             // controller
             for (int i = 0; i < 4; ++i)
             {
+                thumbStickButtonDownTimer[i] += timeSinceLastCall;
+                thumbStickButtonUpTimer[i] += timeSinceLastCall;
+                thumbStickButtonLeftTimer[i] += timeSinceLastCall;
+                thumbStickButtonRightTimer[i] += timeSinceLastCall;
+
                 // pressed
                 if (WasThumbstickLeftPressed(i))
-                    thumbStickButtonLeftTimer = 0.0f;
+                    thumbStickButtonLeftTimer[i] = 0.0f;
                 if (WasThumbstickRightPressed(i))
-                    thumbStickButtonRightTimer = 0.0f;
+                    thumbStickButtonRightTimer[i] = 0.0f;
                 if (WasThumbstickDownPressed(i))
-                    thumbStickButtonDownTimer = 0.0f;
+                    thumbStickButtonDownTimer[i] = 0.0f;
                 if (WasThumbstickUpPressed(i))
-                    thumbStickButtonUpTimer = 0.0f;
+                    thumbStickButtonUpTimer[i] = 0.0f;
 
                 oldGamePadStates[i] = currentGamePadStates[i];
                 currentGamePadStates[i] = GamePad.GetState((PlayerIndex)i);
@@ -212,10 +213,10 @@ namespace ParticleStormControl
         private const float THUMBSTICK_DIRECTION_TRESHHOLD = 0.7f;
         private const float THUMBSTICK_DIRECTION_PAUSE_SECONDS = 0.2f;
 
-        private float thumbStickButtonDownTimer = THUMBSTICK_DIRECTION_TRESHHOLD;
-        private float thumbStickButtonUpTimer = THUMBSTICK_DIRECTION_TRESHHOLD;
-        private float thumbStickButtonLeftTimer = THUMBSTICK_DIRECTION_TRESHHOLD;
-        private float thumbStickButtonRightTimer = THUMBSTICK_DIRECTION_TRESHHOLD;
+        private float[] thumbStickButtonDownTimer = new float[4];
+        private float[] thumbStickButtonUpTimer = new float[4];
+        private float[] thumbStickButtonLeftTimer = new float[4];
+        private float[] thumbStickButtonRightTimer = new float[4];
 
         public bool AnyDownButtonPressed()
         {
@@ -430,23 +431,26 @@ namespace ParticleStormControl
         }
         public bool WasThumbstickLeftPressed(int controller)
         {
-            return currentGamePadStates[controller].ThumbSticks.Left.X < -THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonLeftTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
+            return currentGamePadStates[controller].ThumbSticks.Left.X < -THUMBSTICK_DIRECTION_TRESHHOLD && 
+                        thumbStickButtonLeftTimer[controller] > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
         }
 
         public bool WasThumbstickRightPressed(int controller)
         {
-            return currentGamePadStates[controller].ThumbSticks.Left.X > THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonRightTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
+            return currentGamePadStates[controller].ThumbSticks.Left.X > THUMBSTICK_DIRECTION_TRESHHOLD &&
+                        thumbStickButtonRightTimer[controller] > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
         }
 
         public bool WasThumbstickUpPressed(int controller)
         {
-            return currentGamePadStates[controller].ThumbSticks.Left.Y > THUMBSTICK_DIRECTION_TRESHHOLD && thumbStickButtonUpTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
+            return currentGamePadStates[controller].ThumbSticks.Left.Y > THUMBSTICK_DIRECTION_TRESHHOLD &&
+                         thumbStickButtonUpTimer[controller] > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
         }
 
         public bool WasThumbstickDownPressed(int controller)
         {
-            return currentGamePadStates[controller].ThumbSticks.Left.Y < -THUMBSTICK_DIRECTION_TRESHHOLD && 
-                        thumbStickButtonDownTimer > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
+            return currentGamePadStates[controller].ThumbSticks.Left.Y < -THUMBSTICK_DIRECTION_TRESHHOLD &&
+                        thumbStickButtonDownTimer[controller] > THUMBSTICK_DIRECTION_PAUSE_SECONDS;
         }
 
         #endregion
