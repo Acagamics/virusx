@@ -10,8 +10,10 @@ namespace ParticleStormControl.Menu
 {
     class Viruses : MenuPage
     {
-        int index = 0;
+        private int virusIndex = 0;
         private Texture2D icons;
+
+        private Effect virusRenderEffect;
 
         public Viruses(Menu menu)
             : base(menu)
@@ -20,6 +22,7 @@ namespace ParticleStormControl.Menu
         public override void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
         {
             icons = content.Load<Texture2D>("icons");
+            virusRenderEffect = content.Load<Effect>("shader/particleRendering");
         }
 
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
@@ -34,24 +37,25 @@ namespace ParticleStormControl.Menu
 
             // loopin
             if (InputManager.Instance.AnyLeftButtonPressed())
-                index = index == (int)Player.VirusType.NUM_VIRUSES - 1 ? 0 : index + 1;
+                virusIndex = virusIndex == (int)Player.VirusType.NUM_VIRUSES - 1 ? 0 : virusIndex + 1;
             else if (InputManager.Instance.AnyRightButtonPressed())
-                index = index == 0 ? (int)Player.VirusType.NUM_VIRUSES - 1 : index - 1;
+                virusIndex = virusIndex == 0 ? (int)Player.VirusType.NUM_VIRUSES - 1 : virusIndex - 1;
         }
 
         public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.GameTime gameTime)
         {
             int width = 800;
             int left = (Settings.Instance.ResolutionX - width) / 2;
-            int top = 100;
+            int startTop = 100;
+            int top = startTop;
             int padding = 40;
 
             // info texts
             List<String> labels = new List<string>() {
-                Player.VirusNames[index] + " (" + Player.VirusShortName[index] + ")",
-                Player.VirusClassification[index],
-                "Caused desease:\n" + Player.VirusCausedDisease[index],
-                "Description:\n" + Player.VirusAdditionalInfo[index],
+                Player.VirusNames[virusIndex] + " (" + Player.VirusShortName[virusIndex] + ")",
+                Player.VirusClassification[virusIndex],
+                "Caused desease:\n" + Player.VirusCausedDisease[virusIndex],
+                "Description:\n" + Player.VirusAdditionalInfo[virusIndex],
             };
 
             for (int i = 0; i < labels.Count; i++)
@@ -73,6 +77,38 @@ namespace ParticleStormControl.Menu
             // back button
             string label = "Back to Menu";
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, label, new Vector2((int)((Settings.Instance.ResolutionX - menu.Font.MeasureString(label).X) / 2), Settings.Instance.ResolutionY - 60), true, menu.TexPixel);
+
+
+            // virus
+            virusRenderEffect.Parameters["ScreenSize"].SetValue(new Vector2(menu.ScreenWidth, menu.ScreenHeight));
+
+            const int VIRUS_SIZE = 140;
+            const int VIRUS_PADDING = 10;
+            Rectangle virusImageRect = new Rectangle(left + width - VIRUS_SIZE, startTop, VIRUS_SIZE, VIRUS_SIZE);
+            virusImageRect.Inflate(VIRUS_PADDING, VIRUS_PADDING);
+            spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.Black);
+            virusImageRect.Inflate(-VIRUS_PADDING, -VIRUS_PADDING);
+            spriteBatch.End(); // yeah this sucks terrible! TODO better solution
+            switch ((Player.VirusType)virusIndex)
+            {
+                case Player.VirusType.EPSTEINBARR:
+                    virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["EpsteinBar_Spritebatch"];
+                    break;
+                case Player.VirusType.H5N1:
+                    virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["H5N1_Spritebatch"];
+                    break;
+                case Player.VirusType.HIV:
+                    virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["HIV_Spritebatch"];
+                    break;
+                case Player.VirusType.HEPATITISB:
+                    virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["HepatitisB_Spritebatch"];
+                    break;
+            }
+            virusRenderEffect.Parameters["Color"].SetValue(Color.Gray.ToVector4()*1.8f);
+            spriteBatch.Begin(0, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, virusRenderEffect);
+            spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.White);
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
         }
     }
 }
