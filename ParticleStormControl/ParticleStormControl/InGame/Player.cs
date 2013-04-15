@@ -323,8 +323,8 @@ namespace ParticleStormControl
         #region index/identifier
 
         // who is who (blue etc.)
-        public readonly PlayerIndex playerIndex;
-        public int Index { get { return (int)playerIndex; } }
+        public readonly int playerIndex;
+        public int Index { get { return playerIndex; } }
 
         #endregion
 
@@ -377,7 +377,7 @@ namespace ParticleStormControl
 
         public Player(int playerIndex, int virusTypeIndex, GraphicsDevice device, ContentManager content, Texture2D noiseTexture, int colorIndex)
         {
-            this.playerIndex = (PlayerIndex)playerIndex;
+            this.playerIndex = playerIndex;
             this.noiseTexture = noiseTexture;
             this.colorIndex = colorIndex;
             this.virusIndex = virusTypeIndex;
@@ -631,11 +631,11 @@ namespace ParticleStormControl
             cursorPosition.Y = MathHelper.Clamp(cursorPosition.Y, 0.0f, Level.RELATIVE_MAX.Y);
 
             // hold move
-            if(Alive && !InputManager.Instance.HoldButtonPressed(playerIndex))
+            if(Alive && !InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, playerIndex, true))
                 particleAttractionPosition = cursorPosition;
             
             // action
-            if (Alive && InputManager.Instance.ActionButtonPressed(playerIndex) && ItemSlot != Item.ItemType.NONE)
+            if (Alive && InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, playerIndex) && ItemSlot != Item.ItemType.NONE)
             {
                 level.PlayerUseItem(this);
                 ItemSlot = Item.ItemType.NONE;

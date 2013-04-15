@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace ParticleStormControl
 {
@@ -51,10 +52,21 @@ namespace ParticleStormControl
             LEFT,
             RIGHT,
             ACTION,
-            HOLD
+            HOLD,
+
+            PAUSE,
+            EXIT
         }
 
-        
+
+        private const float THUMBSTICK_DIRECTION_TRESHHOLD = 0.65f;
+        private const float THUMBSTICK_DIRECTION_PAUSE_SECONDS = 0.2f;
+
+        private float[] thumbStickButtonDownTimer = new float[4];
+        private float[] thumbStickButtonUpTimer = new float[4];
+        private float[] thumbStickButtonLeftTimer = new float[4];
+        private float[] thumbStickButtonRightTimer = new float[4];
+
         #endregion
 
         #region state
@@ -91,17 +103,17 @@ namespace ParticleStormControl
         /// <param name="index">the player</param>
         /// <param name="controlType">the control scheme</param>
         /// <returns>true if the control scheme changed, false otherwise</returns>
-        public bool setControlType(PlayerIndex index, ControlType controlType)
+        public bool setControlType(int index, ControlType controlType)
         {
             //foreach (ControlType ct in playerToControl)
             //    if (ct == controlType) return false;
-            getControlTypeForPlayer[(int)index] = controlType;
+            getControlTypeForPlayer[index] = controlType;
             return true;
         }
 
-        public ControlType getControlType(PlayerIndex index)
+        public ControlType getControlType(int index)
         {
-            return getControlTypeForPlayer[(int)index];
+            return getControlTypeForPlayer[index];
         }
 
         /// <summary>
@@ -228,200 +240,6 @@ namespace ParticleStormControl
 
         }
 
-        #region Game-Specific Commands
-
-        public bool WasPauseButtonPressed(ControlType control)
-        {
-            switch (control)
-            {
-                case ControlType.KEYBOARD0:
-                case ControlType.KEYBOARD1:
-                    return PressedButton(Keys.P);
-
-                case ControlType.GAMEPAD0:
-                case ControlType.GAMEPAD1:
-                case ControlType.GAMEPAD2:
-                case ControlType.GAMEPAD3:
-                    return PressedButton(Buttons.Start, control - ControlType.GAMEPAD0);
-            }
-            return false;
-        }
-
-        public bool WasPauseButtonPressed()
-        {
-            return PressedButton(Keys.P) || PressedButton(Buttons.Start);
-        }
-
-        public bool WasContinueButtonPressed()
-        {
-            return PressedButton(Keys.Space) ||
-                   PressedButton(Keys.Enter) ||
-                    PressedButton(Buttons.A) ||
-                    PressedButton(Buttons.Start);
-        }
-
-        public bool WasContinueButtonPressed(ControlType control)
-        {
-            switch (control)
-            {
-                case ControlType.KEYBOARD1:
-                    return PressedButton(Keys.Enter);
-                case ControlType.KEYBOARD0:
-                    return PressedButton(Keys.Space);
-
-                case ControlType.GAMEPAD0:
-                case ControlType.GAMEPAD1:
-                case ControlType.GAMEPAD2:
-                case ControlType.GAMEPAD3:
-                    return PressedButton(Buttons.A, control - ControlType.GAMEPAD0) ||
-                           PressedButton(Buttons.Start, control - ControlType.GAMEPAD0);
-            }
-            return false;
-        }
-
-        public bool WasExitButtonPressed()
-        {
-            return PressedButton(Keys.Escape) || PressedButton(Buttons.Back);
-        }
-
-        private const float THUMBSTICK_DIRECTION_TRESHHOLD = 0.65f;
-        private const float THUMBSTICK_DIRECTION_PAUSE_SECONDS = 0.2f;
-
-        private float[] thumbStickButtonDownTimer = new float[4];
-        private float[] thumbStickButtonUpTimer = new float[4];
-        private float[] thumbStickButtonLeftTimer = new float[4];
-        private float[] thumbStickButtonRightTimer = new float[4];
-
-        public bool AnyDownButtonPressed()
-        {
-            for(int i=0; i<4; ++i)
-            {
-                if (WasThumbstickDownPressed(i))
-                    return true;
-            }
-
-            return PressedButton(Buttons.DPadDown) || PressedButton(Keys.Down);
-        }
-
-        public bool AnyUpButtonPressed()
-        {
-            for (int i = 0; i < 4; ++i)
-            {
-                if (WasThumbstickUpPressed(i))
-                    return true;
-            }
-
-            return PressedButton(Buttons.DPadUp) || PressedButton(Keys.Up);
-        }
-        public bool AnyLeftButtonPressed()
-        {
-            for (int i = 0; i < 4; ++i)
-            {
-                if (WasThumbstickLeftPressed(i))
-                    return true;
-            }
-
-            return PressedButton(Buttons.DPadLeft) || PressedButton(Keys.Left);
-        }
-
-        public bool WasRightButtonPressed(ControlType control)
-        {
-            switch (control)
-            {
-                case ControlType.GAMEPAD0:
-                case ControlType.GAMEPAD1:
-                case ControlType.GAMEPAD2:
-                case ControlType.GAMEPAD3:
-                    return PressedButton(Buttons.DPadRight, control - ControlType.GAMEPAD0) || WasThumbstickRightPressed(control - ControlType.GAMEPAD0);
-
-                case ControlType.KEYBOARD1:
-                    return PressedButton(Keys.Right);
-
-                case ControlType.KEYBOARD0:
-                    return PressedButton(Keys.D);
-            }
-
-            return false;
-        }
-
-        public bool WasLeftButtonPressed(ControlType control)
-        {
-            switch (control)
-            {
-                case ControlType.GAMEPAD0:
-                case ControlType.GAMEPAD1:
-                case ControlType.GAMEPAD2:
-                case ControlType.GAMEPAD3:
-                    return PressedButton(Buttons.DPadLeft, control - ControlType.GAMEPAD0) || WasThumbstickLeftPressed(control - ControlType.GAMEPAD0);
-
-                case ControlType.KEYBOARD1:
-                    PressedButton(Keys.Left);
-                    break;
-
-                case ControlType.KEYBOARD0:
-                    PressedButton(Keys.A);
-                    break;
-            }
-
-            return false;
-        }
-
-        public bool AnyRightButtonPressed()
-        {
-            for (int i = 0; i < 4; ++i)
-            {
-                if (WasThumbstickRightPressed(i))
-                    return true;
-            }
-
-            return PressedButton(Buttons.DPadRight) || PressedButton(Keys.Right);
-        }
-
-        public bool AnyDownButtonDown()
-        {
-            for (int i = 0; i < 4; ++i)
-            {
-                if (IsThumbstickDown_Down(i))
-                    return true;
-            }
-
-            return IsButtonDown(Buttons.DPadDown) || IsButtonDown(Keys.Down);
-        }
-
-        public bool AnyUpButtonDown()
-        {
-            for (int i = 0; i < 4; ++i)
-            {
-                if (IsThumbstickUp_Down(i))
-                    return true;
-            }
-
-            return IsButtonDown(Buttons.DPadUp) || IsButtonDown(Keys.Up);
-        }
-        public bool AnyLeftButtonDown()
-        {
-            for (int i = 0; i < 4; ++i)
-            {
-                if (IsThumbstickLeft_Down(i))
-                    return true;
-            }
-
-            return IsButtonDown(Buttons.DPadLeft) || IsButtonDown(Keys.Left);
-        }
-
-        public bool AnyRightButtonDown()
-        {
-            for (int i = 0; i < 4; ++i)
-            {
-                if (IsThumbstickRight_Down(i))
-                    return true;
-            }
-
-            return IsButtonDown(Buttons.DPadRight) || IsButtonDown(Keys.Right);
-        }
-
-        #endregion
-
         #region Basic Input Commands
 
         public Vector2 GetLeftStickMovement(int controller)
@@ -515,7 +333,7 @@ namespace ParticleStormControl
         {
             return currentKeyboardState.IsKeyUp(key) && oldKeyboardState.IsKeyDown(key);
         }
-        public bool PressedButton(Keys key)
+        public bool IsButtonPressed(Keys key)
         {
             return currentKeyboardState.IsKeyDown(key) && oldKeyboardState.IsKeyUp(key);
         }
@@ -523,11 +341,11 @@ namespace ParticleStormControl
         {
             return currentGamePadStates[controller].IsButtonUp(button) && oldGamePadStates[controller].IsButtonDown(button);
         }
-        public bool PressedButton(Buttons button, int controller)
+        public bool IsButtonPressed(Buttons button, int controller)
         {
             return currentGamePadStates[controller].IsButtonDown(button) && oldGamePadStates[controller].IsButtonUp(button);
         }
-        public bool ReleasedButton(Buttons button)
+        public bool AnyReleasedButton(Buttons button)
         {
             for (int controller = 0; controller < 4; ++controller)
             {
@@ -536,7 +354,7 @@ namespace ParticleStormControl
             }
             return false;
         }
-        public bool PressedButton(Buttons button)
+        public bool AnyPressedButton(Buttons button)
         {
             for (int controller = 0; controller < 4; ++controller)
             {
@@ -571,13 +389,13 @@ namespace ParticleStormControl
 
         #endregion
 
-        #region get specific actions
+        #region Input by Action
 
-        public Vector2 GetMovement(PlayerIndex index)
+        public Vector2 GetMovement(int index)
         {
             Vector2 result = Vector2.Zero;
-            if (Settings.Instance.NumPlayers <= (int)index) return result;
-            switch(getControlTypeForPlayer[(int)index])
+            if (Settings.Instance.NumPlayers <= index) return result;
+            switch(getControlTypeForPlayer[index])
             {
                 case ControlType.GAMEPAD0: result = currentGamePadStates[0].ThumbSticks.Left; break;
                 case ControlType.GAMEPAD1: result = currentGamePadStates[1].ThumbSticks.Left; break;
@@ -609,51 +427,70 @@ namespace ParticleStormControl
             return result;
         }
 
-        public bool ActionButtonPressed(PlayerIndex index)
-        {
-            if (Settings.Instance.NumPlayers <= (int)index) return false;
-            switch (getControlTypeForPlayer[(int)index])
-            {
-                case ControlType.GAMEPAD0: return (currentGamePadStates[0].IsButtonDown(Buttons.A) && oldGamePadStates[0].IsButtonUp(Buttons.A));
-                case ControlType.GAMEPAD1: return (currentGamePadStates[1].IsButtonDown(Buttons.A) && oldGamePadStates[1].IsButtonUp(Buttons.A));
-                case ControlType.GAMEPAD2: return (currentGamePadStates[2].IsButtonDown(Buttons.A) && oldGamePadStates[2].IsButtonUp(Buttons.A));
-                case ControlType.GAMEPAD3: return (currentGamePadStates[3].IsButtonDown(Buttons.A) && oldGamePadStates[3].IsButtonUp(Buttons.A));
-                case ControlType.KEYBOARD0: return (currentKeyboardState.IsKeyDown(Keys.Space) && oldKeyboardState.IsKeyUp(Keys.Space));
-                case ControlType.KEYBOARD1: return (currentKeyboardState.IsKeyDown(Keys.Enter) && oldKeyboardState.IsKeyUp(Keys.Enter));
-                default: return false;
-            }
-        }
-
         public List<ControlType> ContinueButtonsPressed()
         {
             List<ControlType> result = new List<ControlType>();
 
-            if (PressedButton(Buttons.A, 0)) { result.Add(ControlType.GAMEPAD0); }
-            if (PressedButton(Buttons.A, 1)) { result.Add(ControlType.GAMEPAD1); }
-            if (PressedButton(Buttons.A, 2)) { result.Add(ControlType.GAMEPAD2); }
-            if (PressedButton(Buttons.A, 3)) { result.Add(ControlType.GAMEPAD3); }
-            if (PressedButton(Keys.Space)) { result.Add(ControlType.KEYBOARD0); }
-            if (PressedButton(Keys.Enter)) { result.Add(ControlType.KEYBOARD1); }
+            if (IsButtonPressed(Buttons.A, 0)) { result.Add(ControlType.GAMEPAD0); }
+            if (IsButtonPressed(Buttons.A, 1)) { result.Add(ControlType.GAMEPAD1); }
+            if (IsButtonPressed(Buttons.A, 2)) { result.Add(ControlType.GAMEPAD2); }
+            if (IsButtonPressed(Buttons.A, 3)) { result.Add(ControlType.GAMEPAD3); }
+            if (IsButtonPressed(Keys.Space)) { result.Add(ControlType.KEYBOARD0); }
+            if (IsButtonPressed(Keys.Enter)) { result.Add(ControlType.KEYBOARD1); }
 
             return result;
         }
 
-        public bool HoldButtonPressed(PlayerIndex index)
+        /// <summary>
+        /// returns true if any input device pressed or hold down a certain action
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="down">true if hold down is asked, false if "pressed-event" is needed</param>
+        /// <returns>true for pressed/down, false otherwise</returns>
+        public bool WasAnyActionPressed(ControlActions action, bool down = false)
         {
-            if (Settings.Instance.NumPlayers <= (int)index) return false;
-            switch (getControlTypeForPlayer[(int)index])
+            foreach (ControlType control in typeof(ControlType).GetEnumValues())
             {
-                case ControlType.GAMEPAD0: return (currentGamePadStates[0].IsButtonDown(Buttons.B));
-                case ControlType.GAMEPAD1: return (currentGamePadStates[1].IsButtonDown(Buttons.B));
-                case ControlType.GAMEPAD2: return (currentGamePadStates[2].IsButtonDown(Buttons.B));
-                case ControlType.GAMEPAD3: return (currentGamePadStates[3].IsButtonDown(Buttons.B));
-                case ControlType.KEYBOARD0: return (currentKeyboardState.IsKeyDown(Keys.V));
-                case ControlType.KEYBOARD1: return (currentKeyboardState.IsKeyDown(Keys.RightShift));
-                default: return false;
+                if (SpecificActionButtonPressed(action, control, down))
+                    return true;
             }
+            return false;
+        }
+        
+        /// <summary>
+        /// returns true if a specific action button was pressed or hold down
+        /// uses the settings singleton to lookup players
+        /// </summary>
+        /// <see cref="Settings"/>
+        /// <param name="action"></param>
+        /// <param name="playerIndex">-1 for any active</param>
+        /// <param name="down">true if hold down is asked, false if "pressed-event" is needed</param>
+        /// <returns>true for pressed/down, false otherwise</returns>
+        public bool SpecificActionButtonPressed(ControlActions action, int playerIndex, bool down = false)
+        {
+            Debug.Assert(playerIndex < Settings.Instance.NumPlayers);
+
+            if(playerIndex < 0)
+            {
+                for(int i=0; i<Settings.Instance.NumPlayers; ++i)
+                {
+                    if(SpecificActionButtonPressed(action, Settings.Instance.PlayerControls[i], down))
+                        return true;
+                }
+                return false;
+            }
+            else
+                return SpecificActionButtonPressed(action, Settings.Instance.PlayerControls[playerIndex], down);
         }
 
-        public bool SpecificActionButtonPressed(ControlActions action, ControlType type, bool down)
+        /// <summary>
+        /// returns true if a specific action button was pressed or hold down
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="type"></param>
+        /// <param name="down">true if hold down is asked, false if "pressed-event" is needed</param>
+        /// <returns>true for pressed/down, false otherwise</returns>
+        public bool SpecificActionButtonPressed(ControlActions action, ControlType type, bool down = false)
         {
             switch (type)
             {
@@ -661,34 +498,42 @@ namespace ParticleStormControl
                     switch (action)
 	                {
                         case ControlActions.UP:
-                            return down ? IsButtonDown(Keys.W) : PressedButton(Keys.W);
+                            return down ? IsButtonDown(Keys.W) : IsButtonPressed(Keys.W);
                         case ControlActions.DOWN:
-                            return down ? IsButtonDown(Keys.S) : PressedButton(Keys.S);
+                            return down ? IsButtonDown(Keys.S) : IsButtonPressed(Keys.S);
                         case ControlActions.LEFT:
-                            return down ? IsButtonDown(Keys.A) : PressedButton(Keys.A);
+                            return down ? IsButtonDown(Keys.A) : IsButtonPressed(Keys.A);
                         case ControlActions.RIGHT:
-                            return down ? IsButtonDown(Keys.D) : PressedButton(Keys.D);
+                            return down ? IsButtonDown(Keys.D) : IsButtonPressed(Keys.D);
                         case ControlActions.HOLD:
-                            return down ? IsButtonDown(Keys.V) : PressedButton(Keys.V);
+                            return down ? IsButtonDown(Keys.V) : IsButtonPressed(Keys.V);
                         case ControlActions.ACTION:
-                            return down ? IsButtonDown(Keys.Space) : PressedButton(Keys.Space);
+                            return down ? IsButtonDown(Keys.Space) : IsButtonPressed(Keys.Space);
+                        case ControlActions.PAUSE:
+                            return down ? IsButtonDown(Keys.P) : IsButtonPressed(Keys.P);
+                        case ControlActions.EXIT:
+                            return down ? IsButtonDown(Keys.Escape) : IsButtonPressed(Keys.Escape);
 	                }
                     break;
                 case ControlType.KEYBOARD1:
                     switch (action)
                     {
                         case ControlActions.UP:
-                            return down ? IsButtonDown(Keys.Up) : PressedButton(Keys.Up);
+                            return down ? IsButtonDown(Keys.Up) : IsButtonPressed(Keys.Up);
                         case ControlActions.DOWN:
-                            return down ? IsButtonDown(Keys.Down) : PressedButton(Keys.Down);
+                            return down ? IsButtonDown(Keys.Down) : IsButtonPressed(Keys.Down);
                         case ControlActions.LEFT:
-                            return down ? IsButtonDown(Keys.Left) : PressedButton(Keys.Left);
+                            return down ? IsButtonDown(Keys.Left) : IsButtonPressed(Keys.Left);
                         case ControlActions.RIGHT:
-                            return down ? IsButtonDown(Keys.Right) : PressedButton(Keys.Right);
+                            return down ? IsButtonDown(Keys.Right) : IsButtonPressed(Keys.Right);
                         case ControlActions.HOLD:
-                            return down ? IsButtonDown(Keys.RightShift) : PressedButton(Keys.RightShift);
+                            return down ? IsButtonDown(Keys.RightShift) : IsButtonPressed(Keys.RightShift);
                         case ControlActions.ACTION:
-                            return down ? IsButtonDown(Keys.Enter) : PressedButton(Keys.Enter);
+                            return down ? IsButtonDown(Keys.Enter) : IsButtonPressed(Keys.Enter);
+                        case ControlActions.PAUSE:
+                            return down ? IsButtonDown(Keys.P) : IsButtonPressed(Keys.P);
+                        case ControlActions.EXIT:
+                            return down ? IsButtonDown(Keys.Escape) : IsButtonPressed(Keys.Escape);
                     }
                     break;
                 case ControlType.GAMEPAD0:
@@ -699,21 +544,25 @@ namespace ParticleStormControl
                     switch (action)
 	                {
                         case ControlActions.UP:
-                            return (down ? IsButtonDown(Buttons.DPadUp, controller) : PressedButton(Buttons.DPadUp, controller)) || 
+                            return (down ? IsButtonDown(Buttons.DPadUp, controller) : IsButtonPressed(Buttons.DPadUp, controller)) || 
                                     (down ? IsThumbstickUp_Down(controller) : WasThumbstickUpPressed(controller));
                         case ControlActions.DOWN:
-                            return (down ? IsButtonDown(Buttons.DPadDown, controller) : PressedButton(Buttons.DPadDown, controller)) || 
+                            return (down ? IsButtonDown(Buttons.DPadDown, controller) : IsButtonPressed(Buttons.DPadDown, controller)) || 
                                      (down ? IsThumbstickDown_Down(controller) : WasThumbstickDownPressed(controller));
                         case ControlActions.LEFT:
-                            return (down ? IsButtonDown(Buttons.DPadLeft, controller) : PressedButton(Buttons.DPadLeft, controller)) || 
+                            return (down ? IsButtonDown(Buttons.DPadLeft, controller) : IsButtonPressed(Buttons.DPadLeft, controller)) || 
                                     (down ? IsThumbstickLeft_Down(controller) : WasThumbstickLeftPressed(controller));
                         case ControlActions.RIGHT:
-                            return (down ? IsButtonDown(Buttons.DPadRight, controller) : PressedButton(Buttons.DPadRight, controller)) ||
+                            return (down ? IsButtonDown(Buttons.DPadRight, controller) : IsButtonPressed(Buttons.DPadRight, controller)) ||
                                     (down ? IsThumbstickRight_Down(controller) : WasThumbstickRightPressed(controller));
                         case ControlActions.ACTION:
-                            return down ? IsButtonDown(Buttons.A, controller) : PressedButton(Buttons.A, controller);
+                            return down ? IsButtonDown(Buttons.A, controller) : IsButtonPressed(Buttons.A, controller);
                         case ControlActions.HOLD:
-                            return down ? IsButtonDown(Buttons.B, controller) : PressedButton(Buttons.B, controller);
+                            return down ? IsButtonDown(Buttons.B, controller) : IsButtonPressed(Buttons.B, controller);
+                        case ControlActions.PAUSE:
+                            return down ? IsButtonDown(Buttons.Start, controller) : IsButtonPressed(Buttons.Start, controller);
+                        case ControlActions.EXIT:
+                            return down ? IsButtonDown(Buttons.Back, controller) : IsButtonPressed(Buttons.Back, controller);
 	                }
                     break;
             }

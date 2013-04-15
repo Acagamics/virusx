@@ -196,7 +196,7 @@ namespace ParticleStormControl
 
             inGame.Update(gameTime);
 
-            if (InputManager.Instance.PressedButton(Keys.F1))
+            if (InputManager.Instance.IsButtonPressed(Keys.F1))
                 showStatistics = !showStatistics;
         }
 
@@ -257,7 +257,7 @@ namespace ParticleStormControl
 
             // screenshots
 #if WINDOWS
-            if (InputManager.Instance.PressedButton(Keys.PrintScreen))
+            if (InputManager.Instance.IsButtonPressed(Keys.PrintScreen))
             {
                 int w = GraphicsDevice.PresentationParameters.BackBufferWidth;
                 int h = GraphicsDevice.PresentationParameters.BackBufferHeight;

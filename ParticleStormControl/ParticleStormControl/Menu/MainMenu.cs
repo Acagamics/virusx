@@ -42,20 +42,20 @@ namespace ParticleStormControl.Menu
         {
             // loopin
             int selectionInt = (int)selectedButton;
-            if (InputManager.Instance.AnyDownButtonPressed())
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.DOWN))
                 selectionInt = selectionInt == (int)Button.NUM_BUTTONS-1 ? 0 : selectionInt + 1;
-            else if (InputManager.Instance.AnyUpButtonPressed())
+            else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.UP))
                 selectionInt = selectionInt == 0 ? (int)Button.NUM_BUTTONS - 1 : selectionInt - 1;
             if (selectionInt != (int)selectedButton)
                 SimpleButton.Instance.ChangeHappened(gameTime, menu.SoundEffect);
             selectedButton = (Button)(selectionInt);
 
             // button selected
-            if (InputManager.Instance.PressedButton(Buttons.Start))
+            if (InputManager.Instance.AnyPressedButton(Buttons.Start))
             {
                 menu.ChangePage(Menu.Page.NEWGAME, gameTime);
             }
-            else if (InputManager.Instance.WasContinueButtonPressed())
+            else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION))
             {
                 switch (selectedButton)
                 {

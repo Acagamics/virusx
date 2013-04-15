@@ -51,32 +51,65 @@ namespace ParticleStormControl.Menu
 
         public override void Update(GameTime gameTime)
         {
-            // back to game
-            if (InputManager.Instance.WasPauseButtonPressed(Settings.Instance.PlayerControls[ControllingPlayer]))
+            // if keyboard, anybody is allowed!
+            bool otherKeyboard = false;
+            int controllerBefore = ControllingPlayer;
+            if(Settings.Instance.PlayerControls[ControllingPlayer] == InputManager.ControlType.KEYBOARD0)
             {
-                // reset wait for reconnect settings - not connected pads will now be ignored
-                InputManager.Instance.ResetWaitingForReconnect();
-                menu.ChangePage(Menu.Page.INGAME, gameTime);
+                int i = Array.IndexOf(Settings.Instance.PlayerControls, InputManager.ControlType.KEYBOARD1);
+                if (i >= 0)
+                {
+                    otherKeyboard = true;
+                    ControllingPlayer = i;
+                }
             }
-
-            // shutdown per (any) pad
-         //   if (InputManager.Instance.PressedButton(Buttons.Back) || InputManager.Instance.PressedButton(Keys.Escape))
-          //      menu.ChangePage(Menu.Page.MAINMENU, gameTime);
-
-            // selected?
-            if (InputManager.Instance.WasContinueButtonPressed(Settings.Instance.PlayerControls[ControllingPlayer]))
+            else if(Settings.Instance.PlayerControls[ControllingPlayer] == InputManager.ControlType.KEYBOARD1)
             {
-                InputManager.Instance.ResetWaitingForReconnect();
-                if(currentButton == Buttons.CONTINUE)
+                int i = Array.IndexOf(Settings.Instance.PlayerControls, InputManager.ControlType.KEYBOARD0);
+                if (i >= 0)
+                {
+                    otherKeyboard = true;
+                    ControllingPlayer = i;
+                }
+            }
+            do
+            {
+                // back to game
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.PAUSE, ControllingPlayer))
+                {
+                    InputManager.Instance.ResetWaitingForReconnect();
                     menu.ChangePage(Menu.Page.INGAME, gameTime);
-                else if (currentButton == Buttons.QUIT_TO_MAINMENU)
+                }
+                // back to menu
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, ControllingPlayer))
+                {
+                    InputManager.Instance.ResetWaitingForReconnect();
                     menu.ChangePage(Menu.Page.MAINMENU, gameTime);
-            }
+                }
 
-            // changed option
-            if (InputManager.Instance.WasRightButtonPressed(Settings.Instance.PlayerControls[ControllingPlayer]) ||
-                InputManager.Instance.WasLeftButtonPressed(Settings.Instance.PlayerControls[ControllingPlayer]))
-                currentButton = currentButton == Buttons.CONTINUE ? Buttons.QUIT_TO_MAINMENU : Buttons.CONTINUE;
+                // shutdown per (any) pad
+                //   if (InputManager.Instance.PressedButton(Buttons.Back) || InputManager.Instance.PressedButton(Keys.Escape))
+                //      menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+
+                // selected?
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, ControllingPlayer))
+                {
+                    InputManager.Instance.ResetWaitingForReconnect();
+                    if (currentButton == Buttons.CONTINUE)
+                        menu.ChangePage(Menu.Page.INGAME, gameTime);
+                    else if (currentButton == Buttons.QUIT_TO_MAINMENU)
+                        menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+                }
+
+                // changed option
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, ControllingPlayer) ||
+                    InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, ControllingPlayer))
+                    currentButton = currentButton == Buttons.CONTINUE ? Buttons.QUIT_TO_MAINMENU : Buttons.CONTINUE;
+
+
+                otherKeyboard = ControllingPlayer != controllerBefore;
+                ControllingPlayer = controllerBefore;
+            } while (otherKeyboard);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)

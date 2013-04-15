@@ -40,7 +40,7 @@ namespace ParticleStormControl.Menu
                 if (InputManager.Instance.IsWaitingForReconnect())
                     menu.ChangePage(Menu.Page.PAUSED, gameTime);
 
-                if (InputManager.Instance.WasPauseButtonPressed(Settings.Instance.PlayerControls[i]))
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.PAUSE, i))
                 {
                     ((Paused)menu.GetPage(Menu.Page.PAUSED)).ControllingPlayer = i;
                     menu.ChangePage(Menu.Page.PAUSED, gameTime);

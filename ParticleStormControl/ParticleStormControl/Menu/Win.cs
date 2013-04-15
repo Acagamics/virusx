@@ -87,13 +87,13 @@ namespace ParticleStormControl.Menu
 
         public override void Update(GameTime gameTime)
         {
-            if (InputManager.Instance.WasContinueButtonPressed() && timeUntilContinueIsAvailable < 0.0f)
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION) && timeUntilContinueIsAvailable < 0.0f)
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
-            if (InputManager.Instance.AnyRightButtonPressed())
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT))
                 currentDiagramType = (DiagramType)(((int)currentDiagramType + 1) % (int)DiagramType.NUM_VALUES);
 
-            if (InputManager.Instance.AnyLeftButtonPressed())
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT))
                 currentDiagramType = (DiagramType)((((int)currentDiagramType - 1) < 0 ? (int)DiagramType.NUM_VALUES : (int)(currentDiagramType)) -1);
 
             timeUntilContinueIsAvailable -= (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -304,10 +304,14 @@ namespace ParticleStormControl.Menu
 
             // arrows
             int arrowY = area.Y + (area.Height - ARROW_SIZE) / 2;//boxHeight / 2 - ARROW_SIZE;
+            bool left = InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT, true);
+            bool right = InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT, true);
             SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Left - ARROW_SIZE - ARROW_PADDING, arrowY, ARROW_SIZE, ARROW_SIZE),
-                                                                new Rectangle(0 + (!InputManager.Instance.AnyLeftButtonDown() ? 32 : 0), 0, 16, 16), InputManager.Instance.AnyLeftButtonDown(), menu.TexPixel);
+                                                                new Rectangle(0 + (!left ? 32 : 0), 0, 16, 16),
+                                                                left, menu.TexPixel);
             SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Right + ARROW_PADDING, arrowY, ARROW_SIZE, ARROW_SIZE),
-                                                                new Rectangle(16 + (!InputManager.Instance.AnyRightButtonDown() ? 32 : 0), 0, 16, 16), InputManager.Instance.AnyRightButtonDown(), menu.TexPixel);
+                                                                new Rectangle(16 + (!right ? 32 : 0), 0, 16, 16),
+                                                               right, menu.TexPixel);
 
         }
 

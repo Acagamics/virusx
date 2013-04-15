@@ -78,21 +78,22 @@ namespace ParticleStormControl.Menu
         {
             // loopin
             int selectionInt = (int)selectedButton;
-            if (InputManager.Instance.AnyDownButtonPressed())
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.DOWN))
                 selectionInt = selectionInt == (int)Button.NUM_BUTTONS - 1 ? 0 : selectionInt + 1;
-            else if (InputManager.Instance.AnyUpButtonPressed())
+            else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.UP))
                 selectionInt = selectionInt == 0 ? (int)Button.NUM_BUTTONS - 1 : selectionInt - 1;
             if (selectionInt != (int)selectedButton)
                 SimpleButton.Instance.ChangeHappened(gameTime, menu.SoundEffect);
             selectedButton = (Button)(selectionInt);
 
             // button selected
-            bool changedOne = (InputManager.Instance.AnyLeftButtonPressed() || InputManager.Instance.AnyRightButtonPressed() || InputManager.Instance.WasContinueButtonPressed());
-            if (InputManager.Instance.WasContinueButtonPressed() && selectedButton == Button.EXIT || InputManager.Instance.PressedButton(Keys.Escape) || InputManager.Instance.PressedButton(Buttons.B) || InputManager.Instance.WasExitButtonPressed())
+            bool changedOne = (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT) || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT) || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION));
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION) && selectedButton == Button.EXIT ||
+                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT))
             {
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
             }
-            else if (InputManager.Instance.WasContinueButtonPressed() && selectedButton == Button.BACK)
+            else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION) && selectedButton == Button.BACK)
             {
                 Settings.Instance.Fullscreen = fullscreen;
                 Settings.Instance.Sound = sound;
@@ -122,9 +123,9 @@ namespace ParticleStormControl.Menu
             }
             else if (changedOne && selectedButton == Button.RESOLUTION)
             {
-                if (InputManager.Instance.AnyRightButtonPressed())
+                if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT))
                     activeResolution = activeResolution == availableResolutions.Count - 1 ? 0 : (activeResolution + 1);
-                else if (InputManager.Instance.AnyLeftButtonPressed())
+                else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT))
                     activeResolution = (activeResolution == 0 ? availableResolutions.Count : activeResolution) - 1;
             }
         }

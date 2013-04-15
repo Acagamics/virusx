@@ -28,17 +28,15 @@ namespace ParticleStormControl.Menu
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
         {
             // back to main menu
-            if (InputManager.Instance.WasPauseButtonPressed()
-                || InputManager.Instance.WasContinueButtonPressed()
-                || InputManager.Instance.PressedButton(Buttons.B)
-                || InputManager.Instance.PressedButton(Keys.Escape)
-                || InputManager.Instance.WasExitButtonPressed())
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.PAUSE) ||
+                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT) ||
+                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION))
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
             // loopin
-            if (InputManager.Instance.AnyLeftButtonPressed())
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT))
                 virusIndex = virusIndex == (int)Player.VirusType.NUM_VIRUSES - 1 ? 0 : virusIndex + 1;
-            else if (InputManager.Instance.AnyRightButtonPressed())
+            else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT))
                 virusIndex = virusIndex == 0 ? (int)Player.VirusType.NUM_VIRUSES - 1 : virusIndex - 1;
         }
 
@@ -69,9 +67,9 @@ namespace ParticleStormControl.Menu
             // arrows
             int size = 16;
             SimpleButton.Instance.DrawTexture(spriteBatch, icons, new Rectangle(left - size - padding, Settings.Instance.ResolutionY / 2, size, size),
-                new Rectangle(InputManager.Instance.AnyLeftButtonDown() ? 0 : 32, 0, 16, 16), InputManager.Instance.AnyLeftButtonDown(), menu.TexPixel);
+                new Rectangle(InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT, true) ? 0 : 32, 0, 16, 16), InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT, true), menu.TexPixel);
             SimpleButton.Instance.DrawTexture(spriteBatch, icons, new Rectangle(left + width + padding, Settings.Instance.ResolutionY / 2, size, size),
-                new Rectangle(InputManager.Instance.AnyRightButtonDown() ? 16 : 48, 0, 16, 16), InputManager.Instance.AnyRightButtonDown(), menu.TexPixel);
+                new Rectangle(InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT, true) ? 16 : 48, 0, 16, 16), InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT, true), menu.TexPixel);
 
 
             // back button
