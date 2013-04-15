@@ -167,7 +167,8 @@ namespace ParticleStormControl.Menu
                         Settings.Instance.PlayerColorIndices[i] = getNextFreeColorIndex(Settings.Instance.PlayerColorIndices[i]);
                     }
 
-                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, Settings.Instance.PlayerControls[i], false))
+                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, Settings.Instance.PlayerControls[i], false) || 
+                        InputManager.Instance.IsWaitingForReconnect(Settings.Instance.PlayerControls[i]))
                     {
                         if (playerReady[i])
                         {
@@ -383,7 +384,7 @@ namespace ParticleStormControl.Menu
         private int getFreePlayerIndex()
         {
             int i = 0;
-            while (playerConnected[i] && i < 4)
+            while (i < 4 && playerConnected[i])
                 i++;
             return i == 4 ? -1 : i;
         }

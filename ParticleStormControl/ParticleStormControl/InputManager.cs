@@ -158,10 +158,10 @@ namespace ParticleStormControl
 #endif
             return waitingForReconnect[controller];
         }
-
+        
         public bool IsWaitingForReconnect(ControlType controlType)
         {
-            if (controlType != ControlType.KEYBOARD0 || controlType != ControlType.KEYBOARD1)
+            if (controlType != ControlType.KEYBOARD0 && controlType != ControlType.KEYBOARD1)
                 return IsWaitingForReconnect((int)controlType - (int)ControlType.GAMEPAD0);
             else
                 return false;
@@ -227,7 +227,7 @@ namespace ParticleStormControl
                         waitingForReconnect[i] = true;
                 }
                 else
-                    waitingForReconnect[i] = currentGamePadStates[i].IsConnected;
+                    waitingForReconnect[i] = !currentGamePadStates[i].IsConnected;
 
                 // rumble
                 rumbleTime[i] -= timeSinceLastCall;

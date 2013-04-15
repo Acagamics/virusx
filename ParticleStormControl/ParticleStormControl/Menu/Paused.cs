@@ -18,6 +18,9 @@ namespace ParticleStormControl.Menu
         }
         Buttons currentButton = Buttons.CONTINUE;
 
+
+        List<int> reconnectWaitingPlayerIndices = new List<int>();
+
         /// <summary>
         /// player that controlls this menu
         /// </summary>
@@ -110,6 +113,15 @@ namespace ParticleStormControl.Menu
                 otherKeyboard = ControllingPlayer != controllerBefore;
                 ControllingPlayer = controllerBefore;
             } while (otherKeyboard);
+
+
+            // unconnected players?
+            reconnectWaitingPlayerIndices.Clear();
+            for (int i = 0; i < Settings.Instance.NumPlayers; ++i)
+            {
+                if (InputManager.Instance.IsWaitingForReconnect(Settings.Instance.PlayerControls[i]))
+                    reconnectWaitingPlayerIndices.Add(i);
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -120,7 +132,7 @@ namespace ParticleStormControl.Menu
             // paused string
             string label = "game paused";
             Vector2 stringSizePaused = menu.FontCountdown.MeasureString(label);
-            Vector2 positionPaused = (new Vector2(menu.ScreenWidth, menu.ScreenHeight - 100) - stringSizePaused) / 2;
+            Vector2 positionPaused = (new Vector2(menu.ScreenWidth, menu.ScreenHeight - 300) - stringSizePaused) / 2;
             spriteBatch.DrawString(menu.FontCountdown, label, positionPaused, Color.White);
 
             // continue & mainmenu
@@ -128,35 +140,17 @@ namespace ParticleStormControl.Menu
             float y = positionPaused.Y + 180;
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Continue", new Vector2((menu.ScreenWidth) / 2 - 20 - BUTTON_WIDTH, y), currentButton == Buttons.CONTINUE, menu.TexPixel, BUTTON_WIDTH);
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Quit to Menu", new Vector2(menu.ScreenWidth / 2 + 20, y), currentButton == Buttons.QUIT_TO_MAINMENU, menu.TexPixel, BUTTON_WIDTH);
-            y += 80;
+            y += 100;
 
 
             // disconnected message
-            int numDisconnectMessages = 0;
-            for (int i = 0; i < 4; ++i)
+            foreach(int playerIndex in reconnectWaitingPlayerIndices)
             {
-                if (InputManager.Instance.IsWaitingForReconnect(i))
-                {
-                    string message = " - gamepad " + (i + 1) + " disconnected! - ";
-                    Vector2 position = (new Vector2(menu.ScreenWidth/2, y) - menu.Font.MeasureString(message)/2);
-
-                    // find out player color
-                    int playerIndex = i;
-                    for(; playerIndex<Player.MAX_NUM_PLAYERS; ++playerIndex)
-                    {
-                        if (Settings.Instance.PlayerControls[playerIndex] == InputManager.ControlType.GAMEPAD0 + i)
-                            break;
-                    }
-                    if (playerIndex<Player.MAX_NUM_PLAYERS && Settings.Instance.PlayerColorIndices[playerIndex] >= 0)
-                        spriteBatch.DrawString(menu.Font, message, position, Player.Colors[Settings.Instance.PlayerColorIndices[playerIndex]]);
- 
-
-                    ++numDisconnectMessages;
-                    y += 35;
-                }
+                string message = "Player " + (playerIndex + 1) + " is disconnected!";
+                Vector2 position = (new Vector2(menu.ScreenWidth / 2, y) - menu.Font.MeasureString(message) / 2);
+                SimpleButton.Instance.Draw(spriteBatch, menu.Font, message, position, Settings.Instance.GetPlayerColor(playerIndex), menu.TexPixel);
+                y += 50;
             }
-
-            
         }
     }
 }

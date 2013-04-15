@@ -647,8 +647,7 @@ namespace ParticleStormControl
             spriteBatch.End();
 
             // rest rasterizer state if not allready happend
-            if (device.RasterizerState == scissorTestRasterizerState)
-                device.RasterizerState = RasterizerState.CullNone;
+            device.RasterizerState = RasterizerState.CullNone;
         }
 
         private void DrawParticles(GraphicsDevice device)
@@ -679,9 +678,9 @@ namespace ParticleStormControl
         public void Resize(GraphicsDevice device)
         {
             // letterboxing
-            float sizeY = device.Viewport.Width / RELATIVECOR_ASPECT_RATIO;
+            float sizeY = Settings.Instance.ResolutionX / RELATIVECOR_ASPECT_RATIO;
             if (sizeY + PercentageBar.HEIGHT > device.Viewport.Height)
-                sizeY = device.Viewport.Height - PercentageBar.HEIGHT;
+                sizeY = Settings.Instance.ResolutionY - PercentageBar.HEIGHT;
             fieldSize_pixel = new Point((int)(sizeY * RELATIVECOR_ASPECT_RATIO), (int)sizeY);
 
             fieldOffset_pixel = new Point(device.Viewport.Width - fieldSize_pixel.X, device.Viewport.Height - fieldSize_pixel.Y + PercentageBar.HEIGHT);
