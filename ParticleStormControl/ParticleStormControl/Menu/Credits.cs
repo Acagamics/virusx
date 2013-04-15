@@ -38,7 +38,8 @@ namespace ParticleStormControl.Menu
             // back to main menu
             if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.PAUSE) || 
                 InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT) ||
-                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION) || 
+                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION) ||
+                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.HOLD) ||
                 gameTime.TotalGameTime.Subtract(entry) > TimeSpan.FromSeconds(110))
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
         }

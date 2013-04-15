@@ -90,10 +90,10 @@ namespace ParticleStormControl
         private int[] deathStep;
 
         public int MaxOverallSimultaneousParticles { get { return maxOverallSimultaneousParticles; } }
-        private int maxOverallSimultaneousParticles;
+        private int maxOverallSimultaneousParticles = 1;
 
         public float MaxOverallSimultaneousHealth { get { return maxOverallSimultaneousHealth; } }
-        private float maxOverallSimultaneousHealth;
+        private float maxOverallSimultaneousHealth = 1;
 
         #endregion
 

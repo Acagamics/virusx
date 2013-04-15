@@ -88,8 +88,9 @@ namespace ParticleStormControl.Menu
 
             // button selected
             bool changedOne = (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT) || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT) || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION));
-            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION) && selectedButton == Button.EXIT ||
-                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT))
+            if ((InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION) && selectedButton == Button.EXIT) ||
+                 InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT) ||
+                 InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.HOLD))
             {
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
             }
