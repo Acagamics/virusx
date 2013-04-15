@@ -142,6 +142,7 @@ namespace ParticleStormControl
 
             // background particles
             device.BlendState = BlendState.NonPremultiplied;
+            device.RasterizerState = RasterizerState.CullNone;
             backgroundParticles.Draw(device, totalTimeSeconds);
 
             // cells
