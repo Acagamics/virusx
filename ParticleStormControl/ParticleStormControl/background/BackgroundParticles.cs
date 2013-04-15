@@ -52,6 +52,11 @@ namespace ParticleStormControl
         /// </summary>
         private Effect particleEffect;
 
+        // last settings
+        Vector2 posScale;
+        Vector2 posOffset;
+        Vector2 relativeMax;
+
         // particle numbers
         private const int NUM_CIRCLES = 1024;
         private const int NUM_FILLED_CIRCLES = 6144;
@@ -115,15 +120,18 @@ namespace ParticleStormControl
         /// </summary>
         public void Resize(int screenWidth, int screenHeight, Point fieldPixelSize, Point fieldPixelOffset, Vector2 relativeMax)
         {
-            particleEffect.Parameters["PosScale"].SetValue(new Vector2(fieldPixelSize.X, -fieldPixelSize.Y) /
-                                                             new Vector2(screenWidth, screenHeight) * 2);
-            particleEffect.Parameters["PosOffset"].SetValue(new Vector2(fieldPixelOffset.X, -fieldPixelOffset.Y) /
-                                                             new Vector2(screenWidth, screenHeight) * 2 - new Vector2(1, -1));
-            particleEffect.Parameters["RelativeMax"].SetValue(relativeMax);
+            posScale = new Vector2(fieldPixelSize.X, -fieldPixelSize.Y) /
+                            new Vector2(screenWidth, screenHeight) * 2;
+            posOffset = new Vector2(fieldPixelOffset.X, -fieldPixelOffset.Y) /
+                            new Vector2(screenWidth, screenHeight) * 2 - new Vector2(1, -1);
+            this.relativeMax = relativeMax;
         }
 
         public void Draw(GraphicsDevice device, float passedTime)
         {
+            particleEffect.Parameters["PosScale"].SetValue(posScale);
+            particleEffect.Parameters["PosOffset"].SetValue(posOffset);
+            particleEffect.Parameters["RelativeMax"].SetValue(relativeMax);
             particleEffect.Parameters["ParticleMoving"].SetValue(passedTime* PARTICLE_SPEED);
             device.Indices = particleIndexBuffer;
 

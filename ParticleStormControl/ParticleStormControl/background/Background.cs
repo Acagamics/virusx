@@ -26,7 +26,11 @@ namespace ParticleStormControl
         // last settings
         private List<Vector2> cellPositions = new List<Vector2>();
         private Vector2 relativeCoordMax;
+        private Vector2 posScale;
+        private Vector2 posOffset;
         private Rectangle areaInPixel;
+
+
 
         public int NumBackgroundCells { get { return cellPositions.Count;  } }
 
@@ -57,10 +61,6 @@ namespace ParticleStormControl
                 cellColorTexture = new Texture2D(device, cellPositions.Count, 1, false, SurfaceFormat.Color);
             }
 
-            // memorize old some old settings
-            Vector2 posScale = backgroundShader.Parameters["PosScale"].GetValueVector2();
-            Vector2 posOffset = backgroundShader.Parameters["PosOffset"].GetValueVector2();
-
             // new settings
             backgroundShader.Parameters["NumCells"].SetValue(cellPositions.Count);
             backgroundShader.Parameters["Cells_Pos2D"].SetValue(cellPositions.ToArray());
@@ -78,9 +78,6 @@ namespace ParticleStormControl
             // setup for normal rendering
             device.SetRenderTarget(null);
             backgroundShader.CurrentTechnique = backgroundShader.Techniques["TOutput"];
-            backgroundShader.Parameters["PosScale"].SetValue(posScale);
-            backgroundShader.Parameters["PosOffset"].SetValue(posOffset + new Vector2(-0.5f / (float)device.Viewport.Width, 0.5f / (float)device.Viewport.Height));   // + half pixel correction
-            backgroundShader.Parameters["RelativeMax"].SetValue(Vector2.One);
 
     //         using (var file = new System.IO.FileStream("background.png", System.IO.FileMode.Create))
     //            backgroundTexture.SaveAsPng(file, backgroundTexture.Width, backgroundTexture.Height);
@@ -119,12 +116,10 @@ namespace ParticleStormControl
             Generate(device, cellPositions, relativeCoordMax);
 
             // background shader
-            Vector2 posScale = new Vector2(areaInPixel.Width, -areaInPixel.Height) /
+            posScale = new Vector2(areaInPixel.Width, -areaInPixel.Height) /
                                    new Vector2(device.Viewport.Width, device.Viewport.Height) * 2.0f;
-            Vector2 posOffset = new Vector2(areaInPixel.X, -areaInPixel.Y) /
+            posOffset = new Vector2(areaInPixel.X, -areaInPixel.Y) /
                                    new Vector2(device.Viewport.Width, device.Viewport.Height) * 2.0f - new Vector2(1, -1);
-            backgroundShader.Parameters["PosScale"].SetValue(posScale);
-            backgroundShader.Parameters["PosOffset"].SetValue(posOffset);
         }
 
         public void UpdateColors(Color[] colors)
@@ -146,6 +141,9 @@ namespace ParticleStormControl
             backgroundParticles.Draw(device, totalTimeSeconds);
 
             // cells
+            backgroundShader.Parameters["PosScale"].SetValue(posScale);
+            backgroundShader.Parameters["PosOffset"].SetValue(posOffset + new Vector2(-0.5f / (float)device.Viewport.Width, 0.5f / (float)device.Viewport.Height));   // + half pixel correction
+            backgroundShader.Parameters["RelativeMax"].SetValue(Vector2.One);
             backgroundShader.Parameters["BackgroundTexture"].SetValue(backgroundTexture);
             backgroundShader.Parameters["CellColorTexture"].SetValue(cellColorTexture);
             device.SetVertexBuffer(quadVertexBuffer);

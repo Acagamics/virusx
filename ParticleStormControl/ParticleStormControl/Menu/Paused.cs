@@ -142,7 +142,6 @@ namespace ParticleStormControl.Menu
             SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Quit to Menu", new Vector2(menu.ScreenWidth / 2 + 20, y), currentButton == Buttons.QUIT_TO_MAINMENU, menu.TexPixel, BUTTON_WIDTH);
             y += 100;
 
-
             // disconnected message
             foreach(int playerIndex in reconnectWaitingPlayerIndices)
             {
