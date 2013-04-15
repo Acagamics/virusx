@@ -647,8 +647,7 @@ namespace ParticleStormControl
             spriteBatch.End();
 
             // rest rasterizer state if not allready happend
-            if (device.RasterizerState == scissorTestRasterizerState)
-                device.RasterizerState = RasterizerState.CullNone;
+            device.RasterizerState = RasterizerState.CullNone;
         }
 
         private void DrawParticles(GraphicsDevice device)
@@ -679,12 +678,12 @@ namespace ParticleStormControl
         public void Resize(GraphicsDevice device)
         {
             // letterboxing
-            float sizeY = device.Viewport.Width / RELATIVECOR_ASPECT_RATIO;
-            if (sizeY + PercentageBar.HEIGHT > device.Viewport.Height)
-                sizeY = device.Viewport.Height - PercentageBar.HEIGHT;
+            float sizeY = Settings.Instance.ResolutionX / RELATIVECOR_ASPECT_RATIO;
+            if (sizeY + PercentageBar.HEIGHT > Settings.Instance.ResolutionY)
+                sizeY = Settings.Instance.ResolutionY - PercentageBar.HEIGHT;
             fieldSize_pixel = new Point((int)(sizeY * RELATIVECOR_ASPECT_RATIO), (int)sizeY);
 
-            fieldOffset_pixel = new Point(device.Viewport.Width - fieldSize_pixel.X, device.Viewport.Height - fieldSize_pixel.Y + PercentageBar.HEIGHT);
+            fieldOffset_pixel = new Point(Settings.Instance.ResolutionX - fieldSize_pixel.X, Settings.Instance.ResolutionY - fieldSize_pixel.Y + PercentageBar.HEIGHT);
             fieldOffset_pixel.X /= 2;
             fieldOffset_pixel.Y /= 2;
 
@@ -692,9 +691,9 @@ namespace ParticleStormControl
 
             // setup background
             Vector2 posScale = new Vector2(fieldSize_pixel.X, -fieldSize_pixel.Y) /
-                               new Vector2(device.Viewport.Width, device.Viewport.Height) * 2;
+                               new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) * 2;
             Vector2 posOffset = new Vector2(fieldOffset_pixel.X, -fieldOffset_pixel.Y) /
-                                   new Vector2(device.Viewport.Width, device.Viewport.Height) * 2 - new Vector2(1, -1);
+                                   new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) * 2 - new Vector2(1, -1);
             vignettingShader.Parameters["PosScale"].SetValue(posScale);
             vignettingShader.Parameters["PosOffset"].SetValue(posOffset);
 

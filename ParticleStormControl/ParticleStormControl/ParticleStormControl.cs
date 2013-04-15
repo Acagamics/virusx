@@ -105,6 +105,9 @@ namespace ParticleStormControl
             graphics.PreferredBackBufferHeight = Settings.Instance.ResolutionY;
             graphics.ApplyChanges();
 
+            GraphicsDevice.Viewport = new Viewport(0, 0, 
+                GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+
             inGame.Resize(GraphicsDevice);
             if (background != null)
                 RegenerateBackground();
@@ -217,6 +220,7 @@ namespace ParticleStormControl
 
             if (inGame.State == global::ParticleStormControl.InGame.GameState.Inactive)
                 background.Draw(GraphicsDevice, (float)gameTime.TotalGameTime.TotalSeconds);
+
             inGame.Draw_Backbuffer(gameTime, spriteBatch);
             menu.Draw(gameTime, spriteBatch);
 
