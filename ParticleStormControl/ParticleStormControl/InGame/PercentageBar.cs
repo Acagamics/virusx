@@ -59,7 +59,7 @@ namespace ParticleStormControl
 
         /*private int GetPercent(Player[] players, int index)
         {
-            return (int)players[index].TotalVirusHealth+players[index].NumParticlesAlive+(100000*(int)players[index].PossessingBases);
+            return (int)players[index].TotalVirusHealth+players[index].NumParticlesAlive+(100000*(int)players[index].PossessingSpawnPoints);
         }*/
     }
 }

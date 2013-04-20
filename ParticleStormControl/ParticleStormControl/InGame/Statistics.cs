@@ -75,12 +75,12 @@ namespace ParticleStormControl
         #region absolut statistics
 
         /// <summary>
-        /// The overall Number of bases in the game
+        /// The overall Number of SpawnPoints in the game
         /// </summary>
-        public uint OverallNumberOfBases { get; private set; } 
+        public uint OverallNumberOfSpawnPoints { get; private set; } 
         private ulong[] generatedParticles;
-        private uint[] capturedBases; // active
-        private uint[] lostBases; // active
+        private uint[] capturedSpawnPoints; // active
+        private uint[] lostSpawnPoints; // active
         private uint[] wonMatches; // active
         //private uint[] lostMatches;
         private uint[] collectedItems; // active ; split for every item
@@ -105,26 +105,26 @@ namespace ParticleStormControl
         private uint[] averageHealth; // active
         private uint[] maxSimultaneousParticles; // active
         private List<float>[] dominationInStep; // active
-        private List<uint>[] possessingBasesInStep; // active
+        private List<uint>[] possessingSpawnPointsInStep; // active
 
         #endregion
 
-        public Statistics(int _playerCount, int _maxStoredSteps, uint _overallNumberOfBases)
+        public Statistics(int _playerCount, int _maxStoredSteps, uint _overallNumberOfSpawnPoints)
         {
             steps = lastStep = 0;
             //stepTime = _stepTime;
             playerCount = _playerCount;
             remainingTime = 0f;
             maxStoredSteps = _maxStoredSteps;
-            OverallNumberOfBases = _overallNumberOfBases;
+            OverallNumberOfSpawnPoints = _overallNumberOfSpawnPoints;
             Init();
         }
 
         private void Init()
         {
             generatedParticles = new ulong[playerCount];
-            capturedBases = new uint[playerCount];
-            lostBases = new uint[playerCount];
+            capturedSpawnPoints = new uint[playerCount];
+            lostSpawnPoints = new uint[playerCount];
             wonMatches = new uint[playerCount];
             collectedItems = new uint[playerCount];
             usedItems = new uint[playerCount];
@@ -140,7 +140,7 @@ namespace ParticleStormControl
 
             particlesInStep = new List<uint>[playerCount];
             healthInStep = new List<uint>[playerCount];
-            possessingBasesInStep = new List<uint>[playerCount];
+            possessingSpawnPointsInStep = new List<uint>[playerCount];
 
             itemsUsedByPlayer = new List<ItemUsed>[playerCount];
 
@@ -149,7 +149,7 @@ namespace ParticleStormControl
                 particlesInStep[i] = new List<uint>();
                 healthInStep[i] = new List<uint>();
                 dominationInStep[i] = new List<float>();
-                possessingBasesInStep[i] = new List<uint>();
+                possessingSpawnPointsInStep[i] = new List<uint>();
                 itemsUsedByPlayer[i] = new List<ItemUsed>();
                 deathStep[i] = -1;
             }
@@ -180,17 +180,17 @@ namespace ParticleStormControl
         /// <returns></returns>
         public ulong getGeneratedParticles(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? generatedParticles[playerIndex] : 0 : 0; }
         /// <summary>
-        /// The total amount of captuered bases/spawnPoints.
+        /// The total amount of captuered SpawnPoints/spawnPoints.
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public uint getCapturedBases(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? capturedBases[playerIndex] : 0 : 0; }
+        public uint getCapturedSpawnPoints(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? capturedSpawnPoints[playerIndex] : 0 : 0; }
         /// <summary>
-        /// The total amount of lost bases/spawnPoints
+        /// The total amount of lost SpawnPoints/spawnPoints
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public uint getLostBases(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? lostBases[playerIndex] : 0 : 0; }
+        public uint getLostSpawnPoints(int playerIndex) { return playerIndex < playerCount ? playerIndex >= 0 ? lostSpawnPoints[playerIndex] : 0 : 0; }
         /// <summary>
         /// The amount of won matches
         /// </summary>
@@ -286,12 +286,12 @@ namespace ParticleStormControl
             return result;
         }
         /// <summary>
-        /// the number of bases/spawnPoints a player possessed in a specific time step
+        /// the number of SpawnPoints/spawnPoints a player possessed in a specific time step
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public uint getPossessingBasesInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? playerIndex >= 0 ? possessingBasesInStep[playerIndex][step] : 0 : 0) : 0; }
+        public uint getPossessingSpawnPointsInStep(int playerIndex, int step) { return step < steps ? (playerIndex < playerCount ? playerIndex >= 0 ? possessingSpawnPointsInStep[playerIndex][step] : 0 : 0) : 0; }
         
         /// <summary>
         /// a List of all items a player used/activated in a specific time step. The List is empty if the player has not used/activated any item.
@@ -355,18 +355,18 @@ namespace ParticleStormControl
             else generatedParticles[playerIndex] -= (ulong)particles;
         }
 
-        public void addCaptueredBases(int playerIndex, int bases = 1)
+        public void addCaptueredSpawnPoints(int playerIndex, int SpawnPoints = 1)
         {
             if (playerIndex < 0 || playerIndex >= playerCount) return;
-            if (bases > 0) capturedBases[playerIndex] += (uint)bases;
-            else capturedBases[playerIndex] -= (uint)bases;
+            if (SpawnPoints > 0) capturedSpawnPoints[playerIndex] += (uint)SpawnPoints;
+            else capturedSpawnPoints[playerIndex] -= (uint)SpawnPoints;
         }
 
-        public void addLostBases(int playerIndex, int bases = 1)
+        public void addLostSpawnPoints(int playerIndex, int SpawnPoints = 1)
         {
             if (playerIndex < 0 || playerIndex >= playerCount) return;
-            if (bases > 0) lostBases[playerIndex] += (uint)bases;
-            else lostBases[playerIndex] -= (uint)bases;
+            if (SpawnPoints > 0) lostSpawnPoints[playerIndex] += (uint)SpawnPoints;
+            else lostSpawnPoints[playerIndex] -= (uint)SpawnPoints;
         }
 
         public void addWonMatches(int playerIndex, int matches = 1)
@@ -397,12 +397,12 @@ namespace ParticleStormControl
             else killedEnemies[playerIndex] -= (uint)enemies;
         }
 
-        public void setParticlesAndHealthAndPossesingBases(int playerIndex, uint particles, uint health, uint bases)
+        public void setParticlesAndHealthAndPossesingSpawnPoints(int playerIndex, uint particles, uint health, uint SpawnPoints)
         {
             if (playerIndex < 0 || playerIndex >= playerCount) return;
             particlesInStep[playerIndex].Add(particles);
             healthInStep[playerIndex].Add(health);
-            possessingBasesInStep[playerIndex].Add((uint)bases);
+            possessingSpawnPointsInStep[playerIndex].Add((uint)SpawnPoints);
 
             if (particles >= maxSimultaneousParticles[playerIndex])
                 maxSimultaneousParticles[playerIndex] = particles;
@@ -419,7 +419,7 @@ namespace ParticleStormControl
                 particlesInStep[i].RemoveAt(0);
                 healthInStep[i].RemoveAt(0);
                 dominationInStep[i].RemoveAt(0);
-                possessingBasesInStep[i].RemoveAt(0);
+                possessingSpawnPointsInStep[i].RemoveAt(0);
             }
 
         }
@@ -473,7 +473,7 @@ namespace ParticleStormControl
 
         /*private ulong getDominationPercentage(int playerIndex, int step)
         {
-            return healthInStep[playerIndex][step] + possessingBasesInStep[playerIndex][step] * 100000 + particlesInStep[playerIndex][step];
+            return healthInStep[playerIndex][step] + possessingSpawnPointsInStep[playerIndex][step] * 100000 + particlesInStep[playerIndex][step];
         }*/
 
         public static float[] ComputeDomination(Player[] players)
@@ -481,14 +481,14 @@ namespace ParticleStormControl
             float[] result = new float[players.Length];// + 1]; result[players.Length] = 0.0f;
             float overallHealth = 0.0f;
             ulong overallParticles = 0;
-            float overallBaseSizes = 0.0f;
-            uint overallBases = 0;
+            float overallSpawnPointsizes = 0.0f;
+            uint overallSpawnPoints = 0;
             for (int i = 0; i < players.Length; ++i)
             {
-                overallBaseSizes += players[i].PossessingBasesOverallSize;
+                overallSpawnPointsizes += players[i].PossessingSpawnPointsOverallSize;
                 overallParticles += (ulong)players[i].NumParticlesAlive;
                 overallHealth += players[i].TotalVirusHealth;
-                overallBases += players[i].PossessingBases;
+                overallSpawnPoints += players[i].PossessingSpawnPoints;
             }
 
             for (int i = 0; i < players.Length; ++i)
@@ -504,22 +504,22 @@ namespace ParticleStormControl
                     overallParticles = 1;
                     dev -= 1f;
                 }
-                if (overallBaseSizes <= 0.0f)
+                if (overallSpawnPointsizes <= 0.0f)
                 {
-                    overallBaseSizes = 1;
+                    overallSpawnPointsizes = 1;
                     dev -= 2f;
                 }
-                if (overallBases <= 0)
+                if (overallSpawnPoints <= 0)
                 {
-                    overallBaseSizes = 1;
+                    overallSpawnPointsizes = 1;
                     dev -= 1f;
                 }
                 if (dev > 0.0f)
                 {
-                    result[i] = (((players[i].PossessingBasesOverallSize / overallBaseSizes) * 2f)
+                    result[i] = (((players[i].PossessingSpawnPointsOverallSize / overallSpawnPointsizes) * 2f)
                         + (float)players[i].NumParticlesAlive / overallParticles
                         + players[i].TotalVirusHealth / overallHealth
-                        + (float)players[i].PossessingBases / overallBases) / dev;
+                        + (float)players[i].PossessingSpawnPoints / overallSpawnPoints) / dev;
                 }
                 else result[i] = 1f / players.Length;
                 //result[players.Length] += result[i];

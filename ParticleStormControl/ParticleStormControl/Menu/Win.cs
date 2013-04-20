@@ -60,8 +60,8 @@ namespace ParticleStormControl.Menu
                 if (ConnectedPlayers[i])
                 {
                     values[counter] = new List<string>();
-                    values[counter].Add(statistics.getCapturedBases(i).ToString());
-                    values[counter].Add(statistics.getLostBases(i).ToString());
+                    values[counter].Add(statistics.getCapturedSpawnPoints(i).ToString());
+                    values[counter].Add(statistics.getLostSpawnPoints(i).ToString());
                     values[counter].Add(statistics.getMaxSimultaneousParticles(i).ToString());
                     values[counter].Add(statistics.getAverageParticles(i).ToString());
                     values[counter].Add(statistics.getAverageHealth(i).ToString());
@@ -153,7 +153,7 @@ namespace ParticleStormControl.Menu
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.SPAWN_POINTS:
-                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => (float)statistics.getPossessingBasesInStep(player, step) / statistics.OverallNumberOfBases,
+                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => (float)statistics.getPossessingSpawnPointsInStep(player, step) / statistics.OverallNumberOfSpawnPoints,
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
             }

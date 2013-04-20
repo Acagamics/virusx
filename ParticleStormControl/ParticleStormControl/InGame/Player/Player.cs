@@ -13,14 +13,24 @@ namespace ParticleStormControl
 
         protected VirusSwarm virusSwarm;
 
+        #region Basic Properties
+
+        public int Index { get { return playerIndex; } }
+        public readonly int playerIndex;
         
         public VirusSwarm.VirusType Virus { get { return virusSwarm.Virus; } }
+
+        public Item.ItemType ItemSlot { get; set; }
+
+        #endregion
+
+        #region Virus rendering access
 
         public Texture2D HealthTexture { get { return virusSwarm.HealthTexture; } }
         public Texture2D PositionTexture { get { return virusSwarm.PositionTexture; } }
         public int HighestUsedParticleIndex { get { return virusSwarm.HighestUsedParticleIndex; } }
 
-        public int CurrentSpawnNumber { get { return virusSwarm.CurrentSpawnNumber; } }
+        #endregion
 
         #region Color
 
@@ -87,20 +97,6 @@ namespace ParticleStormControl
 
         #endregion
 
-        #region item
-
-        public Item.ItemType ItemSlot { get; set; }
-
-        #endregion
-
-        #region index/identifier
-
-        // who is who (blue etc.)
-        public readonly int playerIndex;
-        public int Index { get { return playerIndex; } }
-
-        #endregion
-
         #region life and lifetime
 
         public bool Alive
@@ -112,6 +108,9 @@ namespace ParticleStormControl
 
         public int NumParticlesAlive
         { get { return alive ? virusSwarm.NumParticlesAlive : 0; } }
+
+        public int CurrentSpawnNumber
+        { get { return virusSwarm.CurrentSpawnNumber; } }
 
         public float RemainingTimeAlive
         {
@@ -129,16 +128,16 @@ namespace ParticleStormControl
 
         #endregion
 
-        #region bases
+        #region SpawnPoints
 
         /// <summary>
         /// for the percentage bar
         /// </summary>
-        public uint PossessingBases { get; set; }
+        public uint PossessingSpawnPoints { get; private set; }
         /// <summary>
         /// for the percentage bar
         /// </summary>
-        public float PossessingBasesOverallSize { get; set; }
+        public float PossessingSpawnPointsOverallSize { get; private set; }
 
         #endregion
 
@@ -185,6 +184,9 @@ namespace ParticleStormControl
 
             if (virusSwarm.CurrentSpawnNumber == 0 && alive)
                 alive = NumParticlesAlive > 0 || cantDie; // still alive *sing*
+
+            PossessingSpawnPoints = (uint)posessedSpawns.Count();
+            PossessingSpawnPointsOverallSize = posessedSpawns.Sum(x => x.Size);
 
             // alive due to number of spawnpoints?
             if (alive)

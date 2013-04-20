@@ -8,6 +8,10 @@ using System.Text;
 
 namespace ParticleStormControl
 {
+    /// <summary>
+    /// Defines a virus swarm of a given type and color
+    /// Every player posesses exactly one Swarm
+    /// </summary>
     public class VirusSwarm
     {
         #region Virus Definitions
@@ -42,39 +46,12 @@ namespace ParticleStormControl
                                                                  "Implicated in several diseases that include infectious mononucleosis,\nmultiple sclerosis and Hodgkin lymphoma." };
 
 
-        #region properties
-
-        // please all values from -1 to 1
-        /*private static readonly float[] disciplin_speed_byVirus = new float[]{ 0.7f, 0.0f, -0.6f, 0.5f };  // negative more disciplin, ...
-        public float Disciplin_speed
-        {  get { return disciplin_speed_byVirus[virusIndex]; } }
-
-        private static readonly float[] mass_health_byVirus = new float[] { -0.5f, -0.2f, 0.6f, -1.0f };  // negative more mass, positive more health 
-        public float Mass_health
-        { get { return mass_health_byVirus[virusIndex]; } }*/
-
-        /*static public string AttributValueToString(float value)
-        {
-            string symbol = "";
-            if (value < 0f) { symbol += "-"; value *= -1f; }
-            else symbol += "+";
-            string result = symbol;
-            if (value > 0.24f) result += symbol;
-            if (value > 0.49f) result += symbol;
-            if (value > 0.74f) result += symbol;
-            //if (value > 0.9f) result += symbol;
-
-            return result;
-        } */
-
-        #region propertie discriptors
         // IMPORTANT: The number '+' for each virus should add to the same sum. This is to imply that all virusses are equally strong. ;)
         // Currently the sum is 10
         public static readonly string[] DESCRIPTOR_Mass = new string[] { "++", "++++", "+", "++++" };
         public static readonly string[] DESCRIPTOR_Speed = new string[] { "+++", "+", "++", "++++" };
         public static readonly string[] DESCRIPTOR_Health = new string[] { "+++", "+++", "++++", "+" };
         public static readonly string[] DESCRIPTOR_Disciplin = new string[] { "++", "++", "+++", "+" };
-        #endregion
 
         // attributs
         private static readonly float[] MASS_byVirus = new float[] { 0.5f, 0.63f, 0.075f, 1.0f };
@@ -119,8 +96,6 @@ namespace ParticleStormControl
 
         // attacking constant
         private const float ATTACKING_PER_SECOND = 30.0f * 255;
-
-        #endregion
 
         #endregion
 
@@ -237,7 +212,9 @@ namespace ParticleStormControl
 
         #endregion
 
-        private int virusIndex;
+        #region Basic Swarm Properties
+
+        private readonly int virusIndex;
         public int VirusIndex
         {
             get { return virusIndex; }
@@ -248,6 +225,8 @@ namespace ParticleStormControl
 
         public float TotalHealth { get { return totalHealth; } }
         private float totalHealth = 0.0f;
+
+        #endregion
 
         public VirusSwarm(int virusIndex, int colorIndex, GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
         {
