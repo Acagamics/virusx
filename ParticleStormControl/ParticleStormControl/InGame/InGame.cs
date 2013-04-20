@@ -108,9 +108,9 @@ namespace ParticleStormControl
             int count = 0;
             for (int i = 0; i < 4; ++i)
             {
-                if (Settings.Instance.PlayerSlotActive[i])
+                if (Settings.Instance.PlayerTypes[i] != Player.Type.NONE)
                 {
-                    if (count == 1)
+                    if (Settings.Instance.PlayerTypes[i] == Player.Type.AI)
                     {
                         players[count] = new AIPlayer(i, Settings.Instance.PlayerVirusIndices[i], Settings.Instance.PlayerColorIndices[i],
                                                         graphicsDevice, content, noiseWhite2D);
@@ -265,7 +265,7 @@ namespace ParticleStormControl
                 level.GameStatistics.addWonMatches(winPlayerIndex);
 
                 ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).WinPlayerIndex = winPlayerIndex;
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).ConnectedPlayers = Settings.Instance.PlayerSlotActive;
+                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerTypes = Settings.Instance.PlayerTypes;
                 ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerColorIndices = Settings.Instance.PlayerColorIndices;
                 
                 menu.ChangePage(Menu.Menu.Page.WIN, gameTime);

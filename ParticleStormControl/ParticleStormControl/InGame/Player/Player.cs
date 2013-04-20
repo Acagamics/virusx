@@ -10,6 +10,13 @@ namespace ParticleStormControl
     {
         public const int MAX_NUM_PLAYERS = 4;
 
+        public enum Type
+        {
+            HUMAN,
+            AI,
+            NONE
+        };
+
         protected VirusSwarm virusSwarm;
 
         #region Basic Properties

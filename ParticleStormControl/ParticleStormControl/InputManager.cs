@@ -54,6 +54,9 @@ namespace ParticleStormControl
             ACTION,
             HOLD,
 
+            ADD_AI,
+            REMOVE_AI,
+
             PAUSE,
             EXIT
         }
@@ -161,7 +164,7 @@ namespace ParticleStormControl
         
         public bool IsWaitingForReconnect(ControlType controlType)
         {
-            if (controlType != ControlType.KEYBOARD0 && controlType != ControlType.KEYBOARD1)
+            if (controlType != ControlType.NONE && controlType != ControlType.KEYBOARD0 && controlType != ControlType.KEYBOARD1)
                 return IsWaitingForReconnect((int)controlType - (int)ControlType.GAMEPAD0);
             else
                 return false;
@@ -513,6 +516,11 @@ namespace ParticleStormControl
                             return down ? IsButtonDown(Keys.P) : IsButtonPressed(Keys.P);
                         case ControlActions.EXIT:
                             return down ? IsButtonDown(Keys.Escape) : IsButtonPressed(Keys.Escape);
+
+                        case ControlActions.ADD_AI:
+                            return IsButtonPressed(Keys.OemPlus);
+                        case ControlActions.REMOVE_AI:
+                            return IsButtonPressed(Keys.OemMinus);
 	                }
                     break;
                 case ControlType.KEYBOARD1:
@@ -534,6 +542,11 @@ namespace ParticleStormControl
                             return down ? IsButtonDown(Keys.P) : IsButtonPressed(Keys.P);
                         case ControlActions.EXIT:
                             return down ? IsButtonDown(Keys.Escape) : IsButtonPressed(Keys.Escape);
+
+                        case ControlActions.ADD_AI:
+                            return IsButtonPressed(Keys.OemPlus);
+                        case ControlActions.REMOVE_AI:
+                            return IsButtonPressed(Keys.OemMinus);
                     }
                     break;
                 case ControlType.GAMEPAD0:

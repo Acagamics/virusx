@@ -23,7 +23,7 @@ namespace ParticleStormControl.Menu
         private Texture2D icons;
 
         public int WinPlayerIndex { get; set; }
-        public bool[] ConnectedPlayers { get; set; }
+        public Player.Type[] PlayerTypes { get; set; }
         public int[] PlayerColorIndices { get; set; }
 
         const float DURATION_CONTINUE_UNAVAILABLE = 1.0f;
@@ -57,7 +57,7 @@ namespace ParticleStormControl.Menu
             int counter = 0;
             for (int i = 0; i < 4; i++)
             {
-                if (ConnectedPlayers[i])
+                if (PlayerTypes[i] != Player.Type.NONE)
                 {
                     values[counter] = new List<string>();
                     values[counter].Add(statistics.getCapturedSpawnPoints(i).ToString());

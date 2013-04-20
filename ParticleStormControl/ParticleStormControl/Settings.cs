@@ -43,7 +43,7 @@ namespace ParticleStormControl
         /// current number of players for the upcoming/running game
         /// <b>Some of these players can be inactive!</b>
         /// </summary>
-        /// <see cref="PlayerSlotActive"/>
+        /// <see cref="PlayerType"/>
         public int NumPlayers
         {
             get { return numPlayers; }
@@ -57,17 +57,13 @@ namespace ParticleStormControl
         public int[] PlayerVirusIndices { get { return playerVirusIndices; } }
         private int[] playerVirusIndices = new int[] { 0, 0, 0, 0 };
 
-        
+
         /// <summary>
-        /// gives for every player slot if there truely IS a player
+        /// gives for every player slot a type and if there truely IS a player
         /// </summary>
-        public bool[] PlayerSlotActive
-        {
-            get { return playerSlotActive; }
-            set { playerSlotActive = value; }
-        }
-        private bool[] playerSlotActive = new bool[] { false, false, false, false };
-        
+        public Player.Type[] PlayerTypes { get { return playerTypes; } }
+        private Player.Type[] playerTypes = new Player.Type[] { Player.Type.NONE, Player.Type.NONE, Player.Type.NONE, Player.Type.NONE };
+
         #endregion
 
         #region Misc
@@ -138,7 +134,7 @@ namespace ParticleStormControl
         public void ResetPlayerSettingsToDefault(int index)
         {
             playerControls[index] = InputManager.ControlType.NONE;
-            playerSlotActive[index] = false;
+            playerTypes[index] = Player.Type.NONE;
             playerColorIndices[index] = -1;
             playerVirusIndices[index] = 0;
         }

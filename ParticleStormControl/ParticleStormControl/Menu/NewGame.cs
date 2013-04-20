@@ -21,7 +21,7 @@ namespace ParticleStormControl.Menu
         private const int maxCountdown = 3;
         private const int safeCountdown = 1;
 
-        private bool[] playerConnected = new bool[4];
+        private bool[] playerSlotOccupied = new bool[4];
         private bool[] playerReady = new bool[4];
 
         private Effect virusRenderEffect;
@@ -34,7 +34,7 @@ namespace ParticleStormControl.Menu
             : base(menu)
         {
             Settings.Instance.ResetPlayerSettingsToDefault();
-            playerConnected = new bool[4];
+            playerSlotOccupied = new bool[4];
             playerReady = new bool[4];
             countdown = new TimeSpan();
         }
@@ -45,7 +45,7 @@ namespace ParticleStormControl.Menu
             countdown = TimeSpan.Zero;
             for (int i = 0; i < 4; ++i)
             {
-                playerConnected[i] = false;
+                playerSlotOccupied[i] = false;
                 playerReady[i] = false;
             }
         }
@@ -124,26 +124,33 @@ namespace ParticleStormControl.Menu
 
                 // add new player
                 if (!found)
+                    AddPlayer(false, type);
+            }
+
+            // test add/remove ai
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ADD_AI))
+            {
+                int index = AddPlayer(true, InputManager.ControlType.NONE);
+                if (index != -1)    
+                    toggleReady(index);
+            }
+            else if(InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.REMOVE_AI))
+            {
+                // search for an ai player
+                for(int i=Player.MAX_NUM_PLAYERS-1; i>=0; --i)
                 {
-                    int index = getFreePlayerIndex();
-                    if (index != -1)
+                    if (playerSlotOccupied[i] && Settings.Instance.PlayerTypes[i] == Player.Type.AI)
                     {
-                        int colorIndex = getNextFreeColorIndex(0);
-                        playerConnected[index] = true;
-                        Settings.Instance.PlayerControls[index] = type;
-                        Settings.Instance.PlayerColorIndices[index] = colorIndex;
-                        Settings.Instance.PlayerVirusIndices[index] = Random.Next(4);
-                        Settings.Instance.NumPlayers++;
-                        Settings.Instance.PlayerSlotActive[index] = true;
-                        countdown = TimeSpan.FromSeconds(-1);
+                        RemovePlayer(i);
+                        break;
                     }
                 }
             }
 
             // test various buttons
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < Player.MAX_NUM_PLAYERS; i++)
             {
-                if (playerConnected[i])
+                if (playerSlotOccupied[i] && Settings.Instance.PlayerTypes[i] == Player.Type.HUMAN)
                 {
                     if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
                     {
@@ -171,22 +178,40 @@ namespace ParticleStormControl.Menu
                         InputManager.Instance.IsWaitingForReconnect(Settings.Instance.PlayerControls[i]))
                     {
                         if (playerReady[i])
-                        {
                             toggleReady(i);
-                        }
                         else
-                        {
-                            // free slot
-                            Settings.Instance.ResetPlayerSettingsToDefault(i);
-                            Settings.Instance.NumPlayers--;
-                            Settings.Instance.PlayerSlotActive[i] = false;
-                            playerConnected[i] = false;
-                            playerReady[i] = false;
-                            startCountdown();
-                        }
+                            RemovePlayer(i);
                     }
                 }
             }
+        }
+
+        int AddPlayer(bool ai, InputManager.ControlType controlType)
+        {
+            int index = getFreePlayerIndex();
+            if (index != -1)
+            {
+                int colorIndex = getNextFreeColorIndex(0);
+                playerSlotOccupied[index] = true;
+                Settings.Instance.PlayerControls[index] = ai ? InputManager.ControlType.NONE : controlType;
+                Settings.Instance.PlayerColorIndices[index] = colorIndex;
+                Settings.Instance.PlayerVirusIndices[index] = Random.Next((int)VirusSwarm.VirusType.NUM_VIRUSES);
+                Settings.Instance.NumPlayers++; // really?
+                Settings.Instance.PlayerTypes[index] = ai ? Player.Type.AI : Player.Type.HUMAN;
+                countdown = TimeSpan.FromSeconds(-1);
+            }
+
+            return index;
+        }
+
+        void RemovePlayer(int slot)
+        {
+            Settings.Instance.ResetPlayerSettingsToDefault(slot);
+            Settings.Instance.NumPlayers--; // reeeally?
+            Settings.Instance.PlayerTypes[slot] = Player.Type.NONE;
+            playerSlotOccupied[slot] = false;
+            playerReady[slot] = false;
+            CheckStartCountdown();
         }
 
         /// <summary>
@@ -242,7 +267,7 @@ namespace ParticleStormControl.Menu
                         break;
                 }
 
-                if (playerConnected[i])
+                if (playerSlotOccupied[i])
                 {
                     // text
                     SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, VirusSwarm.VirusNames[Settings.Instance.PlayerVirusIndices[i]].ToString(),
@@ -332,6 +357,13 @@ namespace ParticleStormControl.Menu
                                                 new Rectangle(0 + isActive(InputManager.ControlActions.LEFT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.LEFT, i), menu.TexPixel);
                     SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X + boxWidth - ARROW_SIZE, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE), 
                                                 new Rectangle(16 + isActive(InputManager.ControlActions.RIGHT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.RIGHT, i), menu.TexPixel);
+
+                    // big fat "comp" for those who need it
+                    if (Settings.Instance.PlayerTypes[i] == Player.Type.AI)
+                    {
+                        Vector2 stringSize = menu.FontCountdown.MeasureString("COMP");
+                        spriteBatch.DrawString(menu.FontCountdown, "COMP", origin + new Vector2(boxWidth, boxHeight) / 2 - stringSize / 2, Color.DarkGray * 0.8f);
+                    }
                 }
                 else
                 {
@@ -384,7 +416,7 @@ namespace ParticleStormControl.Menu
         private int getFreePlayerIndex()
         {
             int i = 0;
-            while (i < 4 && playerConnected[i])
+            while (i < 4 && playerSlotOccupied[i])
                 i++;
             return i == 4 ? -1 : i;
         }
@@ -399,12 +431,12 @@ namespace ParticleStormControl.Menu
             return isActive(action, index) ? 0 : offset;
         }
 
-        private void startCountdown()
+        private void CheckStartCountdown()
         {
-            bool allReady = playerConnected.Count(x => x) > 1;
+            bool allReady = playerSlotOccupied.Count(x => x) > 1;
             for (int i = 0; i < 4; i++)
             {
-                if (playerConnected[i] != playerReady[i])
+                if (playerSlotOccupied[i] != playerReady[i])
                     allReady = false;
             }
             if (allReady && Settings.Instance.NumPlayers > 0)
@@ -419,7 +451,7 @@ namespace ParticleStormControl.Menu
 
             // countdown
             if (playerReady[index] && countdown.TotalSeconds <= 0)
-                startCountdown();
+                CheckStartCountdown();
             else if (countdown.TotalSeconds > safeCountdown)
                 countdown = TimeSpan.FromSeconds(-1);
         }
