@@ -152,7 +152,7 @@ namespace ParticleStormControl
         {
             if (explosionTimer.IsRunning && PossessingPlayer != -1)
             {
-                Color damage = Player.TextureDamageValue[PossessingPlayer] * explosionDamage * currentExplosionAlpha;
+                Color damage = VirusSwarm.TextureDamageValue[PossessingPlayer] * explosionDamage * currentExplosionAlpha;
                 spriteBatch.Draw(explosionTexture, DamageMap.ComputePixelRect(Position, currentExplosionSize), null, damage, explosionRotation,
                                      new Vector2(explosionTexture.Width / 2, explosionTexture.Height / 2), SpriteEffects.None, 1.0f);
             }

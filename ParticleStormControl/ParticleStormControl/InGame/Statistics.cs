@@ -454,7 +454,7 @@ namespace ParticleStormControl
             //ulong overall = 0;
 
             maxOverallSimultaneousParticles = Math.Max(players.Sum(x => x.NumParticlesAlive), maxOverallSimultaneousParticles);
-            maxOverallSimultaneousHealth = Math.Max(players.Sum(x => x.TotalHealth), maxOverallSimultaneousHealth);
+            maxOverallSimultaneousHealth = Math.Max(players.Sum(x => x.TotalVirusHealth), maxOverallSimultaneousHealth);
 
 
             float [] percentage = ComputeDomination(players);
@@ -487,7 +487,7 @@ namespace ParticleStormControl
             {
                 overallBaseSizes += players[i].PossessingBasesOverallSize;
                 overallParticles += (ulong)players[i].NumParticlesAlive;
-                overallHealth += players[i].TotalHealth;
+                overallHealth += players[i].TotalVirusHealth;
                 overallBases += players[i].PossessingBases;
             }
 
@@ -518,7 +518,7 @@ namespace ParticleStormControl
                 {
                     result[i] = (((players[i].PossessingBasesOverallSize / overallBaseSizes) * 2f)
                         + (float)players[i].NumParticlesAlive / overallParticles
-                        + players[i].TotalHealth / overallHealth
+                        + players[i].TotalVirusHealth / overallHealth
                         + (float)players[i].PossessingBases / overallBases) / dev;
                 }
                 else result[i] = 1f / players.Length;

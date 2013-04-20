@@ -127,11 +127,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="background\Background.cs" />
+    <Compile Include="InGame\Player\HumanPlayer.cs" />
     <Compile Include="InGame\InGame.cs" />
     <Compile Include="InGame\InGameInterface.cs" />
     <Compile Include="background\BackgroundParticles.cs" />
     <Compile Include="InGame\Level\Item.cs" />
     <Compile Include="InGame\PercentageBar.cs" />
+    <Compile Include="InGame\Player\VirusSwarm.cs" />
     <Compile Include="InGame\Random.cs" />
     <Compile Include="InGame\Statistics.cs" />
     <Compile Include="InputManager.cs" />
@@ -158,7 +160,7 @@
     <Compile Include="InGame\Level\Level.cs" />
     <Compile Include="InGame\ParticleRenderer.cs" />
     <Compile Include="InGame\Level\DangerZone.cs" />
-    <Compile Include="InGame\Player.cs" />
+    <Compile Include="InGame\Player\Player.cs" />
     <Compile Include="Menu\Viruses.cs" />
     <Compile Include="Menu\Win.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
