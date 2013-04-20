@@ -74,6 +74,7 @@
     <Compile Include="InGame\Level\Debuff.cs" />
     <Compile Include="InGame\Level\Item.cs" />
     <Compile Include="InGame\PercentageBar.cs" />
+    <Compile Include="InGame\Player\AIPlayer.cs" />
     <Compile Include="InGame\Player\HumanPlayer.cs" />
     <Compile Include="InGame\Player\Player.cs" />
     <Compile Include="InGame\Player\VirusSwarm.cs" />

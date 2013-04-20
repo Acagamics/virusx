@@ -110,8 +110,16 @@ namespace ParticleStormControl
             {
                 if (Settings.Instance.PlayerSlotActive[i])
                 {
-                    players[count] = new HumanPlayer(i, Settings.Instance.PlayerVirusIndices[i],  Settings.Instance.PlayerColorIndices[i],
-                                                    graphicsDevice, content, noiseWhite2D, Settings.Instance.PlayerControls[i]);
+                    if (count == 1)
+                    {
+                        players[count] = new AIPlayer(i, Settings.Instance.PlayerVirusIndices[i], Settings.Instance.PlayerColorIndices[i],
+                                                        graphicsDevice, content, noiseWhite2D);
+                    }
+                    else
+                    {
+                        players[count] = new HumanPlayer(i, Settings.Instance.PlayerVirusIndices[i], Settings.Instance.PlayerColorIndices[i],
+                                                     graphicsDevice, content, noiseWhite2D, Settings.Instance.PlayerControls[i]);
+                    }
                     count++;
                     if (count == Settings.Instance.NumPlayers)
                         break;
@@ -150,9 +158,6 @@ namespace ParticleStormControl
             song = content.Load<Song>("sound/09 Beach");
             MediaPlayer.Volume = 0.5f;
             MediaPlayer.IsRepeating = true;
-            // backgroundmusic
-            //if (Settings.Instance.Music)
-                //MediaPlayer.Play(song);
         }
 
 

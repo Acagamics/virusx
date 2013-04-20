@@ -127,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="background\Background.cs" />
+    <Compile Include="InGame\Player\AIPlayer.cs" />
     <Compile Include="InGame\Player\HumanPlayer.cs" />
     <Compile Include="InGame\InGame.cs" />
     <Compile Include="InGame\InGameInterface.cs" />
