@@ -55,33 +55,41 @@ namespace ParticleStormControl.Menu
             {
                 menu.ChangePage(Menu.Page.NEWGAME, gameTime);
             }
-            else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION))
+            else
             {
-                switch (selectedButton)
+                // as manual loop for identifying the used controls
+                foreach (InputManager.ControlType control in Enum.GetValues(typeof(InputManager.ControlType)))
                 {
-                    case Button.NEWGAME:
-                        menu.ChangePage(Menu.Page.NEWGAME, gameTime);
-                        break;
+                    if(InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, control))
+                    {
+                        switch (selectedButton)
+                        {
+                            case Button.NEWGAME:
+                                ((NewGame)menu.GetPage(Menu.Page.NEWGAME)).StartingControls = control;
+                                menu.ChangePage(Menu.Page.NEWGAME, gameTime);
+                                break;
 
-                    case Button.CONTROLS:
-                        menu.ChangePage(Menu.Page.CONTROLS, gameTime);
-                        break;
+                            case Button.CONTROLS:
+                                menu.ChangePage(Menu.Page.CONTROLS, gameTime);
+                                break;
 
-                    case Button.OPTIONS:
-                        menu.ChangePage(Menu.Page.OPTIONS, gameTime);
-                        break;
+                            case Button.OPTIONS:
+                                menu.ChangePage(Menu.Page.OPTIONS, gameTime);
+                                break;
 
-                    case Button.VIRUSES:
-                        menu.ChangePage(Menu.Page.VIRUSES, gameTime);
-                        break;
+                            case Button.VIRUSES:
+                                menu.ChangePage(Menu.Page.VIRUSES, gameTime);
+                                break;
 
-                    case Button.CREDITS:
-                        menu.ChangePage(Menu.Page.CREDITS, gameTime);
-                        break;
+                            case Button.CREDITS:
+                                menu.ChangePage(Menu.Page.CREDITS, gameTime);
+                                break;
 
-                    case Button.END:
-                        menu.Exit();
-                        break;
+                            case Button.END:
+                                menu.Exit();
+                                break;
+                        }
+                    }
                 }
             }
         }

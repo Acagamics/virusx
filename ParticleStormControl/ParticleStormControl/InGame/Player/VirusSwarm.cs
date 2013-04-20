@@ -254,6 +254,17 @@ namespace ParticleStormControl
                                                             MAX_SPAWNS_PER_FRAME * 2, BufferUsage.WriteOnly);
         }
 
+        ~VirusSwarm()
+        {
+            positionTargets[0].Dispose();
+            positionTargets[1].Dispose();
+            infoTargets[0].Dispose();
+            infoTargets[1].Dispose();
+            movementTexture[0].Dispose();
+            movementTexture[1].Dispose();
+            particleProcessing.Dispose();
+        }
+
         public static void SwitchSwarm(VirusSwarm player1, VirusSwarm player2)
         {
             RenderTarget2D[] targets = player1.infoTargets;

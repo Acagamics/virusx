@@ -30,6 +30,11 @@ namespace ParticleStormControl.Menu
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
 
+        /// <summary>
+        /// controls of the player who opened this menu
+        /// </summary>
+        public InputManager.ControlType StartingControls {get;set;}
+
         public NewGame(Menu menu)
             : base(menu)
         {
@@ -48,6 +53,9 @@ namespace ParticleStormControl.Menu
                 playerSlotOccupied[i] = false;
                 playerReady[i] = false;
             }
+
+            if (StartingControls != InputManager.ControlType.NONE)
+                AddPlayer(false, StartingControls);
         }
 
         /// <summary>
@@ -94,8 +102,8 @@ namespace ParticleStormControl.Menu
             playerReady[0] = playerReady[1] = playerReady[2] = playerReady[3] = playerConnected[0] = playerConnected[1] = playerConnected[2] = playerConnected[3] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = Settings.Instance.PlayerConnected[2] = Settings.Instance.PlayerConnected[3] = true;
             menu.ChangePage(Menu.Page.INGAME,gameTime);
 #endif
-
-            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT))
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT) ||
+                InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, StartingControls))
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
             TimeSpan oldCountdown = countdown;
