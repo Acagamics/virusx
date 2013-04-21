@@ -28,16 +28,37 @@ namespace ParticleStormControl
 
             // find nearest not owning spawnpoint;
             var otherSpawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer != Index);
+            // find nearest spawn point which no player tries to capture
+            var noOtherPlayerTriesToCapture = otherSpawnPoints.Where(x => (x.CapturingPlayer == Index || x.CapturingPlayer == -1));
+            
             float minDistSq = 99999;
-            foreach (SpawnPoint spawn in otherSpawnPoints)
+            if (noOtherPlayerTriesToCapture.Count() != 0)
             {
-                float newDistSq = Vector2.DistanceSquared(spawn.Position, ownTerritoriumMid);
-                if (newDistSq < minDistSq)
+                foreach (SpawnPoint spawn in noOtherPlayerTriesToCapture)
                 {
-                    minDistSq = newDistSq;
-                    particleAttractionPosition = spawn.Position;
+                    float newDistSq = Vector2.DistanceSquared(spawn.Position, ownTerritoriumMid);
+                    if (newDistSq < minDistSq)
+                    {
+                        minDistSq = newDistSq;
+                        particleAttractionPosition = spawn.Position;
+                    }
                 }
             }
+            else
+            {
+                foreach (SpawnPoint spawn in otherSpawnPoints)
+                {
+                    float newDistSq = Vector2.DistanceSquared(spawn.Position, ownTerritoriumMid);
+                    if (newDistSq < minDistSq)
+                    {
+                        minDistSq = newDistSq;
+                        particleAttractionPosition = spawn.Position;
+                    }
+                }
+            }
+
+            particleAttractionPosition.X += (float)Random.NextDouble(-0.03, 0.03);
+            particleAttractionPosition.Y += (float)Random.NextDouble(-0.03, 0.03);
         }
     }
 }
