@@ -1,17 +1,14 @@
 ﻿//#define EMPTY_LEVELDEBUG
 //#define NO_ITEMS
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Diagnostics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace ParticleStormControl
 {
@@ -330,12 +327,12 @@ namespace ParticleStormControl
                     {
                         if (prevPosPlayer != -1)
                         {
-                            GameStatistics.addLostBases(prevPosPlayer);
+                            GameStatistics.addLostSpawnPoints(prevPosPlayer);
                             InputManager.Instance.StartRumble(prevPosPlayer, 0.42f, 0.6f);
                         }
                         if ((interest as SpawnPoint).PossessingPercentage == 1f && (interest as SpawnPoint).PossessingPlayer != -1)
                         {
-                            GameStatistics.addCaptueredBases((interest as SpawnPoint).PossessingPlayer);
+                            GameStatistics.addCaptueredSpawnPoints((interest as SpawnPoint).PossessingPlayer);
                             InputManager.Instance.StartRumble((interest as SpawnPoint).PossessingPlayer,0.42f,0.5f);
                         }
                     }
@@ -346,9 +343,9 @@ namespace ParticleStormControl
         public void Update(float frameTimeSeconds, float totalTimeSeconds, Player[] players)
         {
             // statistics
-            uint[] possesingBases = new uint[players.Length];
-            float[] possesingBasesOverallSize = new float[players.Length];
-            for (int i = 0; i < possesingBases.Length; ++i) { possesingBases[i] = 0; possesingBasesOverallSize[i] = 0.0f; }
+            uint[] possesingSpawnPoints = new uint[players.Length];
+            float[] possesingSpawnPointsOverallSize = new float[players.Length];
+            for (int i = 0; i < possesingSpawnPoints.Length; ++i) { possesingSpawnPoints[i] = 0; possesingSpawnPointsOverallSize[i] = 0.0f; }
             // update
             foreach (MapObject mapObject in mapObjects)
             {
@@ -368,16 +365,10 @@ namespace ParticleStormControl
                     SpawnPoint sp = mapObject as SpawnPoint;
                     if (sp.PossessingPlayer != -1)
                     {
-                        possesingBases[sp.PossessingPlayer]++;
-                        possesingBasesOverallSize[sp.PossessingPlayer] += sp.Size;
+                        possesingSpawnPoints[sp.PossessingPlayer]++;
+                        possesingSpawnPointsOverallSize[sp.PossessingPlayer] += sp.Size;
                     }
                 }
-            }
-
-            for (int i = 0; i < players.Length; ++i)
-            {
-                players[i].PossessingBases = possesingBases[i];
-                players[i].PossessingBasesOverallSize = possesingBasesOverallSize[i];
             }
 
             // remove dead objects
@@ -462,7 +453,7 @@ namespace ParticleStormControl
                 {
                     for (int i = 0; i < players.Length; ++i)
                     {
-                        GameStatistics.setParticlesAndHealthAndPossesingBases(i, (uint)players[i].NumParticlesAlive, (uint)players[i].TotalHealth, (uint)possesingBases[i]);
+                        GameStatistics.setParticlesAndHealthAndPossesingSpawnPoints(i, (uint)players[i].NumParticlesAlive, (uint)players[i].TotalVirusHealth, (uint)possesingSpawnPoints[i]);
                     }
                     GameStatistics.UpdateDomination(players);
                 }

@@ -30,14 +30,15 @@ namespace ParticleStormControl.Menu
             // back to main menu
             if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.PAUSE) ||
                 InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT) ||
-                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION))
+                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION) ||
+                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.HOLD))
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
             // loopin
             if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT))
-                virusIndex = virusIndex == (int)Player.VirusType.NUM_VIRUSES - 1 ? 0 : virusIndex + 1;
+                virusIndex = virusIndex == (int)VirusSwarm.VirusType.NUM_VIRUSES - 1 ? 0 : virusIndex + 1;
             else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT))
-                virusIndex = virusIndex == 0 ? (int)Player.VirusType.NUM_VIRUSES - 1 : virusIndex - 1;
+                virusIndex = virusIndex == 0 ? (int)VirusSwarm.VirusType.NUM_VIRUSES - 1 : virusIndex - 1;
         }
 
         public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.GameTime gameTime)
@@ -50,10 +51,10 @@ namespace ParticleStormControl.Menu
 
             // info texts
             List<String> labels = new List<string>() {
-                Player.VirusNames[virusIndex] + " (" + Player.VirusShortName[virusIndex] + ")",
-                Player.VirusClassification[virusIndex],
-                "Caused desease:\n" + Player.VirusCausedDisease[virusIndex],
-                "Description:\n" + Player.VirusAdditionalInfo[virusIndex],
+                VirusSwarm.VirusNames[virusIndex] + " (" + VirusSwarm.VirusShortName[virusIndex] + ")",
+                VirusSwarm.VirusClassification[virusIndex],
+                "Caused desease:\n" + VirusSwarm.VirusCausedDisease[virusIndex],
+                "Description:\n" + VirusSwarm.VirusAdditionalInfo[virusIndex],
             };
 
             for (int i = 0; i < labels.Count; i++)
@@ -87,18 +88,18 @@ namespace ParticleStormControl.Menu
             spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.Black);
             virusImageRect.Inflate(-VIRUS_PADDING, -VIRUS_PADDING);
             spriteBatch.End(); // yeah this sucks terrible! TODO better solution
-            switch ((Player.VirusType)virusIndex)
+            switch ((VirusSwarm.VirusType)virusIndex)
             {
-                case Player.VirusType.EPSTEINBARR:
+                case VirusSwarm.VirusType.EPSTEINBARR:
                     virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["EpsteinBar_Spritebatch"];
                     break;
-                case Player.VirusType.H5N1:
+                case VirusSwarm.VirusType.H5N1:
                     virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["H5N1_Spritebatch"];
                     break;
-                case Player.VirusType.HIV:
+                case VirusSwarm.VirusType.HIV:
                     virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["HIV_Spritebatch"];
                     break;
-                case Player.VirusType.HEPATITISB:
+                case VirusSwarm.VirusType.HEPATITISB:
                     virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["HepatitisB_Spritebatch"];
                     break;
             }

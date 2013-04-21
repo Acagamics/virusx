@@ -10,6 +10,10 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ParticleStormControl
 {
+    /// <summary>
+    /// Singleton managing all game settings.
+    /// Please take care updating related stuff yourself!
+    /// </summary>
     class Settings
     {
         private static readonly Settings instance = new Settings();
@@ -31,21 +35,35 @@ namespace ParticleStormControl
 
         #region Game
 
-        private InputManager.ControlType[] playerControls = new InputManager.ControlType[]{ InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE };
+        private InputManager.ControlType[] playerControls = new InputManager.ControlType[]
+                    { InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE };
         public InputManager.ControlType[] PlayerControls { get { return playerControls; } }
-        private int numPlayers;
-        public int NumPlayers { get { return numPlayers; } set { if(value <= Player.MAX_NUM_PLAYERS) numPlayers = value; } }
-        private int[] playerColorIndices = new int[] { -1, -1, -1, -1 };
-        public int[] PlayerColorIndices { get { return playerColorIndices; } }
-        private int[] playerVirusIndices = new int[] { 0, 0, 0, 0 };
-        public int[] PlayerVirusIndices { get { return playerVirusIndices; } }
-        private bool[] playerConnected = new bool[] { false, false, false, false };
-        public bool[] PlayerConnected
-        {
-            get { return playerConnected; }
-            set { playerConnected = value; }
-        }
         
+        /// <summary>
+        /// current number of players for the upcoming/running game
+        /// <b>Some of these players can be inactive!</b>
+        /// </summary>
+        /// <see cref="PlayerType"/>
+        public int NumPlayers
+        {
+            get { return numPlayers; }
+            set { if(value <= Player.MAX_NUM_PLAYERS) numPlayers = value; }
+        }
+        private int numPlayers;
+        
+        public int[] PlayerColorIndices { get { return playerColorIndices; } }
+        private int[] playerColorIndices = new int[] { -1, -1, -1, -1 };
+        
+        public int[] PlayerVirusIndices { get { return playerVirusIndices; } }
+        private int[] playerVirusIndices = new int[] { 0, 0, 0, 0 };
+
+
+        /// <summary>
+        /// gives for every player slot a type and if there truely IS a player
+        /// </summary>
+        public Player.Type[] PlayerTypes { get { return playerTypes; } }
+        private Player.Type[] playerTypes = new Player.Type[] { Player.Type.NONE, Player.Type.NONE, Player.Type.NONE, Player.Type.NONE };
+
         #endregion
 
         #region Misc
@@ -116,7 +134,7 @@ namespace ParticleStormControl
         public void ResetPlayerSettingsToDefault(int index)
         {
             playerControls[index] = InputManager.ControlType.NONE;
-            playerConnected[index] = false;
+            playerTypes[index] = Player.Type.NONE;
             playerColorIndices[index] = -1;
             playerVirusIndices[index] = 0;
         }

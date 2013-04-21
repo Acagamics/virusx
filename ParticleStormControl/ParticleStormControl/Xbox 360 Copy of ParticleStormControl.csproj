@@ -74,6 +74,10 @@
     <Compile Include="InGame\Level\Debuff.cs" />
     <Compile Include="InGame\Level\Item.cs" />
     <Compile Include="InGame\PercentageBar.cs" />
+    <Compile Include="InGame\Player\AIPlayer.cs" />
+    <Compile Include="InGame\Player\HumanPlayer.cs" />
+    <Compile Include="InGame\Player\Player.cs" />
+    <Compile Include="InGame\Player\VirusSwarm.cs" />
     <Compile Include="InGame\Random.cs" />
     <Compile Include="InGame\Statistics.cs" />
     <Compile Include="InputManager.cs" />
@@ -95,7 +99,6 @@
     <Compile Include="InGame\Level\MapObject.cs" />
     <Compile Include="InGame\Level\Level.cs" />
     <Compile Include="InGame\ParticleRenderer.cs" />
-    <Compile Include="InGame\Player.cs" />
     <Compile Include="Menu\Viruses.cs" />
     <Compile Include="Menu\Win.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -47,7 +47,7 @@ namespace ParticleStormControl
 
         private Effect particleEffect;
 
-        private static readonly Vector2 RENDERING_SIZE_CONSTANT = new Vector2(0.009f / Level.RELATIVECOR_ASPECT_RATIO, 0.009f) / Player.HEALTH_CONSTANT;
+        private static readonly Vector2 RENDERING_SIZE_CONSTANT = new Vector2(0.009f / Level.RELATIVECOR_ASPECT_RATIO, 0.009f) / VirusSwarm.HEALTH_CONSTANT;
         private const float minimumHealth = 5.0f;  // added to the health in rendering shader
 
         public ParticleRenderer(GraphicsDevice device, ContentManager content, int numPlayers)
@@ -56,7 +56,7 @@ namespace ParticleStormControl
             instanceVertexBuffer = new VertexBuffer[numPlayers];
 
             particleEffect = content.Load<Effect>("shader/particleRendering");
-            particleEffect.Parameters["TextureSize"].SetValue(Player.MAX_PARTICLES_SQRT);
+            particleEffect.Parameters["TextureSize"].SetValue(VirusSwarm.MAX_PARTICLES_SQRT);
             particleEffect.Parameters["HealthToSizeScale"].SetValue(RENDERING_SIZE_CONSTANT);
             particleEffect.Parameters["MinHealth"].SetValue(minimumHealth);
             particleEffect.Parameters["RelativeMax"].SetValue(Level.RELATIVE_MAX);
@@ -76,7 +76,7 @@ namespace ParticleStormControl
 
             for (int i = 0; i < numPlayers; ++i)
             {
-                instanceVertexBuffer[i] = new VertexBuffer(device, vertex2dInstance.VertexDeclaration, Player.MAX_PARTICLES, BufferUsage.WriteOnly);
+                instanceVertexBuffer[i] = new VertexBuffer(device, vertex2dInstance.VertexDeclaration, VirusSwarm.MAX_PARTICLES, BufferUsage.WriteOnly);
                 instanceVertexBufferBinding[i] = new VertexBufferBinding(instanceVertexBuffer[i], 0, 1);
             }
 
@@ -85,10 +85,10 @@ namespace ParticleStormControl
 
         private void UpdateVertexBuffers(int numPlayers)
         {
-            vertex2dInstance[] vertexStructBuffer = new vertex2dInstance[Player.MAX_PARTICLES];
+            vertex2dInstance[] vertexStructBuffer = new vertex2dInstance[VirusSwarm.MAX_PARTICLES];
             for (int playerIndex = 0; playerIndex < numPlayers; ++playerIndex)
             {
-                for (int particleIndex = 0; particleIndex < Player.MAX_PARTICLES; particleIndex++)
+                for (int particleIndex = 0; particleIndex < VirusSwarm.MAX_PARTICLES; particleIndex++)
                     vertexStructBuffer[particleIndex].Index = particleIndex;
                 instanceVertexBuffer[playerIndex].SetData<vertex2dInstance>(vertexStructBuffer);
             }
@@ -128,16 +128,16 @@ namespace ParticleStormControl
 
             switch(player.Virus)
             {
-                case Player.VirusType.H5N1:
+                case VirusSwarm.VirusType.H5N1:
                     particleEffect.CurrentTechnique = particleEffect.Techniques["H5N1"];
                     break;
-                case Player.VirusType.HEPATITISB:
+                case VirusSwarm.VirusType.HEPATITISB:
                     particleEffect.CurrentTechnique = particleEffect.Techniques["HepatitisB"];
                     break;
-                case Player.VirusType.HIV:
+                case VirusSwarm.VirusType.HIV:
                     particleEffect.CurrentTechnique = particleEffect.Techniques["HIV"];
                     break;
-                case Player.VirusType.EPSTEINBARR:
+                case VirusSwarm.VirusType.EPSTEINBARR:
                     particleEffect.CurrentTechnique = particleEffect.Techniques["EpsteinBar"];
                     break;
                 default:
@@ -152,7 +152,7 @@ namespace ParticleStormControl
             particleEffect.Parameters["InfoTexture"].SetValue(player.HealthTexture);
 
             if (damage)
-                particleEffect.Parameters["Color"].SetValue(Player.TextureDamageValue[player.Index].ToVector4());
+                particleEffect.Parameters["Color"].SetValue(VirusSwarm.TextureDamageValue[player.Index].ToVector4());
             else
                 particleEffect.Parameters["Color"].SetValue(player.ParticleColor.ToVector4());
 

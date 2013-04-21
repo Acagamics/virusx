@@ -21,7 +21,7 @@ namespace ParticleStormControl.Menu
         private const int maxCountdown = 3;
         private const int safeCountdown = 1;
 
-        private bool[] playerConnected = new bool[4];
+        private bool[] playerSlotOccupied = new bool[4];
         private bool[] playerReady = new bool[4];
 
         private Effect virusRenderEffect;
@@ -30,11 +30,16 @@ namespace ParticleStormControl.Menu
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
 
+        /// <summary>
+        /// controls of the player who opened this menu
+        /// </summary>
+        public InputManager.ControlType StartingControls {get;set;}
+
         public NewGame(Menu menu)
             : base(menu)
         {
             Settings.Instance.ResetPlayerSettingsToDefault();
-            playerConnected = new bool[4];
+            playerSlotOccupied = new bool[4];
             playerReady = new bool[4];
             countdown = new TimeSpan();
         }
@@ -45,9 +50,12 @@ namespace ParticleStormControl.Menu
             countdown = TimeSpan.Zero;
             for (int i = 0; i < 4; ++i)
             {
-                playerConnected[i] = false;
+                playerSlotOccupied[i] = false;
                 playerReady[i] = false;
             }
+
+            if (StartingControls != InputManager.ControlType.NONE)
+                AddPlayer(false, StartingControls);
         }
 
         /// <summary>
@@ -94,8 +102,8 @@ namespace ParticleStormControl.Menu
             playerReady[0] = playerReady[1] = playerReady[2] = playerReady[3] = playerConnected[0] = playerConnected[1] = playerConnected[2] = playerConnected[3] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = Settings.Instance.PlayerConnected[2] = Settings.Instance.PlayerConnected[3] = true;
             menu.ChangePage(Menu.Page.INGAME,gameTime);
 #endif
-
-            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT))
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT) ||
+                InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, StartingControls))
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
             TimeSpan oldCountdown = countdown;
@@ -124,36 +132,43 @@ namespace ParticleStormControl.Menu
 
                 // add new player
                 if (!found)
+                    AddPlayer(false, type);
+            }
+
+            // test add/remove ai
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ADD_AI))
+            {
+                int index = AddPlayer(true, InputManager.ControlType.NONE);
+                if (index != -1)    
+                    toggleReady(index);
+            }
+            else if(InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.REMOVE_AI))
+            {
+                // search for an ai player
+                for(int i=Player.MAX_NUM_PLAYERS-1; i>=0; --i)
                 {
-                    int index = getFreePlayerIndex();
-                    if (index != -1)
+                    if (playerSlotOccupied[i] && Settings.Instance.PlayerTypes[i] == Player.Type.AI)
                     {
-                        int colorIndex = getNextFreeColorIndex(0);
-                        playerConnected[index] = true;
-                        Settings.Instance.PlayerControls[index] = type;
-                        Settings.Instance.PlayerColorIndices[index] = colorIndex;
-                        Settings.Instance.PlayerVirusIndices[index] = Random.Next(4);
-                        Settings.Instance.NumPlayers++;
-                        Settings.Instance.PlayerConnected[index] = true;
-                        countdown = TimeSpan.FromSeconds(-1);
+                        RemovePlayer(i);
+                        break;
                     }
                 }
             }
 
             // test various buttons
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < Player.MAX_NUM_PLAYERS; i++)
             {
-                if (playerConnected[i])
+                if (playerSlotOccupied[i] && Settings.Instance.PlayerTypes[i] == Player.Type.HUMAN)
                 {
                     if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
                     {
                         if (--Settings.Instance.PlayerVirusIndices[i] < 0)
-                            Settings.Instance.PlayerVirusIndices[i] = Player.Viruses.Length - 1;
+                            Settings.Instance.PlayerVirusIndices[i] = VirusSwarm.Viruses.Length - 1;
                     }
 
                     if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.PlayerControls[i], false) && !playerReady[i])
                     {
-                        if (++Settings.Instance.PlayerVirusIndices[i] >= Player.Viruses.Length)
+                        if (++Settings.Instance.PlayerVirusIndices[i] >= VirusSwarm.Viruses.Length)
                             Settings.Instance.PlayerVirusIndices[i] = 0;
                     }
 
@@ -171,22 +186,40 @@ namespace ParticleStormControl.Menu
                         InputManager.Instance.IsWaitingForReconnect(Settings.Instance.PlayerControls[i]))
                     {
                         if (playerReady[i])
-                        {
                             toggleReady(i);
-                        }
                         else
-                        {
-                            // free slot
-                            Settings.Instance.ResetPlayerSettingsToDefault(i);
-                            Settings.Instance.NumPlayers--;
-                            Settings.Instance.PlayerConnected[i] = false;
-                            playerConnected[i] = false;
-                            playerReady[i] = false;
-                            startCountdown();
-                        }
+                            RemovePlayer(i);
                     }
                 }
             }
+        }
+
+        int AddPlayer(bool ai, InputManager.ControlType controlType)
+        {
+            int index = getFreePlayerIndex();
+            if (index != -1)
+            {
+                int colorIndex = getNextFreeColorIndex(0);
+                playerSlotOccupied[index] = true;
+                Settings.Instance.PlayerControls[index] = ai ? InputManager.ControlType.NONE : controlType;
+                Settings.Instance.PlayerColorIndices[index] = colorIndex;
+                Settings.Instance.PlayerVirusIndices[index] = Random.Next((int)VirusSwarm.VirusType.NUM_VIRUSES);
+                Settings.Instance.NumPlayers++; // really?
+                Settings.Instance.PlayerTypes[index] = ai ? Player.Type.AI : Player.Type.HUMAN;
+                countdown = TimeSpan.FromSeconds(-1);
+            }
+
+            return index;
+        }
+
+        void RemovePlayer(int slot)
+        {
+            Settings.Instance.ResetPlayerSettingsToDefault(slot);
+            Settings.Instance.NumPlayers--; // reeeally?
+            Settings.Instance.PlayerTypes[slot] = Player.Type.NONE;
+            playerSlotOccupied[slot] = false;
+            playerReady[slot] = false;
+            CheckStartCountdown();
         }
 
         /// <summary>
@@ -242,10 +275,10 @@ namespace ParticleStormControl.Menu
                         break;
                 }
 
-                if (playerConnected[i])
+                if (playerSlotOccupied[i])
                 {
                     // text
-                    SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, Player.VirusNames[Settings.Instance.PlayerVirusIndices[i]].ToString(),
+                    SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, VirusSwarm.VirusNames[Settings.Instance.PlayerVirusIndices[i]].ToString(),
                                                     origin + new Vector2(SIDE_PADDING, 0), playerReady[i], menu.TexPixel);
 
                     // controlls
@@ -274,16 +307,16 @@ namespace ParticleStormControl.Menu
                     int descpX1 = descpX0 + backgroundLength / 2;
                     float descpY = boxHeight - textBoxHeight * 2;
 
-                    string symbols = Player.DiscriptorSpeed[Settings.Instance.PlayerVirusIndices[i]];//. AttributValueToString(Player.speed_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
+                    string symbols = VirusSwarm.DESCRIPTOR_Speed[Settings.Instance.PlayerVirusIndices[i]];//. AttributValueToString(Player.speed_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Speed", origin + new Vector2(descpX0, descpY), false, menu.TexPixel, backgroundLength);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, descpY), false, menu.TexPixel, -1);
-                    symbols = Player.DiscriptorMass[Settings.Instance.PlayerVirusIndices[i]];//Player.AttributValueToString(Player.mass_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
+                    symbols = VirusSwarm.DESCRIPTOR_Mass[Settings.Instance.PlayerVirusIndices[i]];//Player.AttributValueToString(Player.mass_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Mass", origin + new Vector2(descpX0, descpY + textBoxHeight), false, menu.TexPixel, backgroundLength);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, descpY + textBoxHeight), false, menu.TexPixel, -1);
-                    symbols = Player.DiscriptorDisciplin[Settings.Instance.PlayerVirusIndices[i]];//Player.AttributValueToString(Player.disciplin_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
+                    symbols = VirusSwarm.DESCRIPTOR_Disciplin[Settings.Instance.PlayerVirusIndices[i]];//Player.AttributValueToString(Player.disciplin_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Discipline", origin + new Vector2(descpX1, descpY), false, menu.TexPixel, -1);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, descpY), false, menu.TexPixel, -1);
-                    symbols = Player.DiscriptorHealth[Settings.Instance.PlayerVirusIndices[i]];//Player.AttributValueToString(Player.health_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
+                    symbols = VirusSwarm.DESCRIPTOR_Health[Settings.Instance.PlayerVirusIndices[i]];//Player.AttributValueToString(Player.health_byVirus[Settings.Instance.PlayerVirusIndices[i]]);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Health", origin + new Vector2(descpX1, descpY + textBoxHeight), false, menu.TexPixel, -1);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, descpY + textBoxHeight), false, menu.TexPixel, -1);
                    
@@ -296,22 +329,22 @@ namespace ParticleStormControl.Menu
                     spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.Black);
                     virusImageRect.Inflate(-VIRUS_PADDING, -VIRUS_PADDING);
                     spriteBatch.End(); // yeah this sucks terrible! TODO better solution
-                    switch(Player.Viruses[Settings.Instance.PlayerVirusIndices[i]])
+                    switch(VirusSwarm.Viruses[Settings.Instance.PlayerVirusIndices[i]])
                     {
-                        case Player.VirusType.EPSTEINBARR:
+                        case VirusSwarm.VirusType.EPSTEINBARR:
                             virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["EpsteinBar_Spritebatch"];
                             break;
-                        case Player.VirusType.H5N1:
+                        case VirusSwarm.VirusType.H5N1:
                             virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["H5N1_Spritebatch"];
                             break;
-                        case Player.VirusType.HIV:
+                        case VirusSwarm.VirusType.HIV:
                             virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["HIV_Spritebatch"];
                             break;
-                        case Player.VirusType.HEPATITISB:
+                        case VirusSwarm.VirusType.HEPATITISB:
                             virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["HepatitisB_Spritebatch"];
                             break;
                     }
-                    virusRenderEffect.Parameters["Color"].SetValue(Player.ParticleColors[Settings.Instance.PlayerColorIndices[i]].ToVector4() * 1.5f);
+                    virusRenderEffect.Parameters["Color"].SetValue(VirusSwarm.ParticleColors[Settings.Instance.PlayerColorIndices[i]].ToVector4() * 1.5f);
                     spriteBatch.Begin(0, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, virusRenderEffect);
                     spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.White);
                     spriteBatch.End();
@@ -332,6 +365,13 @@ namespace ParticleStormControl.Menu
                                                 new Rectangle(0 + isActive(InputManager.ControlActions.LEFT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.LEFT, i), menu.TexPixel);
                     SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X + boxWidth - ARROW_SIZE, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE), 
                                                 new Rectangle(16 + isActive(InputManager.ControlActions.RIGHT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.RIGHT, i), menu.TexPixel);
+
+                    // big fat "comp" for those who need it
+                    if (Settings.Instance.PlayerTypes[i] == Player.Type.AI)
+                    {
+                        Vector2 stringSize = menu.FontCountdown.MeasureString("COMP");
+                        spriteBatch.DrawString(menu.FontCountdown, "COMP", origin + new Vector2(boxWidth, boxHeight) / 2 - stringSize / 2, Color.DarkGray * 0.8f);
+                    }
                 }
                 else
                 {
@@ -384,7 +424,7 @@ namespace ParticleStormControl.Menu
         private int getFreePlayerIndex()
         {
             int i = 0;
-            while (i < 4 && playerConnected[i])
+            while (i < 4 && playerSlotOccupied[i])
                 i++;
             return i == 4 ? -1 : i;
         }
@@ -399,12 +439,12 @@ namespace ParticleStormControl.Menu
             return isActive(action, index) ? 0 : offset;
         }
 
-        private void startCountdown()
+        private void CheckStartCountdown()
         {
-            bool allReady = playerConnected.Count(x => x) > 1;
+            bool allReady = playerSlotOccupied.Count(x => x) > 1;
             for (int i = 0; i < 4; i++)
             {
-                if (playerConnected[i] != playerReady[i])
+                if (playerSlotOccupied[i] != playerReady[i])
                     allReady = false;
             }
             if (allReady && Settings.Instance.NumPlayers > 0)
@@ -419,7 +459,7 @@ namespace ParticleStormControl.Menu
 
             // countdown
             if (playerReady[index] && countdown.TotalSeconds <= 0)
-                startCountdown();
+                CheckStartCountdown();
             else if (countdown.TotalSeconds > safeCountdown)
                 countdown = TimeSpan.FromSeconds(-1);
         }

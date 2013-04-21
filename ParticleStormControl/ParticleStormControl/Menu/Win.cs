@@ -23,7 +23,7 @@ namespace ParticleStormControl.Menu
         private Texture2D icons;
 
         public int WinPlayerIndex { get; set; }
-        public bool[] ConnectedPlayers { get; set; }
+        public Player.Type[] PlayerTypes { get; set; }
         public int[] PlayerColorIndices { get; set; }
 
         const float DURATION_CONTINUE_UNAVAILABLE = 1.0f;
@@ -57,11 +57,11 @@ namespace ParticleStormControl.Menu
             int counter = 0;
             for (int i = 0; i < 4; i++)
             {
-                if (ConnectedPlayers[i])
+                if (PlayerTypes[i] != Player.Type.NONE)
                 {
                     values[counter] = new List<string>();
-                    values[counter].Add(statistics.getCapturedBases(i).ToString());
-                    values[counter].Add(statistics.getLostBases(i).ToString());
+                    values[counter].Add(statistics.getCapturedSpawnPoints(i).ToString());
+                    values[counter].Add(statistics.getLostSpawnPoints(i).ToString());
                     values[counter].Add(statistics.getMaxSimultaneousParticles(i).ToString());
                     values[counter].Add(statistics.getAverageParticles(i).ToString());
                     values[counter].Add(statistics.getAverageHealth(i).ToString());
@@ -143,17 +143,17 @@ namespace ParticleStormControl.Menu
                                                     (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.HEALTH:
-                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => statistics.getHealthInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
+                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => //statistics.getHealthInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
                                                         (float)statistics.getHealthInStep(player, step) / statistics.MaxOverallSimultaneousHealth, //statistics.getHealthInStep(step),
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.MASS:
-                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => statistics.getParticlesInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
+                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => //statistics.getParticlesInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
                                                         (float)statistics.getParticlesInStep(player, step) / statistics.MaxOverallSimultaneousParticles, //statistics.getParticlesInStep(step),
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.SPAWN_POINTS:
-                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => (float)statistics.getPossessingBasesInStep(player, step) / statistics.OverallNumberOfBases,
+                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => (float)statistics.getPossessingSpawnPointsInStep(player, step) / statistics.OverallNumberOfSpawnPoints,
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
             }

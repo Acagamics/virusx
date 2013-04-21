@@ -108,10 +108,18 @@ namespace ParticleStormControl
             int count = 0;
             for (int i = 0; i < 4; ++i)
             {
-                if (Settings.Instance.PlayerConnected[i])
+                if (Settings.Instance.PlayerTypes[i] != Player.Type.NONE)
                 {
-                    players[count] = new Player(i, Settings.Instance.PlayerVirusIndices[i], graphicsDevice, content, noiseWhite2D, Settings.Instance.PlayerColorIndices[i]);
-                    players[count].Controls = Settings.Instance.PlayerControls[i];
+                    if (Settings.Instance.PlayerTypes[i] == Player.Type.AI)
+                    {
+                        players[count] = new AIPlayer(i, Settings.Instance.PlayerVirusIndices[i], Settings.Instance.PlayerColorIndices[i],
+                                                        graphicsDevice, content, noiseWhite2D);
+                    }
+                    else
+                    {
+                        players[count] = new HumanPlayer(i, Settings.Instance.PlayerVirusIndices[i], Settings.Instance.PlayerColorIndices[i],
+                                                     graphicsDevice, content, noiseWhite2D, Settings.Instance.PlayerControls[i]);
+                    }
                     count++;
                     if (count == Settings.Instance.NumPlayers)
                         break;
@@ -150,9 +158,6 @@ namespace ParticleStormControl
             song = content.Load<Song>("sound/09 Beach");
             MediaPlayer.Volume = 0.5f;
             MediaPlayer.IsRepeating = true;
-            // backgroundmusic
-            //if (Settings.Instance.Music)
-                //MediaPlayer.Play(song);
         }
 
 
@@ -206,7 +211,7 @@ namespace ParticleStormControl
                     try
                     {
                         bool alive = players[(int)index].Alive;
-                        players[(int)index].UpdateCPUPart(passedFrameTime, level.SpawnPoints, playerCantDie);
+                        players[(int)index].UpdateCPUPart(gameTime, level.SpawnPoints, playerCantDie);
                         if (alive && !players[(int)index].Alive)
                             GameStatistics.playerDied((int)index);
                     }
@@ -260,7 +265,7 @@ namespace ParticleStormControl
                 level.GameStatistics.addWonMatches(winPlayerIndex);
 
                 ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).WinPlayerIndex = winPlayerIndex;
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).ConnectedPlayers = Settings.Instance.PlayerConnected;
+                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerTypes = Settings.Instance.PlayerTypes;
                 ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerColorIndices = Settings.Instance.PlayerColorIndices;
                 
                 menu.ChangePage(Menu.Menu.Page.WIN, gameTime);
@@ -282,7 +287,7 @@ namespace ParticleStormControl
 
                 // update player gpu
                 for (int i = 0; i < players.Length; ++i)
-                    players[i].UpdateGPUPart(graphicsDevice, (float)gameTime.ElapsedGameTime.TotalSeconds, damageMap.DamageTexture);
+                    players[i].UpdateGPUPart(gameTime, graphicsDevice, damageMap.DamageTexture);
                 graphicsDevice.SetRenderTarget(null);
 
                 level.BeginDrawInternParticleTarget(graphicsDevice);
