@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParticleStormControlContent
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParticleStormControl", "ParticleStormControl\ParticleStormControl\ParticleStormControl.csproj", "{49067EF1-08DC-4E32-B81F-A06401D94E03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xbox 360 Copy of ParticleStormControl", "ParticleStormControl\ParticleStormControl\Xbox 360 Copy of ParticleStormControl.csproj", "{D847776C-B29A-4965-AB38-2EB29A5535C2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -35,18 +33,6 @@ Global
 		{49067EF1-08DC-4E32-B81F-A06401D94E03}.Release|x86.Build.0 = Release|x86
 		{49067EF1-08DC-4E32-B81F-A06401D94E03}.Release|Xbox 360.ActiveCfg = Release|x86
 		{49067EF1-08DC-4E32-B81F-A06401D94E03}.Release|Xbox 360.Build.0 = Release|x86
-		{D847776C-B29A-4965-AB38-2EB29A5535C2}.Debug|Mixed Platforms.ActiveCfg = Debug|Xbox 360
-		{D847776C-B29A-4965-AB38-2EB29A5535C2}.Debug|x86.ActiveCfg = Debug|Xbox 360
-		{D847776C-B29A-4965-AB38-2EB29A5535C2}.Debug|x86.Build.0 = Debug|Xbox 360
-		{D847776C-B29A-4965-AB38-2EB29A5535C2}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
-		{D847776C-B29A-4965-AB38-2EB29A5535C2}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
-		{D847776C-B29A-4965-AB38-2EB29A5535C2}.Debug|Xbox 360.Deploy.0 = Debug|Xbox 360
-		{D847776C-B29A-4965-AB38-2EB29A5535C2}.Release|Mixed Platforms.ActiveCfg = Release|Xbox 360
-		{D847776C-B29A-4965-AB38-2EB29A5535C2}.Release|x86.ActiveCfg = Release|Xbox 360
-		{D847776C-B29A-4965-AB38-2EB29A5535C2}.Release|x86.Build.0 = Release|Xbox 360
-		{D847776C-B29A-4965-AB38-2EB29A5535C2}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
-		{D847776C-B29A-4965-AB38-2EB29A5535C2}.Release|Xbox 360.Build.0 = Release|Xbox 360
-		{D847776C-B29A-4965-AB38-2EB29A5535C2}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
