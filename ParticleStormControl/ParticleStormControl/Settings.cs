@@ -35,34 +35,38 @@ namespace ParticleStormControl
 
         #region Game
 
-        private InputManager.ControlType[] playerControls = new InputManager.ControlType[]
-                    { InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE, InputManager.ControlType.NONE };
-        public InputManager.ControlType[] PlayerControls { get { return playerControls; } }
-        
-        /// <summary>
-        /// current number of players for the upcoming/running game
-        /// <b>Some of these players can be inactive!</b>
-        /// </summary>
-        /// <see cref="PlayerType"/>
-        public int NumPlayers
+        public class PlayerSettings
         {
-            get { return numPlayers; }
-            set { if(value <= Player.MAX_NUM_PLAYERS) numPlayers = value; }
+            public int ColorIndex;
+            public int VirusIndex;
+            public int SlotIndex;
+            public Player.Type Type;
+            public InputManager.ControlType ControlType;
+        };
+        private List<PlayerSettings> playerSettings = new List<PlayerSettings>(Player.MAX_NUM_PLAYERS);
+
+        public int NumPlayers { get { return playerSettings.Count; } }
+
+        public void AddPlayer(PlayerSettings settings)
+        {
+            Debug.Assert(NumPlayers < Player.MAX_NUM_PLAYERS);
+            playerSettings.Add(settings);
         }
-        private int numPlayers;
-        
-        public int[] PlayerColorIndices { get { return playerColorIndices; } }
-        private int[] playerColorIndices = new int[] { -1, -1, -1, -1 };
-        
-        public int[] PlayerVirusIndices { get { return playerVirusIndices; } }
-        private int[] playerVirusIndices = new int[] { 0, 0, 0, 0 };
 
+        public void RemovePlayer(int playerIndex)
+        {
+            playerSettings.RemoveAt(playerIndex);
+        }
 
-        /// <summary>
-        /// gives for every player slot a type and if there truely IS a player
-        /// </summary>
-        public Player.Type[] PlayerTypes { get { return playerTypes; } }
-        private Player.Type[] playerTypes = new Player.Type[] { Player.Type.NONE, Player.Type.NONE, Player.Type.NONE, Player.Type.NONE };
+        public PlayerSettings GetPlayer(int playerIndex)
+        {
+            return playerSettings[playerIndex];
+        }
+
+        public IEnumerable<T> GetPlayerSettingSelection<T>(Func<PlayerSettings, T> selector)
+        {
+            return playerSettings.Select(selector);
+        }
 
         #endregion
 
@@ -110,33 +114,12 @@ namespace ParticleStormControl
             if(playerIndex >= playerColorIndices.Length || playerIndex < 0)
                 throw new Exception("Invalid player index!");
 #endif
-            return Player.Colors[playerColorIndices[playerIndex]];
+            return Player.Colors[playerSettings[playerIndex].ColorIndex];
         }
 
-        public void ResetPlayerSettingsToDefault()
+        public void ResetPlayerSettings()
         {
-            numPlayers = 0;
-
-#if XBOX
-            for (int i = 0; i < 4; ++i)
-                numPlayers += GamePad.GetState((PlayerIndex)i).IsConnected ? 1 : 0;
-
-            playerControls = new InputManager.ControlType[] { InputManager.ControlType.GAMEPAD0, InputManager.ControlType.GAMEPAD1, InputManager.ControlType.GAMEPAD2, InputManager.ControlType.GAMEPAD3 };
-            
-#endif
-
-            for (int i = 0; i < 4; i++)
-            {
-                ResetPlayerSettingsToDefault(i);
-            }
-        }
-
-        public void ResetPlayerSettingsToDefault(int index)
-        {
-            playerControls[index] = InputManager.ControlType.NONE;
-            playerTypes[index] = Player.Type.NONE;
-            playerColorIndices[index] = -1;
-            playerVirusIndices[index] = 0;
+            playerSettings.Clear();
         }
 
         /// <summary>
@@ -186,11 +169,6 @@ namespace ParticleStormControl
                 {
                 }
             }
-
-            if (numPlayers < 0)
-                numPlayers = 0;
-            else if (numPlayers > 4)
-                numPlayers = 4;
 #endif
         }
 

@@ -153,7 +153,7 @@ namespace ParticleStormControl
             this.colorIndex = colorIndex;
             this.ItemSlot = global::ParticleStormControl.Item.ItemType.NONE;
 
-            cursorPosition = cursorStartPositions[(int)playerIndex];
+            cursorPosition = cursorStartPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex];
 
             virusSwarm = new VirusSwarm(virusIndex, colorIndex, device, content, noiseTexture);
         }

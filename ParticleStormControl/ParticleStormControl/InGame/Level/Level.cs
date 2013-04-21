@@ -220,8 +220,12 @@ namespace ParticleStormControl
             cellPositions.Add(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER));
             cellPositions.Add(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER));
             cellPositions.Add(new Vector2(LEVEL_BORDER, LEVEL_BORDER));
-            for(int i=0; i<numPlayers; ++i)
-                spawnPoints.Add(new SpawnPoint(cellPositions[i], 1000.0f, START_POINT_GLOW_SIZE, i, content));
+
+            for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; ++playerIndex)
+            {
+                if(Settings.Instance.GetPlayer(playerIndex).Type != Player.Type.NONE)
+                    spawnPoints.Add(new SpawnPoint(cellPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex], 1000.0f, START_POINT_GLOW_SIZE, playerIndex, content));
+            }
 
 
             // generate in a grid of equilateral triangles

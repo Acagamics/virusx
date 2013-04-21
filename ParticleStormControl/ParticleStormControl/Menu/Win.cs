@@ -55,7 +55,7 @@ namespace ParticleStormControl.Menu
 
             values = new List<string>[statistics.PlayerCount];
             int counter = 0;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < PlayerTypes.Length; i++)
             {
                 if (PlayerTypes[i] != Player.Type.NONE)
                 {

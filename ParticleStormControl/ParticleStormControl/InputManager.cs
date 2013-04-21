@@ -133,7 +133,7 @@ namespace ParticleStormControl
                     bool relevant = false;
                     for (int player = 0; player < Settings.Instance.NumPlayers; ++player)
                     {
-                        if (Settings.Instance.PlayerControls[player] == ControlType.GAMEPAD0 + controller)
+                        if (Settings.Instance.GetPlayer(player).ControlType == ControlType.GAMEPAD0 + controller)
                         {
                             relevant = true;
                             break;
@@ -477,13 +477,13 @@ namespace ParticleStormControl
             {
                 for(int i=0; i<Settings.Instance.NumPlayers; ++i)
                 {
-                    if(SpecificActionButtonPressed(action, Settings.Instance.PlayerControls[i], down))
+                    if(SpecificActionButtonPressed(action, Settings.Instance.GetPlayer(i).ControlType, down))
                         return true;
                 }
                 return false;
             }
             else
-                return SpecificActionButtonPressed(action, Settings.Instance.PlayerControls[playerIndex], down);
+                return SpecificActionButtonPressed(action, Settings.Instance.GetPlayer(playerIndex).ControlType, down);
         }
 
         /// <summary>

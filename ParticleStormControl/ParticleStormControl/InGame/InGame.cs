@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
@@ -108,17 +109,17 @@ namespace ParticleStormControl
             int count = 0;
             for (int i = 0; i < 4; ++i)
             {
-                if (Settings.Instance.PlayerTypes[i] != Player.Type.NONE)
+                if (Settings.Instance.GetPlayer(i).Type != Player.Type.NONE)
                 {
-                    if (Settings.Instance.PlayerTypes[i] == Player.Type.AI)
+                    if (Settings.Instance.GetPlayer(i).Type == Player.Type.AI)
                     {
-                        players[count] = new AIPlayer(i, Settings.Instance.PlayerVirusIndices[i], Settings.Instance.PlayerColorIndices[i],
+                        players[count] = new AIPlayer(i, Settings.Instance.GetPlayer(i).VirusIndex, Settings.Instance.GetPlayer(i).ColorIndex,
                                                         graphicsDevice, content, noiseWhite2D);
                     }
                     else
                     {
-                        players[count] = new HumanPlayer(i, Settings.Instance.PlayerVirusIndices[i], Settings.Instance.PlayerColorIndices[i],
-                                                     graphicsDevice, content, noiseWhite2D, Settings.Instance.PlayerControls[i]);
+                        players[count] = new HumanPlayer(i, Settings.Instance.GetPlayer(i).VirusIndex, Settings.Instance.GetPlayer(i).ColorIndex,
+                                                     graphicsDevice, content, noiseWhite2D, Settings.Instance.GetPlayer(i).ControlType);
                     }
                     count++;
                     if (count == Settings.Instance.NumPlayers)
@@ -265,8 +266,8 @@ namespace ParticleStormControl
                 level.GameStatistics.addWonMatches(winPlayerIndex);
 
                 ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).WinPlayerIndex = winPlayerIndex;
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerTypes = Settings.Instance.PlayerTypes;
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerColorIndices = Settings.Instance.PlayerColorIndices;
+                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x=>x.Type).ToArray();
+                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
                 
                 menu.ChangePage(Menu.Menu.Page.WIN, gameTime);
             }

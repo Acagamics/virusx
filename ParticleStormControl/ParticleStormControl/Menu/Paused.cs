@@ -43,7 +43,7 @@ namespace ParticleStormControl.Menu
             {
                 ControllingPlayer = 0;
                 while (ControllingPlayer < Settings.Instance.NumPlayers &&
-                    InputManager.Instance.IsWaitingForReconnect(Settings.Instance.PlayerControls[ControllingPlayer]))
+                    InputManager.Instance.IsWaitingForReconnect(Settings.Instance.GetPlayer(ControllingPlayer).ControlType))
                 {
                     ++ControllingPlayer;
                 }
@@ -57,18 +57,18 @@ namespace ParticleStormControl.Menu
             // if keyboard, anybody is allowed!
             bool otherKeyboard = false;
             int controllerBefore = ControllingPlayer;
-            if(Settings.Instance.PlayerControls[ControllingPlayer] == InputManager.ControlType.KEYBOARD0)
+            if(Settings.Instance.GetPlayer(ControllingPlayer).ControlType == InputManager.ControlType.KEYBOARD0)
             {
-                int i = Array.IndexOf(Settings.Instance.PlayerControls, InputManager.ControlType.KEYBOARD1);
+                int i = Array.IndexOf(Settings.Instance.GetPlayerSettingSelection(x => x.ControlType).ToArray(), InputManager.ControlType.KEYBOARD1);
                 if (i >= 0)
                 {
                     otherKeyboard = true;
                     ControllingPlayer = i;
                 }
             }
-            else if(Settings.Instance.PlayerControls[ControllingPlayer] == InputManager.ControlType.KEYBOARD1)
+            else if(Settings.Instance.GetPlayer(ControllingPlayer).ControlType == InputManager.ControlType.KEYBOARD1)
             {
-                int i = Array.IndexOf(Settings.Instance.PlayerControls, InputManager.ControlType.KEYBOARD0);
+                int i = Array.IndexOf(Settings.Instance.GetPlayerSettingSelection(x => x.ControlType).ToArray(), InputManager.ControlType.KEYBOARD0);
                 if (i >= 0)
                 {
                     otherKeyboard = true;
@@ -119,7 +119,7 @@ namespace ParticleStormControl.Menu
             reconnectWaitingPlayerIndices.Clear();
             for (int i = 0; i < Settings.Instance.NumPlayers; ++i)
             {
-                if (InputManager.Instance.IsWaitingForReconnect(Settings.Instance.PlayerControls[i]))
+                if (InputManager.Instance.IsWaitingForReconnect(Settings.Instance.GetPlayer(i).ControlType))
                     reconnectWaitingPlayerIndices.Add(i);
             }
         }
