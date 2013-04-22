@@ -262,7 +262,7 @@ namespace ParticleStormControl
             infoTargets[1].Dispose();
             movementTexture[0].Dispose();
             movementTexture[1].Dispose();
-            particleProcessing.Dispose();
+            //particleProcessing.Dispose();
         }
 
         public static void SwitchSwarm(VirusSwarm player1, VirusSwarm player2)
