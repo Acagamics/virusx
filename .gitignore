@@ -8,3 +8,6 @@
 /*.vspx
 
 /ParticleStormControl/ParticleStormControl/*.cachefile
+
+/ParticleStormControl/ParticleStormControl/ParticleStormControl.csproj.user
+/ParticleStormControl/ParticleStormControl/ParticleStormControl_TemporaryKey.pfx

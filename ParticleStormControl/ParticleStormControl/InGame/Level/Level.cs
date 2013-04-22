@@ -223,10 +223,12 @@ namespace ParticleStormControl
 
             for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; ++playerIndex)
             {
-                if(Settings.Instance.GetPlayer(playerIndex).Type != Player.Type.NONE)
-                    spawnPoints.Add(new SpawnPoint(cellPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex], 1000.0f, START_POINT_GLOW_SIZE, playerIndex, content));
+                if (Settings.Instance.GetPlayer(playerIndex).Type != Player.Type.NONE)
+                {
+                    int slot = Settings.Instance.GetPlayer(playerIndex).SlotIndex;
+                    spawnPoints.Add(new SpawnPoint(cellPositions[slot], 1000.0f, START_POINT_GLOW_SIZE, playerIndex, content));
+                }
             }
-
 
             // generate in a grid of equilateral triangles
             const int SPAWNS_GRID_X = 6;
@@ -263,7 +265,11 @@ namespace ParticleStormControl
             // background
             List<Vector2> renderCells = new List<Vector2>(spawnPoints.Select(x => x.Position));// to keep things simple, place spawnpoints at the beginning
             renderCells.AddRange(removedCells);
-            renderCells.AddRange(cellPositions.GetRange(numPlayers, 4 - numPlayers));
+            for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; ++playerIndex)
+            {
+                if (Settings.Instance.GetPlayer(playerIndex).Type == Player.Type.NONE)
+                    renderCells.Add(cellPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex]);
+            }
             background.Generate(device, renderCells, Level.RELATIVE_MAX);
         }
 

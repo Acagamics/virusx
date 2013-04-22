@@ -115,24 +115,53 @@ namespace ParticleStormControl.Menu
                 return;
             }
 
-            // test continue buttons
+            // test various buttons
+            for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; playerIndex++)
+            {
+                int slot = Settings.Instance.GetPlayer(playerIndex).SlotIndex;
+                if (playerSlotOccupied[slot] && Settings.Instance.GetPlayer(playerIndex).Type == Player.Type.HUMAN)
+                {
+                    // color
+                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.GetPlayer(playerIndex).ControlType, false) && !playerReadyBySlot[slot])
+                    {
+                        if (--Settings.Instance.GetPlayer(playerIndex).VirusIndex < 0)
+                            Settings.Instance.GetPlayer(playerIndex).VirusIndex = VirusSwarm.Viruses.Length - 1;
+                    }
+                    else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.GetPlayer(playerIndex).ControlType, false) && !playerReadyBySlot[slot])
+                    {
+                        if (++Settings.Instance.GetPlayer(playerIndex).VirusIndex >= VirusSwarm.Viruses.Length)
+                            Settings.Instance.GetPlayer(playerIndex).VirusIndex = 0;
+                    }
+
+                    // color
+                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.UP, Settings.Instance.GetPlayer(playerIndex).ControlType, false) && !playerReadyBySlot[slot])
+                        Settings.Instance.GetPlayer(playerIndex).ColorIndex = GetPreviousFreeColorIndex(Settings.Instance.GetPlayer(playerIndex).ColorIndex);
+                    else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.DOWN, Settings.Instance.GetPlayer(playerIndex).ControlType, false) && !playerReadyBySlot[slot])
+                        Settings.Instance.GetPlayer(playerIndex).ColorIndex = GetNextFreeColorIndex(Settings.Instance.GetPlayer(playerIndex).ColorIndex);
+
+                    // remove
+                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, Settings.Instance.GetPlayer(playerIndex).ControlType, false) ||
+                        InputManager.Instance.IsWaitingForReconnect(Settings.Instance.GetPlayer(playerIndex).ControlType))
+                    {
+                        if (playerReadyBySlot[slot])
+                            ToggleReady(slot);
+                        else
+                        {
+                            RemovePlayer(slot);
+                            break; // this blocks other inputs, but @30fps min thats not that bad
+                        }
+                    }
+
+                    // ready
+                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, Settings.Instance.GetPlayer(playerIndex).ControlType, false))
+                        ToggleReady(slot);
+                }
+            }
+
+            // new human player?
             foreach (InputManager.ControlType type in InputManager.Instance.ContinueButtonsPressed())
             {
-                bool found = false;
-
-                for (int i = 0; i < Settings.Instance.NumPlayers; i++)
-                {
-                    // player already connected
-                    if (type == Settings.Instance.GetPlayer(i).ControlType)
-                    {
-                        found = true;
-
-                        toggleReady(i);
-                    }
-                }
-
-                // add new player
-                if (!found)
+                if (!Settings.Instance.GetPlayerSettingSelection(x=>x.ControlType).Contains(type))
                     AddPlayer(false, type);
             }
 
@@ -141,51 +170,17 @@ namespace ParticleStormControl.Menu
             {
                 int index = AddPlayer(true, InputManager.ControlType.NONE);
                 if (index != -1)    
-                    toggleReady(index);
+                    ToggleReady(index);
             }
             else if(InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.REMOVE_AI))
             {
                 // search for an ai player
-                for(int i=Player.MAX_NUM_PLAYERS-1; i>=0; --i)
+                for (int i = Settings.Instance.NumPlayers-1; i >= 0; --i)
                 {
-                    if (playerSlotOccupied[i] && Settings.Instance.GetPlayer(i).Type == Player.Type.AI)
+                    if (playerSlotOccupied[Settings.Instance.GetPlayer(i).SlotIndex] && Settings.Instance.GetPlayer(i).Type == Player.Type.AI)
                     {
-                        RemovePlayer(i);
+                        RemovePlayer(Settings.Instance.GetPlayer(i).SlotIndex);
                         break;
-                    }
-                }
-            }
-
-            // test various buttons
-            for (int i = 0; i < Settings.Instance.NumPlayers; i++)
-            {
-                if (playerSlotOccupied[i] && Settings.Instance.GetPlayer(i).Type == Player.Type.HUMAN)
-                {
-                    // color
-                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.GetPlayer(i).ControlType, false) && !playerReadyBySlot[i])
-                    {
-                        if (--Settings.Instance.GetPlayer(i).VirusIndex < 0)
-                            Settings.Instance.GetPlayer(i).VirusIndex = VirusSwarm.Viruses.Length - 1;
-                    }
-                    else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.GetPlayer(i).ControlType, false) && !playerReadyBySlot[i])
-                    {
-                        if (++Settings.Instance.GetPlayer(i).VirusIndex >= VirusSwarm.Viruses.Length)
-                            Settings.Instance.GetPlayer(i).VirusIndex = 0;
-                    }
-
-                    // color
-                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.UP, Settings.Instance.GetPlayer(i).ControlType, false) && !playerReadyBySlot[i])
-                        Settings.Instance.GetPlayer(i).ColorIndex = GetPreviousFreeColorIndex(Settings.Instance.GetPlayer(i).ColorIndex);
-                    else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.DOWN, Settings.Instance.GetPlayer(i).ControlType, false) && !playerReadyBySlot[i])
-                        Settings.Instance.GetPlayer(i).ColorIndex = GetNextFreeColorIndex(Settings.Instance.GetPlayer(i).ColorIndex);
-
-                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, Settings.Instance.GetPlayer(i).ControlType, false) || 
-                        InputManager.Instance.IsWaitingForReconnect(Settings.Instance.GetPlayer(i).ControlType))
-                    {
-                        if (playerReadyBySlot[i])
-                            toggleReady(i);
-                        else
-                            RemovePlayer(i);
                     }
                 }
             }
@@ -194,11 +189,12 @@ namespace ParticleStormControl.Menu
         int AddPlayer(bool ai, InputManager.ControlType controlType)
         {
             int slotIndex = GetFreeSlotIndex();
-            int playerIndex = GetFreePlayerIndex();
-            if (slotIndex != -1 && playerIndex != -1)
+            int playerIndex = Settings.Instance.NumPlayers;
+            if (slotIndex != -1 && playerIndex < Player.MAX_NUM_PLAYERS)
             {
                 int colorIndex = GetNextFreeColorIndex(0);
                 playerSlotOccupied[slotIndex] = true;
+                playerReadyBySlot[slotIndex] = false;
                 slotIndexToPlayerIndexMapper[slotIndex] = playerIndex;
 
                 Settings.Instance.AddPlayer(new Settings.PlayerSettings()
@@ -219,9 +215,17 @@ namespace ParticleStormControl.Menu
 
         void RemovePlayer(int slot)
         {
-            Settings.Instance.RemovePlayer(slotIndexToPlayerIndexMapper[slot]);
+            int playerIndex = slotIndexToPlayerIndexMapper[slot];
+            Settings.Instance.RemovePlayer(playerIndex);
             playerSlotOccupied[slot] = false;
             playerReadyBySlot[slot] = false;
+
+            // refresh slotIndexToPlayerIndexMapper
+            for (int i = 0; i < 4; ++i)
+                slotIndexToPlayerIndexMapper[i] = -1;
+            for(int i = 0; i < Settings.Instance.NumPlayers; ++i)
+                slotIndexToPlayerIndexMapper[Settings.Instance.GetPlayer(i).SlotIndex] = i;
+
             CheckStartCountdown();
         }
 
@@ -278,20 +282,22 @@ namespace ParticleStormControl.Menu
                         break;
                 }
 
-                if (playerSlotOccupied[i]) // TODO: slotindex to playerindex
+                if (playerSlotOccupied[i])
                 {
+                    int playerIndex = slotIndexToPlayerIndexMapper[i];
+
                     // text
-                    SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, VirusSwarm.VirusNames[Settings.Instance.GetPlayer(i).VirusIndex].ToString(),
+                    SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, VirusSwarm.VirusNames[Settings.Instance.GetPlayer(playerIndex).VirusIndex].ToString(),
                                                     origin + new Vector2(SIDE_PADDING, 0), playerReadyBySlot[i], menu.TexPixel);
 
                     // controlls
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, InputManager.CONTROL_NAMES[(int)Settings.Instance.GetPlayer(i).ControlType].ToString(),
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, InputManager.CONTROL_NAMES[(int)Settings.Instance.GetPlayer(playerIndex).ControlType].ToString(),
                                                     origin + new Vector2(SIDE_PADDING, textBoxHeight*2 + SimpleButton.PADDING * 2), false, menu.TexPixel);
 
                     /*
                     string colorString = "Color: ";
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, colorString, origin + new Vector2(SIDE_PADDING, textBoxHeight*2.5f), false, menu.PixelTexture);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, Player.ColorNames[Settings.Instance.GetPlayer(i).ColorIndex].ToString(),
+                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, Player.ColorNames[Settings.Instance.GetPlayer(playerIndex).ColorIndex].ToString(),
                                     origin + new Vector2(SIDE_PADDING + SimpleButton.PADDING * 2 + menu.Font.MeasureString(colorString).X, textBoxHeight * 2.5f), Settings.Instance.GetPlayerColor(i), menu.PixelTexture);
                     */
 
@@ -310,16 +316,16 @@ namespace ParticleStormControl.Menu
                     int descpX1 = descpX0 + backgroundLength / 2;
                     float descpY = boxHeight - textBoxHeight * 2;
 
-                    string symbols = VirusSwarm.DESCRIPTOR_Speed[Settings.Instance.GetPlayer(i).VirusIndex];//. AttributValueToString(Player.speed_byVirus[Settings.Instance.GetPlayer(i).VirusIndex]);
+                    string symbols = VirusSwarm.DESCRIPTOR_Speed[Settings.Instance.GetPlayer(playerIndex).VirusIndex];//. AttributValueToString(Player.speed_byVirus[Settings.Instance.GetPlayer(playerIndex).VirusIndex]);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Speed", origin + new Vector2(descpX0, descpY), false, menu.TexPixel, backgroundLength);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, descpY), false, menu.TexPixel, -1);
-                    symbols = VirusSwarm.DESCRIPTOR_Mass[Settings.Instance.GetPlayer(i).VirusIndex];//Player.AttributValueToString(Player.mass_byVirus[Settings.Instance.GetPlayer(i).VirusIndex]);
+                    symbols = VirusSwarm.DESCRIPTOR_Mass[Settings.Instance.GetPlayer(playerIndex).VirusIndex];//Player.AttributValueToString(Player.mass_byVirus[Settings.Instance.GetPlayer(playerIndex).VirusIndex]);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Mass", origin + new Vector2(descpX0, descpY + textBoxHeight), false, menu.TexPixel, backgroundLength);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, descpY + textBoxHeight), false, menu.TexPixel, -1);
-                    symbols = VirusSwarm.DESCRIPTOR_Disciplin[Settings.Instance.GetPlayer(i).VirusIndex];//Player.AttributValueToString(Player.disciplin_byVirus[Settings.Instance.GetPlayer(i).VirusIndex]);
+                    symbols = VirusSwarm.DESCRIPTOR_Disciplin[Settings.Instance.GetPlayer(playerIndex).VirusIndex];//Player.AttributValueToString(Player.disciplin_byVirus[Settings.Instance.GetPlayer(playerIndex).VirusIndex]);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Discipline", origin + new Vector2(descpX1, descpY), false, menu.TexPixel, -1);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, descpY), false, menu.TexPixel, -1);
-                    symbols = VirusSwarm.DESCRIPTOR_Health[Settings.Instance.GetPlayer(i).VirusIndex];//Player.AttributValueToString(Player.health_byVirus[Settings.Instance.GetPlayer(i).VirusIndex]);
+                    symbols = VirusSwarm.DESCRIPTOR_Health[Settings.Instance.GetPlayer(playerIndex).VirusIndex];//Player.AttributValueToString(Player.health_byVirus[Settings.Instance.GetPlayer(playerIndex).VirusIndex]);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Health", origin + new Vector2(descpX1, descpY + textBoxHeight), false, menu.TexPixel, -1);
                     SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, descpY + textBoxHeight), false, menu.TexPixel, -1);
                    
@@ -332,7 +338,7 @@ namespace ParticleStormControl.Menu
                     spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.Black);
                     virusImageRect.Inflate(-VIRUS_PADDING, -VIRUS_PADDING);
                     spriteBatch.End(); // yeah this sucks terrible! TODO better solution
-                    switch(VirusSwarm.Viruses[Settings.Instance.GetPlayer(i).VirusIndex])
+                    switch(VirusSwarm.Viruses[Settings.Instance.GetPlayer(playerIndex).VirusIndex])
                     {
                         case VirusSwarm.VirusType.EPSTEINBARR:
                             virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["EpsteinBar_Spritebatch"];
@@ -347,7 +353,7 @@ namespace ParticleStormControl.Menu
                             virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["HepatitisB_Spritebatch"];
                             break;
                     }
-                    virusRenderEffect.Parameters["Color"].SetValue(VirusSwarm.ParticleColors[Settings.Instance.GetPlayer(i).ColorIndex].ToVector4() * 1.5f);
+                    virusRenderEffect.Parameters["Color"].SetValue(VirusSwarm.ParticleColors[Settings.Instance.GetPlayer(playerIndex).ColorIndex].ToVector4() * 1.5f);
                     spriteBatch.Begin(0, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, virusRenderEffect);
                     spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.White);
                     spriteBatch.End();
@@ -357,20 +363,20 @@ namespace ParticleStormControl.Menu
                     const int ARROW_WIDDEN = 8;
                     SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(virusImageRect.Center.X - (ARROW_UP_SIZE + ARROW_WIDDEN) / 2,
                                                             virusImageRect.Y - ARROW_UP_SIZE - VIRUS_PADDING / 2, ARROW_UP_SIZE + ARROW_WIDDEN, ARROW_UP_SIZE),
-                                                new Rectangle(0 + isActive(InputManager.ControlActions.UP, i, 32), 16, 16, 16), isActive(InputManager.ControlActions.UP, i), menu.TexPixel);
+                                                new Rectangle(0 + isActive(InputManager.ControlActions.UP, playerIndex, 32), 16, 16, 16), isActive(InputManager.ControlActions.UP, playerIndex), menu.TexPixel);
                     SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(virusImageRect.Center.X - (ARROW_UP_SIZE + ARROW_WIDDEN) / 2,
                                                             virusImageRect.Bottom + VIRUS_PADDING / 2, ARROW_UP_SIZE + ARROW_WIDDEN, ARROW_UP_SIZE),
-                                                new Rectangle(16 + isActive(InputManager.ControlActions.DOWN, i, 32), 16, 16, 16), isActive(InputManager.ControlActions.DOWN, i), menu.TexPixel);
+                                                new Rectangle(16 + isActive(InputManager.ControlActions.DOWN, playerIndex, 32), 16, 16, 16), isActive(InputManager.ControlActions.DOWN, playerIndex), menu.TexPixel);
                     
                     // arrows left & right
                     int arrowY = (int)readyHeight - ARROW_SIZE;//boxHeight / 2 - ARROW_SIZE;
-                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE), 
-                                                new Rectangle(0 + isActive(InputManager.ControlActions.LEFT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.LEFT, i), menu.TexPixel);
-                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X + boxWidth - ARROW_SIZE, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE), 
-                                                new Rectangle(16 + isActive(InputManager.ControlActions.RIGHT, i, 32), 0, 16, 16), isActive(InputManager.ControlActions.RIGHT, i), menu.TexPixel);
+                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE),
+                                                new Rectangle(0 + isActive(InputManager.ControlActions.LEFT, playerIndex, 32), 0, 16, 16), isActive(InputManager.ControlActions.LEFT, playerIndex), menu.TexPixel);
+                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X + boxWidth - ARROW_SIZE, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE),
+                                                new Rectangle(16 + isActive(InputManager.ControlActions.RIGHT, playerIndex, 32), 0, 16, 16), isActive(InputManager.ControlActions.RIGHT, playerIndex), menu.TexPixel);
 
                     // big fat "comp" for those who need it
-                    if (Settings.Instance.GetPlayer(i).Type == Player.Type.AI)
+                    if (Settings.Instance.GetPlayer(playerIndex).Type == Player.Type.AI)
                     {
                         Vector2 stringSize = menu.FontCountdown.MeasureString("COMP");
                         spriteBatch.DrawString(menu.FontCountdown, "COMP", origin + new Vector2(boxWidth, boxHeight) / 2 - stringSize / 2, Color.DarkGray * 0.8f);
@@ -434,14 +440,6 @@ namespace ParticleStormControl.Menu
             return i == 4 ? -1 : i;
         }
 
-        private int GetFreePlayerIndex()
-        {
-            int i = 0;
-            while (i < Settings.Instance.NumPlayers && Settings.Instance.GetPlayer(i).Type != Player.Type.NONE)
-                i++;
-            return i == 4 ? -1 : i;
-        }
-
         private bool isActive(InputManager.ControlActions action, int index)
         {
             return InputManager.Instance.SpecificActionButtonPressed(action, Settings.Instance.GetPlayer(index).ControlType, true) && !playerReadyBySlot[index];
@@ -464,14 +462,14 @@ namespace ParticleStormControl.Menu
                 countdown = TimeSpan.FromSeconds(maxCountdown - 0.001);
         }
 
-        private void toggleReady(int index)
+        private void ToggleReady(int slotIndex)
         {
             // toggle ready
             if (countdown.TotalSeconds > safeCountdown || countdown.TotalSeconds <= 0)
-                playerReadyBySlot[index] = !playerReadyBySlot[index];
+                playerReadyBySlot[slotIndex] = !playerReadyBySlot[slotIndex];
 
             // countdown
-            if (playerReadyBySlot[index] && countdown.TotalSeconds <= 0)
+            if (playerReadyBySlot[slotIndex] && countdown.TotalSeconds <= 0)
                 CheckStartCountdown();
             else if (countdown.TotalSeconds > safeCountdown)
                 countdown = TimeSpan.FromSeconds(-1);
