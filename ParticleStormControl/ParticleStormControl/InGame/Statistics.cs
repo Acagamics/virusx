@@ -426,17 +426,17 @@ namespace ParticleStormControl
 
         private void computeAverage(int playerIndex)
         {
-            ulong overallParticles = 0;
+            /*ulong overallParticles = 0;
             ulong overallHealth = 0;
 
             for (int i = 0; i < steps; ++i)
             {
                 overallParticles += (ulong)particlesInStep[playerIndex][i];
                 overallHealth += (ulong)healthInStep[playerIndex][i];
-            }
+            }*/
 
-            averageParticles[playerIndex] = (uint)(overallParticles / (ulong)particlesInStep[playerIndex].Count);
-            averageHealth[playerIndex] = (uint)(overallHealth / (ulong)healthInStep[playerIndex].Count);
+            averageParticles[playerIndex] = (uint)particlesInStep[playerIndex].ToArray().Average(x => (uint)x);// (uint)(overallParticles / (ulong)particlesInStep[playerIndex].Count);
+            averageHealth[playerIndex] = (uint)healthInStep[playerIndex].ToArray().Average(x => (uint)x);//(uint)(overallHealth / (ulong)healthInStep[playerIndex].Count);
         }
 
         public void UpdateDomination(Player[] players)
