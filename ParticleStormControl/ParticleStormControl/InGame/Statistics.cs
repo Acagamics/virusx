@@ -434,15 +434,6 @@ namespace ParticleStormControl
                 overallParticles += (ulong)particlesInStep[playerIndex][i];
                 overallHealth += (ulong)healthInStep[playerIndex][i];
             }
-            /*foreach (uint i in particlesInStep[playerIndex])
-            {
-                overallParticles += (ulong)i;
-            }
-
-            foreach (uint i in healthInStep[playerIndex])
-            {
-                overallHealth += (ulong)i;
-            }*/
 
             averageParticles[playerIndex] = (uint)(overallParticles / (ulong)particlesInStep[playerIndex].Count);
             averageHealth[playerIndex] = (uint)(overallHealth / (ulong)healthInStep[playerIndex].Count);
@@ -450,9 +441,6 @@ namespace ParticleStormControl
 
         public void UpdateDomination(Player[] players)
         {
-            //int currentStep = steps - 1;
-            //ulong overall = 0;
-
             maxOverallSimultaneousParticles = Math.Max(players.Sum(x => x.NumParticlesAlive), maxOverallSimultaneousParticles);
             maxOverallSimultaneousHealth = Math.Max(players.Sum(x => x.TotalVirusHealth), maxOverallSimultaneousHealth);
 
@@ -460,7 +448,6 @@ namespace ParticleStormControl
             float [] percentage = ComputeDomination(players);
             for (int i = 0; i < playerCount; ++i)
             {
-                //percentage = (float)((double)getDominationPercentage(i, currentStep) / overall);
                 dominationInStep[i].Add(percentage[i]);
             }
 
@@ -471,25 +458,13 @@ namespace ParticleStormControl
             }
         }
 
-        /*private ulong getDominationPercentage(int playerIndex, int step)
-        {
-            return healthInStep[playerIndex][step] + possessingSpawnPointsInStep[playerIndex][step] * 100000 + particlesInStep[playerIndex][step];
-        }*/
-
         public static float[] ComputeDomination(Player[] players)
         {
             float[] result = new float[players.Length];// + 1]; result[players.Length] = 0.0f;
-            float overallHealth = 0.0f;
-            ulong overallParticles = 0;
-            float overallSpawnPointsizes = 0.0f;
-            uint overallSpawnPoints = 0;
-            for (int i = 0; i < players.Length; ++i)
-            {
-                overallSpawnPointsizes += players[i].PossessingSpawnPointsOverallSize;
-                overallParticles += (ulong)players[i].NumParticlesAlive;
-                overallHealth += players[i].TotalVirusHealth;
-                overallSpawnPoints += players[i].PossessingSpawnPoints;
-            }
+            float overallHealth = players.Sum(x => x.TotalVirusHealth);// 0.0f;
+            ulong overallParticles = (ulong)players.Sum(x => x.NumParticlesAlive); //0;
+            float overallSpawnPointsizes = players.Sum(x => x.PossessingSpawnPointsOverallSize);// 0.0f;
+            uint overallSpawnPoints = (uint)players.Sum(x => x.PossessingSpawnPoints);//0;
 
             for (int i = 0; i < players.Length; ++i)
             {
