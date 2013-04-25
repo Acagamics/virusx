@@ -86,18 +86,18 @@ namespace ParticleStormControl
         /// <summary>
         /// Matching of player to used controls of the player.
         /// </summary>
-        private ControlType[] getControlTypeForPlayer = { ControlType.KEYBOARD0, ControlType.KEYBOARD1, ControlType.GAMEPAD0, ControlType.GAMEPAD1 };
+        //private ControlType[] getControlTypeForPlayer = { ControlType.KEYBOARD0, ControlType.KEYBOARD1, ControlType.GAMEPAD0, ControlType.GAMEPAD1 };
 
         #endregion
 
         /// <summary>
         /// Resets for all players the Control Type to NONE
         /// </summary>
-        public void resetAllControlTypes()
+        /*public void resetAllControlTypes()
         {
             for (int i = 0; i < getControlTypeForPlayer.Length; ++i)
                 getControlTypeForPlayer[i] = ControlType.NONE;
-        }
+        }*/
 
         /// <summary>
         /// Set the control scheme for the given player. The control scheme will only be changed, if no other player uses the given scheme.
@@ -106,18 +106,18 @@ namespace ParticleStormControl
         /// <param name="index">the player</param>
         /// <param name="controlType">the control scheme</param>
         /// <returns>true if the control scheme changed, false otherwise</returns>
-        public bool setControlType(int index, ControlType controlType)
+        /*public bool setControlType(int index, ControlType controlType)
         {
             //foreach (ControlType ct in playerToControl)
             //    if (ct == controlType) return false;
             getControlTypeForPlayer[index] = controlType;
             return true;
-        }
+        }*/
 
-        public ControlType getControlType(int index)
+        /*public ControlType getControlType(int index)
         {
             return getControlTypeForPlayer[index];
-        }
+        }*/
 
         /// <summary>
         /// is the game waiting for any reconnect
@@ -398,7 +398,7 @@ namespace ParticleStormControl
         {
             Vector2 result = Vector2.Zero;
             if (Settings.Instance.NumPlayers <= index) return result;
-            switch(getControlTypeForPlayer[index])
+            switch(Settings.Instance.GetPlayer(index).ControlType)//getControlTypeForPlayer[index])
             {
                 case ControlType.GAMEPAD0: result = currentGamePadStates[0].ThumbSticks.Left; break;
                 case ControlType.GAMEPAD1: result = currentGamePadStates[1].ThumbSticks.Left; break;
@@ -593,7 +593,7 @@ namespace ParticleStormControl
         public void StartRumble(int playerIndex, float time, float strenght)
         {
             if (!ActivateRumble) return;
-            switch (getControlTypeForPlayer[(int)playerIndex])
+            switch (Settings.Instance.GetPlayer(playerIndex).ControlType/* getControlTypeForPlayer[(int)playerIndex]*/)
             {
                 case ControlType.GAMEPAD0: GamePad.SetVibration(PlayerIndex.One, strenght, strenght); rumbleTime[0] = time; break;
                 case ControlType.GAMEPAD1: GamePad.SetVibration(PlayerIndex.Two, strenght, strenght); rumbleTime[1] = time; break;

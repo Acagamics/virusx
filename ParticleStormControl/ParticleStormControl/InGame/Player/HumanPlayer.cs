@@ -10,8 +10,8 @@ namespace ParticleStormControl
 
         public InputManager.ControlType Controls
         {
-            get { return InputManager.Instance.getControlType(playerIndex); }
-            set { InputManager.Instance.setControlType(playerIndex, value); }
+            get { return Settings.Instance.GetPlayer(Index).ControlType;}// InputManager.Instance.getControlType(playerIndex); }
+            set { Settings.Instance.GetPlayer(Index).ControlType = value; }// InputManager.Instance.setControlType(playerIndex, value); }
         }
 
         #endregion
