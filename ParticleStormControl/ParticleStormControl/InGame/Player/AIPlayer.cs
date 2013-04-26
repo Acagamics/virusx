@@ -1,4 +1,4 @@
-﻿#define AI_DEBUG
+﻿//#define AI_DEBUG
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -107,6 +107,8 @@ namespace ParticleStormControl
                     targetSpawnPoint = null;
                     currentTargetTime = maxTargetTime + 0.1f;
                 }
+                // Testcode
+                // --------
                 /*var ownSpawnpoints = level.SpawnPoints.Where(x => x.PossessingPlayer == Index);
                 // check for spawn points which are unter attack and eventually protrect them
                 //var ownSpawnPointsUnterAttack = ownSpawnpoints.Where(x => (x.CapturingPlayer != Index && x.CapturingPlayer != -1));
@@ -124,6 +126,8 @@ namespace ParticleStormControl
                     targetPosition = targetSpawnPoint.Position;
                 targetPosition.X += (float)Random.NextDouble(-0.03, 0.03);
                 targetPosition.Y += (float)Random.NextDouble(-0.03, 0.03);*/
+                // ------------
+                // End Testcode 
             }
         }
 
@@ -153,44 +157,21 @@ namespace ParticleStormControl
             // eliminate all spawn points in possession of another player
             noOtherPlayerTriesToCapture = noOtherPlayerTriesToCapture.Where(x => (x.PossessingPlayer == -1));
 
+            // Testcode
+            // --------
             // check for spawn points which are unter attack and eventually protrect them
             //var ownSpawnPointsUnterAttack = ownSpawnpoints.Where(x => (x.CapturingPlayer != Index && x.CapturingPlayer != -1));
-            var ownSpawnPointsUnterAttack = ownSpawnpoints.Where(x => (x.PossessingPercentage < 0.5f));
+            /*var ownSpawnPointsUnterAttack = ownSpawnpoints.Where(x => (x.PossessingPercentage < 0.5f));
             float meanSpawnSize = ownSpawnpoints.Sum(x => x.SpawnSize) / ownSpawnpoints.Count();
             ownSpawnPointsUnterAttack = ownSpawnPointsUnterAttack.Where(x => (x.SpawnSize >= (meanSpawnSize/2) && x.PossessingPercentage < 0.5));
 
-            //targetSpawnPoint = selectTargetSpawnPointFromList(ownSpawnPointsUnterAttack);
+            //targetSpawnPoint = selectTargetSpawnPointFromList(ownSpawnPointsUnterAttack);*/
+            // ------------
+            // End Testcode
             if (targetSpawnPoint == null)
                 targetSpawnPoint = selectTargetSpawnPointFromList(noOtherPlayerTriesToCapture);
             if (targetSpawnPoint == null)
                 targetSpawnPoint = selectTargetSpawnPointFromList(otherSpawnPoints);
-            /*float minDistSq = 99999;
-            if (noOtherPlayerTriesToCapture.Count() != 0)
-            {
-                foreach (SpawnPoint spawn in noOtherPlayerTriesToCapture)
-                {
-                    float newDistSq = Vector2.DistanceSquared(spawn.Position, ownTerritoriumMid);
-                    if (newDistSq < minDistSq)
-                    {
-                        minDistSq = newDistSq;
-                        targetPosition = spawn.Position;
-                        targetSpawnPoint = spawn;
-                    }
-                }
-            }
-            else
-            {
-                foreach (SpawnPoint spawn in otherSpawnPoints)
-                {
-                    float newDistSq = Vector2.DistanceSquared(spawn.Position, ownTerritoriumMid);
-                    if (newDistSq < minDistSq)
-                    {
-                        minDistSq = newDistSq;
-                        targetPosition = spawn.Position;
-                        targetSpawnPoint = spawn;
-                    }
-                }
-            }*/
 
             if (targetSpawnPoint != null)
                 targetPosition = targetSpawnPoint.Position;
@@ -203,7 +184,7 @@ namespace ParticleStormControl
         private SpawnPoint selectTargetSpawnPointFromList(IEnumerable<SpawnPoint> spawnPointList)
         {
             if (spawnPointList.Count() < 1) return null;
-            float minDistSq = 99999;
+            /*float minDistSq = 99999;
             SpawnPoint result = null;
             foreach (SpawnPoint spawn in spawnPointList)
             {
@@ -213,9 +194,11 @@ namespace ParticleStormControl
                     minDistSq = newDistSq;
                     result = spawn;
                 }
-            }
+            }*/
 
-            return result;
+            spawnPointList = spawnPointList.OrderBy(x => Vector2.DistanceSquared(x.Position, ownTerritoriumMid));
+
+            return spawnPointList.First();//result;
         }
 
         private void MoveCursor(float frameTimeInterval)
