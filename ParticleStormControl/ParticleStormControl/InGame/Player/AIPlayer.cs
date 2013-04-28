@@ -1,4 +1,4 @@
-﻿#define AI_DEBUG
+﻿//#define AI_DEBUG
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -179,10 +179,10 @@ namespace ParticleStormControl
 
         public override void UserControl(float frameTimeInterval, Level level)
         {
-            CheckItems(level);
-
             targetPosition = targetSelector.Update(level, this, frameTimeInterval);
             targetSpawnPoint = targetSelector.TargetSpawnPoint;
+
+            CheckItems(level);
 
             if (TargetRndMoveTimeReached)
             {
