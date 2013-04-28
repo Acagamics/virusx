@@ -29,7 +29,7 @@ namespace ParticleStormControl
         private float currentExplosionAlpha;
         private float explosionRotation;
         private const int explosionDamage = 8;//10;
-        private const float explosionDuration = 1.0f;
+        private const float duration = 1.0f;
         
         private Stopwatch explosionTimer = new Stopwatch();
 
@@ -100,7 +100,7 @@ namespace ParticleStormControl
             if (explosionTimer.IsRunning)
             {
                 float effectseconds = (float) explosionTimer.Elapsed.TotalSeconds;
-                if (effectseconds > explosionDuration)
+                if (effectseconds > duration)
                 {
                     explosionTimer.Reset();
                     if (Settings.Instance.Sound)
@@ -110,7 +110,7 @@ namespace ParticleStormControl
                 {
                     float scaling = MathHelper.Clamp((float) Math.Log(effectseconds*16 + 1.0f)/3, 0.0f, 1.0f);
                     currentExplosionSize = explosionMaxSize*scaling;
-                    currentExplosionAlpha = 1.0f - effectseconds/explosionDuration;
+                    currentExplosionAlpha = 1.0f - effectseconds/duration;
                 }
             }
         }

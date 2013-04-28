@@ -180,6 +180,12 @@ namespace ParticleStormControl
                                      particleAttractionPosition, playerIndex);
         }
 
+        /// <summary>
+        /// performs all cpu updates
+        /// </summary>
+        /// <param name="gameTime"></param>
+        /// <param name="spawnPoints"></param>
+        /// <param name="cantDie">set to true if this player should be invincible in this update step</param>
         public void UpdateCPUPart(GameTime gameTime, IEnumerable<SpawnPoint> spawnPoints, bool cantDie)
         {
             if (!alive)
