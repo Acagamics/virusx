@@ -1,4 +1,4 @@
-﻿//#define AI_DEBUG
+﻿#define AI_DEBUG
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -13,16 +13,161 @@ namespace ParticleStormControl
     public class AIPlayer : Player
     {
 
+        class TargetSelector
+        {
+            SpawnPoint lastTarget = null;
+            float lastTargetPossessingPercentage = 0f;
+            float timeOnTarget;
+            float maxTimeOnTarget = 5f;
+
+            SpawnPoint ignoreSpawnPoint = null;
+            float maxIgnoreTime = 2.5f;
+            float ignoreTime = 0f;
+
+            public Vector2 LastTargetPosition { get { return lastTarget != null ? lastTarget.Position : Vector2.Zero; } }
+            public Vector2 IgnorePosition { get { return ignoreSpawnPoint != null ? ignoreSpawnPoint.Position : Vector2.Zero; } }
+            public SpawnPoint TargetSpawnPoint { get { return lastTarget; } }
+
+            public TargetSelector()
+            {
+            }
+
+            public Vector2 Update(Level level, Player player, float frameTimeInterval)
+            {
+                if (ignoreSpawnPoint != null)
+                {
+                    ignoreTime += frameTimeInterval;
+                    if (ignoreTime >= maxIgnoreTime)
+                    {
+                        ignoreSpawnPoint = null;
+                    }
+                }
+                Vector2 newTarget = player.ParticleAttractionPosition;
+
+                SpawnPoint possibleTarget = SelectTarget(level, player);
+                if (possibleTarget == null)
+                {
+                    lastTarget = null;
+                    return newTarget;
+                }
+
+                if (possibleTarget == lastTarget)
+                {
+                    timeOnTarget += frameTimeInterval;
+                    if (timeOnTarget >= maxTimeOnTarget)
+                    {
+                        if (ignoreSpawnPoint == null)
+                        {
+                            ignoreSpawnPoint = possibleTarget;
+                            ignoreTime = 0f;
+                        }
+                        timeOnTarget = 0f;
+
+                        possibleTarget = SelectTarget(level, player);
+
+                        if (possibleTarget == lastTarget)
+                            Console.WriteLine("The Same!!!");
+                        if (possibleTarget == null)
+                            possibleTarget = lastTarget;
+                    }
+                }
+                else timeOnTarget = 0f;
+
+                newTarget = possibleTarget.Position;
+                lastTarget = possibleTarget;
+                lastTargetPossessingPercentage = lastTarget.PossessingPercentage;
+
+                return newTarget;
+            }
+
+            private SpawnPoint SelectTarget(Level level, Player player)
+            {
+                var ownSpawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer == player.Index);
+                int numberOfOwnSPs = ownSpawnPoints.Count();
+
+                var noOwnerSpawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer == -1);
+                int numberOfNoOwnerSPs = noOwnerSpawnPoints.Count();
+
+                var otherSpawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer != player.Index && x.PossessingPlayer != -1);
+                int numberOfOtherSPs = otherSpawnPoints.Count();
+
+                if (ignoreSpawnPoint != null)
+                {
+                    noOwnerSpawnPoints = noOwnerSpawnPoints.Where(x =>  x != ignoreSpawnPoint);
+                    numberOfNoOwnerSPs = noOwnerSpawnPoints.Count();
+                    otherSpawnPoints = otherSpawnPoints.Where(x =>  x != ignoreSpawnPoint);
+                    numberOfOtherSPs = otherSpawnPoints.Count();
+                }
+
+                Vector2 ownTerritoriumMid = player.ParticleAttractionPosition;
+                if (numberOfOwnSPs > 0)
+                {
+                    ownTerritoriumMid.X = ownSpawnPoints.Average(x => x.Position.X);
+                    ownTerritoriumMid.Y = ownSpawnPoints.Average(x => x.Position.Y);
+                }
+                Vector2 ownTerritoriumMidWithPAP = (ownTerritoriumMid + player.ParticleAttractionPosition) / 2f;
+
+                if (numberOfNoOwnerSPs > 0)
+                    noOwnerSpawnPoints = noOwnerSpawnPoints.OrderBy(x => Vector2.DistanceSquared(x.Position, ownTerritoriumMidWithPAP));
+                if (numberOfOtherSPs > 0)
+                    otherSpawnPoints = otherSpawnPoints.OrderBy(x => Vector2.DistanceSquared(x.Position, ownTerritoriumMidWithPAP));
+
+                var withoutCaptuerer = noOwnerSpawnPoints.Where(x => x.CapturingPlayer == player.Index || x.CapturingPlayer == -1)
+                    .OrderBy(x => Vector2.DistanceSquared(x.Position, ownTerritoriumMidWithPAP));
+
+                SpawnPoint possibleTarget = null;
+                if (withoutCaptuerer.Count() > 0)
+                {
+                    if (getMinDist(withoutCaptuerer, ownTerritoriumMidWithPAP) <= getMinDist(noOwnerSpawnPoints, ownTerritoriumMidWithPAP) * 2f)
+                    {
+                        possibleTarget = withoutCaptuerer.First();
+                    }
+                    else
+                    {
+                        possibleTarget = noOwnerSpawnPoints.First();
+                    }
+                }
+
+                if (possibleTarget == null && numberOfNoOwnerSPs > 0)
+                {
+                    possibleTarget = noOwnerSpawnPoints.First();
+                }
+
+                if (possibleTarget == null && numberOfOtherSPs > 0)
+                {
+                    possibleTarget = otherSpawnPoints.First();
+                }
+                else if (numberOfOtherSPs > 0)
+                {
+                    if (getMinDist(otherSpawnPoints, ownTerritoriumMidWithPAP) <= Vector2.DistanceSquared(possibleTarget.Position, ownTerritoriumMidWithPAP) * 0.8f)
+                        possibleTarget = otherSpawnPoints.First();
+                }
+
+                return possibleTarget;
+            }
+
+            private float getMinDist(IEnumerable<SpawnPoint> spawnPoints, Vector2 toPoint)
+            {
+                return spawnPoints.Min(x => Vector2.DistanceSquared(x.Position, toPoint));
+            }
+
+            private float getMaxDist(IEnumerable<SpawnPoint> spawnPoints, Vector2 toPoint)
+            {
+                return spawnPoints.Max(x => Vector2.DistanceSquared(x.Position, toPoint));
+            }
+        }
+
         #region control variables
 
         private Vector2 targetPosition = Vector2.Zero;
         Vector2 ownTerritoriumMid = Vector2.Zero;
         private SpawnPoint targetSpawnPoint = null;
-        //private Item targetTarget = null;
 
-        private float maxTargetTime = 5f;
-        private float currentTargetTime = 2.5f;
-        private bool TargetTimeReached { get { return currentTargetTime >= maxTargetTime; } }
+        private float maxRndMovementTime = 5f;
+        private float currentRndMovmentTime = 2.5f;
+        private bool TargetRndMoveTimeReached { get { return currentRndMovmentTime >= maxRndMovementTime; } }
+
+        private TargetSelector targetSelector = new TargetSelector();
 
         #endregion
 
@@ -35,22 +180,25 @@ namespace ParticleStormControl
         public override void UserControl(float frameTimeInterval, Level level)
         {
             CheckItems(level);
-            CheckTargets(level);
-            if (TargetTimeReached)
+
+            targetPosition = targetSelector.Update(level, this, frameTimeInterval);
+            targetSpawnPoint = targetSelector.TargetSpawnPoint;
+
+            if (TargetRndMoveTimeReached)
             {
-                SelectTarget(level);
-                currentTargetTime = 0.0f;
+                maxRndMovementTime = (float)Random.NextDouble(1.0, 5.0);
+                currentRndMovmentTime = 0f;
+                targetPosition.X += (float)Random.NextDouble(-0.03, 0.03);
+                targetPosition.Y += (float)Random.NextDouble(-0.03, 0.03);
             }
-            else
-            {
-                currentTargetTime += frameTimeInterval;
-            }
+            else currentRndMovmentTime += frameTimeInterval;
 
             MoveCursor(frameTimeInterval);
 
 #if AI_DEBUG
-            ownTerritoriumMid = (ownTerritoriumMid + particleAttractionPosition) / 2f;
-            cursorPosition = ownTerritoriumMid;
+            //ownTerritoriumMid = (ownTerritoriumMid + particleAttractionPosition) / 2f;
+            //cursorPosition = ownTerritoriumMid;
+            cursorPosition = targetSelector.IgnorePosition;
 #endif
             /*particleAttractionPosition.X += (float)Random.NextDouble(-0.03, 0.03);
             particleAttractionPosition.Y += (float)Random.NextDouble(-0.03, 0.03);*/
@@ -96,109 +244,6 @@ namespace ParticleStormControl
         {
             level.PlayerUseItem(this);
             ItemSlot = Item.ItemType.NONE;
-        }
-
-        private void CheckTargets(Level level)
-        {
-            if (targetSpawnPoint != null)
-            {
-                if (targetSpawnPoint.PossessingPlayer == Index)
-                {
-                    targetSpawnPoint = null;
-                    currentTargetTime = maxTargetTime + 0.1f;
-                }
-                // Testcode
-                // --------
-                /*var ownSpawnpoints = level.SpawnPoints.Where(x => x.PossessingPlayer == Index);
-                // check for spawn points which are unter attack and eventually protrect them
-                //var ownSpawnPointsUnterAttack = ownSpawnpoints.Where(x => (x.CapturingPlayer != Index && x.CapturingPlayer != -1));
-                var ownSpawnPointsUnterAttack = ownSpawnpoints.Where(x => (x.PossessingPercentage < 0.25f));
-                //float meanSpawnSize = ownSpawnpoints.Sum(x => x.SpawnSize) / ownSpawnpoints.Count();
-                //ownSpawnPointsUnterAttack = ownSpawnPointsUnterAttack.Where(x => (x.SpawnSize >= (meanSpawnSize / 2)));// && x.PossessingPercentage > 0.5));
-
-                if (ownSpawnPointsUnterAttack.Count() > 0)
-                {
-                    //targetSpawnPoint = selectTargetSpawnPointFromList(ownSpawnPointsUnterAttack);
-                    targetSpawnPoint = null;
-                    currentTargetTime = maxTargetTime + 0.1f;
-                }*/
-                /*if (targetSpawnPoint != null)
-                    targetPosition = targetSpawnPoint.Position;
-                targetPosition.X += (float)Random.NextDouble(-0.03, 0.03);
-                targetPosition.Y += (float)Random.NextDouble(-0.03, 0.03);*/
-                // ------------
-                // End Testcode 
-            }
-        }
-
-        private void SelectTarget(Level level)
-        {
-            // find middle
-            var ownSpawnpoints = level.SpawnPoints.Where(x => x.PossessingPlayer == Index);
-            if (ownSpawnpoints.Count() < 1) ownTerritoriumMid = Player.cursorStartPositions[Index];
-            else ownTerritoriumMid = Vector2.Zero;
-            foreach (SpawnPoint spawn in ownSpawnpoints)
-            {
-                ownTerritoriumMid += spawn.Position;// *spawn.Size;
-            }
-            ownTerritoriumMid /= (ownSpawnpoints.Count());// * PossessingSpawnPointsOverallSize);
-            ownTerritoriumMid = (ownTerritoriumMid + particleAttractionPosition) / 2f;
-#if AI_DEBUG
-            cursorPosition = ownTerritoriumMid;
-#endif
-            // find nearest not owning spawnpoint;
-            var otherSpawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer != Index);
-            // remove current target to prevent that to much time is spent on an unreachable target
-            if (otherSpawnPoints.Count() > 1 && targetSpawnPoint != null)
-                otherSpawnPoints = otherSpawnPoints.Where(x => x != targetSpawnPoint);
-            targetSpawnPoint = null;
-            // find nearest spawn point which no player tries to capture
-            var noOtherPlayerTriesToCapture = otherSpawnPoints.Where(x => (x.CapturingPlayer == Index || x.CapturingPlayer == -1));
-            // eliminate all spawn points in possession of another player
-            noOtherPlayerTriesToCapture = noOtherPlayerTriesToCapture.Where(x => (x.PossessingPlayer == -1));
-
-            // Testcode
-            // --------
-            // check for spawn points which are unter attack and eventually protrect them
-            //var ownSpawnPointsUnterAttack = ownSpawnpoints.Where(x => (x.CapturingPlayer != Index && x.CapturingPlayer != -1));
-            /*var ownSpawnPointsUnterAttack = ownSpawnpoints.Where(x => (x.PossessingPercentage < 0.5f));
-            float meanSpawnSize = ownSpawnpoints.Sum(x => x.SpawnSize) / ownSpawnpoints.Count();
-            ownSpawnPointsUnterAttack = ownSpawnPointsUnterAttack.Where(x => (x.SpawnSize >= (meanSpawnSize/2) && x.PossessingPercentage < 0.5));
-
-            //targetSpawnPoint = selectTargetSpawnPointFromList(ownSpawnPointsUnterAttack);*/
-            // ------------
-            // End Testcode
-            if (targetSpawnPoint == null)
-                targetSpawnPoint = selectTargetSpawnPointFromList(noOtherPlayerTriesToCapture);
-            if (targetSpawnPoint == null)
-                targetSpawnPoint = selectTargetSpawnPointFromList(otherSpawnPoints);
-
-            if (targetSpawnPoint != null)
-                targetPosition = targetSpawnPoint.Position;
-            else
-                targetPosition = ownTerritoriumMid;
-            targetPosition.X += (float)Random.NextDouble(-0.03, 0.03);
-            targetPosition.Y += (float)Random.NextDouble(-0.03, 0.03);
-        }
-
-        private SpawnPoint selectTargetSpawnPointFromList(IEnumerable<SpawnPoint> spawnPointList)
-        {
-            if (spawnPointList.Count() < 1) return null;
-            /*float minDistSq = 99999;
-            SpawnPoint result = null;
-            foreach (SpawnPoint spawn in spawnPointList)
-            {
-                float newDistSq = Vector2.DistanceSquared(spawn.Position, ownTerritoriumMid);
-                if (newDistSq < minDistSq)
-                {
-                    minDistSq = newDistSq;
-                    result = spawn;
-                }
-            }*/
-
-            spawnPointList = spawnPointList.OrderBy(x => Vector2.DistanceSquared(x.Position, ownTerritoriumMid));
-
-            return spawnPointList.First();//result;
         }
 
         private void MoveCursor(float frameTimeInterval)
