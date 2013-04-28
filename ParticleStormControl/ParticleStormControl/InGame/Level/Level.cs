@@ -390,19 +390,10 @@ namespace ParticleStormControl
                     Item item = mapObjects[i] as Item;
                     if (item != null && !item.Timeouted && item.PossessingPlayer != -1 && item.PossessingPercentage == 1.0f)
                     {
-                        // reject if player allready owns a item
-                      /*  if (players[item.PossessingPlayer].ItemSlot != Item.ItemType.NONE)
-                        {
-                            item.Alive = true;
-                            continue;
-                        }
-                        else */
-                        {
-                            players[item.PossessingPlayer].ItemSlot = item.Type;
-                            // statistics
-                            GameStatistics.addCollectedItems(item.PossessingPlayer);
-                            InputManager.Instance.StartRumble(item.PossessingPlayer, 0.25f, 0.37f);
-                        }
+                        players[item.PossessingPlayer].ItemSlot = item.Type;
+                        // statistics
+                        GameStatistics.addCollectedItems(item.PossessingPlayer);
+                        InputManager.Instance.StartRumble(item.PossessingPlayer, 0.25f, 0.37f);
                     }
 
                     // statistics (a debuff has been activated)
@@ -478,6 +469,13 @@ namespace ParticleStormControl
             })
             .Concat(Enumerable.Repeat(Color.DimGray, background.NumBackgroundCells - spawnPoints.Count));
             background.UpdateColors(colors.ToArray());
+        }
+
+        public void AddMapObject(MapObject mapObject)
+        {
+            mapObjects.Add(mapObject);
+            if (mapObject.GetType() == typeof(SpawnPoint))
+                mapObjects.Add(mapObject);
         }
 
         private void AddItem(int i, Vector2 position)
@@ -729,7 +727,7 @@ namespace ParticleStormControl
             switch (player.ItemSlot)
             {
                 case Item.ItemType.DANGER_ZONE:
-                    mapObjects.Add(new DangerZone(contentManager, player.CursorPosition, player.Index));
+                    mapObjects.Add(DamageArea.CreateDangerZone(contentManager, player.CursorPosition, player.Index));
                     break;
 
                 case Item.ItemType.MUTATION:

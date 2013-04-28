@@ -31,31 +31,41 @@ namespace ParticleStormControl
 
         private Menu.Menu menu;
 
-        private ParticleRenderer particleRenderer;
-        private DamageMap damageMap;
-
+        /// <summary>
+        /// list of all players
+        /// </summary>
         public Player[] Players { get { return players;  } }
         private Player[] players;
+
         /// <summary>
         /// noise texture needed for players, generated only once!
         /// </summary>
         private Texture2D noiseWhite2D;
 
-        Level level;
-        InGameInterface inGameInterface;
-        PercentageBar percentageBar;
+        private Level level;
+        private InGameInterface inGameInterface;
+        private PercentageBar percentageBar;
+        private ParticleRenderer particleRenderer;
+        private DamageMap damageMap;
 
+        private ContentManager content;
+
+
+        /// <summary>
+        /// current game state
+        /// </summary>
         public GameState State { get; private set; }
-        private int winPlayerIndex = -1;
 
         
-
         /// <summary>
         /// without this timer, the player would instantly die because of 0 particles
         /// </summary>
         private const float instantDeathProtectingDuration = 1.0f;
         private float instantDeathProtectingTime = 0.0f;
 
+        /// <summary>
+        /// background music
+        /// </summary>
         Song song;
 
         // damaging is only every second frame - switch every frame to be xbox friendly
@@ -146,6 +156,7 @@ namespace ParticleStormControl
         public void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
         {
             this.graphicsDevice = graphicsDevice;
+            this.content = content;
 
             damageMap = new DamageMap();
             noiseWhite2D = NoiseTexture.GenerateNoise2D16f(graphicsDevice, 64, 64);
@@ -191,21 +202,8 @@ namespace ParticleStormControl
                 bool playerCantDie = instantDeathProtectingTime < instantDeathProtectingDuration;
 
                 // spawning & move - parallel!
-#if XBOX
-                // threads for xbox
-                ManualResetEvent[] waitHandles = new ManualResetEvent[players.Length];
-                for (int i = 0; i < players.Length; ++i)
-                {
-                    waitHandles[i] = new ManualResetEvent(false);
-                    ThreadPool.QueueUserWorkItem(delegate(object obj)
-                                                    {
-                                                        int index = (int)obj;
-                                                        players[(int)index].UpdateCPUPart(passedFrameTime, level.mapObjects, playerCantDie);
-                                                        waitHandles[index].Set();
-                                                    }, i);
-                }
-                WaitHandle.WaitAll(waitHandles);
-#else
+                bool[] playerRecentlyDied = new bool[players.Length];
+                Array.Clear(playerRecentlyDied, 0, playerRecentlyDied.Length);
                 Task[] playerTaskList = new Task[players.Length];
                 var func = new Action<object>((index) =>
                 {
@@ -214,7 +212,7 @@ namespace ParticleStormControl
                         bool alive = players[(int)index].Alive;
                         players[(int)index].UpdateCPUPart(gameTime, level.SpawnPoints, playerCantDie);
                         if (alive && !players[(int)index].Alive)
-                            GameStatistics.playerDied((int)index);
+                            playerRecentlyDied[(int)index] = true; //
                     }
                     catch(Exception exp)
                     {
@@ -225,7 +223,16 @@ namespace ParticleStormControl
                 for (int i = 0; i < players.Length; ++i)
                     playerTaskList[i] = Task.Factory.StartNew(func, i);
                 Task.WaitAll(playerTaskList);
-#endif
+
+                // die events
+                for (int i = 0; i < playerRecentlyDied.Length; ++i)
+                {
+                    if (playerRecentlyDied[i])
+                    {
+                        GameStatistics.playerDied(i);
+                        level.AddMapObject(DamageArea.CreatePlayerDeathDamage(content, players[i].CursorPosition, i));
+                    }
+                }
 
                 // damaging - switch every frame to be xbox friendly (preserve content stuff)
                 // see also correlating gpu-functions
@@ -246,7 +253,7 @@ namespace ParticleStormControl
         private void CheckWinning(GameTime gameTime)
         {
             // only one player alive
-            winPlayerIndex = -1;
+            int winPlayerIndex = -1;
             for (int i = 0; i < players.Length; ++i)
             {
                 if (players[i].Alive)
