@@ -411,20 +411,57 @@ namespace ParticleStormControl
             }
 
             // random events
-            if (pickuptimer.Elapsed.TotalSeconds > 4/*2*/)
+            if (pickuptimer.Elapsed.TotalSeconds > 3/*4/*2*/)
             {
                 // random position within a certain range
-                Vector2 position = new Vector2((float)(Random.NextDouble()) * 0.8f + 0.1f, (float)(Random.NextDouble()) * 0.8f + 0.1f);
+                Vector2 position;
+                
 #if NO_ITEMS
 #else
                 double next_item_pos = Random.NextDouble();
+                int item = 0;
                 for (int i = 1; i < itemPossibilities.Length; i++)
                 {
                     if (itemPossibilities[i - 1] < next_item_pos && next_item_pos < itemPossibilities[i])
                     {
-                        AddItem(i,position);
+                        item = i;
                     }
                 }
+
+                if (Random.NextDouble() < 0.33f && GameStatistics.Steps > 50)
+                {
+                    int weakestPlayer = 0;
+                    float minDomination = GameStatistics.getDominationInStep(0, GameStatistics.Steps - 1);
+                    for (int i = 1; i < GameStatistics.PlayerCount; ++i)
+                    {
+                        if(item != 1)
+                            if (minDomination > GameStatistics.getDominationInStep(i, GameStatistics.Steps - 1))
+                            {
+                                weakestPlayer = i;
+                                minDomination = GameStatistics.getDominationInStep(i, GameStatistics.Steps - 1);
+                            }
+                            else if(minDomination < GameStatistics.getDominationInStep(i, GameStatistics.Steps - 1))
+                            {
+                                weakestPlayer = i;
+                                minDomination = GameStatistics.getDominationInStep(i, GameStatistics.Steps - 1);
+                            }
+                    }
+
+                    var spwp = spawnPoints.Where(x => x.PossessingPlayer == weakestPlayer);
+                    Vector2 weakestPlayerCenter = players[weakestPlayer].CursorPosition;
+                    if (spwp.Count() > 1)
+                    {
+                        weakestPlayerCenter.X = spwp.Average(x => x.Position.X);
+                        weakestPlayerCenter.Y = spwp.Average(x => x.Position.Y);
+                    }
+                    position = weakestPlayerCenter + new Vector2((float)(Random.NextDouble()) * 0.4f - 0.2f, (float)(Random.NextDouble()) * 0.2f - 0.1f);
+                    position.X = MathHelper.Clamp(position.X, 0.1f, 1.9f);
+                    position.Y = MathHelper.Clamp(position.Y, 0.1f, 0.9f);
+                }
+                else
+                    position = new Vector2((float)(Random.NextDouble()) * 1.8f + 0.1f, (float)(Random.NextDouble()) * 0.8f + 0.1f);
+
+                AddItem(item, position);
                 /*if (Random.NextDouble() < 0.25 )
                     mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
                 else if (Random.NextDouble() < 0.23)
