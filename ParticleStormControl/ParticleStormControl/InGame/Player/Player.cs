@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -17,6 +18,31 @@ namespace ParticleStormControl
             NONE
         };
 
+        public enum Teams
+        {
+            // capture the cell
+            DEFENDER,
+            ATTACKER,
+
+            // 2 vs 2
+            LEFT,
+            RIGHT,
+            
+            // death match
+            NONE,
+
+            NUM_TEAMS
+        };
+
+        static public readonly String[] TEAM_NAMES = new String[]
+        {
+            "Defender",
+            "Attacker",
+            "Team Left",
+            "Team Right",
+            "No team"
+        };
+
         protected VirusSwarm virusSwarm;
 
         #region Basic Properties
@@ -27,6 +53,9 @@ namespace ParticleStormControl
         public VirusSwarm.VirusType Virus { get { return virusSwarm.Virus; } }
 
         public Item.ItemType ItemSlot { get; set; }
+
+        public Teams Team { get { return team; } set { team = value; } }
+        private Teams team;
 
         #endregion
 
@@ -147,10 +176,11 @@ namespace ParticleStormControl
 
         #endregion
 
-        public Player(int playerIndex, int virusIndex, int colorIndex, GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
+        public Player(int playerIndex, int virusIndex, int colorIndex, Teams team, GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
         {
             this.playerIndex = playerIndex;
             this.colorIndex = colorIndex;
+            this.team = team;
             this.ItemSlot = global::ParticleStormControl.Item.ItemType.NONE;
 
             cursorPosition = cursorStartPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex];

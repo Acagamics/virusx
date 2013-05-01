@@ -1,8 +1,10 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace ParticleStormControl.Menu
 {
@@ -27,7 +29,7 @@ namespace ParticleStormControl.Menu
             }
         }
 
-        public override void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
+        public override void LoadContent(ContentManager content)
         {
         }
 
@@ -55,7 +57,7 @@ namespace ParticleStormControl.Menu
             blendIn -= (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
-        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, GameTime gameTime)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             if(blendIn > 0.0f)
                spriteBatch.Draw(menu.TexPixel, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * (blendIn / GAME_BLEND_DURATION));

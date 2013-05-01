@@ -106,6 +106,19 @@ namespace ParticleStormControl
         /// every value is [i-1] + possebility
         /// </summary>
         private static readonly float[] itemPossibilities = new float[] { 0.0f, 0.17f, 0.45f, 0.60f, 0.73f, 1.0f };
+        /// <summary>
+        /// determines how many seconds should pass until the next item placement attemp will be started
+        /// </summary>
+        private static readonly float itemSpawnTime = 2.8f;
+        /// <summary>
+        /// a probarbility which determines how often the weakest player will get items near is territory center and 
+        /// the strongest player gets antibodies. This is used to give weaker players a chance to come back into the game
+        /// </summary>
+        private static readonly float itemWinLoseRubberBand = 0.33f;
+        /// <summary>
+        /// controls how much steps (from Statistics) should pass until the rubber band takes effect
+        /// </summary>
+        private static readonly int itemWinLoseRubberBandMinStepsPlayed = 50;
 
         #endregion
         
@@ -399,7 +412,7 @@ namespace ParticleStormControl
             }
 
             // random events
-            if (pickuptimer.Elapsed.TotalSeconds > 3/*4/*2*/)
+            if (pickuptimer.Elapsed.TotalSeconds > itemSpawnTime)
             {
                 // random position within a certain range
                 Vector2 position;
@@ -416,7 +429,7 @@ namespace ParticleStormControl
                     }
                 }
 
-                if (Random.NextDouble() < 0.33f && GameStatistics.Steps > 50)
+                if (Random.NextDouble() < itemWinLoseRubberBand && GameStatistics.Steps > itemWinLoseRubberBandMinStepsPlayed)
                 {
                     int weakestPlayer = 0;
                     float minDomination = GameStatistics.getDominationInStep(0, GameStatistics.Steps - 1);
@@ -443,21 +456,13 @@ namespace ParticleStormControl
                         weakestPlayerCenter.Y = spwp.Average(x => x.Position.Y);
                     }
                     position = weakestPlayerCenter + new Vector2((float)(Random.NextDouble()) * 0.4f - 0.2f, (float)(Random.NextDouble()) * 0.2f - 0.1f);
-                    position.X = MathHelper.Clamp(position.X, 0.1f, 1.9f);
-                    position.Y = MathHelper.Clamp(position.Y, 0.1f, 0.9f);
+                    position.X = MathHelper.Clamp(position.X, 0.1f, Level.RELATIVE_MAX.X);
+                    position.Y = MathHelper.Clamp(position.Y, 0.1f, Level.RELATIVE_MAX.Y);
                 }
                 else
-                    position = new Vector2((float)(Random.NextDouble()) * 1.8f + 0.1f, (float)(Random.NextDouble()) * 0.8f + 0.1f);
+                    position = new Vector2((float)(Random.NextDouble()) * (RELATIVE_MAX.X - 0.2f) + 0.1f, (float)(Random.NextDouble()) * (RELATIVE_MAX.Y - 0.2f) + 0.1f);
 
                 AddItem(item, position);
-                /*if (Random.NextDouble() < 0.25 )
-                    mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
-                else if (Random.NextDouble() < 0.23)
-                    mapObjects.Add(new Debuff(position, contentManager));
-                else if (Random.NextDouble() < 0.15)
-                    mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
-                else if (Random.NextDouble() < 0.32)
-                    mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager));*/
 #endif
                 // restart timer
                 pickuptimer.Reset();
