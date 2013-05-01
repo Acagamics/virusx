@@ -49,6 +49,10 @@ namespace ParticleStormControl.Menu
         private InterfaceButton diagramDescription;
         private DiagramType currentDiagramType;
 
+        private const int ARROW_SIZE = 50;
+        private InterfaceImageButton leftButton;
+        private InterfaceImageButton rightButton;
+
         public StatisticsScreen(Menu menu)
             : base(menu)
         {
@@ -82,6 +86,26 @@ namespace ParticleStormControl.Menu
             // stats descriptor
             diagramDescription = new InterfaceButton(() => DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], Vector2.Zero);
             Interface.Add(diagramDescription);
+
+            // arrows
+            leftButton = new InterfaceImageButton(
+                "icons",
+                Vector2.Zero, // later
+                ARROW_SIZE - InterfaceImageButton.PADDING*2, ARROW_SIZE - InterfaceImageButton.PADDING*2,
+                new Rectangle(0, 0, 16, 16),
+                new Rectangle(32, 0, 16, 16),
+                () => { return InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT, true); }, () => true
+            );
+            Interface.Add(leftButton);
+            rightButton = new InterfaceImageButton(
+                "icons",
+                Vector2.Zero, // later
+                ARROW_SIZE - InterfaceImageButton.PADDING * 2, ARROW_SIZE- InterfaceImageButton.PADDING*2,
+                new Rectangle(16, 0, 16, 16),
+                new Rectangle(48, 0, 16, 16),
+                () => { return InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT, true); }, () => true
+            );
+            Interface.Add(rightButton);
 
             // continue button
             string text = "continue";
@@ -190,7 +214,6 @@ namespace ParticleStormControl.Menu
         {
             Rectangle area;
 
-            const int ARROW_SIZE = 50;
             const int ARROW_PADDING = 20;
 
             int diagramAreaMaxWidth = maxWidth - ARROW_SIZE * 2 - ARROW_PADDING * 2;
@@ -204,9 +227,9 @@ namespace ParticleStormControl.Menu
 
             area.Height = heightVal;
             area.X = (menu.ScreenWidth-area.Width) / 2;
-            area.Y = yPos + (int)menu.FontHeading.MeasureString(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType]).Y; // +InterfaceButton.PADDING;
+            area.Y = yPos + InterfaceElement.PADDING*2 + menu.GetFontHeight();
 
-            diagramDescription.Position = new Vector2(area.X + InterfaceButton.PADDING, yPos);
+            diagramDescription.Position = new Vector2(area.X, yPos);
 
             // draw border
             spriteBatch.Draw(menu.TexPixel, area, Color.Black);
@@ -311,17 +334,9 @@ namespace ParticleStormControl.Menu
                 //InterfaceButton.Instance.Draw(spriteBatch, menu.Font, endTimeString, new Vector2(x, area.Y + area.Height + 10), false, menu.TexPixel);
             }
 
-            // arrows
             int arrowY = area.Y + (area.Height - ARROW_SIZE) / 2;//boxHeight / 2 - ARROW_SIZE;
-            bool left = InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT, true);
-            bool right = InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT, true);
-            //InterfaceButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Left - ARROW_SIZE - ARROW_PADDING, arrowY, ARROW_SIZE, ARROW_SIZE),
-            //                                                    new Rectangle(0 + (!left ? 32 : 0), 0, 16, 16),
-            //                                                    left, menu.TexPixel);
-            //InterfaceButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Right + ARROW_PADDING, arrowY, ARROW_SIZE, ARROW_SIZE),
-            //                                                    new Rectangle(16 + (!right ? 32 : 0), 0, 16, 16),
-            //                                                   right, menu.TexPixel);
-
+            leftButton.Position = new Vector2(area.Left - ARROW_SIZE - InterfaceImageButton.PADDING, arrowY);
+            rightButton.Position = new Vector2(area.Right + InterfaceImageButton.PADDING, arrowY);
         }
 
         private string GenerateTimeString(float time)
