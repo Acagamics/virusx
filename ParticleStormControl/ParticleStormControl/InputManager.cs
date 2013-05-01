@@ -576,6 +576,11 @@ namespace ParticleStormControl
                             return down ? IsButtonDown(Buttons.Start, controller) : IsButtonPressed(Buttons.Start, controller);
                         case ControlActions.EXIT:
                             return down ? IsButtonDown(Buttons.Back, controller) : IsButtonPressed(Buttons.Back, controller);
+
+                        case ControlActions.ADD_AI:
+                            return IsButtonPressed(Buttons.RightShoulder, controller);
+                        case ControlActions.REMOVE_AI:
+                            return IsButtonPressed(Buttons.LeftShoulder, controller);
 	                }
                     break;
             }

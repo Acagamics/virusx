@@ -347,13 +347,13 @@ namespace ParticleStormControl.Menu
             }
 
             // test add/remove ai
-            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ADD_AI))
+            if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ADD_AI, StartingControls))
             {
                 int index = AddPlayer(true, InputManager.ControlType.NONE);
                 if (index != -1)    
                     ToggleReady(index);
             }
-            else if(InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.REMOVE_AI))
+            else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.REMOVE_AI, StartingControls))
             {
                 // search for an ai player
                 for (int i = Settings.Instance.NumPlayers-1; i >= 0; --i)
