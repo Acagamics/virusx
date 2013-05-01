@@ -160,7 +160,6 @@ namespace ParticleStormControl.Menu
                 // big fat "comp" for those who need it
                 //stringSize = menu.FontCountdown.MeasureString("COMP");
                 //Interface.Add(new InterfaceButton("COMP", origin + new Vector2(BOX_WIDTH, BOX_HEIGHT) / 2, () => { return false; }, () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.AI; }));
-
             }
 
             // countdown
@@ -483,6 +482,8 @@ namespace ParticleStormControl.Menu
             }
             if (allReady && Settings.Instance.NumPlayers > 0)
                 countdown = TimeSpan.FromSeconds(maxCountdown - 0.001);
+            else
+                countdown = TimeSpan.FromSeconds(-1);
         }
 
         private void ToggleReady(int slotIndex)
