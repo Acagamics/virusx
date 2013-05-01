@@ -75,7 +75,8 @@ namespace ParticleStormControl.Menu
 
                 // controls
                 Interface.Add(new InterfaceButton(
-                    () => { return index < Settings.Instance.NumPlayers ? InputManager.CONTROL_NAMES[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).ControlType].ToString() : ""; },
+                    () => { return slotIndexToPlayerIndexMapper[index] < Settings.Instance.NumPlayers ? 
+                                        InputManager.CONTROL_NAMES[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).ControlType].ToString() : ""; },
                     origin + new Vector2(SIDE_PADDING, TEXTBOX_HEIGHT * 2 + InterfaceButton.PADDING * 2),
                     () => { return false; },
                     () => { return playerSlotOccupied[index]; }

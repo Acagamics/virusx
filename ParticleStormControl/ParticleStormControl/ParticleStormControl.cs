@@ -64,7 +64,7 @@ namespace ParticleStormControl
 
             graphics.SynchronizeWithVerticalRetrace = true;
 
-            Random.InitRandom((uint)DateTime.Now.Millisecond);
+            Random.InitRandom((uint)DateTime.Now.Ticks);
 
             // read start settings
             Settings.Instance.ReadSettings();
