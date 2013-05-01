@@ -69,8 +69,8 @@ namespace ParticleStormControl.Menu
                         {
                             case Button.NEWGAME:
                                 ((NewGame)menu.GetPage(Menu.Page.NEWGAME)).StartingControls = control;
-                                ((Mode)menu.GetPage(Menu.Page.MODE)).StartingControls = control;
-                                menu.ChangePage(Menu.Page.MODE, gameTime);
+                               // ((Mode)menu.GetPage(Menu.Page.MODE)).StartingControls = control;
+                                menu.ChangePage(Menu.Page.NEWGAME, gameTime);
                                 break;
 
                             case Button.CONTROLS:

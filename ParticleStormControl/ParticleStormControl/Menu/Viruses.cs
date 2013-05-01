@@ -99,9 +99,6 @@ namespace ParticleStormControl.Menu
                 case VirusSwarm.VirusType.EPSTEINBARR:
                     virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["EpsteinBar_Spritebatch"];
                     break;
-                case VirusSwarm.VirusType.H5N1:
-                    virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["H5N1_Spritebatch"];
-                    break;
                 case VirusSwarm.VirusType.HIV:
                     virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["HIV_Spritebatch"];
                     break;

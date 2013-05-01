@@ -128,9 +128,6 @@ namespace ParticleStormControl
 
             switch(player.Virus)
             {
-                case VirusSwarm.VirusType.H5N1:
-                    particleEffect.CurrentTechnique = particleEffect.Techniques["H5N1"];
-                    break;
                 case VirusSwarm.VirusType.HEPATITISB:
                     particleEffect.CurrentTechnique = particleEffect.Techniques["HepatitisB"];
                     break;

@@ -15,7 +15,6 @@ namespace ParticleStormControl
 
         public enum VirusType
         {
-            H5N1,
             HEPATITISB,
             HIV,
             EPSTEINBARR,
@@ -23,38 +22,35 @@ namespace ParticleStormControl
             NUM_VIRUSES
         }
 
-        public readonly static VirusType[] Viruses = { VirusType.H5N1, VirusType.HEPATITISB, VirusType.HIV, VirusType.EPSTEINBARR };
-        public readonly static string[] VirusNames = { "Influenza A", "Hepatitis B", "Human immunodeficiency", "Epstein-Barr" };
-        public readonly static string[] VirusAdditionalInfo = { "It is a highly contagious virus which is a potential pandemic threat.",
-                                                               "Can also lead to cirrhosis and hepatocellular carcinoma.",
+        public readonly static VirusType[] Viruses = { VirusType.HEPATITISB, VirusType.HIV, VirusType.EPSTEINBARR };
+        public readonly static string[] VirusNames = { "Hepatitis B", "Human immunodeficiency", "Epstein-Barr" };
+        public readonly static string[] VirusAdditionalInfo = { "Can also lead to cirrhosis and hepatocellular carcinoma.",
                                                                "Infection with HIV occurs by the transfer of blood, semen,\nvaginal fluid, pre-ejaculate, or breast milk.",
                                                                "It is one of the most common viruses in humans." };
         public readonly static string[] VirusClassification = { "Group V; Genus A; Family of Orthomyxoviridae",
                                                                   "Group VII; Genus Orthohepadnavirus; Family of Hepadnaviridae",
                                                                   "Group VI; Genus Lentivirus; Family of Retroviridae",
                                                                   "Group I; Genus of Lymphocryptovirus; Family of Herpesviridae" };
-        public readonly static string[] VirusShortName = { "H5N1",
-                                                             "HBV",
+        public readonly static string[] VirusShortName = {  "HBV",
                                                              "HIV",
                                                              "EBV" };
-        public readonly static string[] VirusCausedDisease = { "avian influenza (bird flu)",
-                                                                 "hepatitis B",
+        public readonly static string[] VirusCausedDisease = { "hepatitis B",
                                                                  "acquired immunodeficiency syndrome (AIDS)",
                                                                  "Implicated in several diseases that include infectious mononucleosis,\nmultiple sclerosis and Hodgkin lymphoma." };
 
 
         // IMPORTANT: The number '+' for each virus should add to the same sum. This is to imply that all virusses are equally strong. ;)
         // Currently the sum is 10
-        public static readonly string[] DESCRIPTOR_Mass = new string[] { "++", "++++", "+", "++++" };
-        public static readonly string[] DESCRIPTOR_Speed = new string[] { "+++", "+", "++", "++++" };
-        public static readonly string[] DESCRIPTOR_Health = new string[] { "+++", "+++", "++++", "+" };
-        public static readonly string[] DESCRIPTOR_Discipline = new string[] { "++", "++", "+++", "+" };
+        public static readonly string[] DESCRIPTOR_Mass = new string[] { "++++", "+", "++++" };
+        public static readonly string[] DESCRIPTOR_Speed = new string[] { "+", "++", "++++" };
+        public static readonly string[] DESCRIPTOR_Health = new string[] { "+++", "++++", "+" };
+        public static readonly string[] DESCRIPTOR_Discipline = new string[] { "++", "+++", "+" };
 
         // attributs
-        private static readonly float[] MASS_byVirus = new float[] { 0.5f, 0.63f, 0.075f, 1.0f };
-        private static readonly float[] SPEED_byVirus = new float[] { 0.44f, -0.40f, 0.3f, 1.0f };
-        private static readonly float[] HEALTH_byVirus = new float[] { 0.5f, 0.35f, 1.0f, -0.38f };
-        private static readonly float[] DISCIPLIN_byVirus = new float[] { 0.44f, 0.25f, 0.65f, 0.55f };
+        private static readonly float[] MASS_byVirus = new float[] { 0.63f, 0.075f, 1.0f };
+        private static readonly float[] SPEED_byVirus = new float[] { -0.40f, 0.3f, 1.0f };
+        private static readonly float[] HEALTH_byVirus = new float[] { 0.35f, 1.0f, -0.38f };
+        private static readonly float[] DISCIPLIN_byVirus = new float[] { 0.25f, 0.65f, 0.55f };
 
         // speed stuff
         private const float SPEED_CONSTANT = 0.18f; // 0.13f;

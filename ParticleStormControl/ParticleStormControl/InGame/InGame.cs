@@ -123,10 +123,10 @@ namespace ParticleStormControl
             {
                 if (Settings.Instance.GetPlayer(i).Type != Player.Type.NONE)
                 {
-                    if (Settings.Instance.GetPlayer(i).Type == Player.Type.AI)
+                    if (false)//Settings.Instance.GetPlayer(i).Type == Player.Type.AI)
                     {
-                        players[count] = new AIPlayer(i, Settings.Instance.GetPlayer(i).VirusIndex, Settings.Instance.GetPlayer(i).ColorIndex,
-                            Settings.Instance.GetPlayer(i).Team, graphicsDevice, content, noiseWhite2D);
+               //         players[count] = new AIPlayer(i, Settings.Instance.GetPlayer(i).VirusIndex, Settings.Instance.GetPlayer(i).ColorIndex,
+               //             Settings.Instance.GetPlayer(i).Team, graphicsDevice, content, noiseWhite2D);
                     }
                     else
                     {

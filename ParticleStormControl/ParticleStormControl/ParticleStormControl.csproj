@@ -137,7 +137,6 @@
   <ItemGroup>
     <Compile Include="background\Background.cs" />
     <Compile Include="InGame\Level\DamageArea.cs" />
-    <Compile Include="InGame\Player\AIPlayer.cs" />
     <Compile Include="InGame\Player\HumanPlayer.cs" />
     <Compile Include="InGame\InGame.cs" />
     <Compile Include="InGame\InGameInterface.cs" />
@@ -156,7 +155,6 @@
     <Compile Include="Menu\Interface\InterfaceImage.cs" />
     <Compile Include="Menu\Interface\InterfaceImageButton.cs" />
     <Compile Include="Menu\Interface\InterfaceFiller.cs" />
-    <Compile Include="Menu\Mode.cs" />
     <Compile Include="Menu\Options.cs" />
     <Compile Include="Menu\MainMenu.cs" />
     <Compile Include="Menu\Menu.cs" />

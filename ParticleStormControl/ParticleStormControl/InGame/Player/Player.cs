@@ -69,8 +69,8 @@ namespace ParticleStormControl
 
         #region Color
 
-        public readonly static Color[] Colors = { Color.Red, /*Color.Blue*/new Color(40, 50, 250), Color.DarkTurquoise, new Color(20, 148, 20),/* Color.Black,*/ Color.DeepPink, new Color(250, 120, 20) };
-        public readonly static string[] ColorNames = { "Red", "Blue", "Turquoise", "Green", /*"Black",*/ "Pink", "Orange" };
+        public readonly static Color[] Colors = { Color.Red, new Color(40, 50, 250), Color.DarkTurquoise, new Color(20, 148, 20), Color.DeepPink, new Color(250, 120, 20) };
+        public readonly static string[] ColorNames = { "Red", "Blue", "Turquoise", "Green", "Pink", "Orange" };
 
         private int colorIndex;
 

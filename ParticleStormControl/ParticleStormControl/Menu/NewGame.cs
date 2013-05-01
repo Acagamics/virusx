@@ -228,14 +228,14 @@ namespace ParticleStormControl.Menu
             }
 
             // help text
-            int textBoxHeight = menu.GetFontHeight() + 2 * InterfaceElement.PADDING;
+/*            int textBoxHeight = menu.GetFontHeight() + 2 * InterfaceElement.PADDING;
             string help = "\"+\": add computer\n\"-\":  remove computer";
             Interface.Add(new InterfaceButton(help, new Vector2(-menu.Font.MeasureString(help).X / 2, menu.Font.MeasureString(help).Y + 2 * InterfaceElement.PADDING), () => false, () => StartingControls == InputManager.ControlType.KEYBOARD0 || StartingControls == InputManager.ControlType.KEYBOARD1, Alignment.BOTTOM_CENTER));
             Interface.Add(new InterfaceImage("ButtonImages/xboxControllerRightShoulder", new Rectangle(-140, 2 * textBoxHeight, 100, textBoxHeight), Color.Black, () => StartingControls != InputManager.ControlType.KEYBOARD0 && StartingControls != InputManager.ControlType.KEYBOARD1, Alignment.BOTTOM_CENTER));
             Interface.Add(new InterfaceButton("add computer", new Vector2(-40, 2 * textBoxHeight), () => false, () => StartingControls != InputManager.ControlType.KEYBOARD0 && StartingControls != InputManager.ControlType.KEYBOARD1, 180, Alignment.BOTTOM_CENTER));
             Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(-140, textBoxHeight, 100, textBoxHeight), Color.Black, () => StartingControls != InputManager.ControlType.KEYBOARD0 && StartingControls != InputManager.ControlType.KEYBOARD1, Alignment.BOTTOM_CENTER));
             Interface.Add(new InterfaceButton("remove computer", new Vector2(-40, textBoxHeight), () => false, () => StartingControls != InputManager.ControlType.KEYBOARD0 && StartingControls != InputManager.ControlType.KEYBOARD1, 180, Alignment.BOTTOM_CENTER));
-
+            */
             // countdown
             String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
             Vector2 size = menu.FontHeading.MeasureString(text);
@@ -296,7 +296,7 @@ namespace ParticleStormControl.Menu
 #endif
             if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, StartingControls) ||
                 InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, StartingControls))
-                menu.ChangePage(Menu.Page.MODE, gameTime);
+                menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
             TimeSpan oldCountdown = countdown;
             countdown = countdown.Subtract(gameTime.ElapsedGameTime);
@@ -357,7 +357,7 @@ namespace ParticleStormControl.Menu
             }
 
             // test add/remove ai
-            if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ADD_AI, StartingControls))
+          /*  if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ADD_AI, StartingControls))
             {
                 int index = AddPlayer(true, InputManager.ControlType.NONE);
                 if (index != -1)    
@@ -375,6 +375,7 @@ namespace ParticleStormControl.Menu
                     }
                 }
             }
+           */
 
             base.Update(gameTime);
         }
@@ -481,9 +482,6 @@ namespace ParticleStormControl.Menu
                     {
                         case VirusSwarm.VirusType.EPSTEINBARR:
                             virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["EpsteinBar_Spritebatch"];
-                            break;
-                        case VirusSwarm.VirusType.H5N1:
-                            virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["H5N1_Spritebatch"];
                             break;
                         case VirusSwarm.VirusType.HIV:
                             virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["HIV_Spritebatch"];
