@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 using ParticleStormControl;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 
 namespace ParticleStormControl.Menu
 {
@@ -30,6 +31,7 @@ namespace ParticleStormControl.Menu
         private int[] slotIndexToPlayerIndexMapper = new int[4];
 
         private Effect virusRenderEffect;
+        private SoundEffect addPlayerSoundEffect;
 
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
@@ -73,7 +75,8 @@ namespace ParticleStormControl.Menu
 
                 // controls
                 Interface.Add(new InterfaceButton(
-                    () => { return index < Settings.Instance.NumPlayers ? InputManager.CONTROL_NAMES[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).ControlType].ToString() : ""; },
+                    () => { return slotIndexToPlayerIndexMapper[index] < Settings.Instance.NumPlayers ? 
+                                        InputManager.CONTROL_NAMES[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).ControlType].ToString() : ""; },
                     origin + new Vector2(SIDE_PADDING, TEXTBOX_HEIGHT * 2 + InterfaceButton.PADDING * 2),
                     () => { return false; },
                     () => { return playerSlotOccupied[index]; }
@@ -157,16 +160,15 @@ namespace ParticleStormControl.Menu
                 // big fat "comp" for those who need it
                 //stringSize = menu.FontCountdown.MeasureString("COMP");
                 //Interface.Add(new InterfaceButton("COMP", origin + new Vector2(BOX_WIDTH, BOX_HEIGHT) / 2, () => { return false; }, () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.AI; }));
-
-                // countdown
-                String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
-                Vector2 size = menu.FontHeading.MeasureString(text);
-                Interface.Add(new InterfaceFiller(Vector2.Zero, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, Color.FromNonPremultiplied(0, 0, 0, 128), () => { return countdown.TotalSeconds > 0; }));
-                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.White, () => { return countdown.TotalSeconds > 0; }));
-                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.Black, () => { return countdown.TotalSeconds > safeCountdown; }));
-                Interface.Add(new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true));
-
             }
+
+            // countdown
+            String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
+            Vector2 size = menu.FontHeading.MeasureString(text);
+            Interface.Add(new InterfaceFiller(Vector2.Zero, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, Color.FromNonPremultiplied(0, 0, 0, 128), () => { return countdown.TotalSeconds > 0; }));
+            Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.White, () => { return countdown.TotalSeconds > 0; }));
+            Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.Black, () => { return countdown.TotalSeconds > safeCountdown; }));
+            Interface.Add(new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true));
         }
 
         /// <summary>
@@ -196,6 +198,7 @@ namespace ParticleStormControl.Menu
         public override void LoadContent(ContentManager content)
         {
             virusRenderEffect = content.Load<Effect>("shader/particleRendering");
+            addPlayerSoundEffect = content.Load<SoundEffect>("sound/room__snare-switchy");
 
             base.LoadContent(content);
         }
@@ -345,6 +348,7 @@ namespace ParticleStormControl.Menu
                     Type = ai ? Player.Type.AI : Player.Type.HUMAN,
                 });
 
+                addPlayerSoundEffect.Play();
                 countdown = TimeSpan.FromSeconds(-1);
             }
 
@@ -478,6 +482,8 @@ namespace ParticleStormControl.Menu
             }
             if (allReady && Settings.Instance.NumPlayers > 0)
                 countdown = TimeSpan.FromSeconds(maxCountdown - 0.001);
+            else
+                countdown = TimeSpan.FromSeconds(-1);
         }
 
         private void ToggleReady(int slotIndex)

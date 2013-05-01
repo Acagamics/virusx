@@ -363,7 +363,7 @@ namespace ParticleStormControl
             }
         }
 
-        public void Update(float frameTimeSeconds, float totalTimeSeconds, Player[] players)
+        public void Update(GameTime gameTime, Player[] players)
         {
             // statistics
             uint[] possesingSpawnPoints = new uint[players.Length];
@@ -372,14 +372,15 @@ namespace ParticleStormControl
             // update
             foreach (MapObject mapObject in mapObjects)
             {
-                mapObject.Update(frameTimeSeconds, totalTimeSeconds);
+                mapObject.Update(gameTime);
 
                 Crosshair crosshair = mapObject as Crosshair;
                 if (crosshair != null)
                 {
                     crosshair.Position = players[crosshair.PlayerIndex].CursorPosition;
                     crosshair.ParticleAttractionPosition = players[crosshair.PlayerIndex].ParticleAttractionPosition;
-                    crosshair.Alive = players[crosshair.PlayerIndex].Alive;
+                    //crosshair.Alive = players[crosshair.PlayerIndex].Alive;
+                    crosshair.PlayerAlive = players[crosshair.PlayerIndex].Alive;
                 }
 
                 // statistics
@@ -484,13 +485,13 @@ namespace ParticleStormControl
             // wipeout
             if (wipeoutActive)
             {
-                wipeoutProgress += frameTimeSeconds;
+                wipeoutProgress += (float)gameTime.TotalGameTime.TotalSeconds;
                 if (wipeoutProgress > 1.0f)
                     wipeoutActive = false;
             }
 
             // statistics
-            if (GameStatistics.UpdateTimer(frameTimeSeconds))
+            if (GameStatistics.UpdateTimer((float)gameTime.TotalGameTime.TotalSeconds))
             {
                 if (!dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug)
                 {
@@ -636,23 +637,23 @@ namespace ParticleStormControl
             device.SetRenderTarget(null);
         }
 
-        public void Draw(float totalTimeSeconds, GraphicsDevice device, Player[] players)
+        public void Draw(GameTime gameTime, GraphicsDevice device, Player[] players)
         {
             // activate scissor test - is this a performance issue?
             device.ScissorRectangle = fieldPixelRectangle;
             device.RasterizerState = scissorTestRasterizerState;
 
             // background
-            background.Draw(device, totalTimeSeconds);
+            background.Draw(device, (float)gameTime.TotalGameTime.TotalSeconds);
 
             // screenblend stuff
-            spriteBatch.Begin(SpriteSortMode.BackToFront, ScreenBlend);
+           /* spriteBatch.Begin(SpriteSortMode.BackToFront, ScreenBlend);
             foreach (MapObject mapObject in mapObjects)
             {
                 if (mapObject.Alive)
                     mapObject.Draw_ScreenBlended(spriteBatch, this, totalTimeSeconds);
             }
-            spriteBatch.End();
+            spriteBatch.End();*/
 
             // the particles!
             DrawParticles(device);
@@ -671,18 +672,18 @@ namespace ParticleStormControl
             foreach (MapObject mapObject in mapObjects)
             {
                 if (mapObject.Alive)
-                    mapObject.Draw_AlphaBlended(spriteBatch, this, totalTimeSeconds);
+                    mapObject.Draw_AlphaBlended(spriteBatch, this, gameTime);
             }
 
             // wipeout
             if (wipeoutActive)
                 spriteBatch.Draw(wipeoutExplosionTexture, ComputePixelRect(Level.RELATIVE_MAX / 2, Level.RELATIVE_MAX.X * wipeoutProgress * WIPEOUT_SIZEFACTOR),
-                                    null, new Color(1.0f, 1.0f, 1.0f, (float)(1.0 - Math.Sqrt(wipeoutProgress))), totalTimeSeconds, 
+                                    null, new Color(1.0f, 1.0f, 1.0f, (float)(1.0 - Math.Sqrt(wipeoutProgress))), (float)gameTime.TotalGameTime.TotalSeconds, 
                                     new Vector2(wipeoutExplosionTexture.Width, wipeoutExplosionTexture.Height) * 0.5f, SpriteEffects.None, 0.0f);
 
 
             // countdown
-            DrawCountdown(device, totalTimeSeconds);
+            DrawCountdown(device, (float)gameTime.TotalGameTime.TotalSeconds);
 
 
             spriteBatch.End();

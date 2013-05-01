@@ -228,10 +228,7 @@ namespace ParticleStormControl
                 for (int i = 0; i < playerRecentlyDied.Length; ++i)
                 {
                     if (playerRecentlyDied[i])
-                    {
                         GameStatistics.playerDied(i);
-                        level.AddMapObject(DamageArea.CreatePlayerDeathDamage(content, players[i].CursorPosition, i));
-                    }
                 }
 
                 // damaging - switch every frame to be xbox friendly (preserve content stuff)
@@ -243,7 +240,7 @@ namespace ParticleStormControl
                 }
 
                 // level update
-                level.Update((float)gameTime.ElapsedGameTime.TotalSeconds, passedFrameTime, players);
+                level.Update(gameTime, players);
 
                 // wining
                 CheckWinning(gameTime);
@@ -318,7 +315,7 @@ namespace ParticleStormControl
             float timeSinceLastFrame = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // draw level
-            level.Draw(totalGameTime, spriteBatch.GraphicsDevice, players);
+            level.Draw(gameTime, spriteBatch.GraphicsDevice, players);
 
             inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime);
 

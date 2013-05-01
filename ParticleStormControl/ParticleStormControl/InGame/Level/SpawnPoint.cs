@@ -93,9 +93,9 @@ namespace ParticleStormControl
             SpawnTimeAccum = 0.0f;
         }
 
-        public override void Update(float frameTimeSeconds, float totalTimeSeconds)
+        public override void Update(GameTime gameTime)
         {
-            base.Update(frameTimeSeconds, totalTimeSeconds);
+            base.Update(gameTime);
 
             if (explosionTimer.IsRunning)
             {
@@ -115,14 +115,14 @@ namespace ParticleStormControl
             }
         }
 
-        public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, float totalTimeSeconds)
+        public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime)
         {
             // main
             Color color = ComputeColor();
             const float PULSING = 0.01f;
          //   spriteBatch.Draw(outerTexture, rect, null, color, totalTimeSeconds, new Vector2(outerTexture.Width * 0.5f, outerTexture.Height * 0.5f), SpriteEffects.None, 0.8f);
-            spriteBatch.Draw(nucleusTexture_inner, level.ComputePixelRect(Position, Size + (float)Math.Sin(totalTimeSeconds * 1.7 + randomAngle) * PULSING - PULSING), 
-                                                null, color, totalTimeSeconds + randomAngle,
+            spriteBatch.Draw(nucleusTexture_inner, level.ComputePixelRect(Position, Size + (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 1.7 + randomAngle) * PULSING - PULSING),
+                                                null, color, (float)gameTime.TotalGameTime.TotalSeconds + randomAngle,
                 new Vector2(nucleusTexture_inner.Width * 0.5f, nucleusTexture_inner.Height * 0.5f), SpriteEffects.None, 0.7f);
             spriteBatch.Draw(nucleusTexture_outer, level.ComputePixelRect(Position, Size), null, color, 0,
                 new Vector2(nucleusTexture_outer.Width * 0.5f, nucleusTexture_outer.Height * 0.5f), SpriteEffects.None, 0.6f);
@@ -134,18 +134,6 @@ namespace ParticleStormControl
                 spriteBatch.Draw(explosionTexture, level.ComputePixelRect(Position, currentExplosionSize), null, explosionColor, explosionRotation,
                                         new Vector2(explosionTexture.Width / 2, explosionTexture.Height / 2), SpriteEffects.None, 0.1f);
             }
-        }
-
-        public override void Draw_ScreenBlended(SpriteBatch spriteBatch, Level level, float totalTimeSeconds)
-        {
-         /*   // glow for possed ones
-            if (PossessingPlayer != -1)
-            {
-                float currentsize = MathHelper.Clamp((float)glowtimer.Elapsed.TotalSeconds * 2.5f, 0.0f, 1.0f) * glowSize_Game;
-                Color glowColor = Settings.Instance.GetPlayerColor(PossessingPlayer) * 0.5f;
-                if (currentsize > 0.0f)
-                    spriteBatch.Draw(glowTexture, level.ComputePixelRect_Centered(Position, currentsize), null, glowColor, 0.0f, Vector2.Zero, SpriteEffects.None, 1.0f);
-            } */
         }
 
         public override void DrawToDamageMap(SpriteBatch spriteBatch)
