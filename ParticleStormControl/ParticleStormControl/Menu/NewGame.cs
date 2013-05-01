@@ -65,6 +65,12 @@ namespace ParticleStormControl.Menu
         private GameMode mode;
 
         /// <summary>
+        /// reference to the content manager
+        /// needed because the "lazy load" of all these items
+        /// </summary>
+        private ContentManager content;
+
+        /// <summary>
         /// controls of the player who opened this menu
         /// </summary>
         public InputManager.ControlType StartingControls {get;set;}
@@ -72,9 +78,30 @@ namespace ParticleStormControl.Menu
         public NewGame(Menu menu)
             : base(menu)
         {
-            playerSlotOccupied = new bool[4];
-            playerReadyBySlot = new bool[4];
             countdown = new TimeSpan();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="oldPage"></param>
+        /// <param name="gameTime"></param>
+        public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
+        {
+            Settings.Instance.ResetPlayerSettings();
+            countdown = TimeSpan.Zero;
+            for (int i = 0; i < 4; ++i)
+            {
+                playerSlotOccupied[i] = false;
+                playerReadyBySlot[i] = false;
+                slotIndexToPlayerIndexMapper[i] = i;
+            }
+
+            if (StartingControls != InputManager.ControlType.NONE)
+                AddPlayer(false, StartingControls);
+
+            // create ui @ onActia
+            Interface.Clear();
 
             // four boxes
             int TEXTBOX_HEIGHT = menu.GetFontHeight() + 2 * InterfaceButton.PADDING;
@@ -194,10 +221,6 @@ namespace ParticleStormControl.Menu
 
                 Interface.Add(new InterfaceButton("Health", origin + new Vector2(descpX1, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }));
                 Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Health[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex]; }, origin + new Vector2(descpX1 + descpStrLen, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }));
-                
-                // big fat "comp" for those who need it
-                //stringSize = menu.FontCountdown.MeasureString("COMP");
-                //Interface.Add(new InterfaceButton("COMP", origin + new Vector2(BOX_WIDTH, BOX_HEIGHT) / 2, () => { return false; }, () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.AI; }));
             }
 
             // help text
@@ -216,26 +239,8 @@ namespace ParticleStormControl.Menu
             Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.White, () => { return countdown.TotalSeconds > 0; }));
             Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.Black, () => { return countdown.TotalSeconds > safeCountdown; }));
             Interface.Add(new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true));
-        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="oldPage"></param>
-        /// <param name="gameTime"></param>
-        public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
-        {
-            Settings.Instance.ResetPlayerSettings();
-            countdown = TimeSpan.Zero;
-            for (int i = 0; i < 4; ++i)
-            {
-                playerSlotOccupied[i] = false;
-                playerReadyBySlot[i] = false;
-                slotIndexToPlayerIndexMapper[i] = i;
-            }
-
-            if (StartingControls != InputManager.ControlType.NONE)
-                AddPlayer(false, StartingControls);
+            base.LoadContent(content);
         }
 
         /// <summary>
@@ -244,6 +249,7 @@ namespace ParticleStormControl.Menu
         /// <param name="content"></param>
         public override void LoadContent(ContentManager content)
         {
+            this.content = content;
             virusRenderEffect = content.Load<Effect>("shader/particleRendering");
             addPlayerSoundEffect = content.Load<SoundEffect>("sound/room__snare-switchy");
 
