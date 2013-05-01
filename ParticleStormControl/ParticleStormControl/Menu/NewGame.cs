@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 using ParticleStormControl;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 
 namespace ParticleStormControl.Menu
 {
@@ -30,6 +31,7 @@ namespace ParticleStormControl.Menu
         private int[] slotIndexToPlayerIndexMapper = new int[4];
 
         private Effect virusRenderEffect;
+        private SoundEffect addPlayerSoundEffect;
 
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
@@ -196,6 +198,7 @@ namespace ParticleStormControl.Menu
         public override void LoadContent(ContentManager content)
         {
             virusRenderEffect = content.Load<Effect>("shader/particleRendering");
+            addPlayerSoundEffect = content.Load<SoundEffect>("sound/room__snare-switchy");
 
             base.LoadContent(content);
         }
@@ -345,6 +348,7 @@ namespace ParticleStormControl.Menu
                     Type = ai ? Player.Type.AI : Player.Type.HUMAN,
                 });
 
+                addPlayerSoundEffect.Play();
                 countdown = TimeSpan.FromSeconds(-1);
             }
 

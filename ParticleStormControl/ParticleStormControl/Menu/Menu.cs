@@ -57,6 +57,12 @@ namespace ParticleStormControl.Menu
         public ParticleStormControl Game // Haaaack (how else do I get the statistics outside the inGame?)
         { get { return game; } }
 
+
+        /// <summary>
+        /// sound effect for changing a page
+        /// </summary>
+        SoundEffect changePageSoundEffect;
+
         public Menu(ParticleStormControl game)
         {
             this.game = game;
@@ -80,6 +86,7 @@ namespace ParticleStormControl.Menu
         public void LoadContent(ContentManager content)
         {
             texPixel = content.Load<Texture2D>("pix");
+            changePageSoundEffect = content.Load<SoundEffect>("sound/room__snare-switchy");
 
             foreach (MenuPage page in pages)
             {
@@ -157,6 +164,9 @@ namespace ParticleStormControl.Menu
                 PageChangingEvent(newPage, activePage);
             pages[(int)newPage].OnActivated(activePage, gameTime);
             activePage = newPage;
+
+            changePageSoundEffect.Play();
+            
             //if(newPage != Page.INGAME)
             //    InterfaceButton.Instance.ChangeHappened(gameTime, SoundEffect);
         }

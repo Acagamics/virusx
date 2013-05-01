@@ -144,6 +144,7 @@ namespace ParticleStormControl.Menu
             this.alignment = alignment;
             this.position = position;
             this.visible = visible;
+            this.selectedNow = selected();
         }
 
         #endregion
