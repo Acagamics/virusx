@@ -1,5 +1,9 @@
 ﻿//#define DAMAGEMAP_DEBUGGING
-#define STATS_TEST
+//#define STATS_TEST
+#if !DEBUG
+#undef STATS_TEST
+#undef DAMAGEMAP_DEBUGGING
+#endif
 
 using System;
 using Microsoft.Xna.Framework;
@@ -273,6 +277,17 @@ namespace ParticleStormControl
                 
                 menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
             }
+
+#if STATS_TEST
+            // statistics
+            level.GameStatistics.FillWithTestdata(1000);
+
+            ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).WinPlayerIndex = 0;
+            ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
+            ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
+
+            menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
+#endif
         }
 
 

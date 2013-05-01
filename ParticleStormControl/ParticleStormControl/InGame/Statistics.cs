@@ -539,15 +539,16 @@ namespace ParticleStormControl
 
             for (int i = 0; i < numberOfSteps; ++i)
             {
-                int aviableSpawnPoints = (int)OverallNumberOfSpawnPoints;
+                int availableSpawnPoints = (int)OverallNumberOfSpawnPoints;
+                if(playerCount>2 && diedInStep == i)playerDied(diedPlayer);
                 for (int p = 0; p < PlayerCount; ++p)
                 {
                     if (playerCount > 2 && diedPlayer == p && diedInStep >= i)
                         setParticlesAndHealthAndPossesingSpawnPoints(p, 0, 0, 0);
                     else
                     {
-                        int spawnPoints = Random.Next(0, aviableSpawnPoints);
-                        aviableSpawnPoints -= spawnPoints;
+                        int spawnPoints = Random.Next(0, availableSpawnPoints);
+                        availableSpawnPoints -= spawnPoints;
                         setParticlesAndHealthAndPossesingSpawnPoints(p, (uint)Random.Next(1, 10000), (uint)Random.Next(1, 12000), (uint)spawnPoints);
                     }
                 }
@@ -557,9 +558,10 @@ namespace ParticleStormControl
                     int player = Random.Next(0, playerCount);
                     if (playerCount > 2 && diedPlayer == player && diedInStep >= i)
                         break;
-                    else itemUsed(player, (StatItems)Random.Next(0, 5));
+                    else itemUsed(player, (StatItems)Random.Next(0, (int)StatItems.NUM_STAT_ITEMS));
                 }
             }
+            lastStep = steps;
         }
 
         private void UpdateDominationTestData(int step)

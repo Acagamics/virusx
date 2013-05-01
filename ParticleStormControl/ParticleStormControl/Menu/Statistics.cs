@@ -53,39 +53,61 @@ namespace ParticleStormControl.Menu
         private InterfaceImageButton leftButton;
         private InterfaceImageButton rightButton;
 
+        private const int NUM_TIME_DISPLAYS = 4;
+        private InterfaceButton[] timeDisplays = new InterfaceButton[NUM_TIME_DISPLAYS];
+
+        private InterfaceButton winnerLabel;
+        private InterfaceButton[] playerStatLabels = new InterfaceButton[4];
+
         public StatisticsScreen(Menu menu)
             : base(menu)
         {
             // zentrieren
-            int pad = (menu.ScreenWidth - (captions.Count + 1) * COLUMN_WIDTH + SIDE_PADDING * 2 - COLUMN_PADDING) / 2;
+            int leftStart = -COLUMN_WIDTH * (captions.Count+1) / 2;
 
             // header um eins verschoben
 
             // draw winning string
-            Interface.Add(new InterfaceButton(() => { return Player.ColorNames[PlayerColorIndices[WinPlayerIndex]] + " wins!"; }, new Vector2(-(int)menu.FontHeading.MeasureString("Player ... wins!").X / 2, 60), () => { return false; }, Color.White, Color.FromNonPremultiplied(255, 255, 255, 0), Alignment.TOP_CENTER)); 
+            winnerLabel = new InterfaceButton(() => { return Player.ColorNames[PlayerColorIndices[WinPlayerIndex]] + " wins!"; },
+                                                Vector2.Zero,   // positioning later - string size changes!
+                                                () => { return false; },
+                                                Color.White, Color.FromNonPremultiplied(255, 255, 255, 0), Alignment.TOP_CENTER);
+            Interface.Add(winnerLabel); 
 
             // draw all captions
             for (int i = 0; i < captions.Count; i++)
             {
-                Interface.Add(new InterfaceButton(captions[i], new Vector2(pad + COLUMN_WIDTH * (i + 1), 150), () => { return false; }, COLUMN_WIDTH - COLUMN_PADDING));
+                Interface.Add(new InterfaceButton(captions[i], new Vector2(leftStart + COLUMN_WIDTH * (i + 1), 150), () => { return false; },
+                                        COLUMN_WIDTH - COLUMN_PADDING, Alignment.TOP_CENTER));
             }
 
             // fill table with values
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < playerStatLabels.Length; i++)
             {
                 int index = i;
-                Interface.Add(new InterfaceButton(() => { return Player.ColorNames[PlayerColorIndices[index]]; }, new Vector2(pad, 210 + 60 * index), () => { return false; }, () => { return index < statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING));
+                playerStatLabels[i] = new InterfaceButton(() => { return Player.ColorNames[PlayerColorIndices[index]]; }, new Vector2(leftStart, 210 + 60 * index),
+                                () => { return false; }, () => { return index < statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING, 
+                                Color.White, Color.Black, false, Alignment.TOP_CENTER);
+                Interface.Add(playerStatLabels[i]);
                 for (int j = 0; j < captions.Count; j++)
                 {
                     int x = i;
                     int y = j;
-                    Interface.Add(new InterfaceButton(() => values[x][y], new Vector2(pad + COLUMN_WIDTH * (y + 1), 210 + 60 * x), () => { return false; }, () => { return x < statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING));
+                    Interface.Add(new InterfaceButton(() => values[x][y], new Vector2(leftStart + COLUMN_WIDTH * (y + 1), 210 + 60 * x),
+                                    () => { return false; }, () => { return x < statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING, Alignment.TOP_CENTER));
                 }
             }
 
             // stats descriptor
             diagramDescription = new InterfaceButton(() => DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], Vector2.Zero);
             Interface.Add(diagramDescription);
+
+            // continue button
+            string text = "continue";
+            int width = (int)menu.Font.MeasureString(text).X;
+            Interface.Add(new InterfaceButton(text, new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, 
+                                                                    menu.GetFontHeight() + InterfaceImageButton.PADDING * 2 + 50),
+                                        () => { return timeUntilContinueIsAvailable < 0.0f; }, Alignment.BOTTOM_CENTER));
 
             // arrows
             leftButton = new InterfaceImageButton(
@@ -107,10 +129,13 @@ namespace ParticleStormControl.Menu
             );
             Interface.Add(rightButton);
 
-            // continue button
-            string text = "continue";
-            int width = (int)menu.Font.MeasureString(text).X;
-            Interface.Add(new InterfaceButton(text, new Vector2((int)((Settings.Instance.ResolutionX - width) * 0.5f), Settings.Instance.ResolutionY - 80), () => { return timeUntilContinueIsAvailable < 0.0f; }));
+            // time displays
+            for (int i = 0; i < timeDisplays.Length; ++i)
+            {
+                timeDisplays[i] = new InterfaceButton("", Vector2.Zero);
+                Interface.Add(timeDisplays[i]);
+            }
+
         }
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
@@ -131,11 +156,13 @@ namespace ParticleStormControl.Menu
                     values[counter].Add(statistics.getAverageParticles(i).ToString());
                     values[counter].Add(statistics.getAverageHealth(i).ToString());
                     values[counter].Add(statistics.getCollectedItems(i).ToString());
+                    playerStatLabels[i].BackgroundColor = Settings.Instance.GetPlayerColor(i);
                     counter++;
                 }
             }
 
-            ((InterfaceButton)Interface[0]).BackgroundColor = Player.Colors[PlayerColorIndices[WinPlayerIndex]];
+            winnerLabel.BackgroundColor = Player.Colors[PlayerColorIndices[WinPlayerIndex]];
+            winnerLabel.Position = new Vector2(-(int)menu.FontHeading.MeasureString(winnerLabel.Text()).X / 2, 60);
 
             timeUntilContinueIsAvailable = DURATION_CONTINUE_UNAVAILABLE;
         }
@@ -184,13 +211,11 @@ namespace ParticleStormControl.Menu
                                                     (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.HEALTH:
-                    DrawDiagram(spriteBatch, (step, player) => //statistics.getHealthInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
-                                                        (float)statistics.getHealthInStep(player, step) / statistics.MaxOverallSimultaneousHealth, //statistics.getHealthInStep(step),
+                    DrawDiagram(spriteBatch, (step, player) => (float)statistics.getHealthInStep(player, step) / statistics.MaxOverallSimultaneousHealth,
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.MASS:
-                    DrawDiagram(spriteBatch, (step, player) => //statistics.getParticlesInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
-                                                        (float)statistics.getParticlesInStep(player, step) / statistics.MaxOverallSimultaneousParticles, //statistics.getParticlesInStep(step),
+                    DrawDiagram(spriteBatch, (step, player) => (float)statistics.getParticlesInStep(player, step) / statistics.MaxOverallSimultaneousParticles,
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.SPAWN_POINTS:
@@ -313,25 +338,24 @@ namespace ParticleStormControl.Menu
 
             area.Inflate(10, 10);
 
-            // draw timings
-            const int numTimeDisplays = 4;
-            for (int i = 0; i < numTimeDisplays; ++i)
+            // position time displays
+            for (int i = 0; i < timeDisplays.Length; ++i)
             {
-                float progress = (float)i / (numTimeDisplays-1);
+                float progress = (float)i / (timeDisplays.Length-1);
                 float time = ((statistics.Steps - startStep) * progress + statistics.FirstStep + startStep) * statistics.StepTime;
                 string endTimeString = GenerateTimeString(time);
                 float textLen = menu.Font.MeasureString(endTimeString).X;
                 
                 float textOffset;
-                //if(i == 0)
-                    //textOffset = InterfaceButton.PADDING;
-                //else if (i == numTimeDisplays-1)
-                    //textOffset = -textLen - InterfaceButton.PADDING;
-                //else
+                if(i == 0)
+                    textOffset = 0;
+                else if (i == timeDisplays.Length - 1)
+                    textOffset = -textLen - InterfaceButton.PADDING*2;
+                else
                     textOffset = -textLen / 2;
-                
-                float x = area.X + area.Width * progress + textOffset;
-                //InterfaceButton.Instance.Draw(spriteBatch, menu.Font, endTimeString, new Vector2(x, area.Y + area.Height + 10), false, menu.TexPixel);
+
+                timeDisplays[i].Position = new Vector2(area.X + area.Width * progress + textOffset, area.Y + area.Height);
+                timeDisplays[i].Text = () => endTimeString;
             }
 
             int arrowY = area.Y + (area.Height - ARROW_SIZE) / 2;//boxHeight / 2 - ARROW_SIZE;

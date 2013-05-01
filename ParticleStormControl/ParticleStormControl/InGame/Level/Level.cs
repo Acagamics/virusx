@@ -44,14 +44,18 @@ namespace ParticleStormControl
                                                 {
                                                     ColorSourceBlend = Blend.Zero,
                                                     ColorDestinationBlend = Blend.SourceAlpha,
-                                                    ColorBlendFunction = BlendFunction.Add
+                                                    ColorBlendFunction = BlendFunction.Add,
+                                                    AlphaSourceBlend = Blend.Zero,
+                                                    AlphaDestinationBlend = Blend.One
                                                 };
 
         public static BlendState ShadowBlend = new BlendState
                                                    {
                                                        ColorSourceBlend = Blend.One,
                                                        ColorDestinationBlend = Blend.InverseSourceAlpha,
-                                                       ColorBlendFunction = BlendFunction.Add
+                                                       ColorBlendFunction = BlendFunction.Add,
+                                                       AlphaSourceBlend = Blend.Zero,
+                                                       AlphaDestinationBlend = Blend.One
                                                    };
 
         #region field dimension & cordinates
