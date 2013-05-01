@@ -27,7 +27,7 @@ namespace ParticleStormControl
         private Stopwatch explosionTimer;
         private float alpha = 1.0f;
 
-        private readonly float fadeOutTime = 0.2f;
+        private readonly float fadeOutTime;
 
         private Texture2D damageZoneTexture;
 
@@ -40,9 +40,21 @@ namespace ParticleStormControl
         /// </summary>
         public static DamageArea CreateDangerZone(ContentManager content, Vector2 Position, int possessingPlayer)
         {
-            content.Load<SoundEffect>("sound/danger_zone").Play();
-            return new DamageArea(content.Load<Texture2D>("danger_zone_inner"), Position, possessingPlayer, 
-                                            0.22f, 3, 8.0f, 7.0f);
+            if (Settings.Instance.Sound)
+                content.Load<SoundEffect>("sound/danger_zone").Play();
+            return new DamageArea(content.Load<Texture2D>("danger_zone_inner"), Position, possessingPlayer,
+                                            0.22f, 3, 8.0f, 7.0f, 0.2f);
+        }
+
+        /// <summary>
+        /// creates a new danger zone damaging area
+        /// </summary>
+        public static DamageArea CreateWipeout(ContentManager content)
+        {
+            if (Settings.Instance.Sound)
+                content.Load<SoundEffect>("sound/andromadax24__woosh-01").Play();
+            return new DamageArea(content.Load<Texture2D>("Wipeout_big"), Level.RELATIVE_MAX / 2, -1,
+                                            3.0f, 1.6f, 1000.0f, 0.6f, 0.6f);
         }
 
         /// <summary>
@@ -55,7 +67,7 @@ namespace ParticleStormControl
         }*/
 
         public DamageArea(Texture2D damageZoneTexture, Vector2 Position, int possessingPlayer,
-                            float explosionMaxSize, float explosionScaleSpeed, float explosionDamage, float duration)
+                            float explosionMaxSize, float explosionScaleSpeed, float explosionDamage, float duration, float fadeoutTime)
             : base(Position, 0.0f)
         {
             this.damageZoneTexture = damageZoneTexture;
@@ -64,6 +76,7 @@ namespace ParticleStormControl
             this.duration = duration;
             this.possessingPlayer = possessingPlayer;
             this.explosionScaleSpeed = explosionScaleSpeed;
+            this.fadeOutTime = fadeoutTime;
 
             explosionTimer = new Stopwatch();
 
@@ -81,8 +94,7 @@ namespace ParticleStormControl
             float scaling = MathHelper.Clamp(effectSeconds * explosionScaleSpeed, 0.0f, 1.0f);
             Size = explosionMaxSize * scaling;
 
-            alpha = Size / explosionMaxSize;
-
+            alpha = 1.0f;//Size / explosionMaxSize
             float remainingTime = duration - effectSeconds;
             if (effectSeconds - duration < fadeOutTime)
                 alpha = Math.Min(alpha, remainingTime / fadeOutTime);
@@ -95,7 +107,12 @@ namespace ParticleStormControl
 
         public override void DrawToDamageMap(SpriteBatch spriteBatch)
         {
-            Color damage = VirusSwarm.TextureDamageValue[possessingPlayer] * explosionDamage * alpha;
+            Color playerColor;
+            if (possessingPlayer < 0)
+                playerColor = Color.White;
+            else
+                playerColor = VirusSwarm.TextureDamageValue[possessingPlayer];
+            Color damage = playerColor * (explosionDamage * alpha);
             spriteBatch.Draw(damageZoneTexture, DamageMap.ComputePixelRect(Position, Size), null, damage, currentRotation, textureCenterZone, SpriteEffects.None, 0);
         }
 
