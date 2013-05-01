@@ -42,6 +42,41 @@ namespace ParticleStormControl.Menu
         public Options(Menu menu)
             : base(menu)
         {
+            // search.. ehrm.. nearest resolution
+            availableResolutions.AddRange(from dispMode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes
+                                          where dispMode.Format == SurfaceFormat.Color && dispMode.Width >= Settings.MINIMUM_SCREEN_WIDTH &&
+                                                                                          dispMode.Height >= Settings.MINIMUM_SCREEN_HEIGHT
+                                          orderby dispMode.Width, dispMode.Height
+                                          select new Resolution() { width = dispMode.Width, height = dispMode.Height });
+            for (int i = 0; i < availableResolutions.Count; ++i)
+            {
+                if (availableResolutions[i].width >= Settings.Instance.ResolutionX &&
+                    availableResolutions[i].height >= Settings.Instance.ResolutionY)
+                {
+                    activeResolution = i;
+                    break;
+                }
+            }
+
+            Interface.Add(new InterfaceButton("Options", new Vector2(100, 100), true));
+
+            Interface.Add(new InterfaceButton("Screen Resolution", new Vector2(100, 220), () => { return selectedButton == Button.RESOLUTION; }));
+            Interface.Add(new InterfaceButton(() => { return "< " + availableResolutions[activeResolution].width + " x " + availableResolutions[activeResolution].height + " >"; }, new Vector2(450, 220)));
+
+            Interface.Add(new InterfaceButton("Fullscreen", new Vector2(100, 280), () => { return selectedButton == Button.FULLSCREEN; }));
+            Interface.Add(new InterfaceButton(() => { return fullscreen ? "< ON >" : "< OFF >"; }, new Vector2(450, 280), () => { return false; }, Color.White, fullscreen ? Color.Green : Color.Red));
+
+            Interface.Add(new InterfaceButton("Sounds", new Vector2(100, 340), () => { return selectedButton == Button.SOUND; }));
+            Interface.Add(new InterfaceButton(() => { return sound ? "< ON >" : "< OFF >"; }, new Vector2(450, 340), () => { return false; }, Color.White, sound ? Color.Green : Color.Red));
+
+            Interface.Add(new InterfaceButton("Music", new Vector2(100, 400), () => { return selectedButton == Button.MUSIC; }));
+            Interface.Add(new InterfaceButton(() => { return music ? "< ON >" : "< OFF >"; }, new Vector2(450, 400), () => { return false; }, Color.White, music ? Color.Green : Color.Red));
+
+            Interface.Add(new InterfaceButton("Rumble", new Vector2(100, 460), () => { return selectedButton == Button.FORCEFEEDBACK; }));
+            Interface.Add(new InterfaceButton(() => { return forceFeedback ? "< ON >" : "< OFF >"; }, new Vector2(450, 460), () => { return false; }, Color.White, forceFeedback ? Color.Green : Color.Red));
+
+            Interface.Add(new InterfaceButton("Save and Exit", new Vector2(100, 580), () => { return selectedButton == Button.BACK; }));
+            Interface.Add(new InterfaceButton("Cancel", new Vector2(100, 640), () => { return selectedButton == Button.EXIT; }));
         }
 
         // if changed to main menu without saving
@@ -51,27 +86,14 @@ namespace ParticleStormControl.Menu
             sound = Settings.Instance.Sound;
             music = Settings.Instance.Music;
 
-            // search.. ehrm.. nearest resolution
-            availableResolutions.AddRange(from dispMode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes
-                                          where dispMode.Format == SurfaceFormat.Color && dispMode.Width >= Settings.MINIMUM_SCREEN_WIDTH && 
-                                                                                          dispMode.Height >= Settings.MINIMUM_SCREEN_HEIGHT
-                                          orderby dispMode.Width, dispMode.Height
-                                          select new Resolution() { width = dispMode.Width, height = dispMode.Height });
-            for(int i=0; i<availableResolutions.Count; ++i)
-            {
-                if (availableResolutions[i].width >= Settings.Instance.ResolutionX &&
-                    availableResolutions[i].height >= Settings.Instance.ResolutionY)
-                {
-                    activeResolution = i;
-                    break;
-                }
-            }
             selectedButton = Button.BACK;
         }
 
         public override void LoadContent(ContentManager content)
         {
             logo = content.Load<Texture2D>("logo");
+
+            base.LoadContent(content);
         }
 
         public override void Update(GameTime gameTime)
@@ -82,8 +104,6 @@ namespace ParticleStormControl.Menu
                 selectionInt = selectionInt == (int)Button.NUM_BUTTONS - 1 ? 0 : selectionInt + 1;
             else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.UP))
                 selectionInt = selectionInt == 0 ? (int)Button.NUM_BUTTONS - 1 : selectionInt - 1;
-            if (selectionInt != (int)selectedButton)
-                SimpleButton.Instance.ChangeHappened(gameTime, menu.SoundEffect);
             selectedButton = (Button)(selectionInt);
 
             // button selected
@@ -129,41 +149,50 @@ namespace ParticleStormControl.Menu
                 else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT))
                     activeResolution = (activeResolution == 0 ? availableResolutions.Count : activeResolution) - 1;
             }
+
+            // update background colors
+            ((InterfaceButton)Interface[4]).BackgroundColor = fullscreen ? Color.Green : Color.Red;
+            ((InterfaceButton)Interface[6]).BackgroundColor = sound ? Color.Green : Color.Red;
+            ((InterfaceButton)Interface[8]).BackgroundColor = music ? Color.Green : Color.Red;
+            ((InterfaceButton)Interface[10]).BackgroundColor = forceFeedback ? Color.Green : Color.Red;
+
+            base.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "Options", new Vector2(100, 100), false, menu.TexPixel);
+            base.Draw(spriteBatch, gameTime);
+            //Button.Instance.Draw(spriteBatch, menu.FontHeading, "Options", new Vector2(100, 100), false, menu.TexPixel);
 
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Screen Resolution", new Vector2(100, 220), selectedButton == Button.RESOLUTION, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< " + availableResolutions[activeResolution].width + " x " + availableResolutions[activeResolution].height + " >", new Vector2(450, 220), false, menu.TexPixel);
+            //Button.Instance.Draw(spriteBatch, menu.Font, "Screen Resolution", new Vector2(100, 220), selectedButton == Button.RESOLUTION, menu.TexPixel);
+            //Button.Instance.Draw(spriteBatch, menu.Font, "< " + availableResolutions[activeResolution].width + " x " + availableResolutions[activeResolution].height + " >", new Vector2(450, 220), false, menu.TexPixel);
 
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Fullscreen", new Vector2(100, 280), selectedButton == Button.FULLSCREEN, menu.TexPixel);
-            if(fullscreen)
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 280), Color.Green, menu.TexPixel);
-            else
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 280), Color.Red, menu.TexPixel);
+            //Button.Instance.Draw(spriteBatch, menu.Font, "Fullscreen", new Vector2(100, 280), selectedButton == Button.FULLSCREEN, menu.TexPixel);
+            //if(fullscreen)
+            //    Button.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 280), Color.Green, menu.TexPixel);
+            //else
+            //    Button.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 280), Color.Red, menu.TexPixel);
 
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Sounds", new Vector2(100, 340), selectedButton == Button.SOUND, menu.TexPixel);
-            if (sound)
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 340), Color.Green, menu.TexPixel);
-            else
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 340), Color.Red, menu.TexPixel);
+            //Button.Instance.Draw(spriteBatch, menu.Font, "Sounds", new Vector2(100, 340), selectedButton == Button.SOUND, menu.TexPixel);
+            //if (sound)
+            //    Button.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 340), Color.Green, menu.TexPixel);
+            //else
+            //    Button.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 340), Color.Red, menu.TexPixel);
 
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Music", new Vector2(100, 400), selectedButton == Button.MUSIC, menu.TexPixel);
-            if (music)
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 400), Color.Green, menu.TexPixel);
-            else
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 400), Color.Red, menu.TexPixel);
+            //Button.Instance.Draw(spriteBatch, menu.Font, "Music", new Vector2(100, 400), selectedButton == Button.MUSIC, menu.TexPixel);
+            //if (music)
+            //    Button.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 400), Color.Green, menu.TexPixel);
+            //else
+            //    Button.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 400), Color.Red, menu.TexPixel);
 
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Rumble", new Vector2(100, 460), selectedButton == Button.FORCEFEEDBACK, menu.TexPixel);
-            if (forceFeedback)
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 460), Color.Green, menu.TexPixel);
-            else
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 460), Color.Red, menu.TexPixel);
+            //Button.Instance.Draw(spriteBatch, menu.Font, "Rumble", new Vector2(100, 460), selectedButton == Button.FORCEFEEDBACK, menu.TexPixel);
+            //if (forceFeedback)
+            //    Button.Instance.Draw(spriteBatch, menu.Font, "< ON >", new Vector2(450, 460), Color.Green, menu.TexPixel);
+            //else
+            //    Button.Instance.Draw(spriteBatch, menu.Font, "< OFF >", new Vector2(450, 460), Color.Red, menu.TexPixel);
 
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Save and Exit", new Vector2(100, 580), selectedButton == Button.BACK, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Cancel", new Vector2(100, 640), selectedButton == Button.EXIT, menu.TexPixel);
+            //Button.Instance.Draw(spriteBatch, menu.Font, "Save and Exit", new Vector2(100, 580), selectedButton == Button.BACK, menu.TexPixel);
+            //Button.Instance.Draw(spriteBatch, menu.Font, "Cancel", new Vector2(100, 640), selectedButton == Button.EXIT, menu.TexPixel);
         }
     }
 }

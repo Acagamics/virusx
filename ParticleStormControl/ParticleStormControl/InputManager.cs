@@ -26,7 +26,7 @@ namespace ParticleStormControl
             "Gamepad 2",
             "Gamepad 3",
             "Gamepad 4",
-            "No Control"
+            "Computer"
         };
 
         /// <summary>

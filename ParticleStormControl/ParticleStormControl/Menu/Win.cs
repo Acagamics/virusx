@@ -12,8 +12,8 @@ namespace ParticleStormControl.Menu
     class Win : MenuPage
     {
         private Statistics statistics;
-        private List<String> captions = new List<String> { "Captured", "Lost", "Max #", "Average #", "Average HP", "Items" };
-        private List<String>[] values;
+        private List<string> captions = new List<string> { "Captured", "Lost", "Max #", "Average #", "Average HP", "Items" };
+        private List<string>[] values = new List<string>[0];
 
         private Texture2D[] itemTextures = new Texture2D[(int)Statistics.StatItems.NUM_STAT_ITEMS]; 
         private const int ITEM_DISPLAY_SIZE = 30;
@@ -27,6 +27,10 @@ namespace ParticleStormControl.Menu
         public int[] PlayerColorIndices { get; set; }
 
         const float DURATION_CONTINUE_UNAVAILABLE = 1.0f;
+        const int SIDE_PADDING = 30; // padding from left
+        const int COLUMN_WIDTH = 145; // width of the columns WITH PADDING!
+        const int COLUMN_PADDING = 20;
+
         /// <summary>
         /// if smaller than 0, continue button is available
         /// </summary>
@@ -46,7 +50,39 @@ namespace ParticleStormControl.Menu
 
         public Win(Menu menu)
             : base(menu)
-        { }
+        {
+            // zentrieren
+            int pad = (menu.ScreenWidth - (captions.Count + 1) * COLUMN_WIDTH + SIDE_PADDING * 2 - COLUMN_PADDING) / 2;
+
+            // header um eins verschoben
+
+            // draw winning string
+            Interface.Add(new InterfaceButton(() => { return Player.ColorNames[PlayerColorIndices[WinPlayerIndex]] + " wins!"; }, new Vector2(-(int)menu.FontHeading.MeasureString("Player ... wins!").X / 2, 60), () => { return false; }, Color.White, Color.FromNonPremultiplied(255, 255, 255, 0), Alignment.TOP_CENTER)); 
+
+            // draw all captions
+            for (int i = 0; i < captions.Count; i++)
+            {
+                Interface.Add(new InterfaceButton(captions[i], new Vector2(pad + COLUMN_WIDTH * (i + 1), 150), () => { return false; }, COLUMN_WIDTH - COLUMN_PADDING));
+            }
+
+            // fill table with values
+            for (int i = 0; i < 4; i++)
+            {
+                int index = i;
+                Interface.Add(new InterfaceButton(() => { return Player.ColorNames[PlayerColorIndices[index]]; }, new Vector2(pad, 210 + 60 * index), () => { return false; }, () => { return index < statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING));
+                for (int j = 0; j < captions.Count; j++)
+                {
+                    int x = i;
+                    int y = j;
+                    Interface.Add(new InterfaceButton(() => { return values[x][y]; }, new Vector2(pad + COLUMN_WIDTH * (y + 1), 210 + 60 * x), () => { return false; }, () => { return x < statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING));
+                }
+            }
+
+            // continue button
+            string text = "continue";
+            int width = (int)menu.Font.MeasureString(text).X;
+            Interface.Add(new InterfaceButton(text, new Vector2((int)((Settings.Instance.ResolutionX - width) * 0.5f), Settings.Instance.ResolutionY - 80), () => { return timeUntilContinueIsAvailable < 0.0f; }));
+        }
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
@@ -70,6 +106,8 @@ namespace ParticleStormControl.Menu
                 }
             }
 
+            ((InterfaceButton)Interface[0]).BackgroundColor = Player.Colors[PlayerColorIndices[WinPlayerIndex]];
+
             timeUntilContinueIsAvailable = DURATION_CONTINUE_UNAVAILABLE;
         }
 
@@ -83,6 +121,8 @@ namespace ParticleStormControl.Menu
             playerDiedTexture = content.Load<Texture2D>("death");
 
             icons = content.Load<Texture2D>("icons");
+
+            base.LoadContent(content);
         }
 
         public override void Update(GameTime gameTime)
@@ -97,41 +137,12 @@ namespace ParticleStormControl.Menu
                 currentDiagramType = (DiagramType)((((int)currentDiagramType - 1) < 0 ? (int)DiagramType.NUM_VALUES : (int)(currentDiagramType)) -1);
 
             timeUntilContinueIsAvailable -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            base.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            const int SIDE_PADDING = 30; // padding from left
-            const int COLUMN_WIDTH = 145; // width of the columns WITH PADDING!
-            const int COLUMN_PADDING = 20;
-            
-
-            // zentrieren
-            int pad = (menu.ScreenWidth - (captions.Count + 1) * COLUMN_WIDTH + SIDE_PADDING * 2 - COLUMN_PADDING) / 2;
-
-            // header um eins verschoben
-
-            // draw winning string
-            string text = Player.ColorNames[PlayerColorIndices[WinPlayerIndex]] + " wins!";
-            int width = (int)menu.FontHeading.MeasureString(text).X;
-            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, text, new Vector2((int)((Settings.Instance.ResolutionX - width) * 0.5f), 60), Player.Colors[PlayerColorIndices[WinPlayerIndex]], menu.TexPixel);
-
-            // draw all captions
-            for (int i = 0; i < captions.Count; i++)
-            {
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, captions[i], new Vector2(pad + COLUMN_WIDTH * (i + 1), 150), false, menu.TexPixel, COLUMN_WIDTH - COLUMN_PADDING);
-            }
-
-            // fill table with values
-            for (int i = 0; i < values.Length; i++)
-            {
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, Player.ColorNames[PlayerColorIndices[i]], new Vector2(pad, 210 + 60 * i), Player.Colors[PlayerColorIndices[i]], menu.TexPixel, COLUMN_WIDTH - COLUMN_PADDING);
-                for (int j = 0; j < values[0].Count; j++)
-                {
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, values[i][j], new Vector2(pad + COLUMN_WIDTH * (j + 1), 210 + 60 * i), false, menu.TexPixel, COLUMN_WIDTH - COLUMN_PADDING);
-                }
-            }
-
             // draw diagrams
             int yPos = 220 + 60 * values.Length;
             int height = Settings.Instance.ResolutionY - 400 - 60 * values.Length;
@@ -158,11 +169,7 @@ namespace ParticleStormControl.Menu
                     break;
             }
 
-            // continue button
-            text = "continue";
-            width = (int)menu.Font.MeasureString(text).X;
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, text, new Vector2((int)((Settings.Instance.ResolutionX - width) * 0.5f),
-                                                                                    Settings.Instance.ResolutionY - 80), timeUntilContinueIsAvailable < 0.0f, menu.TexPixel);
+            base.Draw(spriteBatch, gameTime);
         }
 
 
@@ -191,13 +198,13 @@ namespace ParticleStormControl.Menu
 
             area.Height = heightVal;
             area.X = (menu.ScreenWidth-area.Width) / 2;
-            area.Y = yPos + (int)menu.FontHeading.MeasureString(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType]).Y + SimpleButton.PADDING;
+            area.Y = yPos + (int)menu.FontHeading.MeasureString(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType]).Y; // +InterfaceButton.PADDING;
 
 
             // draw heading
-            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, description,
-                                       new Vector2(area.X + SimpleButton.PADDING, yPos),
-                                       false, menu.TexPixel);
+            //InterfaceButton.Instance.Draw(spriteBatch, menu.FontHeading, description,
+            //                           new Vector2(area.X + InterfaceButton.PADDING, yPos),
+            //                           false, menu.TexPixel);
 
             // draw border
             spriteBatch.Draw(menu.TexPixel, area, Color.Black);
@@ -291,27 +298,27 @@ namespace ParticleStormControl.Menu
                 float textLen = menu.Font.MeasureString(endTimeString).X;
                 
                 float textOffset;
-                if(i == 0)
-                    textOffset = SimpleButton.PADDING;
-                else if (i == numTimeDisplays-1)
-                    textOffset = -textLen - SimpleButton.PADDING;
-                else
+                //if(i == 0)
+                    //textOffset = InterfaceButton.PADDING;
+                //else if (i == numTimeDisplays-1)
+                    //textOffset = -textLen - InterfaceButton.PADDING;
+                //else
                     textOffset = -textLen / 2;
                 
                 float x = area.X + area.Width * progress + textOffset;
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, endTimeString, new Vector2(x, area.Y + area.Height + 10), false, menu.TexPixel);
+                //InterfaceButton.Instance.Draw(spriteBatch, menu.Font, endTimeString, new Vector2(x, area.Y + area.Height + 10), false, menu.TexPixel);
             }
 
             // arrows
             int arrowY = area.Y + (area.Height - ARROW_SIZE) / 2;//boxHeight / 2 - ARROW_SIZE;
             bool left = InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT, true);
             bool right = InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT, true);
-            SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Left - ARROW_SIZE - ARROW_PADDING, arrowY, ARROW_SIZE, ARROW_SIZE),
-                                                                new Rectangle(0 + (!left ? 32 : 0), 0, 16, 16),
-                                                                left, menu.TexPixel);
-            SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Right + ARROW_PADDING, arrowY, ARROW_SIZE, ARROW_SIZE),
-                                                                new Rectangle(16 + (!right ? 32 : 0), 0, 16, 16),
-                                                               right, menu.TexPixel);
+            //InterfaceButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Left - ARROW_SIZE - ARROW_PADDING, arrowY, ARROW_SIZE, ARROW_SIZE),
+            //                                                    new Rectangle(0 + (!left ? 32 : 0), 0, 16, 16),
+            //                                                    left, menu.TexPixel);
+            //InterfaceButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(area.Right + ARROW_PADDING, arrowY, ARROW_SIZE, ARROW_SIZE),
+            //                                                    new Rectangle(16 + (!right ? 32 : 0), 0, 16, 16),
+            //                                                   right, menu.TexPixel);
 
         }
 

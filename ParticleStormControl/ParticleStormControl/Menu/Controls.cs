@@ -14,24 +14,6 @@ namespace ParticleStormControl.Menu
         public Controls(Menu menu)
             : base(menu)
         {
-        }
-
-        public override void LoadContent(ContentManager content)
-        {
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            // back to main menu
-            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.PAUSE) || 
-                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT) ||
-                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION) ||
-                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.HOLD))
-                menu.ChangePage(Menu.Page.MAINMENU, gameTime);
-        }
-
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-        {
             string[,] data = {
                                  { null,                 "Keyboard 1",   "Keyboard 2",   "Gamepad" },
                                  { "Up",                 "W",            "Arrow Up",     null },
@@ -47,7 +29,7 @@ namespace ParticleStormControl.Menu
             int row = 60;       // row height
             int gap = 20;       // gap between columns
             int top = 100;       // distance from top
-            int left = (Settings.Instance.ResolutionX - data.GetLength(1) * (column + gap)) / 2 + gap; // distance from left (centered)
+            int left = -(data.GetLength(1) * (column + gap)) / 2 + gap;
 
             for (int i = 0; i < data.GetLength(0); i++)
             {
@@ -55,40 +37,50 @@ namespace ParticleStormControl.Menu
                 {
                     if (data[i, j] != null)
                         if(i == 0 || j == 0)
-                            SimpleButton.Instance.Draw(spriteBatch, menu.Font, data[i, j], new Vector2(left + j * (column + gap), top + i * row), Color.White, Color.Black, menu.TexPixel, column);
+                            Interface.Add(new InterfaceButton(data[i, j], new Vector2(left + j * (column + gap), top + i * row), () => { return true; }, column - gap, Alignment.TOP_CENTER));
                         else
-                            SimpleButton.Instance.Draw(spriteBatch, menu.Font, data[i, j], new Vector2(left + j * (column + gap), top + i * row), false, menu.TexPixel, column);
+                            Interface.Add(new InterfaceButton(data[i, j], new Vector2(left + j * (column + gap), top + i * row), () => { return false; }, column - gap, Alignment.TOP_CENTER));
                 }
             }
 
             // draw icons
-            int fontHeight = (int)menu.Font.MeasureString("Test").Y + 2 * SimpleButton.PADDING;
-            
-            SimpleButton.Instance.DrawTexture_NoScalingNoPadding(
-                spriteBatch,
-                menu.TexLeftThumbstick,
-                new Rectangle(left + 3 * (column + gap) - SimpleButton.PADDING, top + 1 * row - SimpleButton.PADDING, column, row * 3 + fontHeight),
-                menu.TexLeftThumbstick.Bounds,
-                false,
-                menu.TexPixel);
-            SimpleButton.Instance.DrawTexture_NoScalingNoPadding(
-                spriteBatch,
-                menu.TexA,
-                new Rectangle(left + 3 * (column + gap) - SimpleButton.PADDING, top + 5 * row - SimpleButton.PADDING, column, fontHeight),
-                menu.TexA.Bounds,
-                false,
-                menu.TexPixel);
-            SimpleButton.Instance.DrawTexture_NoScalingNoPadding(
-                spriteBatch,
-                menu.TexB,
-                new Rectangle(left + 3 * (column + gap) - SimpleButton.PADDING, top + 6 * row - SimpleButton.PADDING, column, fontHeight),
-                menu.TexB.Bounds,
-                false,
-                menu.TexPixel);
+            int fontHeight = menu.GetFontHeight() + 2 * InterfaceButton.PADDING;
+            Interface.Add(new InterfaceImage(
+                "ButtonImages/xboxControllerLeftThumbstick",
+                new Rectangle(left + 3 * (column + gap), top + 1 * row, column, row * 3 + fontHeight),
+                InterfaceElement.COLOR_NORMAL,
+                Alignment.TOP_CENTER));
+            Interface.Add(new InterfaceImage(
+                "ButtonImages/xboxControllerButtonA",
+                new Rectangle(left + 3 * (column + gap), top + 5 * row, column, fontHeight),
+                InterfaceElement.COLOR_NORMAL,
+                Alignment.TOP_CENTER));
+            Interface.Add(new InterfaceImage(
+                "ButtonImages/xboxControllerButtonB",
+                new Rectangle(left + 3 * (column + gap), top + 6 * row, column, fontHeight),
+                InterfaceElement.COLOR_NORMAL,
+                Alignment.TOP_CENTER));
 
             // back button
-            string label =  "Back to Menu";
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, label, new Vector2((int)((Settings.Instance.ResolutionX - menu.Font.MeasureString(label).X) / 2), Settings.Instance.ResolutionY - 100), true, menu.TexPixel);
+            string label = "Back to Menu";
+            Interface.Add(new InterfaceButton(label, new Vector2(-(int)(menu.Font.MeasureString(label).X / 2), 100), () => { return true; }, Alignment.BOTTOM_CENTER));
+        }
+
+        public override void LoadContent(ContentManager content)
+        {
+            base.LoadContent(content);
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            menu.BackToMainMenu(gameTime);
+
+            base.Update(gameTime);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            base.Draw(spriteBatch, gameTime);
         }
     }
 }

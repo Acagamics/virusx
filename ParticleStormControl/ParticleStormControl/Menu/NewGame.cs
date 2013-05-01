@@ -15,8 +15,12 @@ namespace ParticleStormControl.Menu
 {
     class NewGame : MenuPage
     {
-        private const int padd = 30; // padding for boxes
-        private const int offset = 5; // offset for arrows
+        const int VIRUS_SIZE = 110;
+        const int VIRUS_PADDING = 10;
+        const int ARROW_VERTICAL_SIZE = 8;
+        const int ARROW_WIDDEN = 8;
+        const int BOX_WIDTH = 1024 / 2 - 60;
+        const int BOX_HEIGHT = 768 / 2 - 60;
 
         private const int maxCountdown = 3;
         private const int safeCountdown = 1;
@@ -26,7 +30,6 @@ namespace ParticleStormControl.Menu
         private int[] slotIndexToPlayerIndexMapper = new int[4];
 
         private Effect virusRenderEffect;
-        private Texture2D icons;
 
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
@@ -42,8 +45,135 @@ namespace ParticleStormControl.Menu
             playerSlotOccupied = new bool[4];
             playerReadyBySlot = new bool[4];
             countdown = new TimeSpan();
+
+            // four boxes
+            int TEXTBOX_HEIGHT = menu.GetFontHeight() + 2 * InterfaceButton.PADDING;
+            int SIDE_PADDING = TEXTBOX_HEIGHT + 30;
+            int ARROW_SIZE = menu.GetFontHeight();
+
+            string joinText = "< press continue to join game >";
+            Vector2 stringSize = menu.Font.MeasureString(joinText);
+
+            for (int i = 0; i < 4; i++)
+            {
+                int index = i;
+                Vector2 origin = GetOrigin(index);
+
+                // join text
+                Interface.Add(new InterfaceButton(joinText, GetOrigin(index) + new Vector2((int)((BOX_WIDTH - stringSize.X) / 2), (int)((BOX_HEIGHT - stringSize.Y) / 2)), () => { return true; }, () => { return !playerSlotOccupied[index]; }));
+
+                // virus name
+                Interface.Add(new InterfaceButton(
+                    () => { return VirusSwarm.VirusNames[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex].ToString(); },
+                    origin + new Vector2(SIDE_PADDING, 0),
+                    () => { return playerReadyBySlot[index]; },
+                    () => { return playerSlotOccupied[index]; },
+                    true
+                ));
+
+                // controls
+                Interface.Add(new InterfaceButton(
+                    () => { return index < Settings.Instance.NumPlayers ? InputManager.CONTROL_NAMES[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).ControlType].ToString() : ""; },
+                    origin + new Vector2(SIDE_PADDING, TEXTBOX_HEIGHT * 2 + InterfaceButton.PADDING * 2),
+                    () => { return false; },
+                    () => { return playerSlotOccupied[index]; }
+                ));
+
+                // ready
+                int readyHeight = TEXTBOX_HEIGHT * 4;
+                Interface.Add(new InterfaceButton(
+                    () => { return playerReadyBySlot[index] ? "ready!" : "not ready"; },
+                    origin + new Vector2(SIDE_PADDING + TEXTBOX_HEIGHT, readyHeight),
+                    () => { return playerReadyBySlot[index]; },
+                    () => { return playerSlotOccupied[index]; }
+                ));
+                Interface.Add(new InterfaceImageButton(
+                    "icons",
+                    new Rectangle((int)origin.X + SIDE_PADDING, (int)origin.Y + readyHeight, ARROW_SIZE, ARROW_SIZE),
+                    new Rectangle(0, 32, 16, 16),
+                    new Rectangle(48, 32, 16, 16),
+                    () => { return playerReadyBySlot[index]; },
+                    () => { return playerSlotOccupied[index]; }
+                ));
+
+                // arrows up & down
+                Rectangle virusImageRect = new Rectangle((int)origin.X + BOX_WIDTH - VIRUS_SIZE - SIDE_PADDING, (int)origin.Y + TEXTBOX_HEIGHT + 40, VIRUS_SIZE, VIRUS_SIZE);
+                Interface.Add(new InterfaceImageButton(
+                    "icons",
+                    new Rectangle(virusImageRect.Center.X - (ARROW_VERTICAL_SIZE + ARROW_WIDDEN) / 2 - InterfaceElement.PADDING, virusImageRect.Top - InterfaceElement.PADDING - 2 * ARROW_VERTICAL_SIZE, ARROW_VERTICAL_SIZE + ARROW_WIDDEN, ARROW_VERTICAL_SIZE),
+                    new Rectangle(0, 16, 16, 16),
+                    new Rectangle(32, 16, 16, 16),
+                    () => { return isActive(InputManager.ControlActions.UP, index); },
+                    () => { return playerSlotOccupied[index]; }
+                ));
+                Interface.Add(new InterfaceImageButton(
+                    "icons",
+                    new Rectangle(virusImageRect.Center.X - (ARROW_VERTICAL_SIZE + ARROW_WIDDEN) / 2 - InterfaceElement.PADDING, virusImageRect.Bottom - InterfaceElement.PADDING + ARROW_VERTICAL_SIZE, ARROW_VERTICAL_SIZE + ARROW_WIDDEN, ARROW_VERTICAL_SIZE),
+                    new Rectangle(16, 16, 16, 16),
+                    new Rectangle(48, 16, 16, 16),
+                    () => { return isActive(InputManager.ControlActions.DOWN, index); },
+                    () => { return playerSlotOccupied[index]; }
+                ));
+
+                // arrows left & right
+                int arrowY = (int)readyHeight - ARROW_SIZE;
+                Interface.Add(new InterfaceImageButton(
+                    "icons",
+                    new Rectangle((int)origin.X, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE),
+                    new Rectangle(0, 0, 16, 16),
+                    new Rectangle(32, 0, 16, 16),
+                    () => { return isActive(InputManager.ControlActions.LEFT, index); },
+                    () => { return playerSlotOccupied[index]; }
+                ));
+                Interface.Add(new InterfaceImageButton(
+                    "icons",
+                    new Rectangle((int)origin.X + BOX_WIDTH - ARROW_SIZE, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE),
+                    new Rectangle(16, 0, 16, 16),
+                    new Rectangle(48, 0, 16, 16),
+                    () => { return isActive(InputManager.ControlActions.RIGHT, index); },
+                    () => { return playerSlotOccupied[index]; }
+                ));
+
+                // description
+                int descpStrLen = (int)menu.Font.MeasureString("Discipline").X + 7 + InterfaceElement.PADDING;
+                int symbolLen = (int)menu.Font.MeasureString("++++").X + InterfaceElement.PADDING;
+                int backgroundLength = (BOX_WIDTH - SIDE_PADDING * 2 + InterfaceElement.PADDING * 2) / 2; //(descpStrLen + symbolLen) * 2 + 15;
+                int descpX0 = SIDE_PADDING;
+                int descpX1 = descpX0 + backgroundLength;
+                float descpY = BOX_HEIGHT - TEXTBOX_HEIGHT * 2;
+
+                Interface.Add(new InterfaceButton("Speed", origin + new Vector2(descpX0, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }));
+                Interface.Add(new InterfaceButton(() => { return playerSlotOccupied[index] ? VirusSwarm.DESCRIPTOR_Speed[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex] : ""; }, origin + new Vector2(descpX0 + descpStrLen, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }));
+
+                Interface.Add(new InterfaceButton("Mass", origin + new Vector2(descpX0, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }));
+                Interface.Add(new InterfaceButton(() => { return playerSlotOccupied[index] ? VirusSwarm.DESCRIPTOR_Mass[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex] : ""; }, origin + new Vector2(descpX0 + descpStrLen, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }));
+
+                Interface.Add(new InterfaceButton("Discipline", origin + new Vector2(descpX1, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }));
+                Interface.Add(new InterfaceButton(() => { return playerSlotOccupied[index] ? VirusSwarm.DESCRIPTOR_Discipline[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex] : ""; }, origin + new Vector2(descpX1 + descpStrLen, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }));
+
+                Interface.Add(new InterfaceButton("Health", origin + new Vector2(descpX1, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }));
+                Interface.Add(new InterfaceButton(() => { return playerSlotOccupied[index] ? VirusSwarm.DESCRIPTOR_Health[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex] : ""; }, origin + new Vector2(descpX1 + descpStrLen, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }));
+                
+                // big fat "comp" for those who need it
+                //stringSize = menu.FontCountdown.MeasureString("COMP");
+                //Interface.Add(new InterfaceButton("COMP", origin + new Vector2(BOX_WIDTH, BOX_HEIGHT) / 2, () => { return false; }, () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.AI; }));
+
+                // countdown
+                String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
+                Vector2 size = menu.FontHeading.MeasureString(text);
+                Interface.Add(new InterfaceFiller(Vector2.Zero, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, Color.FromNonPremultiplied(0, 0, 0, 128), () => { return countdown.TotalSeconds > 0; }));
+                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.White, () => { return countdown.TotalSeconds > 0; }));
+                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.Black, () => { return countdown.TotalSeconds > safeCountdown; }));
+                Interface.Add(new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true));
+
+            }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="oldPage"></param>
+        /// <param name="gameTime"></param>
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
             Settings.Instance.ResetPlayerSettings();
@@ -66,7 +196,8 @@ namespace ParticleStormControl.Menu
         public override void LoadContent(ContentManager content)
         {
             virusRenderEffect = content.Load<Effect>("shader/particleRendering");
-            icons = content.Load<Texture2D>("icons");
+
+            base.LoadContent(content);
         }
 
         /// <summary>
@@ -184,8 +315,16 @@ namespace ParticleStormControl.Menu
                     }
                 }
             }
+
+            base.Update(gameTime);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ai"></param>
+        /// <param name="controlType"></param>
+        /// <returns></returns>
         int AddPlayer(bool ai, InputManager.ControlType controlType)
         {
             int slotIndex = GetFreeSlotIndex();
@@ -206,13 +345,16 @@ namespace ParticleStormControl.Menu
                     Type = ai ? Player.Type.AI : Player.Type.HUMAN,
                 });
 
-
                 countdown = TimeSpan.FromSeconds(-1);
             }
 
             return slotIndex;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="slot"></param>
         void RemovePlayer(int slot)
         {
             int playerIndex = slotIndexToPlayerIndexMapper[slot];
@@ -236,104 +378,22 @@ namespace ParticleStormControl.Menu
         /// <param name="timeInterval"></param>
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-           /* int boxHeight = (int)(Settings.Instance.ResolutionX * 0.5625f - padd) / 2;
-            int boxWidth = (int)(boxHeight * 1.8f);
-            
-            int offX = 0;
-            int offY = (Settings.Instance.ResolutionY - 2 * boxHeight - 2 * padd) / 2;
-
-            if (boxHeight * 2 + 3 * padd > Settings.Instance.ResolutionY)
-            {
-                boxWidth = (int)(Settings.Instance.ResolutionY * 16 / 9 - 3 * padd) / 2;
-                boxHeight = (Settings.Instance.ResolutionY - 3 * padd) / 2;
-
-                offX = (Settings.Instance.ResolutionX - 2 * boxWidth - 3 * padd) / 2;
-                offY = 0;
-            }*/
-
-            // new fixed resolution solution
-            const int boxWidth = 1024 / 2 - padd * 2;
-            const int boxHeight = 768 / 2 - padd * 2;
-
             // four boxes
-            int textBoxHeight = (int)menu.Font.MeasureString("ABC").Y + SimpleButton.PADDING * 2;
-            int ARROW_SIZE = textBoxHeight;
+            int TEXTBOX_HEIGHT = menu.GetFontHeight() + 2 * InterfaceButton.PADDING;
+            int ARROW_SIZE = TEXTBOX_HEIGHT;
             int SIDE_PADDING = ARROW_SIZE + 30;
 
             virusRenderEffect.Parameters["ScreenSize"].SetValue(new Vector2(menu.ScreenWidth, menu.ScreenHeight));
 
-            // for each player
+            // virus image for each player
             for (int i = 0; i < 4; i++)
             {
-                Vector2 origin = new Vector2();
-                switch (i)
-                {
-                    case 3:
-                        origin = new Vector2(Settings.Instance.ResolutionX / 4 - boxWidth / 2, Settings.Instance.ResolutionY / 4 - boxHeight / 2);
-                        break;
-                    case 2:
-                        origin = new Vector2(Settings.Instance.ResolutionX / 4 * 3 - boxWidth / 2, Settings.Instance.ResolutionY / 4 * 3 - boxHeight / 2);
-                        break;
-                    case 1:
-                        origin = new Vector2(Settings.Instance.ResolutionX / 4 * 3 - boxWidth / 2, Settings.Instance.ResolutionY / 4 - boxHeight / 2);
-                        break;
-                    case 0:
-                        origin = new Vector2(Settings.Instance.ResolutionX / 4 - boxWidth / 2, Settings.Instance.ResolutionY / 4 * 3 - boxHeight / 2);
-                        break;
-                }
-
                 if (playerSlotOccupied[i])
                 {
+                    Vector2 origin = GetOrigin(i);
                     int playerIndex = slotIndexToPlayerIndexMapper[i];
-
-                    // text
-                    SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, VirusSwarm.VirusNames[Settings.Instance.GetPlayer(playerIndex).VirusIndex].ToString(),
-                                                    origin + new Vector2(SIDE_PADDING, 0), playerReadyBySlot[i], menu.TexPixel);
-
-                    // controlls
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, InputManager.CONTROL_NAMES[(int)Settings.Instance.GetPlayer(playerIndex).ControlType].ToString(),
-                                                    origin + new Vector2(SIDE_PADDING, textBoxHeight*2 + SimpleButton.PADDING * 2), false, menu.TexPixel);
-
-                    /*
-                    string colorString = "Color: ";
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, colorString, origin + new Vector2(SIDE_PADDING, textBoxHeight*2.5f), false, menu.PixelTexture);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, Player.ColorNames[Settings.Instance.GetPlayer(playerIndex).ColorIndex].ToString(),
-                                    origin + new Vector2(SIDE_PADDING + SimpleButton.PADDING * 2 + menu.Font.MeasureString(colorString).X, textBoxHeight * 2.5f), Settings.Instance.GetPlayerColor(i), menu.PixelTexture);
-                    */
-
-                    // ready
-                    int readyHeight = textBoxHeight * 4;
-                    string playerReadyText = playerReadyBySlot[i] ? "ready!" : "not ready";
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, playerReadyText, origin + new Vector2(SIDE_PADDING + ARROW_SIZE, readyHeight), playerReadyBySlot[i], menu.TexPixel);
-                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X + SIDE_PADDING - SimpleButton.PADDING,
-                                            (int)origin.Y + readyHeight - SimpleButton.PADDING, ARROW_SIZE, ARROW_SIZE), new Rectangle(playerReadyBySlot[i] ? 48 : 0, 32, 16, 16), !playerReadyBySlot[i], menu.TexPixel);
-
-                    // description
-                    int descpStrLen = (int)menu.Font.MeasureString("Discipline").X + 7;
-                    int symbolLen = (int)menu.Font.MeasureString("++++").X + SimpleButton.PADDING;
-                    int backgroundLength = boxWidth - SIDE_PADDING * 2 + SimpleButton.PADDING*2;//(descpStrLen + symbolLen) * 2 + 15;
-                    int descpX0 = SIDE_PADDING;
-                    int descpX1 = descpX0 + backgroundLength / 2;
-                    float descpY = boxHeight - textBoxHeight * 2;
-
-                    string symbols = VirusSwarm.DESCRIPTOR_Speed[Settings.Instance.GetPlayer(playerIndex).VirusIndex];//. AttributValueToString(Player.speed_byVirus[Settings.Instance.GetPlayer(playerIndex).VirusIndex]);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Speed", origin + new Vector2(descpX0, descpY), false, menu.TexPixel, backgroundLength);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, descpY), false, menu.TexPixel, -1);
-                    symbols = VirusSwarm.DESCRIPTOR_Mass[Settings.Instance.GetPlayer(playerIndex).VirusIndex];//Player.AttributValueToString(Player.mass_byVirus[Settings.Instance.GetPlayer(playerIndex).VirusIndex]);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Mass", origin + new Vector2(descpX0, descpY + textBoxHeight), false, menu.TexPixel, backgroundLength);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX0 + descpStrLen, descpY + textBoxHeight), false, menu.TexPixel, -1);
-                    symbols = VirusSwarm.DESCRIPTOR_Disciplin[Settings.Instance.GetPlayer(playerIndex).VirusIndex];//Player.AttributValueToString(Player.disciplin_byVirus[Settings.Instance.GetPlayer(playerIndex).VirusIndex]);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Discipline", origin + new Vector2(descpX1, descpY), false, menu.TexPixel, -1);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, descpY), false, menu.TexPixel, -1);
-                    symbols = VirusSwarm.DESCRIPTOR_Health[Settings.Instance.GetPlayer(playerIndex).VirusIndex];//Player.AttributValueToString(Player.health_byVirus[Settings.Instance.GetPlayer(playerIndex).VirusIndex]);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Health", origin + new Vector2(descpX1, descpY + textBoxHeight), false, menu.TexPixel, -1);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, symbols, origin + new Vector2(descpX1 + descpStrLen, descpY + textBoxHeight), false, menu.TexPixel, -1);
-                   
-                    // image
-                    const int VIRUS_SIZE = 110;
-                    const int VIRUS_PADDING = 10;
-                    Rectangle virusImageRect = new Rectangle((int)origin.X + boxWidth - VIRUS_SIZE - SIDE_PADDING, 
-                                                    (int)origin.Y + textBoxHeight + 40, VIRUS_SIZE, VIRUS_SIZE);
+                    
+                    Rectangle virusImageRect = new Rectangle((int)origin.X + BOX_WIDTH - VIRUS_SIZE - SIDE_PADDING, (int)origin.Y + TEXTBOX_HEIGHT + 40, VIRUS_SIZE, VIRUS_SIZE);
                     virusImageRect.Inflate(VIRUS_PADDING, VIRUS_PADDING);
                     spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.Black);
                     virusImageRect.Inflate(-VIRUS_PADDING, -VIRUS_PADDING);
@@ -358,58 +418,21 @@ namespace ParticleStormControl.Menu
                     spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.White);
                     spriteBatch.End();
                     spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
-
-                    const int ARROW_UP_SIZE = 25;
-                    const int ARROW_WIDDEN = 8;
-                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(virusImageRect.Center.X - (ARROW_UP_SIZE + ARROW_WIDDEN) / 2,
-                                                            virusImageRect.Y - ARROW_UP_SIZE - VIRUS_PADDING / 2, ARROW_UP_SIZE + ARROW_WIDDEN, ARROW_UP_SIZE),
-                                                new Rectangle(0 + isActive(InputManager.ControlActions.UP, playerIndex, 32), 16, 16, 16), isActive(InputManager.ControlActions.UP, playerIndex), menu.TexPixel);
-                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle(virusImageRect.Center.X - (ARROW_UP_SIZE + ARROW_WIDDEN) / 2,
-                                                            virusImageRect.Bottom + VIRUS_PADDING / 2, ARROW_UP_SIZE + ARROW_WIDDEN, ARROW_UP_SIZE),
-                                                new Rectangle(16 + isActive(InputManager.ControlActions.DOWN, playerIndex, 32), 16, 16, 16), isActive(InputManager.ControlActions.DOWN, playerIndex), menu.TexPixel);
-                    
-                    // arrows left & right
-                    int arrowY = (int)readyHeight - ARROW_SIZE;//boxHeight / 2 - ARROW_SIZE;
-                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE),
-                                                new Rectangle(0 + isActive(InputManager.ControlActions.LEFT, playerIndex, 32), 0, 16, 16), isActive(InputManager.ControlActions.LEFT, playerIndex), menu.TexPixel);
-                    SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, icons, new Rectangle((int)origin.X + boxWidth - ARROW_SIZE, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE),
-                                                new Rectangle(16 + isActive(InputManager.ControlActions.RIGHT, playerIndex, 32), 0, 16, 16), isActive(InputManager.ControlActions.RIGHT, playerIndex), menu.TexPixel);
-
-                    // big fat "comp" for those who need it
-                    if (Settings.Instance.GetPlayer(playerIndex).Type == Player.Type.AI)
-                    {
-                        Vector2 stringSize = menu.FontCountdown.MeasureString("COMP");
-                        spriteBatch.DrawString(menu.FontCountdown, "COMP", origin + new Vector2(boxWidth, boxHeight) / 2 - stringSize / 2, Color.DarkGray * 0.8f);
-                    }
-                }
-                else
-                {
-                    string joinText = "< press continue to join game >";
-                    Vector2 stringSize = menu.Font.MeasureString(joinText);
-                    SimpleButton.Instance.Draw(spriteBatch, menu.Font, joinText, origin + new Vector2((int)((boxWidth - stringSize.X) / 2), (int)((boxHeight - stringSize.Y) / 2)), true, menu.TexPixel);
                 }
             }
 
+            base.Draw(spriteBatch, gameTime);
+
             // countdown
-            if (countdown.TotalSeconds > 0)
+            if (countdown.TotalSeconds > 0 && countdown.TotalSeconds < InGame.GAME_BLEND_DURATION)
             {
                 // last half ? draw black fade
-                if (countdown.TotalSeconds < InGame.GAME_BLEND_DURATION)
-                {
-                    float blend = (float)(InGame.GAME_BLEND_DURATION - countdown.TotalSeconds) / InGame.GAME_BLEND_DURATION;
-                    spriteBatch.Draw(menu.TexPixel, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * blend);
-                }
-
-                // countdown
-                String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
-                Vector2 size = menu.FontCountdown.MeasureString(text);
-                spriteBatch.Draw(menu.TexPixel, new Rectangle(0, 0, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY), Color.FromNonPremultiplied(0, 0, 0, 128));
-                SimpleButton.Instance.DrawTexture_NoScalingNoPadding(spriteBatch, menu.TexPixel, new Rectangle(0, Settings.Instance.ResolutionY / 2 - (int)(0.75f * size.Y), Settings.Instance.ResolutionX, (int)(size.Y * 1.5f)), menu.TexPixel.Bounds, !(countdown.TotalSeconds > safeCountdown), menu.TexPixel);
-                SimpleButton.Instance.Draw(spriteBatch, menu.FontCountdown, text, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), !(countdown.TotalSeconds > safeCountdown), menu.TexPixel);
+                float blend = (float)(InGame.GAME_BLEND_DURATION - countdown.TotalSeconds) / InGame.GAME_BLEND_DURATION;
+                spriteBatch.Draw(menu.TexPixel, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * blend);
             }
         }
 
-        /* Helper */
+        #region helper methods
 
         private int GetNextFreeColorIndex(int start)
         {
@@ -442,12 +465,7 @@ namespace ParticleStormControl.Menu
 
         private bool isActive(InputManager.ControlActions action, int index)
         {
-            return InputManager.Instance.SpecificActionButtonPressed(action, Settings.Instance.GetPlayer(index).ControlType, true) && !playerReadyBySlot[index];
-        }
-
-        private int isActive(InputManager.ControlActions action, int index, int offset)
-        {
-            return isActive(action, index) ? 0 : offset;
+            return playerSlotOccupied[index] ? InputManager.Instance.SpecificActionButtonPressed(action, Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).ControlType, true) && !playerReadyBySlot[slotIndexToPlayerIndexMapper[index]] : false;
         }
 
         private void CheckStartCountdown()
@@ -475,10 +493,23 @@ namespace ParticleStormControl.Menu
                 countdown = TimeSpan.FromSeconds(-1);
         }
 
-        private void drawBackground(SpriteBatch spriteBatch, Vector2 position, Vector2 size)
+        private Vector2 GetOrigin(int i)
         {
-            int padding = 20;
-            spriteBatch.Draw(menu.TexPixel, new Rectangle((int)position.X - padding, (int)position.Y - padding, (int)size.X + 2 * padding, (int)size.Y + 2 * padding), Color.Black);
+            switch (i)
+            {
+                case 3:
+                    return new Vector2(Settings.Instance.ResolutionX / 4 - BOX_WIDTH / 2, Settings.Instance.ResolutionY / 4 - BOX_HEIGHT / 2);
+                case 2:
+                    return new Vector2(Settings.Instance.ResolutionX / 4 * 3 - BOX_WIDTH / 2, Settings.Instance.ResolutionY / 4 * 3 - BOX_HEIGHT / 2);
+                case 1:
+                    return new Vector2(Settings.Instance.ResolutionX / 4 * 3 - BOX_WIDTH / 2, Settings.Instance.ResolutionY / 4 - BOX_HEIGHT / 2);
+                case 0:
+                    return new Vector2(Settings.Instance.ResolutionX / 4 - BOX_WIDTH / 2, Settings.Instance.ResolutionY / 4 * 3 - BOX_HEIGHT / 2);
+                default:
+                    return Vector2.Zero;
+            }
         }
+
+        #endregion
     }
 }

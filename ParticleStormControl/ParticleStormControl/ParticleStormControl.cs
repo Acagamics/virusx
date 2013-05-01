@@ -195,7 +195,7 @@ namespace ParticleStormControl
 
             menu.Update(gameTime);
 
-            SimpleButton.Instance.Update(gameTime);
+            //InterfaceButton.Instance.Update(gameTime);
 
             inGame.Update(gameTime);
 
@@ -253,7 +253,7 @@ namespace ParticleStormControl
                 }
 
                 spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, statistic, new Vector2(5, 5), Color.FromNonPremultiplied(0, 0, 0, 128), menu.TexPixel);
+                //InterfaceButton.Instance.Draw(spriteBatch, menu.Font, statistic, new Vector2(5, 5), Color.FromNonPremultiplied(0, 0, 0, 128), menu.TexPixel);
                 spriteBatch.End();
             }
 

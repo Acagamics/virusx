@@ -6,6 +6,7 @@ using ParticleStormControl;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace ParticleStormControl.Menu
 {
@@ -28,10 +29,36 @@ namespace ParticleStormControl.Menu
 
         public Paused(Menu menu)
             : base(menu)
-        { }
-
-        public override void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
         {
+            // background
+            Interface.Add(new InterfaceFiller(Vector2.Zero, menu.ScreenWidth, menu.ScreenHeight, Color.Black * 0.5f, () => { return true; }));
+
+            // paused string
+            string label = "game paused";
+            Vector2 stringSizePaused = menu.FontHeading.MeasureString(label);
+            Vector2 positionPaused = (new Vector2(menu.ScreenWidth, menu.ScreenHeight - 300) - stringSizePaused) / 2;
+            Interface.Add(new InterfaceButton(label, positionPaused, true));
+
+            // continue & mainmenu
+            const int BUTTON_WIDTH = 150;
+            float y = positionPaused.Y + 180;
+            Interface.Add(new InterfaceButton("Continue", new Vector2((menu.ScreenWidth) / 2 - 20 - BUTTON_WIDTH, y), () => { return currentButton == Buttons.CONTINUE; }, BUTTON_WIDTH));
+            Interface.Add(new InterfaceButton("Quit to Menu", new Vector2(menu.ScreenWidth / 2 + 20, y), () => { return currentButton == Buttons.QUIT_TO_MAINMENU; }, BUTTON_WIDTH));
+            y += 100;
+
+            // disconnected message
+            foreach (int playerIndex in reconnectWaitingPlayerIndices)
+            {
+                string message = "Player " + (playerIndex + 1) + " is disconnected!";
+                Vector2 position = (new Vector2(menu.ScreenWidth / 2, y) - menu.Font.MeasureString(message) / 2);
+                Interface.Add(new InterfaceButton(message, position));
+                y += 50;
+            }
+        }
+
+        public override void LoadContent(ContentManager content)
+        {
+            base.LoadContent(content);
         }
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
@@ -122,34 +149,13 @@ namespace ParticleStormControl.Menu
                 if (InputManager.Instance.IsWaitingForReconnect(Settings.Instance.GetPlayer(i).ControlType))
                     reconnectWaitingPlayerIndices.Add(i);
             }
+
+            base.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            // background
-            spriteBatch.Draw(menu.TexPixel, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * 0.5f);
-
-            // paused string
-            string label = "game paused";
-            Vector2 stringSizePaused = menu.FontCountdown.MeasureString(label);
-            Vector2 positionPaused = (new Vector2(menu.ScreenWidth, menu.ScreenHeight - 300) - stringSizePaused) / 2;
-            spriteBatch.DrawString(menu.FontCountdown, label, positionPaused, Color.White);
-
-            // continue & mainmenu
-            const int BUTTON_WIDTH = 150;
-            float y = positionPaused.Y + 180;
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Continue", new Vector2((menu.ScreenWidth) / 2 - 20 - BUTTON_WIDTH, y), currentButton == Buttons.CONTINUE, menu.TexPixel, BUTTON_WIDTH);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Quit to Menu", new Vector2(menu.ScreenWidth / 2 + 20, y), currentButton == Buttons.QUIT_TO_MAINMENU, menu.TexPixel, BUTTON_WIDTH);
-            y += 100;
-
-            // disconnected message
-            foreach(int playerIndex in reconnectWaitingPlayerIndices)
-            {
-                string message = "Player " + (playerIndex + 1) + " is disconnected!";
-                Vector2 position = (new Vector2(menu.ScreenWidth / 2, y) - menu.Font.MeasureString(message) / 2);
-                SimpleButton.Instance.Draw(spriteBatch, menu.Font, message, position, Settings.Instance.GetPlayerColor(playerIndex), menu.TexPixel);
-                y += 50;
-            }
+            base.Draw(spriteBatch, gameTime);
         }
     }
 }

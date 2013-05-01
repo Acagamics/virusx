@@ -11,9 +11,6 @@ namespace ParticleStormControl.Menu
 {
     class MainMenu : MenuPage
     {
-        Texture2D logo;
-        Texture2D instructions;
-
         enum Button
         {
             NEWGAME,
@@ -30,24 +27,35 @@ namespace ParticleStormControl.Menu
         public MainMenu(Menu menu)
             : base(menu)
         {
+            Interface.Add(new InterfaceImage("logoNew", new Vector2(50, 50)));
+
+            Interface.Add(new InterfaceButton("New Game", new Vector2(100, 370), () => { return selectedButton == Button.NEWGAME; }, true));
+            Interface.Add(new InterfaceButton("Controls", new Vector2(100, 440), () => { return selectedButton == Button.CONTROLS; }));
+            Interface.Add(new InterfaceButton("Options", new Vector2(100, 500), () => { return selectedButton == Button.OPTIONS; }));
+            Interface.Add(new InterfaceButton("Viruses", new Vector2(100, 560), () => { return selectedButton == Button.VIRUSES; }));
+            Interface.Add(new InterfaceButton("Credits", new Vector2(100, 620), () => { return selectedButton == Button.CREDITS; }));
+            Interface.Add(new InterfaceButton("Exit Game", new Vector2(100, 680), () => { return selectedButton == Button.END; }));
+
+            Interface.Add(new InterfaceButton("How to Play", new Vector2(620, 100), Alignment.TOP_RIGHT));
+            Interface.Add(new InterfaceImage("instructions", new Vector2(620, 100 + menu.GetFontHeight() + 2 * InterfaceElement.PADDING), Alignment.TOP_RIGHT));
+
+            Interface.Add(new InterfaceButton(ParticleStormControl.VERSION, new Vector2(2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING) + menu.Font.MeasureString(ParticleStormControl.VERSION), Alignment.BOTTOM_RIGHT));
         }
 
         public override void LoadContent(ContentManager content)
         {
-            logo = content.Load<Texture2D>("logoNew");
-            instructions = content.Load<Texture2D>("instructions");
+            base.LoadContent(content);
         }
 
         public override void Update(GameTime gameTime)
         {
+
             // loopin
             int selectionInt = (int)selectedButton;
             if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.DOWN))
                 selectionInt = selectionInt == (int)Button.NUM_BUTTONS-1 ? 0 : selectionInt + 1;
             else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.UP))
                 selectionInt = selectionInt == 0 ? (int)Button.NUM_BUTTONS - 1 : selectionInt - 1;
-            if (selectionInt != (int)selectedButton)
-                SimpleButton.Instance.ChangeHappened(gameTime, menu.SoundEffect);
             selectedButton = (Button)(selectionInt);
 
             // button selected
@@ -92,24 +100,13 @@ namespace ParticleStormControl.Menu
                     }
                 }
             }
+
+            base.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.Draw(logo, new Rectangle(50, 50, logo.Width,logo.Height), Color.White);
-
-            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "New Game", new Vector2(100, 370), selectedButton == Button.NEWGAME, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Controls", new Vector2(100, 440), selectedButton == Button.CONTROLS, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Options", new Vector2(100, 500), selectedButton == Button.OPTIONS, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Viruses", new Vector2(100, 560), selectedButton == Button.VIRUSES, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Credits", new Vector2(100, 620), selectedButton == Button.CREDITS, menu.TexPixel);
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, "Exit Game", new Vector2(100, 680), selectedButton == Button.END, menu.TexPixel);
-
-            SimpleButton.Instance.Draw(spriteBatch, menu.FontHeading, "How to Play", new Vector2(Settings.Instance.ResolutionX - instructions.Width - 60, 100), false, menu.TexPixel);
-            int fontHeight = (int)menu.FontHeading.MeasureString("Test").Y;
-            spriteBatch.Draw(instructions, new Rectangle(Settings.Instance.ResolutionX - instructions.Width - 60 - SimpleButton.PADDING, 100 + fontHeight + SimpleButton.PADDING, instructions.Width, instructions.Height), Color.White);
-
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, ParticleStormControl.VERSION, new Vector2(menu.ScreenWidth - SimpleButton.PADDING, menu.ScreenHeight - SimpleButton.PADDING) - menu.Font.MeasureString(ParticleStormControl.VERSION), false, menu.TexPixel);
+            base.Draw(spriteBatch, gameTime);
         }
     }
 }

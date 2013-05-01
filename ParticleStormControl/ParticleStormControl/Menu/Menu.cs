@@ -38,23 +38,9 @@ namespace ParticleStormControl.Menu
         private SpriteFont fontCountdown;
         #endregion
 
-        #region Sound
-        private SoundEffect soundEffect;
-        public SoundEffect SoundEffect { get { return soundEffect; } }
-        #endregion
-
         #region Textures
         public Texture2D TexPixel { get { return texPixel; } }
         private Texture2D texPixel;
-
-        public Texture2D TexLeftThumbstick { get { return texLeftThumbstick; } }
-        private Texture2D texLeftThumbstick;
-
-        public Texture2D TexA { get { return texA; } }
-        private Texture2D texA;
-
-        public Texture2D TexB { get { return texB; } }
-        private Texture2D texB;
 
         public int ScreenWidth { get { return game.GraphicsDevice.Viewport.Width; } }
         public int ScreenHeight { get { return game.GraphicsDevice.Viewport.Height; } }
@@ -75,6 +61,11 @@ namespace ParticleStormControl.Menu
         {
             this.game = game;
 
+            // preload fonts to measure size at initialization - not very nice!
+            font = game.Content.Load<SpriteFont>("fonts/font");
+            fontHeading = game.Content.Load<SpriteFont>("fonts/fontHeading");
+            fontCountdown = game.Content.Load<SpriteFont>("fonts/fontCountdown");
+
             pages[(int)Page.MAINMENU] =  new MainMenu(this);
             pages[(int)Page.OPTIONS] = new Options(this);
             pages[(int)Page.PAUSED] = new Paused(this);
@@ -88,14 +79,7 @@ namespace ParticleStormControl.Menu
 
         public void LoadContent(ContentManager content)
         {
-            font = content.Load<SpriteFont>("fonts/font");
-            fontHeading = content.Load<SpriteFont>("fonts/fontHeading");
-            fontCountdown = content.Load<SpriteFont>("fonts/fontCountdown");
             texPixel = content.Load<Texture2D>("pix");
-            texLeftThumbstick = content.Load<Texture2D>("ButtonImages/xboxControllerLeftThumbstick");
-            texA = content.Load<Texture2D>("ButtonImages/xboxControllerButtonA");
-            texB = content.Load<Texture2D>("ButtonImages/xboxControllerButtonB");
-            soundEffect = content.Load<SoundEffect>("sound/room__snare-switchy");
 
             foreach (MenuPage page in pages)
             {
@@ -116,6 +100,29 @@ namespace ParticleStormControl.Menu
             if(pages[(int)activePage] != null)
                 pages[(int)activePage].Draw(spriteBatch, gameTime);
             spriteBatch.End();
+        }
+
+        /// <summary>
+        /// Returns maximum height of the used fonts
+        /// </summary>
+        /// <param name="bigFont">The font used for headings</param>
+        /// <returns></returns>
+        public int GetFontHeight(bool bigFont = false)
+        {
+            return bigFont ? (int)fontHeading.MeasureString("Mg").Y : (int)font.MeasureString("Mg").Y;
+        }
+
+        /// <summary>
+        /// Checks a variety of buttons for exit on one button pages
+        /// </summary>
+        /// <param name="gameTime"></param>
+        public void BackToMainMenu(GameTime gameTime)
+        {
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.PAUSE) ||
+                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT) ||
+                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION) ||
+                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.HOLD))
+                ChangePage(Menu.Page.MAINMENU, gameTime);
         }
 
         /// <summary>
@@ -150,8 +157,8 @@ namespace ParticleStormControl.Menu
                 PageChangingEvent(newPage, activePage);
             pages[(int)newPage].OnActivated(activePage, gameTime);
             activePage = newPage;
-            if(newPage != Page.INGAME)
-                SimpleButton.Instance.ChangeHappened(gameTime, SoundEffect);
+            //if(newPage != Page.INGAME)
+            //    InterfaceButton.Instance.ChangeHappened(gameTime, SoundEffect);
         }
 
         public void Shutdown()

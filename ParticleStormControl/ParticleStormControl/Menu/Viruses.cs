@@ -5,78 +5,84 @@ using System.Text;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace ParticleStormControl.Menu
 {
     class Viruses : MenuPage
     {
         private int virusIndex = 0;
-        private Texture2D icons;
+        int width = 800;
+        int startTop = 100;
+        int padding = 40;
 
         private Effect virusRenderEffect;
 
         public Viruses(Menu menu)
             : base(menu)
-        { }
-
-        public override void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
         {
-            icons = content.Load<Texture2D>("icons");
-            virusRenderEffect = content.Load<Effect>("shader/particleRendering");
+            // Update text and position
+            int top = startTop;
+            int left = -400;
+
+            // descriptions
+            // can't be put in a loop because of the anonymous method
+            for (int i = 0; i < 4; i++)
+            {
+                int index = i;
+                Interface.Add(new InterfaceButton(() => { return GetLabels(virusIndex)[index]; }, new Vector2(left, top), Alignment.TOP_CENTER));
+                top += (int)menu.Font.MeasureString(GetLabels(virusIndex)[index]).Y + padding;
+                if (i == 0)
+                    top += padding;
+            }
+
+            // arrows
+            Interface.Add(new InterfaceImageButton(
+                "icons",
+                new Rectangle(left - padding - 16, -8, 16, 16),
+                new Rectangle(0, 0, 16, 16),
+                new Rectangle(32, 0, 16, 16),
+                () => !InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT, true),
+                Alignment.CENTER_CENTER));
+            
+            Interface.Add(new InterfaceImageButton(
+                "icons",
+                new Rectangle(-left + padding, -8, 16, 16),
+                new Rectangle(16, 0, 16, 16),
+                new Rectangle(48, 0, 16, 16),
+                () => !InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT, true),
+                Alignment.CENTER_CENTER));
+
+            // back button
+            string label = "Back to Menu";
+            Interface.Add(new InterfaceButton(label, new Vector2(-(int)(menu.Font.MeasureString(label).X / 2), 100), () => { return true; }, Alignment.BOTTOM_CENTER));
         }
 
-        public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
+        public override void LoadContent(ContentManager content)
         {
-            // back to main menu
-            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.PAUSE) ||
-                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT) ||
-                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION) ||
-                InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.HOLD))
-                menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+            virusRenderEffect = content.Load<Effect>("shader/particleRendering");
+
+            base.LoadContent(content);
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            menu.BackToMainMenu(gameTime);
 
             // loopin
             if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT))
                 virusIndex = virusIndex == (int)VirusSwarm.VirusType.NUM_VIRUSES - 1 ? 0 : virusIndex + 1;
             else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT))
                 virusIndex = virusIndex == 0 ? (int)VirusSwarm.VirusType.NUM_VIRUSES - 1 : virusIndex - 1;
+
+            base.Update(gameTime);
         }
 
-        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.GameTime gameTime)
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            int width = 800;
+            base.Draw(spriteBatch, gameTime);
+
             int left = (Settings.Instance.ResolutionX - width) / 2;
-            int startTop = 100;
-            int top = startTop;
-            int padding = 40;
-
-            // info texts
-            List<String> labels = new List<string>() {
-                VirusSwarm.VirusNames[virusIndex] + " (" + VirusSwarm.VirusShortName[virusIndex] + ")",
-                VirusSwarm.VirusClassification[virusIndex],
-                "Caused desease:\n" + VirusSwarm.VirusCausedDisease[virusIndex],
-                "Description:\n" + VirusSwarm.VirusAdditionalInfo[virusIndex],
-            };
-
-            for (int i = 0; i < labels.Count; i++)
-			{
-                SimpleButton.Instance.Draw(spriteBatch, i == 0 ? menu.FontHeading : menu.Font, labels[i], new Vector2(left, top), i == 0, menu.TexPixel);
-                top += (int)menu.Font.MeasureString(labels[i]).Y + padding;
-                if (i == 0)
-                    top += padding;
-			}
-
-            // arrows
-            int size = 16;
-            SimpleButton.Instance.DrawTexture(spriteBatch, icons, new Rectangle(left - size - padding, Settings.Instance.ResolutionY / 2, size, size),
-                new Rectangle(InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT, true) ? 0 : 32, 0, 16, 16), InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT, true), menu.TexPixel);
-            SimpleButton.Instance.DrawTexture(spriteBatch, icons, new Rectangle(left + width + padding, Settings.Instance.ResolutionY / 2, size, size),
-                new Rectangle(InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT, true) ? 16 : 48, 0, 16, 16), InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT, true), menu.TexPixel);
-
-
-            // back button
-            string label = "Back to Menu";
-            SimpleButton.Instance.Draw(spriteBatch, menu.Font, label, new Vector2((int)((Settings.Instance.ResolutionX - menu.Font.MeasureString(label).X) / 2), Settings.Instance.ResolutionY - 60), true, menu.TexPixel);
-
 
             // virus
             virusRenderEffect.Parameters["ScreenSize"].SetValue(new Vector2(menu.ScreenWidth, menu.ScreenHeight));
@@ -108,6 +114,21 @@ namespace ParticleStormControl.Menu
             spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.White);
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
+        }
+
+        /// <summary>
+        /// Reads the description for every virus
+        /// </summary>
+        /// <param name="virusindex"></param>
+        /// <returns></returns>
+        private List<string> GetLabels(int virusindex)
+        {
+            return new List<string>() {
+                VirusSwarm.VirusNames[virusIndex] + " (" + VirusSwarm.VirusShortName[virusIndex] + ")",
+                VirusSwarm.VirusClassification[virusIndex],
+                "Caused desease:\n" + VirusSwarm.VirusCausedDisease[virusIndex],
+                "Description:\n" + VirusSwarm.VirusAdditionalInfo[virusIndex],
+            };
         }
     }
 }

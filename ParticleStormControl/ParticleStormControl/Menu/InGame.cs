@@ -14,7 +14,9 @@ namespace ParticleStormControl.Menu
         private bool ignoreFirstUpdateStep;
 
         public InGame(Menu menu) : base(menu)
-        {}
+        {
+            
+        }
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {

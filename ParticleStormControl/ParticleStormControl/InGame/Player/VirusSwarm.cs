@@ -48,7 +48,7 @@ namespace ParticleStormControl
         public static readonly string[] DESCRIPTOR_Mass = new string[] { "++", "++++", "+", "++++" };
         public static readonly string[] DESCRIPTOR_Speed = new string[] { "+++", "+", "++", "++++" };
         public static readonly string[] DESCRIPTOR_Health = new string[] { "+++", "+++", "++++", "+" };
-        public static readonly string[] DESCRIPTOR_Disciplin = new string[] { "++", "++", "+++", "+" };
+        public static readonly string[] DESCRIPTOR_Discipline = new string[] { "++", "++", "+++", "+" };
 
         // attributs
         private static readonly float[] MASS_byVirus = new float[] { 0.5f, 0.63f, 0.075f, 1.0f };
