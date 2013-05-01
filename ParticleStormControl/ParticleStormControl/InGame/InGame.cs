@@ -1,4 +1,5 @@
 ﻿//#define DAMAGEMAP_DEBUGGING
+#define STATS_TEST
 
 using System;
 using Microsoft.Xna.Framework;
@@ -11,9 +12,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-#if XBOX
-using System.Threading;
-#endif
 
 namespace ParticleStormControl
 {
@@ -228,10 +226,7 @@ namespace ParticleStormControl
                 for (int i = 0; i < playerRecentlyDied.Length; ++i)
                 {
                     if (playerRecentlyDied[i])
-                    {
                         GameStatistics.playerDied(i);
-                        level.AddMapObject(DamageArea.CreatePlayerDeathDamage(content, players[i].CursorPosition, i));
-                    }
                 }
 
                 // damaging - switch every frame to be xbox friendly (preserve content stuff)
@@ -243,7 +238,7 @@ namespace ParticleStormControl
                 }
 
                 // level update
-                level.Update((float)gameTime.ElapsedGameTime.TotalSeconds, passedFrameTime, players);
+                level.Update(gameTime, players);
 
                 // wining
                 CheckWinning(gameTime);
@@ -272,11 +267,11 @@ namespace ParticleStormControl
                 // statistics
                 level.GameStatistics.addWonMatches(winPlayerIndex);
 
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).WinPlayerIndex = winPlayerIndex;
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x=>x.Type).ToArray();
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
+                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).WinPlayerIndex = winPlayerIndex;
+                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
+                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
                 
-                menu.ChangePage(Menu.Menu.Page.WIN, gameTime);
+                menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
             }
         }
 
@@ -318,7 +313,7 @@ namespace ParticleStormControl
             float timeSinceLastFrame = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // draw level
-            level.Draw(totalGameTime, spriteBatch.GraphicsDevice, players);
+            level.Draw(gameTime, spriteBatch.GraphicsDevice, players);
 
             inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime);
 

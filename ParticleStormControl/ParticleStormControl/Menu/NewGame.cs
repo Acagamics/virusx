@@ -547,6 +547,8 @@ namespace ParticleStormControl.Menu
             }
             if (allReady && Settings.Instance.NumPlayers > 0)
                 countdown = TimeSpan.FromSeconds(maxCountdown - 0.001);
+            else
+                countdown = TimeSpan.FromSeconds(-1);
         }
 
         private void ToggleReady(int slotIndex)

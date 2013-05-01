@@ -27,8 +27,6 @@ namespace ParticleStormControl
         private Texture2D pixelTexture;
         private Texture2D mutateBig;
 
-        private SoundEffect wipeOutSound;
-
         private SpriteBatch spriteBatch;
         private ContentManager contentManager;
 
@@ -91,20 +89,13 @@ namespace ParticleStormControl
 
         #endregion
 
-        #region switch & wipeout
+        #region switch
 
         private SoundEffect switchSound;
         private bool switchCountdownActive = false;
         private float switchCountdownTimer;
         public const float SWITCH_COUNTDOWN_LENGTH = 6.0f;
         private SpriteFont fontCountdownLarge;
-
-        private Texture2D wipeoutExplosionTexture;
-        private Texture2D wipeoutDamageTexture;
-        private const float WIPEOUT_SPEED = 0.5f;
-        private const float WIPEOUT_SIZEFACTOR = 1.5f;
-        private float wipeoutProgress = 0.0f;
-        private bool wipeoutActive;
 
         #endregion
 
@@ -144,8 +135,6 @@ namespace ParticleStormControl
 
             pixelTexture = content.Load<Texture2D>("pix");
 
-            wipeOutSound = content.Load<SoundEffect>("sound/andromadax24__woosh-01");
-            
             spriteBatch = new SpriteBatch(device);
 
             // switch
@@ -160,8 +149,6 @@ namespace ParticleStormControl
 
             // effects
             mutateBig = content.Load<Texture2D>("Mutate_big");
-            wipeoutExplosionTexture = content.Load<Texture2D>("Wipeout_big");
-            wipeoutDamageTexture = wipeoutExplosionTexture;
     
             // setup size
             Resize(device);
@@ -350,7 +337,7 @@ namespace ParticleStormControl
             }
         }
 
-        public void Update(float frameTimeSeconds, float totalTimeSeconds, Player[] players)
+        public void Update(GameTime gameTime, Player[] players)
         {
             // statistics
             uint[] possesingSpawnPoints = new uint[players.Length];
@@ -359,14 +346,15 @@ namespace ParticleStormControl
             // update
             foreach (MapObject mapObject in mapObjects)
             {
-                mapObject.Update(frameTimeSeconds, totalTimeSeconds);
+                mapObject.Update(gameTime);
 
                 Crosshair crosshair = mapObject as Crosshair;
                 if (crosshair != null)
                 {
                     crosshair.Position = players[crosshair.PlayerIndex].CursorPosition;
                     crosshair.ParticleAttractionPosition = players[crosshair.PlayerIndex].ParticleAttractionPosition;
-                    crosshair.Alive = players[crosshair.PlayerIndex].Alive;
+                    //crosshair.Alive = players[crosshair.PlayerIndex].Alive;
+                    crosshair.PlayerAlive = players[crosshair.PlayerIndex].Alive;
                 }
 
                 // statistics
@@ -476,16 +464,8 @@ namespace ParticleStormControl
                 pickuptimer.Start();
             }
 
-            // wipeout
-            if (wipeoutActive)
-            {
-                wipeoutProgress += frameTimeSeconds;
-                if (wipeoutProgress > 1.0f)
-                    wipeoutActive = false;
-            }
-
             // statistics
-            if (GameStatistics.UpdateTimer(frameTimeSeconds))
+            if (GameStatistics.UpdateTimer((float)gameTime.TotalGameTime.TotalSeconds))
             {
                 if (!dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug)
                 {
@@ -631,23 +611,23 @@ namespace ParticleStormControl
             device.SetRenderTarget(null);
         }
 
-        public void Draw(float totalTimeSeconds, GraphicsDevice device, Player[] players)
+        public void Draw(GameTime gameTime, GraphicsDevice device, Player[] players)
         {
             // activate scissor test - is this a performance issue?
             device.ScissorRectangle = fieldPixelRectangle;
             device.RasterizerState = scissorTestRasterizerState;
 
             // background
-            background.Draw(device, totalTimeSeconds);
+            background.Draw(device, (float)gameTime.TotalGameTime.TotalSeconds);
 
             // screenblend stuff
-            spriteBatch.Begin(SpriteSortMode.BackToFront, ScreenBlend);
+           /* spriteBatch.Begin(SpriteSortMode.BackToFront, ScreenBlend);
             foreach (MapObject mapObject in mapObjects)
             {
                 if (mapObject.Alive)
                     mapObject.Draw_ScreenBlended(spriteBatch, this, totalTimeSeconds);
             }
-            spriteBatch.End();
+            spriteBatch.End();*/
 
             // the particles!
             DrawParticles(device);
@@ -666,18 +646,11 @@ namespace ParticleStormControl
             foreach (MapObject mapObject in mapObjects)
             {
                 if (mapObject.Alive)
-                    mapObject.Draw_AlphaBlended(spriteBatch, this, totalTimeSeconds);
+                    mapObject.Draw_AlphaBlended(spriteBatch, this, gameTime);
             }
 
-            // wipeout
-            if (wipeoutActive)
-                spriteBatch.Draw(wipeoutExplosionTexture, ComputePixelRect(Level.RELATIVE_MAX / 2, Level.RELATIVE_MAX.X * wipeoutProgress * WIPEOUT_SIZEFACTOR),
-                                    null, new Color(1.0f, 1.0f, 1.0f, (float)(1.0 - Math.Sqrt(wipeoutProgress))), totalTimeSeconds, 
-                                    new Vector2(wipeoutExplosionTexture.Width, wipeoutExplosionTexture.Height) * 0.5f, SpriteEffects.None, 0.0f);
-
-
             // countdown
-            DrawCountdown(device, totalTimeSeconds);
+            DrawCountdown(device, (float)gameTime.TotalGameTime.TotalSeconds);
 
 
             spriteBatch.End();
@@ -753,10 +726,6 @@ namespace ParticleStormControl
         {
             foreach (MapObject obj in mapObjects)
                 obj.DrawToDamageMap(damageSpriteBatch);
-
-            if(wipeoutActive)
-                damageSpriteBatch.Draw(wipeoutDamageTexture, 
-                    DamageMap.ComputePixelRect_Centred(Level.RELATIVE_MAX / 2, Level.RELATIVE_MAX.X * wipeoutProgress * WIPEOUT_SIZEFACTOR), Color.White);
         }
 
         public void PlayerUseItem(Player player)
@@ -773,13 +742,7 @@ namespace ParticleStormControl
                     break;
 
                 case Item.ItemType.WIPEOUT:
-                    if (!wipeoutActive)
-                    {
-                        wipeoutActive = true;
-                        wipeoutProgress = 0.0f;
-                        if (Settings.Instance.Sound)
-                            wipeOutSound.Play();
-                    }
+                    mapObjects.Add(DamageArea.CreateWipeout(contentManager));
                     break;
             }
             // statistic

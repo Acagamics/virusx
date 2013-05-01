@@ -22,8 +22,11 @@ namespace ParticleStormControl.Menu
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
-            blendIn = GAME_BLEND_DURATION;
-            ignoreFirstUpdateStep = true;
+            if (oldPage != Menu.Page.PAUSED)
+            {
+                blendIn = GAME_BLEND_DURATION;
+                ignoreFirstUpdateStep = true;
+            }
         }
 
         public override void LoadContent(ContentManager content)
@@ -57,7 +60,7 @@ namespace ParticleStormControl.Menu
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             if(blendIn > 0.0f)
-                spriteBatch.Draw(menu.TexPixel, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * (blendIn / GAME_BLEND_DURATION));
+               spriteBatch.Draw(menu.TexPixel, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * (blendIn / GAME_BLEND_DURATION));
         }
     }
 }

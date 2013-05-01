@@ -48,9 +48,9 @@ namespace ParticleStormControl
             soundEffect = content.Load<SoundEffect>("sound/cosmicd__light-switch-of-doom");
         }
 
-        public override void Update(float frameTimeSeconds, float totalTimeSeconds)
+        public override void Update(GameTime gameTime)
         {
-            base.Update(frameTimeSeconds, totalTimeSeconds);
+            base.Update(gameTime);
 
             // gathered?
             if (PossessingPercentage == 1.0f && PossessingPlayer != -1)
@@ -67,10 +67,10 @@ namespace ParticleStormControl
             // apparently a bad solution, but otherwise this item had to know about the player :/
         }
 
-        public override void Draw_AlphaBlended(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Level level, float totalTimeSeconds)
+        public override void Draw_AlphaBlended(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Level level, GameTime gameTime)
         {
             spriteBatch.Draw(itemTexture, level.ComputePixelRect_Centered(Position, Size), null, ComputeColor(),
-                                   ROTATION_SPEED * totalTimeSeconds, new Vector2(itemTexture.Width, itemTexture.Height) / 2, SpriteEffects.None, 1.0f);
+                                   ROTATION_SPEED * (float)gameTime.TotalGameTime.TotalSeconds, new Vector2(itemTexture.Width, itemTexture.Height) / 2, SpriteEffects.None, 1.0f);
         }
     }
 }
