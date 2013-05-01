@@ -15,6 +15,7 @@ namespace ParticleStormControl.Menu
         {
             MAINMENU,
             NEWGAME,
+            MODE,
             CREDITS,
             OPTIONS,
             PAUSED,
@@ -76,6 +77,7 @@ namespace ParticleStormControl.Menu
             pages[(int)Page.OPTIONS] = new Options(this);
             pages[(int)Page.PAUSED] = new Paused(this);
             pages[(int)Page.NEWGAME] = new NewGame(this);
+            pages[(int)Page.MODE] = new Mode(this);
             pages[(int)Page.WIN] = new Win(this);
             pages[(int)Page.INGAME] = new InGame(this);
             pages[(int)Page.CREDITS] = new Credits(this);
@@ -174,6 +176,58 @@ namespace ParticleStormControl.Menu
         public void Shutdown()
         {
             game.Exit();
+        }
+
+        #endregion
+
+        #region helper functions
+
+        /// <summary>
+        /// Helper function for loopin through menus
+        /// </summary>
+        /// <param name="selected"></param>
+        /// <param name="maximum"></param>
+        /// <param name="control">If none, every control works</param>
+        /// <param name="horizontal">If true: left/right, if false: up/down</param>
+        /// <returns></returns>
+        public static int LoopEnum(int selected, int maximum, InputManager.ControlType control = InputManager.ControlType.NONE, bool horizontal = false)
+        {
+            // loopin
+            if (control == InputManager.ControlType.NONE)
+            {
+                if (horizontal)
+                {
+                    if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT))
+                        selected = selected == maximum - 1 ? 0 : selected + 1;
+                    else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT))
+                        selected = selected == 0 ? maximum - 1 : selected - 1;
+                }
+                else
+                {
+                    if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.DOWN))
+                        selected = selected == maximum - 1 ? 0 : selected + 1;
+                    else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.UP))
+                        selected = selected == 0 ? maximum - 1 : selected - 1;
+                }
+            }
+            else
+            {
+                if (horizontal)
+                {
+                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, control))
+                        selected = selected == maximum - 1 ? 0 : selected + 1;
+                    else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, control))
+                        selected = selected == 0 ? maximum - 1 : selected - 1;
+                }
+                else
+                {
+                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.DOWN, control))
+                        selected = selected == maximum - 1 ? 0 : selected + 1;
+                    else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.UP, control))
+                        selected = selected == 0 ? maximum - 1 : selected - 1;
+                }
+            }
+            return selected;
         }
 
         #endregion

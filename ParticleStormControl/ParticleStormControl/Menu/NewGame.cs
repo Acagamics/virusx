@@ -16,6 +16,31 @@ namespace ParticleStormControl.Menu
 {
     class NewGame : MenuPage
     {
+        public enum GameMode
+        {
+            // no teams, up to 4 players
+            CLASSIC,
+
+            // start player -> defender, up to 3 others -> attackers
+            CAPTURE_THE_CELL,
+
+            // 2 teams, each up to 2 players
+            LEFT_VS_RIGHT,
+
+            // 1 player vs 1 computer
+            TUTORIAL,
+
+            NUM_MODES
+        }
+
+        static public readonly String[] GAMEMODE_NAME = new String[]
+        {
+            "Classic",
+            "Capture the Cell",
+            "Left vs. Right",
+            "Tutorial"
+        };
+
         const int VIRUS_SIZE = 110;
         const int VIRUS_PADDING = 10;
         const int ARROW_VERTICAL_SIZE = 8;
@@ -35,6 +60,9 @@ namespace ParticleStormControl.Menu
 
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
+
+        public GameMode Mode { get { return mode; } set { mode = value; } }
+        private GameMode mode;
 
         /// <summary>
         /// controls of the player who opened this menu
@@ -73,26 +101,36 @@ namespace ParticleStormControl.Menu
                     true
                 ));
 
+                // teams
+                Interface.Add(new InterfaceButton(
+                    () =>
+                    {
+                        return Player.TEAM_NAMES[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Team];
+                    },
+                    origin + new Vector2(SIDE_PADDING, TEXTBOX_HEIGHT * 2 - InterfaceElement.PADDING),
+                    () => { return false; },
+                    () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Team != Player.Teams.NONE; }
+                ));
+
                 // controls
                 Interface.Add(new InterfaceButton(
-                    () => { return slotIndexToPlayerIndexMapper[index] < Settings.Instance.NumPlayers ? 
-                                        InputManager.CONTROL_NAMES[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).ControlType].ToString() : ""; },
-                    origin + new Vector2(SIDE_PADDING, TEXTBOX_HEIGHT * 2 + InterfaceButton.PADDING * 2),
+                    () => { return InputManager.CONTROL_NAMES[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).ControlType]; },
+                    origin + new Vector2(SIDE_PADDING, TEXTBOX_HEIGHT * 3),
                     () => { return false; },
                     () => { return playerSlotOccupied[index]; }
                 ));
 
                 // ready
-                int readyHeight = TEXTBOX_HEIGHT * 4;
+                int top = TEXTBOX_HEIGHT * 4 + InterfaceElement.PADDING;
                 Interface.Add(new InterfaceButton(
                     () => { return playerReadyBySlot[index] ? "ready!" : "not ready"; },
-                    origin + new Vector2(SIDE_PADDING + TEXTBOX_HEIGHT, readyHeight),
+                    origin + new Vector2(SIDE_PADDING + TEXTBOX_HEIGHT, top),
                     () => { return playerReadyBySlot[index]; },
                     () => { return playerSlotOccupied[index]; }
                 ));
                 Interface.Add(new InterfaceImageButton(
                     "icons",
-                    new Rectangle((int)origin.X + SIDE_PADDING, (int)origin.Y + readyHeight, ARROW_SIZE, ARROW_SIZE),
+                    new Rectangle((int)origin.X + SIDE_PADDING, (int)origin.Y + top, ARROW_SIZE, ARROW_SIZE),
                     new Rectangle(0, 32, 16, 16),
                     new Rectangle(48, 32, 16, 16),
                     () => { return playerReadyBySlot[index]; },
@@ -119,7 +157,7 @@ namespace ParticleStormControl.Menu
                 ));
 
                 // arrows left & right
-                int arrowY = (int)readyHeight - ARROW_SIZE;
+                int arrowY = TEXTBOX_HEIGHT * 4 - ARROW_SIZE;
                 Interface.Add(new InterfaceImageButton(
                     "icons",
                     new Rectangle((int)origin.X, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE),
@@ -146,21 +184,20 @@ namespace ParticleStormControl.Menu
                 float descpY = BOX_HEIGHT - TEXTBOX_HEIGHT * 2;
 
                 Interface.Add(new InterfaceButton("Speed", origin + new Vector2(descpX0, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }));
-                Interface.Add(new InterfaceButton(() => { return playerSlotOccupied[index] ? VirusSwarm.DESCRIPTOR_Speed[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex] : ""; }, origin + new Vector2(descpX0 + descpStrLen, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }));
+                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Speed[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex]; }, origin + new Vector2(descpX0 + descpStrLen, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }));
 
                 Interface.Add(new InterfaceButton("Mass", origin + new Vector2(descpX0, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }));
-                Interface.Add(new InterfaceButton(() => { return playerSlotOccupied[index] ? VirusSwarm.DESCRIPTOR_Mass[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex] : ""; }, origin + new Vector2(descpX0 + descpStrLen, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }));
+                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Mass[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex]; }, origin + new Vector2(descpX0 + descpStrLen, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }));
 
                 Interface.Add(new InterfaceButton("Discipline", origin + new Vector2(descpX1, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }));
-                Interface.Add(new InterfaceButton(() => { return playerSlotOccupied[index] ? VirusSwarm.DESCRIPTOR_Discipline[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex] : ""; }, origin + new Vector2(descpX1 + descpStrLen, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }));
+                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Discipline[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex]; }, origin + new Vector2(descpX1 + descpStrLen, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }));
 
                 Interface.Add(new InterfaceButton("Health", origin + new Vector2(descpX1, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }));
-                Interface.Add(new InterfaceButton(() => { return playerSlotOccupied[index] ? VirusSwarm.DESCRIPTOR_Health[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex] : ""; }, origin + new Vector2(descpX1 + descpStrLen, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }));
+                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Health[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex]; }, origin + new Vector2(descpX1 + descpStrLen, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }));
                 
                 // big fat "comp" for those who need it
                 //stringSize = menu.FontCountdown.MeasureString("COMP");
                 //Interface.Add(new InterfaceButton("COMP", origin + new Vector2(BOX_WIDTH, BOX_HEIGHT) / 2, () => { return false; }, () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.AI; }));
-
             }
 
             // countdown
@@ -238,9 +275,9 @@ namespace ParticleStormControl.Menu
             playerReady[0] = playerReady[1] = playerReady[2] = playerReady[3] = playerConnected[0] = playerConnected[1] = playerConnected[2] = playerConnected[3] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = Settings.Instance.PlayerConnected[2] = Settings.Instance.PlayerConnected[3] = true;
             menu.ChangePage(Menu.Page.INGAME,gameTime);
 #endif
-            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT) ||
+            if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, StartingControls) ||
                 InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, StartingControls))
-                menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+                menu.ChangePage(Menu.Page.MODE, gameTime);
 
             TimeSpan oldCountdown = countdown;
             countdown = countdown.Subtract(gameTime.ElapsedGameTime);
@@ -339,12 +376,30 @@ namespace ParticleStormControl.Menu
                 playerSlotOccupied[slotIndex] = true;
                 playerReadyBySlot[slotIndex] = false;
                 slotIndexToPlayerIndexMapper[slotIndex] = playerIndex;
+                Player.Teams team = Player.Teams.NONE;
+
+                switch (mode)
+                {
+                    case GameMode.CAPTURE_THE_CELL:
+                        if (slotIndex == 0)
+                            team = Player.Teams.DEFENDER;
+                        else
+                            team = Player.Teams.ATTACKER;
+                        break;
+                    case GameMode.LEFT_VS_RIGHT:
+                        if (slotIndex == 0 || slotIndex == 3)
+                            team = Player.Teams.LEFT;
+                        else
+                            team = Player.Teams.RIGHT;
+                        break;
+                }
 
                 Settings.Instance.AddPlayer(new Settings.PlayerSettings()
                 {
                     SlotIndex = slotIndex,
                     ControlType = ai ? InputManager.ControlType.NONE : controlType,
                     ColorIndex = colorIndex,
+                    Team = team,
                     VirusIndex = Random.Next((int)VirusSwarm.VirusType.NUM_VIRUSES),
                     Type = ai ? Player.Type.AI : Player.Type.HUMAN,
                 });

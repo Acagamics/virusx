@@ -1,12 +1,12 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ParticleStormControl;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ParticleStormControl;
 
 namespace ParticleStormControl
 {
@@ -40,6 +40,7 @@ namespace ParticleStormControl
             public int ColorIndex;
             public int VirusIndex;
             public int SlotIndex;
+            public Player.Teams Team;
             public Player.Type Type;
             public InputManager.ControlType ControlType;
         };
