@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="background\Background.cs" />
+    <Compile Include="InGame\Level\DamageArea.cs" />
     <Compile Include="InGame\Player\AIPlayer.cs" />
     <Compile Include="InGame\Player\HumanPlayer.cs" />
     <Compile Include="InGame\InGame.cs" />
@@ -173,7 +174,6 @@
     <Compile Include="InGame\Level\MapObject.cs" />
     <Compile Include="InGame\Level\Level.cs" />
     <Compile Include="InGame\ParticleRenderer.cs" />
-    <Compile Include="InGame\Level\DangerZone.cs" />
     <Compile Include="InGame\Player\Player.cs" />
     <Compile Include="Menu\Viruses.cs" />
     <Compile Include="Menu\Win.cs" />

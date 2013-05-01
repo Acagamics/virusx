@@ -15,7 +15,7 @@ namespace ParticleStormControl
         public const float explosionMaxSize = 0.3f;
 
         private const float explosionDamage = 0.3f;
-        private const float explosionDuration = 1.0f;
+        private const float duration = 1.0f;
         private float currentExplosionSize;
         private float currentExplosionAlpha;
         private float explosionRotation = 0.0f;
@@ -55,7 +55,7 @@ namespace ParticleStormControl
             float effectSeconds = (float)explosionTimer.Elapsed.TotalSeconds;
             float scaling = MathHelper.Clamp((float)Math.Log(effectSeconds * 16 + 1.0f) / 3, 0.0f, 1.0f);
             currentExplosionSize = explosionMaxSize * scaling;
-            currentExplosionAlpha = 1.0f - effectSeconds / explosionDuration;
+            currentExplosionAlpha = 1.0f - effectSeconds / duration;
 
             if (explosionTimer.Elapsed.TotalSeconds >= 1.0f)
                 Alive = false;
