@@ -25,11 +25,11 @@ namespace ParticleStormControl
         public virtual void DrawToDamageMap(SpriteBatch spriteBatch)
         {}
 
-        public virtual void Update(float frameTimeSeconds, float totalTimeSeconds)
+        public virtual void Update(GameTime gameTime)
         {}
 
-        public abstract void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, float totalTimeSeconds);
-        public virtual void Draw_ScreenBlended(SpriteBatch spriteBatch, Level level, float totalTimeSeconds)
-        {}
+        public abstract void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime);
+       // public virtual void Draw_ScreenBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime)
+       // {}
     }
 }

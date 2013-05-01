@@ -48,9 +48,9 @@ namespace ParticleStormControl
             explosionRotation = (float)(Random.NextDouble()*MathHelper.TwoPi);
         }
 
-        public override void Update(float frameTimeSeconds, float totalTimeSeconds)
+        public override void Update(GameTime gameTime)
         {
-            base.Update(frameTimeSeconds, totalTimeSeconds);
+            base.Update(gameTime);
 
             float effectSeconds = (float)explosionTimer.Elapsed.TotalSeconds;
             float scaling = MathHelper.Clamp((float)Math.Log(effectSeconds * 16 + 1.0f) / 3, 0.0f, 1.0f);
@@ -112,13 +112,13 @@ namespace ParticleStormControl
             }
         }
 
-        public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, float totalTimeSeconds)
+        public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime)
         {
             // item
             if (!explosionTimer.IsRunning)
             {
-                spriteBatch.Draw(itemTexture, level.ComputePixelRect(Position, Size), null, Color.Lerp(Color.White, Color.Black, PossessingPercentage), 
-                                    totalTimeSeconds, textureCenter, SpriteEffects.None, 0.9f);
+                spriteBatch.Draw(itemTexture, level.ComputePixelRect(Position, Size), null, Color.Lerp(Color.White, Color.Black, PossessingPercentage),
+                                    (float)gameTime.TotalGameTime.TotalSeconds, textureCenter, SpriteEffects.None, 0.9f);
             }
             // explosion
             if (explosionTimer.IsRunning)

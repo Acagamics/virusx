@@ -56,7 +56,7 @@ namespace ParticleStormControl
 
         protected abstract void OnPossessingChanged();
 
-        public override void Update(float frameTimeSeconds, float totalTimeSeconds)
+        public override void Update(GameTime gameTime)
         {
             if (lifeTime > 0 && lifeTimer.Elapsed.TotalSeconds > lifeTime)
                 Alive = false;

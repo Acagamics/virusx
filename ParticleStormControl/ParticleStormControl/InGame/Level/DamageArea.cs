@@ -48,11 +48,11 @@ namespace ParticleStormControl
         /// <summary>
         /// creates a new playerdeath damaging area
         /// </summary>
-        public static DamageArea CreatePlayerDeathDamage(ContentManager content, Vector2 Position, int possessingPlayer)
+     /*   public static DamageArea CreatePlayerDeathDamage(ContentManager content, Vector2 Position, int possessingPlayer)
         {
             return new DamageArea(content.Load<Texture2D>("death"), Position, possessingPlayer,
                                             0.35f, 1, 100.0f, 1.0f);
-        }
+        }*/
 
         public DamageArea(Texture2D damageZoneTexture, Vector2 Position, int possessingPlayer,
                             float explosionMaxSize, float explosionScaleSpeed, float explosionDamage, float duration)
@@ -73,9 +73,9 @@ namespace ParticleStormControl
             explosionTimer.Start();
         }
 
-        public override void Update(float frameTimeSeconds, float totalTimeSeconds)
+        public override void Update(GameTime gameTime)
         {
-            base.Update(frameTimeSeconds, totalTimeSeconds);
+            base.Update(gameTime);
 
             float effectSeconds = (float)explosionTimer.Elapsed.TotalSeconds;
             float scaling = MathHelper.Clamp(effectSeconds * explosionScaleSpeed, 0.0f, 1.0f);
@@ -87,7 +87,7 @@ namespace ParticleStormControl
             if (effectSeconds - duration < fadeOutTime)
                 alpha = Math.Min(alpha, remainingTime / fadeOutTime);
 
-            currentRotation += frameTimeSeconds;
+            currentRotation += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if (remainingTime < 0)
                 Alive = false;
@@ -99,7 +99,7 @@ namespace ParticleStormControl
             spriteBatch.Draw(damageZoneTexture, DamageMap.ComputePixelRect(Position, Size), null, damage, currentRotation, textureCenterZone, SpriteEffects.None, 0);
         }
 
-        public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, float totalTimeSeconds)
+        public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime)
         {
             // explosion
             Rectangle rect = level.ComputePixelRect(Position, Size);
