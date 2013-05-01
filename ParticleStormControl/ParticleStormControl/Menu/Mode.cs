@@ -60,6 +60,7 @@ namespace ParticleStormControl.Menu
                 switch (selectedButton)
                 {
                     case Button.CONTINUE:
+                    case Button.MODE:
                         ((NewGame)menu.GetPage(Menu.Page.NEWGAME)).Mode = gameMode;
                         menu.ChangePage(Menu.Page.NEWGAME, gameTime);
                         break;

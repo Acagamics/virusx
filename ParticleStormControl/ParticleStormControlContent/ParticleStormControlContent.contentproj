@@ -363,6 +363,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ButtonImages\xboxControllerLeftShoulder.tga">
+      <Name>xboxControllerLeftShoulder</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="ButtonImages\xboxControllerRightShoulder.tga">
+      <Name>xboxControllerRightShoulder</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <None Include="icon.ico">
       <Name>icon</Name>
     </None>

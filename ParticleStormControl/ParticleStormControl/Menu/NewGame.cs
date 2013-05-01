@@ -200,6 +200,15 @@ namespace ParticleStormControl.Menu
                 //Interface.Add(new InterfaceButton("COMP", origin + new Vector2(BOX_WIDTH, BOX_HEIGHT) / 2, () => { return false; }, () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.AI; }));
             }
 
+            // help text
+            int textBoxHeight = menu.GetFontHeight() + 2 * InterfaceElement.PADDING;
+            string help = "\"+\": add computer\n\"-\":  remove computer";
+            Interface.Add(new InterfaceButton(help, new Vector2(-menu.Font.MeasureString(help).X / 2, menu.Font.MeasureString(help).Y + 2 * InterfaceElement.PADDING), () => false, () => StartingControls == InputManager.ControlType.KEYBOARD0 || StartingControls == InputManager.ControlType.KEYBOARD1, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceImage("ButtonImages/xboxControllerRightShoulder", new Rectangle(-140, 2 * textBoxHeight, 100, textBoxHeight), Color.Black, () => StartingControls != InputManager.ControlType.KEYBOARD0 && StartingControls != InputManager.ControlType.KEYBOARD1, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("add computer", new Vector2(-40, 2 * textBoxHeight), () => false, () => StartingControls != InputManager.ControlType.KEYBOARD0 && StartingControls != InputManager.ControlType.KEYBOARD1, 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(-140, textBoxHeight, 100, textBoxHeight), Color.Black, () => StartingControls != InputManager.ControlType.KEYBOARD0 && StartingControls != InputManager.ControlType.KEYBOARD1, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("remove computer", new Vector2(-40, textBoxHeight), () => false, () => StartingControls != InputManager.ControlType.KEYBOARD0 && StartingControls != InputManager.ControlType.KEYBOARD1, 180, Alignment.BOTTOM_CENTER));
+
             // countdown
             String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
             Vector2 size = menu.FontHeading.MeasureString(text);
