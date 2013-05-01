@@ -526,5 +526,105 @@ namespace ParticleStormControl
         }
 
         #endregion
+
+        #region generate test data
+
+        public void FillWithTestdata(int numberOfSteps)
+        {
+            steps = lastStep = 0;
+            Init();
+
+            int diedPlayer = Random.Next(0, playerCount);
+            int diedInStep = Random.Next(numberOfSteps / 2, numberOfSteps - numberOfSteps / 4);
+
+            for (int i = 0; i < numberOfSteps; ++i)
+            {
+                int aviableSpawnPoints = (int)OverallNumberOfSpawnPoints;
+                for (int p = 0; p < PlayerCount; ++p)
+                {
+                    if (playerCount > 2 && diedPlayer == p && diedInStep >= i)
+                        setParticlesAndHealthAndPossesingSpawnPoints(p, 0, 0, 0);
+                    else
+                    {
+                        int spawnPoints = Random.Next(0, aviableSpawnPoints);
+                        aviableSpawnPoints -= spawnPoints;
+                        setParticlesAndHealthAndPossesingSpawnPoints(p, (uint)Random.Next(1, 10000), (uint)Random.Next(1, 12000), (uint)spawnPoints);
+                    }
+                }
+                UpdateDominationTestData(i);
+                if (Random.NextDouble() < 0.2)
+                {
+                    int player = Random.Next(0, playerCount);
+                    if (playerCount > 2 && diedPlayer == player && diedInStep >= i)
+                        break;
+                    else itemUsed(player, (StatItems)Random.Next(0, 5));
+                }
+            }
+        }
+
+        private void UpdateDominationTestData(int step)
+        {
+            maxOverallSimultaneousParticles = Math.Max((int)particlesInStep.Sum(x => (int)x[step]), maxOverallSimultaneousParticles);
+            maxOverallSimultaneousHealth = Math.Max((int)healthInStep.Sum(x => (int)x[step]), maxOverallSimultaneousHealth);
+
+
+            float[] percentage = ComputeDominationTestData(step);
+            for (int i = 0; i < playerCount; ++i)
+            {
+                dominationInStep[i].Add(percentage[i]);
+            }
+
+            if (steps == maxStoredSteps)
+            {
+                steps--;
+                reduceAllListsByOne();
+            }
+        }
+
+        private float[] ComputeDominationTestData(int step)
+        {
+            float[] result = new float[playerCount];
+            float overallHealth = healthInStep.Sum(x => x[step]);
+            ulong overallParticles = (ulong)particlesInStep.Sum(x => x[step]);
+            //float overallSpawnPointsizes =  players.Sum(x => x.PossessingSpawnPointsOverallSize);
+            uint overallSpawnPoints = (uint)possessingSpawnPointsInStep.Sum(x => x[step]);
+
+            for (int i = 0; i < playerCount; ++i)
+            {
+                float dev = 3f;
+                if (overallHealth <= 0.0f)
+                {
+                    overallHealth = 1.0f;
+                    dev -= 1f;
+                }
+                if (overallParticles <= 0)
+                {
+                    overallParticles = 1;
+                    dev -= 1f;
+                }
+                /*if (overallSpawnPointsizes <= 0.0f)
+                {
+                    overallSpawnPointsizes = 1;
+                    dev -= 2f;
+                }
+                if (overallSpawnPoints <= 0)
+                {
+                    overallSpawnPointsizes = 1;
+                    dev -= 1f;
+                }*/
+                if (dev > 0.0f)
+                {
+                    result[i] = (/*((players[i].PossessingSpawnPointsOverallSize / overallSpawnPointsizes) * 2f)
+                        +*/ (float)particlesInStep[i][step] / overallParticles
+                        + healthInStep[i][step] / overallHealth
+                        + (float)possessingSpawnPointsInStep[i][step] / overallSpawnPoints) / dev;
+                }
+                else result[i] = 1f / playerCount;
+                //result[players.Length] += result[i];
+            }
+
+            return result;
+        }
+        #endregion
     }
 }
