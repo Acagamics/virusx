@@ -7,6 +7,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ParticleStormControl
 {
+    /// <summary>
+    /// explosion object on the map
+    /// currently nearly the same as DamageArea
+    /// </summary>
     public class Debuff : CapturableObject
     {
         /// <summary>
