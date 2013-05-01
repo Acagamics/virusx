@@ -207,19 +207,19 @@ namespace ParticleStormControl.Menu
             switch (currentDiagramType)
             {
                 case DiagramType.DOMINATION:
-                    DrawDiagram(spriteBatch, (step, player) => statistics.getDominationInStep(player, step),
+                    DrawDiagram(spriteBatch, (progress, player) => statistics.getDominationInStep(player, (int)(progress * statistics.Steps)),
                                                     (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.HEALTH:
-                    DrawDiagram(spriteBatch, (step, player) => (float)statistics.getHealthInStep(player, step) / statistics.MaxOverallSimultaneousHealth,
+                    DrawDiagram(spriteBatch, (progress, player) => (float)statistics.getHealthInStep(player, (int)(progress * statistics.Steps)) / statistics.MaxOverallSimultaneousHealth,
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.MASS:
-                    DrawDiagram(spriteBatch, (step, player) => (float)statistics.getParticlesInStep(player, step) / statistics.MaxOverallSimultaneousParticles,
+                    DrawDiagram(spriteBatch, (progress, player) => (float)statistics.getParticlesInStep(player, (int)(progress * statistics.Steps)) / statistics.MaxOverallSimultaneousParticles,
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.SPAWN_POINTS:
-                    DrawDiagram(spriteBatch, (step, player) => (float)statistics.getPossessingSpawnPointsInStep(player, step) / statistics.OverallNumberOfSpawnPoints,
+                    DrawDiagram(spriteBatch, (progress, player) => (float)statistics.getPossessingSpawnPointsInStep(player, (int)(progress * statistics.Steps)) / statistics.OverallNumberOfSpawnPoints,
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
             }
@@ -232,24 +232,17 @@ namespace ParticleStormControl.Menu
         /// 
         /// </summary>
         /// <param name="spriteBatch"></param>
-        /// <param name="heightFunction">function returning a height for a given (1st para) step from a given (2nd para) player. Sum of heights in a step should be one!</param>
+        /// <param name="heightFunction">function returning a height for a given (1st para) progress-percentage from a given (2nd para) player. Sum of heights in a step should be one!</param>
         /// <param name="frameTimeInterval"></param>
         /// <param name="area"></param>
-        private void DrawDiagram(SpriteBatch spriteBatch, Func<int, int, float> heightFunction, float frameTimeInterval, int maxWidth, int heightVal, int yPos)
+        private void DrawDiagram(SpriteBatch spriteBatch, Func<float, int, float> heightFunction, float frameTimeInterval, int maxWidth, int heightVal, int yPos)
         {
             Rectangle area;
 
             const int ARROW_PADDING = 20;
 
             int diagramAreaMaxWidth = maxWidth - ARROW_SIZE * 2 - ARROW_PADDING * 2;
-            int stepWidth = Math.Max(1, diagramAreaMaxWidth / statistics.Steps);
-            int startStep;
-            if (statistics.Steps > diagramAreaMaxWidth)
-                startStep = (statistics.Steps - diagramAreaMaxWidth) / stepWidth + 1;   // if a step is only a pixel... DAMDAM
-            else
-                startStep = 0;
-            area.Width = stepWidth * (statistics.Steps - startStep) + 20;
-
+            area.Width = diagramAreaMaxWidth + 20;
             area.Height = heightVal;
             area.X = (menu.ScreenWidth-area.Width) / 2;
             area.Y = yPos + InterfaceElement.PADDING*2 + menu.GetFontHeight();
@@ -265,18 +258,19 @@ namespace ParticleStormControl.Menu
             // gray background
             spriteBatch.Draw(menu.TexPixel, area, Color.Gray);
 
-            // draw amount of particles per player and step
-            for (int step = startStep; step < statistics.Steps; step++)     
+            // draw amount of particles per player and pixel
+            for (int pixel = 0; pixel < area.Width; pixel++)     
             {
                 int offset = 0;
+                float progress = (float)pixel / area.Width;
                 for (int playerIndex = statistics.PlayerCount-1; playerIndex >= 0; --playerIndex)
                 {
-                    float percentage = heightFunction(step, playerIndex);
+                    float percentage = heightFunction(progress, playerIndex);
                     int height = (int)(percentage * area.Height);
 
                     offset += height;
 
-                    Rectangle rect = new Rectangle(area.X + (step - startStep) * stepWidth, area.Bottom - offset, stepWidth, height);
+                    Rectangle rect = new Rectangle(area.X + pixel, area.Bottom - offset, 1, height);
                     spriteBatch.Draw(menu.TexPixel, rect, Player.Colors[PlayerColorIndices[playerIndex]]);
                 }
             }
@@ -288,12 +282,14 @@ namespace ParticleStormControl.Menu
             spriteBatch.Draw(menu.TexPixel, rouningHide, Color.Black);
 
             // draw items
-            for (int step = startStep; step < statistics.Steps; step++)    
+            float stepWidth = (float)area.Width / statistics.Steps;
+            for (int step = 0; step < statistics.Steps; step++)    
             {
                 int offset = 0;
+                float progress = (float)step / (statistics.Steps-1);
                 for (int playerIndex = statistics.PlayerCount - 1; playerIndex >= 0; --playerIndex)
                 {
-                    float percentage = heightFunction(step, playerIndex);
+                    float percentage = heightFunction(progress, playerIndex);
                     int height = (int)(percentage * area.Height);
 
 
@@ -304,13 +300,13 @@ namespace ParticleStormControl.Menu
                     if (itemUsed != null)
                     {
                         int y = (int)MathHelper.Clamp(area.Bottom - offset + (height - ITEM_DISPLAY_SIZE) / 2, area.Y, area.Y + area.Height - ITEM_DISPLAY_SIZE);
-                        int x = area.X + (step - startStep) * stepWidth - ITEM_DISPLAY_SIZE / 2;
+                        int x = (int)(area.X + step * stepWidth - ITEM_DISPLAY_SIZE / 2 + 0.5f);
 
                         if ((Statistics.StatItems)itemUsed == Statistics.StatItems.MUTATION)
                         {
-                            if (Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime + step > statistics.Steps - startStep)  // never happen?
+                            if (Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime + step > statistics.Steps)  // never happen?
                                 continue;
-                            x += stepWidth * (int)(Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime);
+                            x += (int)(Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime);
                         }
 
                         x = (int)MathHelper.Clamp(x, area.X, area.X + area.Width - ITEM_DISPLAY_SIZE);
@@ -322,14 +318,14 @@ namespace ParticleStormControl.Menu
                     }
                 }
             }
-
+            
             // draw deaths
             for (int playerIndex = 0; playerIndex<statistics.PlayerCount; ++playerIndex)
             {
                 int depthStep = statistics.getDeathStepOfPlayer(playerIndex);
                 if (depthStep >= 0)
                 {
-                    float percentage = (float)depthStep / (statistics.Steps - startStep);
+                    float percentage = (float)depthStep / statistics.Steps;
                     int xPos = (int)MathHelper.Clamp(area.X + percentage * area.Width - ITEM_DISPLAY_SIZE / 2, area.X, area.X + area.Width - ITEM_DISPLAY_SIZE);
                     spriteBatch.Draw(playerDiedTexture, new Rectangle(xPos, area.Bottom - ITEM_DISPLAY_SIZE + 5, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
                                             Player.Colors[PlayerColorIndices[playerIndex]]);
@@ -342,7 +338,7 @@ namespace ParticleStormControl.Menu
             for (int i = 0; i < timeDisplays.Length; ++i)
             {
                 float progress = (float)i / (timeDisplays.Length-1);
-                float time = ((statistics.Steps - startStep) * progress + statistics.FirstStep + startStep) * statistics.StepTime;
+                float time = (statistics.Steps * progress + statistics.FirstStep) * statistics.StepTime;
                 string endTimeString = GenerateTimeString(time);
                 float textLen = menu.Font.MeasureString(endTimeString).X;
                 
