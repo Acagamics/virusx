@@ -175,8 +175,8 @@
     <Compile Include="InGame\Level\Level.cs" />
     <Compile Include="InGame\ParticleRenderer.cs" />
     <Compile Include="InGame\Player\Player.cs" />
+    <Compile Include="Menu\Statistics.cs" />
     <Compile Include="Menu\Viruses.cs" />
-    <Compile Include="Menu\Win.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ParticleStormControl.cs" />

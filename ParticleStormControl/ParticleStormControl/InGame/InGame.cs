@@ -1,4 +1,5 @@
 ﻿//#define DAMAGEMAP_DEBUGGING
+#define STATS_TEST
 
 using System;
 using Microsoft.Xna.Framework;
@@ -11,9 +12,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-#if XBOX
-using System.Threading;
-#endif
 
 namespace ParticleStormControl
 {
@@ -269,11 +267,11 @@ namespace ParticleStormControl
                 // statistics
                 level.GameStatistics.addWonMatches(winPlayerIndex);
 
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).WinPlayerIndex = winPlayerIndex;
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x=>x.Type).ToArray();
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
+                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).WinPlayerIndex = winPlayerIndex;
+                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
+                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
                 
-                menu.ChangePage(Menu.Menu.Page.WIN, gameTime);
+                menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
             }
         }
 

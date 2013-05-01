@@ -22,7 +22,7 @@ namespace ParticleStormControl.Menu
             VIRUSES,
 
             INGAME,
-            WIN,
+            STATS,
 
             NUM_PAGES,
         };
@@ -76,7 +76,7 @@ namespace ParticleStormControl.Menu
             pages[(int)Page.OPTIONS] = new Options(this);
             pages[(int)Page.PAUSED] = new Paused(this);
             pages[(int)Page.NEWGAME] = new NewGame(this);
-            pages[(int)Page.WIN] = new Win(this);
+            pages[(int)Page.STATS] = new StatisticsScreen(this);
             pages[(int)Page.INGAME] = new InGame(this);
             pages[(int)Page.CREDITS] = new Credits(this);
             pages[(int)Page.CONTROLS] = new Controls(this);
