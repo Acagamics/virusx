@@ -144,7 +144,7 @@ namespace ParticleStormControl
             particleRenderer = new ParticleRenderer(graphicsDevice, content, players.Length);
 
             // init statistics
-            level.GameStatistics = new Statistics(Settings.Instance.NumPlayers, 240, (uint)level.SpawnPoints.Count);
+            level.GameStatistics = new Statistics(Settings.Instance.NumPlayers, 2400, (uint)level.SpawnPoints.Count);
 
             State = GameState.Playing;
             System.GC.Collect();
