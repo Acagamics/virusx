@@ -216,24 +216,30 @@ namespace ParticleStormControl
                     }
                     break;
                 case Item.ItemType.MUTATION:
-                    if (level.GameStatistics.getDominationInStep(Index, step) < 0.20f)
+                    if (step > 0)
                     {
-                        UseItem(level);
+                        if (level.GameStatistics.getDominationInStep(Index, step) < 0.20f)
+                        {
+                            UseItem(level);
+                        }
                     }
                     break;
                 case Item.ItemType.WIPEOUT:
-                    uint overall = level.GameStatistics.getParticlesInStep(step);
-                    if ((float)NumParticlesAlive / overall < 0.25f)
+                    if (step > 0)
                     {
-                        UseItem(level);
-                    }
-                    for(int i=0;i<level.GameStatistics.PlayerCount;++i)
-                    {
-                        if(i!= Index)
-                            if (level.GameStatistics.getPossessingSpawnPointsInStep(i, step) == 0)
-                            {
-                                UseItem(level);
-                            }
+                        uint overall = level.GameStatistics.getParticlesInStep(step);
+                        if ((float)NumParticlesAlive / overall < 0.25f)
+                        {
+                            UseItem(level);
+                        }
+                        for (int i = 0; i < level.GameStatistics.PlayerCount; ++i)
+                        {
+                            if (i != Index)
+                                if (level.GameStatistics.getPossessingSpawnPointsInStep(i, step) == 0)
+                                {
+                                    UseItem(level);
+                                }
+                        }
                     }
                     break;
                 default: break;

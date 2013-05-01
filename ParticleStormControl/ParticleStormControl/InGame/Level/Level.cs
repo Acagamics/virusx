@@ -474,7 +474,7 @@ namespace ParticleStormControl
             }
 
             // statistics
-            if (GameStatistics.UpdateTimer((float)gameTime.ElapsedGameTime.Seconds))
+            if (GameStatistics.UpdateTimer((float)gameTime.ElapsedGameTime.TotalSeconds))
             {
                 if (!dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug)
                 {
