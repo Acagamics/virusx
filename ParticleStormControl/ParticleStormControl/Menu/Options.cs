@@ -99,12 +99,7 @@ namespace ParticleStormControl.Menu
         public override void Update(GameTime gameTime)
         {
             // loopin
-            int selectionInt = (int)selectedButton;
-            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.DOWN))
-                selectionInt = selectionInt == (int)Button.NUM_BUTTONS - 1 ? 0 : selectionInt + 1;
-            else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.UP))
-                selectionInt = selectionInt == 0 ? (int)Button.NUM_BUTTONS - 1 : selectionInt - 1;
-            selectedButton = (Button)(selectionInt);
+            selectedButton = (Button)(Menu.LoopEnum((int)selectedButton, (int)Button.NUM_BUTTONS));
 
             // button selected
             bool changedOne = (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT) || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT) || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION));

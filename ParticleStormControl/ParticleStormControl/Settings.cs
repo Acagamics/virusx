@@ -1,12 +1,12 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ParticleStormControl;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ParticleStormControl;
 
 namespace ParticleStormControl
 {
@@ -40,6 +40,7 @@ namespace ParticleStormControl
             public int ColorIndex;
             public int VirusIndex;
             public int SlotIndex;
+            public Player.Teams Team;
             public Player.Type Type;
             public InputManager.ControlType ControlType;
         };
@@ -108,12 +109,16 @@ namespace ParticleStormControl
             }
         }
 
+        /// <summary>
+        /// returns color of player
+        /// </summary>
+        /// <param name="playerIndex">player's index - not slotindex!</param>
+        /// <returns>white if invalid index, otherwise player color (not particle color!)</returns>
         public Color GetPlayerColor(int playerIndex)
         {
-#if _DEBUG
-            if(playerIndex >= playerColorIndices.Length || playerIndex < 0)
-                throw new Exception("Invalid player index!");
-#endif
+            if (playerIndex >= playerSettings.Count || playerIndex < 0)
+                return Color.White;
+
             return Player.Colors[playerSettings[playerIndex].ColorIndex];
         }
 

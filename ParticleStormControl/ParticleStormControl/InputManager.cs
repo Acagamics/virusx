@@ -513,7 +513,7 @@ namespace ParticleStormControl
                         case ControlActions.ACTION:
                             return down ? IsButtonDown(Keys.Space) : IsButtonPressed(Keys.Space);
                         case ControlActions.PAUSE:
-                            return down ? IsButtonDown(Keys.P) : IsButtonPressed(Keys.P);
+                            return down ? (IsButtonDown(Keys.P) || IsButtonDown(Keys.Escape)) : (IsButtonPressed(Keys.P) || IsButtonPressed(Keys.Escape));
                         case ControlActions.EXIT:
                             return down ? IsButtonDown(Keys.Escape) : IsButtonPressed(Keys.Escape);
 
@@ -539,7 +539,7 @@ namespace ParticleStormControl
                         case ControlActions.ACTION:
                             return down ? IsButtonDown(Keys.Enter) : IsButtonPressed(Keys.Enter);
                         case ControlActions.PAUSE:
-                            return down ? IsButtonDown(Keys.P) : IsButtonPressed(Keys.P);
+                            return down ? (IsButtonDown(Keys.P) || IsButtonDown(Keys.Escape)) : (IsButtonPressed(Keys.P) || IsButtonPressed(Keys.Escape));
                         case ControlActions.EXIT:
                             return down ? IsButtonDown(Keys.Escape) : IsButtonPressed(Keys.Escape);
 
@@ -576,6 +576,11 @@ namespace ParticleStormControl
                             return down ? IsButtonDown(Buttons.Start, controller) : IsButtonPressed(Buttons.Start, controller);
                         case ControlActions.EXIT:
                             return down ? IsButtonDown(Buttons.Back, controller) : IsButtonPressed(Buttons.Back, controller);
+
+                        case ControlActions.ADD_AI:
+                            return IsButtonPressed(Buttons.RightShoulder, controller);
+                        case ControlActions.REMOVE_AI:
+                            return IsButtonPressed(Buttons.LeftShoulder, controller);
 	                }
                     break;
             }

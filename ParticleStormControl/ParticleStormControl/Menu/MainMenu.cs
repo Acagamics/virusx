@@ -51,12 +51,7 @@ namespace ParticleStormControl.Menu
         {
 
             // loopin
-            int selectionInt = (int)selectedButton;
-            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.DOWN))
-                selectionInt = selectionInt == (int)Button.NUM_BUTTONS-1 ? 0 : selectionInt + 1;
-            else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.UP))
-                selectionInt = selectionInt == 0 ? (int)Button.NUM_BUTTONS - 1 : selectionInt - 1;
-            selectedButton = (Button)(selectionInt);
+            selectedButton = (Button)(Menu.LoopEnum((int)selectedButton, (int)Button.NUM_BUTTONS));
 
             // button selected
             if (InputManager.Instance.AnyPressedButton(Buttons.Start))
@@ -74,7 +69,8 @@ namespace ParticleStormControl.Menu
                         {
                             case Button.NEWGAME:
                                 ((NewGame)menu.GetPage(Menu.Page.NEWGAME)).StartingControls = control;
-                                menu.ChangePage(Menu.Page.NEWGAME, gameTime);
+                                ((Mode)menu.GetPage(Menu.Page.MODE)).StartingControls = control;
+                                menu.ChangePage(Menu.Page.MODE, gameTime);
                                 break;
 
                             case Button.CONTROLS:

@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ParticleStormControl.Menu
 {
-    class Win : MenuPage
+    class StatisticsScreen : MenuPage
     {
         private Statistics statistics;
         private List<string> captions = new List<string> { "Captured", "Lost", "Max #", "Average #", "Average HP", "Items" };
@@ -46,9 +46,10 @@ namespace ParticleStormControl.Menu
             NUM_VALUES
         };
         private static readonly string[] DIAGRAM_DESCRIPTIONS = new string[]{ "Domination", "Total HP", "Number of Viruses", "Captured Cells" };
+        private InterfaceButton diagramDescription;
         private DiagramType currentDiagramType;
 
-        public Win(Menu menu)
+        public StatisticsScreen(Menu menu)
             : base(menu)
         {
             // zentrieren
@@ -74,9 +75,13 @@ namespace ParticleStormControl.Menu
                 {
                     int x = i;
                     int y = j;
-                    Interface.Add(new InterfaceButton(() => { return values[x][y]; }, new Vector2(pad + COLUMN_WIDTH * (y + 1), 210 + 60 * x), () => { return false; }, () => { return x < statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING));
+                    Interface.Add(new InterfaceButton(() => values[x][y], new Vector2(pad + COLUMN_WIDTH * (y + 1), 210 + 60 * x), () => { return false; }, () => { return x < statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING));
                 }
             }
+
+            // stats descriptor
+            diagramDescription = new InterfaceButton(() => DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], Vector2.Zero);
+            Interface.Add(diagramDescription);
 
             // continue button
             string text = "continue";
@@ -147,24 +152,25 @@ namespace ParticleStormControl.Menu
             int yPos = 220 + 60 * values.Length;
             int height = Settings.Instance.ResolutionY - 400 - 60 * values.Length;
             int maxWidth = Settings.Instance.ResolutionX - SIDE_PADDING * 2;
+
             switch (currentDiagramType)
             {
                 case DiagramType.DOMINATION:
-                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => statistics.getDominationInStep(player, step),
+                    DrawDiagram(spriteBatch, (step, player) => statistics.getDominationInStep(player, step),
                                                     (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.HEALTH:
-                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => //statistics.getHealthInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
+                    DrawDiagram(spriteBatch, (step, player) => //statistics.getHealthInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
                                                         (float)statistics.getHealthInStep(player, step) / statistics.MaxOverallSimultaneousHealth, //statistics.getHealthInStep(step),
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.MASS:
-                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => //statistics.getParticlesInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
+                    DrawDiagram(spriteBatch, (step, player) => //statistics.getParticlesInStep(step) == 0 ? 1.0f / statistics.PlayerCount :
                                                         (float)statistics.getParticlesInStep(player, step) / statistics.MaxOverallSimultaneousParticles, //statistics.getParticlesInStep(step),
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.SPAWN_POINTS:
-                    DrawDiagram(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], spriteBatch, (step, player) => (float)statistics.getPossessingSpawnPointsInStep(player, step) / statistics.OverallNumberOfSpawnPoints,
+                    DrawDiagram(spriteBatch, (step, player) => (float)statistics.getPossessingSpawnPointsInStep(player, step) / statistics.OverallNumberOfSpawnPoints,
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
             }
@@ -180,7 +186,7 @@ namespace ParticleStormControl.Menu
         /// <param name="heightFunction">function returning a height for a given (1st para) step from a given (2nd para) player. Sum of heights in a step should be one!</param>
         /// <param name="frameTimeInterval"></param>
         /// <param name="area"></param>
-        private void DrawDiagram(string description, SpriteBatch spriteBatch, Func<int, int, float> heightFunction, float frameTimeInterval, int maxWidth, int heightVal, int yPos)
+        private void DrawDiagram(SpriteBatch spriteBatch, Func<int, int, float> heightFunction, float frameTimeInterval, int maxWidth, int heightVal, int yPos)
         {
             Rectangle area;
 
@@ -200,11 +206,7 @@ namespace ParticleStormControl.Menu
             area.X = (menu.ScreenWidth-area.Width) / 2;
             area.Y = yPos + (int)menu.FontHeading.MeasureString(DIAGRAM_DESCRIPTIONS[(int)currentDiagramType]).Y; // +InterfaceButton.PADDING;
 
-
-            // draw heading
-            //InterfaceButton.Instance.Draw(spriteBatch, menu.FontHeading, description,
-            //                           new Vector2(area.X + InterfaceButton.PADDING, yPos),
-            //                           false, menu.TexPixel);
+            diagramDescription.Position = new Vector2(area.X + InterfaceButton.PADDING, yPos);
 
             // draw border
             spriteBatch.Draw(menu.TexPixel, area, Color.Black);

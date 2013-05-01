@@ -27,8 +27,6 @@ namespace ParticleStormControl
         private Texture2D pixelTexture;
         private Texture2D mutateBig;
 
-        private SoundEffect wipeOutSound;
-
         private SpriteBatch spriteBatch;
         private ContentManager contentManager;
 
@@ -91,20 +89,13 @@ namespace ParticleStormControl
 
         #endregion
 
-        #region switch & wipeout
+        #region switch
 
         private SoundEffect switchSound;
         private bool switchCountdownActive = false;
         private float switchCountdownTimer;
         public const float SWITCH_COUNTDOWN_LENGTH = 6.0f;
         private SpriteFont fontCountdownLarge;
-
-        private Texture2D wipeoutExplosionTexture;
-        private Texture2D wipeoutDamageTexture;
-        private const float WIPEOUT_SPEED = 0.5f;
-        private const float WIPEOUT_SIZEFACTOR = 1.5f;
-        private float wipeoutProgress = 0.0f;
-        private bool wipeoutActive;
 
         #endregion
 
@@ -157,8 +148,6 @@ namespace ParticleStormControl
 
             pixelTexture = content.Load<Texture2D>("pix");
 
-            wipeOutSound = content.Load<SoundEffect>("sound/andromadax24__woosh-01");
-            
             spriteBatch = new SpriteBatch(device);
 
             // switch
@@ -173,8 +162,6 @@ namespace ParticleStormControl
 
             // effects
             mutateBig = content.Load<Texture2D>("Mutate_big");
-            wipeoutExplosionTexture = content.Load<Texture2D>("Wipeout_big");
-            wipeoutDamageTexture = wipeoutExplosionTexture;
     
             // setup size
             Resize(device);
@@ -482,14 +469,6 @@ namespace ParticleStormControl
                 pickuptimer.Start();
             }
 
-            // wipeout
-            if (wipeoutActive)
-            {
-                wipeoutProgress += (float)gameTime.TotalGameTime.TotalSeconds;
-                if (wipeoutProgress > 1.0f)
-                    wipeoutActive = false;
-            }
-
             // statistics
             if (GameStatistics.UpdateTimer((float)gameTime.TotalGameTime.TotalSeconds))
             {
@@ -675,13 +654,6 @@ namespace ParticleStormControl
                     mapObject.Draw_AlphaBlended(spriteBatch, this, gameTime);
             }
 
-            // wipeout
-            if (wipeoutActive)
-                spriteBatch.Draw(wipeoutExplosionTexture, ComputePixelRect(Level.RELATIVE_MAX / 2, Level.RELATIVE_MAX.X * wipeoutProgress * WIPEOUT_SIZEFACTOR),
-                                    null, new Color(1.0f, 1.0f, 1.0f, (float)(1.0 - Math.Sqrt(wipeoutProgress))), (float)gameTime.TotalGameTime.TotalSeconds, 
-                                    new Vector2(wipeoutExplosionTexture.Width, wipeoutExplosionTexture.Height) * 0.5f, SpriteEffects.None, 0.0f);
-
-
             // countdown
             DrawCountdown(device, (float)gameTime.TotalGameTime.TotalSeconds);
 
@@ -759,10 +731,6 @@ namespace ParticleStormControl
         {
             foreach (MapObject obj in mapObjects)
                 obj.DrawToDamageMap(damageSpriteBatch);
-
-            if(wipeoutActive)
-                damageSpriteBatch.Draw(wipeoutDamageTexture, 
-                    DamageMap.ComputePixelRect_Centred(Level.RELATIVE_MAX / 2, Level.RELATIVE_MAX.X * wipeoutProgress * WIPEOUT_SIZEFACTOR), Color.White);
         }
 
         public void PlayerUseItem(Player player)
@@ -779,13 +747,7 @@ namespace ParticleStormControl
                     break;
 
                 case Item.ItemType.WIPEOUT:
-                    if (!wipeoutActive)
-                    {
-                        wipeoutActive = true;
-                        wipeoutProgress = 0.0f;
-                        if (Settings.Instance.Sound)
-                            wipeOutSound.Play();
-                    }
+                    mapObjects.Add(DamageArea.CreateWipeout(contentManager));
                     break;
             }
             // statistic

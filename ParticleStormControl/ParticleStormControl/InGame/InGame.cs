@@ -1,4 +1,5 @@
 ﻿//#define DAMAGEMAP_DEBUGGING
+#define STATS_TEST
 
 using System;
 using Microsoft.Xna.Framework;
@@ -11,9 +12,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-#if XBOX
-using System.Threading;
-#endif
 
 namespace ParticleStormControl
 {
@@ -124,12 +122,12 @@ namespace ParticleStormControl
                     if (Settings.Instance.GetPlayer(i).Type == Player.Type.AI)
                     {
                         players[count] = new AIPlayer(i, Settings.Instance.GetPlayer(i).VirusIndex, Settings.Instance.GetPlayer(i).ColorIndex,
-                                                        graphicsDevice, content, noiseWhite2D);
+                            Settings.Instance.GetPlayer(i).Team, graphicsDevice, content, noiseWhite2D);
                     }
                     else
                     {
                         players[count] = new HumanPlayer(i, Settings.Instance.GetPlayer(i).VirusIndex, Settings.Instance.GetPlayer(i).ColorIndex,
-                                                     graphicsDevice, content, noiseWhite2D, Settings.Instance.GetPlayer(i).ControlType);
+                            Settings.Instance.GetPlayer(i).Team, graphicsDevice, content, noiseWhite2D, Settings.Instance.GetPlayer(i).ControlType);
                     }
                     count++;
                     if (count == Settings.Instance.NumPlayers)
@@ -269,11 +267,11 @@ namespace ParticleStormControl
                 // statistics
                 level.GameStatistics.addWonMatches(winPlayerIndex);
 
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).WinPlayerIndex = winPlayerIndex;
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x=>x.Type).ToArray();
-                ((Menu.Win)menu.GetPage(Menu.Menu.Page.WIN)).PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
+                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).WinPlayerIndex = winPlayerIndex;
+                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
+                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
                 
-                menu.ChangePage(Menu.Menu.Page.WIN, gameTime);
+                menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
             }
         }
 

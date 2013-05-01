@@ -156,6 +156,7 @@
     <Compile Include="Menu\Interface\InterfaceImage.cs" />
     <Compile Include="Menu\Interface\InterfaceImageButton.cs" />
     <Compile Include="Menu\Interface\InterfaceFiller.cs" />
+    <Compile Include="Menu\Mode.cs" />
     <Compile Include="Menu\Options.cs" />
     <Compile Include="Menu\MainMenu.cs" />
     <Compile Include="Menu\Menu.cs" />
@@ -175,8 +176,8 @@
     <Compile Include="InGame\Level\Level.cs" />
     <Compile Include="InGame\ParticleRenderer.cs" />
     <Compile Include="InGame\Player\Player.cs" />
+    <Compile Include="Menu\Statistics.cs" />
     <Compile Include="Menu\Viruses.cs" />
-    <Compile Include="Menu\Win.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ParticleStormControl.cs" />
