@@ -207,19 +207,19 @@ namespace ParticleStormControl.Menu
             switch (currentDiagramType)
             {
                 case DiagramType.DOMINATION:
-                    DrawDiagram(spriteBatch, (progress, player) => statistics.getDominationInStep(player, (int)(progress * statistics.Steps)),
+                    DrawDiagram(spriteBatch, (progress, player) => statistics.getDominationInStep(player, (int)(progress * statistics.Steps+0.5f)),
                                                     (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.HEALTH:
-                    DrawDiagram(spriteBatch, (progress, player) => (float)statistics.getHealthInStep(player, (int)(progress * statistics.Steps)) / statistics.MaxOverallSimultaneousHealth,
+                    DrawDiagram(spriteBatch, (progress, player) => (float)statistics.getHealthInStep(player, (int)(progress * statistics.Steps + 0.5f)) / statistics.MaxOverallSimultaneousHealth,
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.MASS:
-                    DrawDiagram(spriteBatch, (progress, player) => (float)statistics.getParticlesInStep(player, (int)(progress * statistics.Steps)) / statistics.MaxOverallSimultaneousParticles,
+                    DrawDiagram(spriteBatch, (progress, player) => (float)statistics.getParticlesInStep(player, (int)(progress * statistics.Steps + 0.5f)) / statistics.MaxOverallSimultaneousParticles,
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.SPAWN_POINTS:
-                    DrawDiagram(spriteBatch, (progress, player) => (float)statistics.getPossessingSpawnPointsInStep(player, (int)(progress * statistics.Steps)) / statistics.OverallNumberOfSpawnPoints,
+                    DrawDiagram(spriteBatch, (progress, player) => (float)statistics.getPossessingSpawnPointsInStep(player, (int)(progress * statistics.Steps + 0.5f)) / statistics.OverallNumberOfSpawnPoints,
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
             }
@@ -292,7 +292,6 @@ namespace ParticleStormControl.Menu
                     float percentage = heightFunction(progress, playerIndex);
                     int height = (int)(percentage * area.Height);
 
-
                     offset += height;
 
                     // render
@@ -306,7 +305,7 @@ namespace ParticleStormControl.Menu
                         {
                             if (Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime + step > statistics.Steps)  // never happen?
                                 continue;
-                            x += (int)(Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime);
+                            x += (int)(Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime * stepWidth);
                         }
 
                         x = (int)MathHelper.Clamp(x, area.X, area.X + area.Width - ITEM_DISPLAY_SIZE);
