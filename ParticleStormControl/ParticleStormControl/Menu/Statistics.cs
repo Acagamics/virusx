@@ -295,7 +295,7 @@ namespace ParticleStormControl.Menu
                     offset += height;
 
                     // render
-                    Statistics.StatItems? itemUsed = statistics.getFirstUsedItemInStep(playerIndex, step);
+                    Statistics.StatItems? itemUsed = statistics.getFirstUsedItemInStep(playerIndex, step + statistics.FirstStep);
                     if (itemUsed != null)
                     {
                         int y = (int)MathHelper.Clamp(area.Bottom - offset + (height - ITEM_DISPLAY_SIZE) / 2, area.Y, area.Y + area.Height - ITEM_DISPLAY_SIZE);
@@ -321,7 +321,7 @@ namespace ParticleStormControl.Menu
             // draw deaths
             for (int playerIndex = 0; playerIndex<statistics.PlayerCount; ++playerIndex)
             {
-                int depthStep = statistics.getDeathStepOfPlayer(playerIndex);
+                int depthStep = statistics.getDeathStepOfPlayer(playerIndex) - statistics.FirstStep;
                 if (depthStep >= 0)
                 {
                     float percentage = (float)depthStep / statistics.Steps;
