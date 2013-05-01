@@ -37,6 +37,12 @@ namespace ParticleStormControl.Menu
             set { backgroundColor = value; }
         }
 
+        public Func<string> Text
+        {
+            get { return text; }
+            set { text = value; }
+        }
+
         #endregion
 
         #region constructors
