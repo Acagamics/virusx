@@ -1,5 +1,5 @@
 ﻿//#define DAMAGEMAP_DEBUGGING
-#define STATS_TEST
+//#define STATS_TEST
 #if !DEBUG
 #undef STATS_TEST
 #undef DAMAGEMAP_DEBUGGING
