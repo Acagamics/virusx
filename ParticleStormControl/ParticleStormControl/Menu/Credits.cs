@@ -21,14 +21,21 @@ namespace ParticleStormControl.Menu
             Interface.Add(new InterfaceButton("A game made by", new Vector2(100, Settings.Instance.ResolutionY), true)); 
 
             List<string> names = new List<string>() {
-                "Andreas Reich", "Programming, Gamplay, Graphics",
-                "Enrico Gebert", "Programming, Gamplay, Balancing",
-                "Sebastian Lay", "Programming, Interface, Musik/Sound",
-                "Maria Manneck", "2D Arts, Interface"
+                "Andreas Reich", "Programming, Gameplay, Graphics",
+                "Enrico Gebert", "Programming, Gameplay, Balancing",
+                "Sebastian Lay", "Programming, Interface, Music/Sound",
+                "Maria Manneck", "2D Arts, Interface",
             };
             AddNames(names, Settings.Instance.ResolutionY + 200);
 
-            Interface.Add(new InterfaceButton("Sounds/Music", new Vector2(100, Settings.Instance.ResolutionY + 1200), true)); 
+            names = new List<string>() {
+                "Special Thanks",
+                "Tim Benedict Jagla, Fritz and all our testers"
+            };
+            AddNames(names, Settings.Instance.ResolutionY + 1100);
+
+
+            Interface.Add(new InterfaceButton("Sounds/Music", new Vector2(100, Settings.Instance.ResolutionY + 1500), true)); 
 
             names = new List<string>() {
                 "Beach - PaulFitzZaland", "soundcloud.com/paulfitzzaland",
@@ -36,9 +43,9 @@ namespace ParticleStormControl.Menu
                 "snare - switchy - room", "freesound.org/people/room",
                 "Woosh.01 - Andromadax24", "freesound.org/people/Andromadax24"
             };
-            AddNames(names, Settings.Instance.ResolutionY + 1400);
+            AddNames(names, Settings.Instance.ResolutionY + 1700);
 
-            Interface.Add(new InterfaceImage("acagamicslogo", new Vector2(-500 / 2, Settings.Instance.ResolutionY + 2400), Alignment.TOP_CENTER));
+            Interface.Add(new InterfaceImage("acagamicslogo", new Vector2(-500 / 2, Settings.Instance.ResolutionY + 2600), Alignment.TOP_CENTER));
 
             Interface.Add(new InterfaceImage("Gruppe1", new Vector2(-768 / 2, Settings.Instance.ResolutionY + 9001), Alignment.TOP_CENTER));
         }
