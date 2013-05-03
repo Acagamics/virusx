@@ -81,7 +81,7 @@ namespace ParticleStormControl
             Content.RootDirectory = "Content";
             Window.AllowUserResizing = false;
             Window.ClientSizeChanged += new EventHandler<EventArgs>(WindowClientSizeChanged);
-            Window.Title = "Virus X";
+            Window.Title = "Virus X - Demo1";
         }
 
         void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
