@@ -32,7 +32,7 @@ namespace ParticleStormControl
         private const float DEATH_CURSOR_SIZE_PERCENTAGE = 0.25f;    // percentage of MAX_DEATH_EXPL_SIZE that is the normal death cursor size
         private const float MAX_DEATH_EXPL_SIZE = 0.35f;
         private const float EXPL_SCALE_SPEED = 2.0f;
-        private const float DEATH_DAMAGE = 80; // is multiplied by the size, so don't be afraid, this value isn't as high as it looks
+        private const float DEATH_DAMAGE = 60; // is multiplied by the size, so don't be afraid, this value isn't as high as it looks
 
        
         public Crosshair (int playerindex, ContentManager contentManager) :
