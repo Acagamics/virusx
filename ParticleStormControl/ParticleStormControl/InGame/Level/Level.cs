@@ -406,7 +406,7 @@ namespace ParticleStormControl
                     if (debuff != null)
                     if(debuff.CapturingPlayer != -1 && debuff.PossessingPercentage >= 1.0f)
                     {
-                        GameStatistics.itemUsed(debuff.CapturingPlayer);
+                        GameStatistics.ItemUsed(debuff.CapturingPlayer);
                         InputManager.Instance.StartRumble(debuff.CapturingPlayer, 0.25f, 0.22f);
                     }
 
