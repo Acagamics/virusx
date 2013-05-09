@@ -282,13 +282,13 @@ namespace ParticleStormControl
                     do
                     {
                         ++screenshot;
-                        filename = "Screenshot" + screenshot + ".jpg";
+                        filename = "Screenshot" + screenshot + ".png";
                     } while (System.IO.File.Exists(filename));
 
                     // save to disk
                     using (var stream = System.IO.File.OpenWrite(filename))
                     {
-                        texture.SaveAsJpeg(stream, w, h);
+                        texture.SaveAsPng(stream, w, h);
                         stream.Close();
                     }
                 }
