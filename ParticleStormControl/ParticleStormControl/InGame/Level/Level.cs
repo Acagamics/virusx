@@ -19,6 +19,8 @@ namespace ParticleStormControl
         private bool dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug = true;
 
         private List<MapObject> mapObjects = new List<MapObject>();
+        public List<MapObject> MapObjects { get { return mapObjects; } }
+        public IEnumerable<MapObject> Items { get { return mapObjects.Where(x => x is Item); } }
         private List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
         public List<SpawnPoint> SpawnPoints { get { return spawnPoints; } }
 
