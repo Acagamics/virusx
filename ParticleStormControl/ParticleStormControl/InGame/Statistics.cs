@@ -23,14 +23,14 @@ namespace ParticleStormControl
             NUM_STAT_ITEMS
         }
 
-        public struct ItemUsed 
+        public struct UsedItem 
         {
             public StatItems item;
             public int step;
-            public static ItemUsed newItemUsed(StatItems _item, int _step) { ItemUsed res; res.item = _item; res.step = _step; return res; }
+            public static UsedItem newItemUsed(StatItems _item, int _step) { UsedItem res; res.item = _item; res.step = _step; return res; }
         }
 
-        List<ItemUsed>[] itemsUsedByPlayer;
+        List<UsedItem>[] itemsUsedByPlayer;
 
         #endregion
 
@@ -142,7 +142,7 @@ namespace ParticleStormControl
             healthInStep = new List<uint>[playerCount];
             possessingSpawnPointsInStep = new List<uint>[playerCount];
 
-            itemsUsedByPlayer = new List<ItemUsed>[playerCount];
+            itemsUsedByPlayer = new List<UsedItem>[playerCount];
 
             for (int i = 0; i < playerCount; ++i)
             {
@@ -150,7 +150,7 @@ namespace ParticleStormControl
                 healthInStep[i] = new List<uint>();
                 dominationInStep[i] = new List<float>();
                 possessingSpawnPointsInStep[i] = new List<uint>();
-                itemsUsedByPlayer[i] = new List<ItemUsed>();
+                itemsUsedByPlayer[i] = new List<UsedItem>();
                 deathStep[i] = -1;
             }
         }
@@ -335,7 +335,7 @@ namespace ParticleStormControl
         {
             if (step < steps && playerIndex < playerCount)
             {
-                foreach (ItemUsed item in itemsUsedByPlayer[playerIndex])
+                foreach (UsedItem item in itemsUsedByPlayer[playerIndex])
                 {
                     if (item.step == step)
                         return item.item;
@@ -513,7 +513,7 @@ namespace ParticleStormControl
             return result;
         }
 
-        public void itemUsed(int playerIndex, Item.ItemType _item)
+        public void ItemUsed(int playerIndex, Item.ItemType _item)
         {
             if (playerIndex < 0 || playerIndex >= playerCount) return;
 
@@ -532,7 +532,7 @@ namespace ParticleStormControl
         {
             if (playerIndex < 0 || playerIndex >= playerCount) return;
 
-            itemsUsedByPlayer[playerIndex].Add(ItemUsed.newItemUsed(_item,steps-1));
+            itemsUsedByPlayer[playerIndex].Add(UsedItem.newItemUsed(_item,steps-1));
         }
 
         #endregion

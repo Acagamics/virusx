@@ -29,7 +29,5 @@ namespace ParticleStormControl
         {}
 
         public abstract void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime);
-       // public virtual void Draw_ScreenBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime)
-       // {}
     }
 }

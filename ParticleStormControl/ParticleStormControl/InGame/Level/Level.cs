@@ -756,7 +756,7 @@ namespace ParticleStormControl
             }
             // statistic
             GameStatistics.addUsedItems(player.Index);
-            GameStatistics.itemUsed(player.Index, player.ItemSlot);
+            GameStatistics.ItemUsed(player.Index, player.ItemSlot);
         }
     }
 }
