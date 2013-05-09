@@ -230,11 +230,11 @@ namespace ParticleStormControl.Menu
             // help text
             int textBoxHeight = menu.GetFontHeight() + 2 * InterfaceElement.PADDING;
             string help = "\"+\": add computer\n\"-\":  remove computer";
-            Interface.Add(new InterfaceButton(help, new Vector2(-menu.Font.MeasureString(help).X / 2, menu.Font.MeasureString(help).Y + 2 * InterfaceElement.PADDING), () => false, () => StartingControls == InputManager.ControlType.KEYBOARD0 || StartingControls == InputManager.ControlType.KEYBOARD1, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceImage("ButtonImages/xboxControllerRightShoulder", new Rectangle(-140, 2 * textBoxHeight, 100, textBoxHeight), Color.Black, () => StartingControls != InputManager.ControlType.KEYBOARD0 && StartingControls != InputManager.ControlType.KEYBOARD1, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("add computer", new Vector2(-40, 2 * textBoxHeight), () => false, () => StartingControls != InputManager.ControlType.KEYBOARD0 && StartingControls != InputManager.ControlType.KEYBOARD1, 180, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(-140, textBoxHeight, 100, textBoxHeight), Color.Black, () => StartingControls != InputManager.ControlType.KEYBOARD0 && StartingControls != InputManager.ControlType.KEYBOARD1, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("remove computer", new Vector2(-40, textBoxHeight), () => false, () => StartingControls != InputManager.ControlType.KEYBOARD0 && StartingControls != InputManager.ControlType.KEYBOARD1, 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton(help, new Vector2(-menu.Font.MeasureString(help).X / 2, menu.Font.MeasureString(help).Y + 2 * InterfaceElement.PADDING), () => false, () => InputManager.IsKeyboardControlType(StartingControls), Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceImage("ButtonImages/xboxControllerRightShoulder", new Rectangle(-140, 2 * textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(StartingControls), Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("add computer", new Vector2(-40, 2 * textBoxHeight), () => InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(-140, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(StartingControls), Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("remove computer", new Vector2(-40, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
 
             // countdown
             String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
@@ -350,10 +350,11 @@ namespace ParticleStormControl.Menu
             }
 
             // new human player?
-            foreach (InputManager.ControlType type in InputManager.Instance.ContinueButtonsPressed())
+            InputManager.ControlType controlTypePressingContinue; 
+            if(InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION, out controlTypePressingContinue))
             {
-                if (!Settings.Instance.GetPlayerSettingSelection(x=>x.ControlType).Contains(type))
-                    AddPlayer(false, type);
+                if (!Settings.Instance.GetPlayerSettingSelection(x => x.ControlType).Contains(controlTypePressingContinue))
+                    AddPlayer(false, controlTypePressingContinue);
             }
 
             // test add/remove ai
