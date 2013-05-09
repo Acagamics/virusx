@@ -84,18 +84,9 @@ namespace ParticleStormControl.Menu
             // if keyboard, anybody is allowed!
             bool otherKeyboard = false;
             int controllerBefore = ControllingPlayer;
-            if(Settings.Instance.GetPlayer(ControllingPlayer).ControlType == InputManager.ControlType.KEYBOARD0)
+            if(InputManager.IsKeyboardControlType(Settings.Instance.GetPlayer(ControllingPlayer).ControlType))
             {
-                int i = Array.IndexOf(Settings.Instance.GetPlayerSettingSelection(x => x.ControlType).ToArray(), InputManager.ControlType.KEYBOARD1);
-                if (i >= 0)
-                {
-                    otherKeyboard = true;
-                    ControllingPlayer = i;
-                }
-            }
-            else if(Settings.Instance.GetPlayer(ControllingPlayer).ControlType == InputManager.ControlType.KEYBOARD1)
-            {
-                int i = Array.IndexOf(Settings.Instance.GetPlayerSettingSelection(x => x.ControlType).ToArray(), InputManager.ControlType.KEYBOARD0);
+                int i = Array.IndexOf(Settings.Instance.GetPlayerSettingSelection(x => x.ControlType).ToArray(), Settings.Instance.GetPlayer(ControllingPlayer));
                 if (i >= 0)
                 {
                     otherKeyboard = true;
