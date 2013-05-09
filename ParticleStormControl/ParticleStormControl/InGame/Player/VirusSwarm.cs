@@ -304,6 +304,8 @@ namespace ParticleStormControl
         public void UpdateGPUPart(GraphicsDevice device, float timeInterval, Texture2D damageMapTexture,
                                     Vector2 particleAttractionPosition, int playerIndex)
         {
+            device.SetVertexBuffer(null);
+            
             // update spawn vb if necessary
             if (currentSpawnNumber > 0)
                 spawnVertexBuffer.SetData<SpawnVertex>(spawnVerticesRAMBuffer, 0, currentSpawnNumber * 2);
@@ -413,6 +415,7 @@ namespace ParticleStormControl
             int biggestAliveIndex = 0;
             NumParticlesAlive = 0;
             int numAlreadySpawned = 0;
+            const float lineOffset = 0.5f / MAX_PARTICLES_SQRT;
             int imax = (int)MathHelper.Clamp(HighestUsedParticleIndex + currentSpawnNumber + 1, 0, MAX_PARTICLES);
             for (int i = 0; i < imax; ++i)
             {
@@ -427,9 +430,10 @@ namespace ParticleStormControl
                 {
                     float x = (float)(i % MAX_PARTICLES_SQRT) / MAX_PARTICLES_SQRT;
                     float y = (float)(i / MAX_PARTICLES_SQRT) / MAX_PARTICLES_SQRT;
-                    spawnVerticesRAMBuffer[numAlreadySpawned * 2].texturePosition = new Vector2(x * 2.0f - 1.0f, (1.0f - y) * 2.0f - 1.0f);
-                    spawnVerticesRAMBuffer[numAlreadySpawned * 2 + 1] = spawnVerticesRAMBuffer[numAlreadySpawned * 2]; // copytime!
-                    spawnVerticesRAMBuffer[numAlreadySpawned * 2 + 1].texturePosition.X += 0.5f / MAX_PARTICLES_SQRT;
+                    spawnVerticesRAMBuffer[numAlreadySpawned * 2].texturePosition = new Vector2(x * 2.0f - 1.0f - lineOffset, 
+                                                                                                (1.0f - y) * 2.0f - 1.0f);
+                    spawnVerticesRAMBuffer[numAlreadySpawned * 2 + 1] = spawnVerticesRAMBuffer[numAlreadySpawned * 2]; // copytime
+                    spawnVerticesRAMBuffer[numAlreadySpawned * 2 + 1].texturePosition.X += lineOffset;
 
                     totalHealth += HealthStart;
                     ++numAlreadySpawned;
