@@ -94,10 +94,16 @@ namespace ParticleStormControl
             Sound = true;
             Music = true;
             Fullscreen = true;
+            ChooseStandardResolution();
+        }
+
+        /// <summary>
+        /// choose best available resolution with "color" as default
+        /// </summary>
+        private void ChooseStandardResolution()
+        {
             ResolutionX = MINIMUM_SCREEN_WIDTH;
             ResolutionY = MINIMUM_SCREEN_HEIGHT;
-
-            // choose best available resolution with "color" as default
             foreach (var mode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes)
             {
                 if (mode.Format == SurfaceFormat.Color &&
@@ -133,7 +139,6 @@ namespace ParticleStormControl
         public void ReadSettings()
         {
             Reset();
-#if !XBOX
             try
             {
                 System.Xml.XmlTextReader xmlConfigReader = new System.Xml.XmlTextReader("settings.xml");
@@ -147,6 +152,11 @@ namespace ParticleStormControl
                                 fullscreen = Convert.ToBoolean(xmlConfigReader.GetAttribute("fullscreen"));
                                 resolutionX = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionX"));
                                 resolutionY = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionY"));
+                                
+                            // validate resolution
+                                if (GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Single(x => x.Format == SurfaceFormat.Color && 
+                                                                                                x.Height == resolutionY && x.Width == resolutionX) != null)
+                                    ChooseStandardResolution();
                                 break;
 
                             case "sound":
@@ -174,12 +184,10 @@ namespace ParticleStormControl
                 {
                 }
             }
-#endif
         }
 
         public void Save()
         {
-#if !XBOX
             System.Xml.XmlTextWriter settingsXML = new System.Xml.XmlTextWriter("settings.xml", System.Text.Encoding.UTF8);
             settingsXML.WriteStartDocument();
             settingsXML.WriteStartElement("settings");
@@ -208,7 +216,6 @@ namespace ParticleStormControl
             settingsXML.WriteEndElement();
             settingsXML.WriteEndDocument();
             settingsXML.Close();
-#endif
         }
     }
 }
