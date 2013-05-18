@@ -378,7 +378,6 @@ namespace ParticleStormControl
                     //crosshair.Alive = players[crosshair.PlayerIndex].Alive;
                     crosshair.PlayerAlive = players[crosshair.PlayerIndex].Alive;
                 }
-
                 // statistics
                 else if (mapObject is SpawnPoint)
                 {
@@ -387,6 +386,21 @@ namespace ParticleStormControl
                     {
                         possesingSpawnPoints[sp.PossessingPlayer]++;
                         possesingSpawnPointsOverallSize[sp.PossessingPlayer] += sp.Size;
+                    }
+                }
+                // move antibodies to the nearest player
+                else if (mapObject is Debuff)
+                {
+                    var playerByDistance = players.OrderBy(x => Vector2.DistanceSquared(x.ParticleAttractionPosition, mapObject.Position));
+                    if(playerByDistance.Count() > 1)
+                    {
+                        Vector2 move = playerByDistance.First().ParticleAttractionPosition - mapObject.Position;
+                        if (move.Length() > 0.02f)
+                        {
+                            move /= move.Length();
+                            move *= (float)gameTime.ElapsedGameTime.TotalSeconds * (Player.CURSOR_SPEED * 0.015f);
+                            mapObject.Position += move;
+                        }
                     }
                 }
             }

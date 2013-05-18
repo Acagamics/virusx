@@ -130,7 +130,7 @@ namespace ParticleStormControl
         /// <summary>
         /// movementspeed of the cursor
         /// </summary>
-        protected const float CURSOR_SPEED = 1.0f;
+        public static readonly float CURSOR_SPEED = 1.0f;
 
 
         #endregion
