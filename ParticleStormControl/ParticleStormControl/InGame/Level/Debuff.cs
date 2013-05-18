@@ -105,12 +105,17 @@ namespace ParticleStormControl
             }
         }
 
+        override public Color ComputeColor()
+        {
+            return Color.Lerp(Color.White, Color.Black, PossessingPercentage);
+        }
+
         public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime)
         {
             // item
             if (!explosionTimer.IsRunning)
             {
-                spriteBatch.Draw(itemTexture, level.ComputePixelRect(Position, Size), null, Color.Lerp(Color.White, Color.Black, PossessingPercentage),
+                spriteBatch.Draw(itemTexture, level.ComputePixelRect(Position, Size), null, ComputeColor(),
                                     (float)gameTime.TotalGameTime.TotalSeconds, textureCenter, SpriteEffects.None, 0.9f);
             }
             // explosion

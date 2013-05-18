@@ -162,7 +162,7 @@ namespace ParticleStormControl
             }
         }
 
-        public Color ComputeColor()
+        virtual public Color ComputeColor()
         {
             if (PossessingPlayer != -1)
                 return Color.Lerp(Color.White, Settings.Instance.GetPlayerColor(PossessingPlayer), PossessingPercentage);
