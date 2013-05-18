@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="background\Background.cs" />
+    <Compile Include="InGame\Level\MapGenerator.cs" />
     <Compile Include="InGame\Level\DamageArea.cs" />
     <Compile Include="InGame\Player\AIPlayer.cs" />
     <Compile Include="InGame\Player\HumanPlayer.cs" />
