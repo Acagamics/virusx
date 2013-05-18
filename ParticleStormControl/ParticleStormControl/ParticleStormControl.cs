@@ -253,7 +253,7 @@ namespace ParticleStormControl
                 }
 
                 spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
-                //InterfaceButton.Instance.Draw(spriteBatch, menu.Font, statistic, new Vector2(5, 5), Color.FromNonPremultiplied(0, 0, 0, 128), menu.TexPixel);
+                spriteBatch.DrawString(menu.Font, statistic, new Vector2(5, 5), Color.White);
                 spriteBatch.End();
             }
 
@@ -282,13 +282,13 @@ namespace ParticleStormControl
                     do
                     {
                         ++screenshot;
-                        filename = "Screenshot" + screenshot + ".jpg";
+                        filename = "Screenshot" + screenshot + ".png";
                     } while (System.IO.File.Exists(filename));
 
                     // save to disk
                     using (var stream = System.IO.File.OpenWrite(filename))
                     {
-                        texture.SaveAsJpeg(stream, w, h);
+                        texture.SaveAsPng(stream, w, h);
                         stream.Close();
                     }
                 }

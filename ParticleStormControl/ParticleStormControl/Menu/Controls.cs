@@ -15,21 +15,21 @@ namespace ParticleStormControl.Menu
             : base(menu)
         {
             string[,] data = {
-                                 { null,                 "Keyboard 1",   "Keyboard 2",   "Gamepad" },
-                                 { "Up",                 "W",            "Arrow Up",     null },
-                                 { "Left",               "A",            "Arrow Left",   null },
-                                 { "Down",               "S",            "Arrow Down",   null },
-                                 { "Right",              "D",            "Arrow Right",  null },
-                                 { "Action / Use Item",  "Space",        "Enter",        null },
-                                 { "Back / Hold Cursor", "V",            "Shift",        null },
+                                 { null,                 "Keyboard 1",   "Keyboard 2",  "Keyboard 3",   "Gamepad" },
+                                 { "Up",                 "W",            "Arrow Up",    "Numpad 8",     null },
+                                 { "Left",               "A",            "Arrow Left",  "Numpad 4",     null },
+                                 { "Down",               "S",            "Arrow Down",   "Numpad 5/2",    null },
+                                 { "Right",              "D",            "Arrow Right",  "Numpad 6",    null },
+                                 { "Action / Use Item",  "Space",        "Enter",        "Numpad 0",    null },
+                                 { "Back / Hold Cursor", "V",            "Shift",        "Numpad 7/9",    null },
                              };
 
             // big table
-            int column = 220;   // column width
+            int column = 190;   // column width
             int row = 60;       // row height
-            int gap = 20;       // gap between columns
+            int gap = 15;       // gap between columns
             int top = 100;       // distance from top
-            int left = -(data.GetLength(1) * (column + gap)) / 2 + gap;
+            int left = -(data.GetLength(1) * (column + gap) - gap + InterfaceButton.PADDING) / 2;
 
             for (int i = 0; i < data.GetLength(0); i++)
             {
@@ -45,19 +45,20 @@ namespace ParticleStormControl.Menu
 
             // draw icons
             int fontHeight = menu.GetFontHeight() + 2 * InterfaceButton.PADDING;
+            int width = column + InterfaceImage.PADDING/2;
             Interface.Add(new InterfaceImage(
                 "ButtonImages/xboxControllerLeftThumbstick",
-                new Rectangle(left + 3 * (column + gap), top + 1 * row, column, row * 3 + fontHeight),
+                new Rectangle(left + 4 * (column + gap), top + 1 * row, width, row * 3 + fontHeight),
                 InterfaceElement.COLOR_NORMAL,
                 Alignment.TOP_CENTER));
             Interface.Add(new InterfaceImage(
                 "ButtonImages/xboxControllerButtonA",
-                new Rectangle(left + 3 * (column + gap), top + 5 * row, column, fontHeight),
+                new Rectangle(left + 4 * (column + gap), top + 5 * row, width, fontHeight),
                 InterfaceElement.COLOR_NORMAL,
                 Alignment.TOP_CENTER));
             Interface.Add(new InterfaceImage(
                 "ButtonImages/xboxControllerButtonB",
-                new Rectangle(left + 3 * (column + gap), top + 6 * row, column, fontHeight),
+                new Rectangle(left + 4 * (column + gap), top + 6 * row, width, fontHeight),
                 InterfaceElement.COLOR_NORMAL,
                 Alignment.TOP_CENTER));
 

@@ -28,6 +28,8 @@ namespace ParticleStormControl
             public Vector2 IgnorePosition { get { return ignoreSpawnPoint != null ? ignoreSpawnPoint.Position : Vector2.Zero; } }
             public SpawnPoint TargetSpawnPoint { get { return lastTarget; } }
 
+            Vector2 ownTerritoriumMid;
+
             public TargetSelector()
             {
             }
@@ -73,10 +75,20 @@ namespace ParticleStormControl
                 }
                 else timeOnTarget = 0f;
 
-                newTarget = possibleTarget.Position;
-                lastTarget = possibleTarget;
-                lastTargetPossessingPercentage = lastTarget.PossessingPercentage;
+                Item possibleItem = SelectItem(level, player);
 
+                // TODO better selection if the item should be collected or not (distance alone is not sufficant)
+                /*if (possibleItem != null && player.ItemSlot == Item.ItemType.NONE
+                    && (Vector2.DistanceSquared(possibleTarget.Position,possibleItem.Position) < Vector2.DistanceSquared(possibleItem.Position, ownTerritoriumMid)))
+                {
+                        newTarget = possibleItem.Position;
+                }
+                else
+                {*/
+                    newTarget = possibleTarget.Position;
+                    lastTarget = possibleTarget;
+                    lastTargetPossessingPercentage = lastTarget.PossessingPercentage;
+                //}
                 return newTarget;
             }
 
@@ -99,7 +111,7 @@ namespace ParticleStormControl
                     numberOfOtherSPs = otherSpawnPoints.Count();
                 }
 
-                Vector2 ownTerritoriumMid = player.ParticleAttractionPosition;
+                ownTerritoriumMid = player.ParticleAttractionPosition;
                 if (numberOfOwnSPs > 0)
                 {
                     ownTerritoriumMid.X = ownSpawnPoints.Average(x => x.Position.X);
@@ -143,6 +155,21 @@ namespace ParticleStormControl
                         possibleTarget = otherSpawnPoints.First();
                 }
 
+                return possibleTarget;
+            }
+
+            private Item SelectItem(Level level, Player player)
+            {
+                var items = level.Items;
+
+                if (items.Count() == 0) return null;
+
+                Item possibleTarget = null;
+
+                var distanceList = items.OrderBy(x => Vector2.DistanceSquared(player.CursorPosition, x.Position));
+
+                // TODO check the type of item and the current game situation to determine which item is the most useful to collect
+                possibleTarget = distanceList.First() as Item;
                 return possibleTarget;
             }
 
@@ -216,24 +243,30 @@ namespace ParticleStormControl
                     }
                     break;
                 case Item.ItemType.MUTATION:
-                    if (level.GameStatistics.getDominationInStep(Index, step) < 0.20f)
+                    if (step > 0)
                     {
-                        UseItem(level);
+                        if (level.GameStatistics.getDominationInStep(Index, step) < 0.20f)
+                        {
+                            UseItem(level);
+                        }
                     }
                     break;
                 case Item.ItemType.WIPEOUT:
-                    uint overall = level.GameStatistics.getParticlesInStep(step);
-                    if ((float)NumParticlesAlive / overall < 0.25f)
+                    if (step > 0)
                     {
-                        UseItem(level);
-                    }
-                    for(int i=0;i<level.GameStatistics.PlayerCount;++i)
-                    {
-                        if(i!= Index)
-                            if (level.GameStatistics.getPossessingSpawnPointsInStep(i, step) == 0)
-                            {
-                                UseItem(level);
-                            }
+                        uint overall = level.GameStatistics.getParticlesInStep(step);
+                        if ((float)NumParticlesAlive / overall < 0.25f)
+                        {
+                            UseItem(level);
+                        }
+                        for (int i = 0; i < level.GameStatistics.PlayerCount; ++i)
+                        {
+                            if (i != Index)
+                                if (level.GameStatistics.getPossessingSpawnPointsInStep(i, step) == 0)
+                                {
+                                    UseItem(level);
+                                }
+                        }
                     }
                     break;
                 default: break;

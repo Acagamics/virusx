@@ -22,6 +22,7 @@ namespace ParticleStormControl
         {
             "WASD + SPACE",
             "Arrows + ENTER",
+            "Numpad + 0",
             "Gamepad 1",
             "Gamepad 2",
             "Gamepad 3",
@@ -36,6 +37,7 @@ namespace ParticleStormControl
         {
             KEYBOARD0,
             KEYBOARD1,
+            KEYBOARD2,
             GAMEPAD0,
             GAMEPAD1,
             GAMEPAD2,
@@ -164,11 +166,27 @@ namespace ParticleStormControl
         
         public bool IsWaitingForReconnect(ControlType controlType)
         {
-            if (controlType != ControlType.NONE && controlType != ControlType.KEYBOARD0 && controlType != ControlType.KEYBOARD1)
+            if (InputManager.CanLooseConnection(controlType))
                 return IsWaitingForReconnect((int)controlType - (int)ControlType.GAMEPAD0);
             else
                 return false;
         }
+
+        public static bool CanLooseConnection(ControlType controlType)
+        {
+            return controlType != ControlType.NONE &&
+                    controlType != ControlType.KEYBOARD0 &&
+                    controlType != ControlType.KEYBOARD1 &&
+                    controlType != ControlType.KEYBOARD2;
+        }
+
+        public static bool IsKeyboardControlType(ControlType controlType)
+        {
+            return  controlType == ControlType.KEYBOARD0 ||
+                    controlType == ControlType.KEYBOARD1 ||
+                    controlType == ControlType.KEYBOARD2;
+        }
+
 
         /// <summary>
         /// clears the waiting-for-reconnect table
@@ -424,23 +442,19 @@ namespace ParticleStormControl
                     if (currentKeyboardState.IsKeyDown(Keys.Right))
                         result.X += 1f;
                     break;
+                case ControlType.KEYBOARD2:
+                    if (currentKeyboardState.IsKeyDown(Keys.NumPad8))
+                        result.Y += 1f;
+                    if (currentKeyboardState.IsKeyDown(Keys.NumPad5) || currentKeyboardState.IsKeyDown(Keys.NumPad2))
+                        result.Y -= 1f;
+                    if (currentKeyboardState.IsKeyDown(Keys.NumPad4))
+                        result.X -= 1f;
+                    if (currentKeyboardState.IsKeyDown(Keys.NumPad6))
+                        result.X += 1f;
+                    break;
                 default: return result;
             }
             result.Y = -result.Y;
-            return result;
-        }
-
-        public List<ControlType> ContinueButtonsPressed()
-        {
-            List<ControlType> result = new List<ControlType>();
-
-            if (IsButtonPressed(Buttons.A, 0)) { result.Add(ControlType.GAMEPAD0); }
-            if (IsButtonPressed(Buttons.A, 1)) { result.Add(ControlType.GAMEPAD1); }
-            if (IsButtonPressed(Buttons.A, 2)) { result.Add(ControlType.GAMEPAD2); }
-            if (IsButtonPressed(Buttons.A, 3)) { result.Add(ControlType.GAMEPAD3); }
-            if (IsButtonPressed(Keys.Space)) { result.Add(ControlType.KEYBOARD0); }
-            if (IsButtonPressed(Keys.Enter)) { result.Add(ControlType.KEYBOARD1); }
-
             return result;
         }
 
@@ -452,14 +466,31 @@ namespace ParticleStormControl
         /// <returns>true for pressed/down, false otherwise</returns>
         public bool WasAnyActionPressed(ControlActions action, bool down = false)
         {
+            ControlType type;
+            return WasAnyActionPressed(action, out type, down);
+        }
+
+        /// <summary>
+        /// returns true if any input device pressed or hold down a certain action
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="typePressed">control type that did the given action</param>
+        /// <param name="down">true if hold down is asked, false if "pressed-event" is needed</param>
+        /// <returns>true for pressed/down, false otherwise</returns>
+        public bool WasAnyActionPressed(ControlActions action, out ControlType typePressed, bool down = false)
+        {
             foreach (ControlType control in typeof(ControlType).GetEnumValues())
             {
                 if (SpecificActionButtonPressed(action, control, down))
+                {
+                    typePressed = control;
                     return true;
+                }
             }
+            typePressed = ControlType.NONE;
             return false;
         }
-        
+
         /// <summary>
         /// returns true if a specific action button was pressed or hold down
         /// uses the settings singleton to lookup players
@@ -549,6 +580,35 @@ namespace ParticleStormControl
                             return IsButtonPressed(Keys.OemMinus);
                     }
                     break;
+                case ControlType.KEYBOARD2:
+                    switch (action)
+                    {
+                        case ControlActions.UP:
+                            return down ? IsButtonDown(Keys.NumPad8) : IsButtonPressed(Keys.NumPad8);
+                        case ControlActions.DOWN:
+                            return down ? IsButtonDown(Keys.NumPad5) || IsButtonDown(Keys.NumPad2) : 
+                                            IsButtonPressed(Keys.NumPad5) || IsButtonPressed(Keys.NumPad2);
+                        case ControlActions.LEFT:
+                            return down ? IsButtonDown(Keys.NumPad4) : IsButtonPressed(Keys.NumPad4);
+                        case ControlActions.RIGHT:
+                            return down ? IsButtonDown(Keys.NumPad6) : IsButtonPressed(Keys.NumPad6);
+                        case ControlActions.HOLD:
+                            return down ? IsButtonDown(Keys.NumPad7) || IsButtonDown(Keys.NumPad9) :
+                                            IsButtonPressed(Keys.NumPad7) || IsButtonDown(Keys.NumPad9);
+                        case ControlActions.ACTION:
+                            return down ? IsButtonDown(Keys.NumPad0) : IsButtonPressed(Keys.NumPad0);
+                        case ControlActions.PAUSE:
+                            return down ? (IsButtonDown(Keys.P) || IsButtonDown(Keys.Escape)) : (IsButtonPressed(Keys.P) || IsButtonPressed(Keys.Escape));
+                        case ControlActions.EXIT:
+                            return down ? IsButtonDown(Keys.Escape) : IsButtonPressed(Keys.Escape);
+
+                        case ControlActions.ADD_AI:
+                            return IsButtonPressed(Keys.OemPlus);
+                        case ControlActions.REMOVE_AI:
+                            return IsButtonPressed(Keys.OemMinus);
+                    }
+                    break;
+
                 case ControlType.GAMEPAD0:
                 case ControlType.GAMEPAD1:
                 case ControlType.GAMEPAD2:
