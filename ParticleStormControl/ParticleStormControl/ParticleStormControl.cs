@@ -199,7 +199,7 @@ namespace ParticleStormControl
 
             inGame.Update(gameTime);
 
-            if (InputManager.Instance.IsButtonPressed(Keys.F1))
+            if (InputManager.Instance.IsButtonPressed(Keys.F12))
                 showStatistics = !showStatistics;
         }
 
