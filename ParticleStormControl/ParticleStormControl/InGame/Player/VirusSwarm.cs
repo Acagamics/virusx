@@ -70,7 +70,6 @@ namespace ParticleStormControl
         public float HealthStart
         { get { return HEALTH_byVirus[virusIndex]; } }
 
-
         /// <summary>
         /// returns a mass constant that implies how many particles are spawned per base
         /// </summary>
