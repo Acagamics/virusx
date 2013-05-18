@@ -42,6 +42,8 @@ namespace ParticleStormControl
             quadVertexBuffer = new VertexBuffer(device, ScreenTriangleRenderer.ScreenAlignedTriangleVertex.VertexDeclaration, 4, BufferUsage.WriteOnly);
             quadVertexBuffer.SetData(new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) });
 
+            cellColorTexture = new Texture2D(device, 32, 1, false, SurfaceFormat.Color);
+
         //    ParticleStormControl.DeviceLostEvent += () => { Resize(device, areaInPixel, relativeCoordMax); };
         }
 
@@ -55,11 +57,6 @@ namespace ParticleStormControl
 
             // new cellcolors
             backgroundShader.Parameters["CellColorTexture"].SetValue((Texture2D)null);
-            if (cellColorTexture == null || cellColorTexture.Width != cellPositions.Count)
-            {
-                if (cellColorTexture != null) cellColorTexture.Dispose();
-                cellColorTexture = new Texture2D(device, cellPositions.Count, 1, false, SurfaceFormat.Color);
-            }
 
             // new settings
             backgroundShader.Parameters["NumCells"].SetValue(cellPositions.Count);
@@ -127,7 +124,7 @@ namespace ParticleStormControl
             cellColorTexture.GraphicsDevice.Textures[0] = null;
             cellColorTexture.GraphicsDevice.Textures[1] = null;
             System.Diagnostics.Debug.Assert(colors.Length == cellPositions.Count);
-            cellColorTexture.SetData(colors);
+            cellColorTexture.SetData(colors.Concat(Enumerable.Repeat(Color.Black, cellColorTexture.Width - colors.Length)).ToArray());
         }
 
         public void Draw(GraphicsDevice device, float totalTimeSeconds)
@@ -141,10 +138,12 @@ namespace ParticleStormControl
 
             // cells
             backgroundShader.Parameters["PosScale"].SetValue(posScale);
-            backgroundShader.Parameters["PosOffset"].SetValue(posOffset + new Vector2(-0.5f / (float)device.Viewport.Width, 0.5f / (float)device.Viewport.Height));   // + half pixel correction
+            backgroundShader.Parameters["PosOffset"].SetValue(posOffset);
             backgroundShader.Parameters["RelativeMax"].SetValue(Vector2.One);
             backgroundShader.Parameters["BackgroundTexture"].SetValue(backgroundTexture);
             backgroundShader.Parameters["CellColorTexture"].SetValue(cellColorTexture);
+            backgroundShader.Parameters["HalfPixelCorrection"].SetValue(new Vector2(0.5f / backgroundTexture.Width, 0.5f / backgroundTexture.Height));
+            
             device.SetVertexBuffer(quadVertexBuffer);
             backgroundShader.CurrentTechnique.Passes[0].Apply();
             device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);

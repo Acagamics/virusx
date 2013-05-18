@@ -7,14 +7,15 @@ int NumCells;
 float2 PosOffset;
 float2 PosScale;
 float2 RelativeMax;
+float2 HalfPixelCorrection;
 
 texture BackgroundTexture;
 sampler2D sampBackground = sampler_state
 {	
 	Texture = <BackgroundTexture>;
-    MagFilter = LINEAR;	// this sucks!
-    MinFilter = LINEAR;
-    Mipfilter = LINEAR;
+    MagFilter = POINT;
+    MinFilter = POINT;
+    Mipfilter = POINT;
 };
 
 texture CellColorTexture;
@@ -43,7 +44,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
     VertexShaderOutput output;
 	output.Position.xy = input.Position * PosScale + PosOffset;
 	output.Position.zw = float2(0,1);
-	output.Texcoord = input.Position * RelativeMax;
+	output.Texcoord = input.Position * RelativeMax + HalfPixelCorrection;
     return output;
 }
 
@@ -76,7 +77,7 @@ float4 ComputeBackground_PS(VertexShaderOutput input) : COLOR0
 			maxComp = comp;
 		}
     }
-	cellColorTexcoord /= NumCells-1 + 0.5f / NumCells;
+	cellColorTexcoord /= MAX_NUM_CELLS-1 + 0.5f / MAX_NUM_CELLS;
 
 	float worleySecond = worley - maxComp;
 	float value = min(log(worley / worleySecond), 10.0f);	// loga - logb

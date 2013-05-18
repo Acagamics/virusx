@@ -452,11 +452,19 @@ namespace ParticleStormControl
         {
             switch (i)
             {
-                case 1: mapObjects.Add(new Debuff(position, contentManager)); break;
-                case 2: mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager)); break;
-                case 3: mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager)); break;
-                case 4: mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager)); break;
-                default: break;
+                case 1:
+                    mapObjects.Add(new Debuff(position, contentManager));
+                    break;
+                case 2:
+                    mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
+                    break;
+                case 3:
+                    if(Settings.Instance.GameMode != InGame.GameMode.CAPTURE_THE_CELL)
+                        mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
+                    break;
+                case 4:
+                    mapObjects.Add(new Item(position, Item.ItemType.WIPEOUT, contentManager));
+                    break;
             }
         }
 
@@ -631,7 +639,7 @@ namespace ParticleStormControl
 
                 spriteBatch.DrawString(fontCountdownLarge, text,
                                        new Vector2(mutateBigRect.X - fontCountdownLarge.MeasureString(text).X / 2,
-                                                     mutateBigRect.Y - fontCountdownLarge.MeasureString(text).Y / 2 + 10),
+                                                     mutateBigRect.Y - fontCountdownLarge.MeasureString(text).Y / 2),
                                     Color.LightGray, 0.0f, Vector2.Zero, 1, SpriteEffects.None, 0.0f);
             }
         }
