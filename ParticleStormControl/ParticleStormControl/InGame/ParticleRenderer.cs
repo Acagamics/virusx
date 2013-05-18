@@ -47,7 +47,7 @@ namespace ParticleStormControl
 
         private Effect particleEffect;
 
-        private static readonly Vector2 RENDERING_SIZE_CONSTANT = new Vector2(0.009f / Level.RELATIVECOR_ASPECT_RATIO, 0.009f) / VirusSwarm.HEALTH_CONSTANT;
+        private static readonly Vector2 RENDERING_SIZE_CONSTANT = new Vector2(0.009f / Level.RELATIVECOR_ASPECT_RATIO, 0.009f) / 15.0f;
         private const float minimumHealth = 5.0f;  // added to the health in rendering shader
 
         public ParticleRenderer(GraphicsDevice device, ContentManager content, int numPlayers)

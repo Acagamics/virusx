@@ -26,8 +26,6 @@ namespace ParticleStormControl
 
         private readonly Stopwatch explosionTimer = new Stopwatch();
         
-
-        private SoundEffect explosionSound;
         private Texture2D itemTexture;
         private Texture2D explosionTexture;
 
@@ -36,7 +34,6 @@ namespace ParticleStormControl
         public Debuff(Vector2 Position, ContentManager content)
             : base(Position, -1, 0.01f, 20.0f, 3)
         {
-            explosionSound = content.Load<SoundEffect>("sound/explosion");
             explosionTexture = content.Load<Texture2D>("explosion");
             itemTexture = content.Load<Texture2D>("items/debuff");
 
@@ -46,8 +43,7 @@ namespace ParticleStormControl
 
         protected override void OnPossessingChanged()
         {
-            if(Settings.Instance.Sound)
-                explosionSound.Play();
+            AudioManager.Instance.PlaySoundeffect("explosion");
             explosionTimer.Start();
             explosionRotation = (float)(Random.NextDouble()*MathHelper.TwoPi);
         }

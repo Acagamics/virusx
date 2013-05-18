@@ -25,7 +25,6 @@ namespace ParticleStormControl.Menu
         Texture2D texture;
         SpriteFont fontSmall;
         SpriteFont fontBig;
-        SoundEffect soundEffect;
 
         #endregion
 
@@ -162,7 +161,6 @@ namespace ParticleStormControl.Menu
             texture = content.Load<Texture2D>("pix");
             fontSmall = content.Load<SpriteFont>("fonts/font");
             fontBig = content.Load<SpriteFont>("fonts/fontHeading");
-            soundEffect = content.Load<SoundEffect>("sound/room__snare-switchy");
         }
 
         public override void Update(GameTime gameTime)
@@ -172,8 +170,8 @@ namespace ParticleStormControl.Menu
             selectedNow = selected();
             
             // play sound if button got selected
-            if(selectedNow && !selectedPrevious && Settings.Instance.Sound)
-                soundEffect.Play();
+            if(selectedNow && !selectedPrevious)
+                AudioManager.Instance.PlaySoundeffect("click");
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
