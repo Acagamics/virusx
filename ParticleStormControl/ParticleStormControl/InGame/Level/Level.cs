@@ -113,6 +113,11 @@ namespace ParticleStormControl
         public bool UseItems { get; set; }
 
         /// <summary>
+        /// if this is set to true, all player items will be removed in the next level update step
+        /// </summary>
+        private bool clearAllItems = false;
+
+        /// <summary>
         /// item possebilities [0] = no item; [5] = no item; [1] = antibody; [2] = dangerZone; [3] = mutate; [4] = wipeout
         /// every value is [i-1] + possebility
         /// </summary>
@@ -435,6 +440,13 @@ namespace ParticleStormControl
                     // restart timer
                     pickuptimer.Reset();
                     pickuptimer.Start();
+                }
+                // remove all player items after a wipeout
+                if (clearAllItems)
+                {
+                    foreach (Player p in players)
+                        p.ItemSlot = Item.ItemType.NONE;
+                    clearAllItems = false;
                 }
             }
 
@@ -766,6 +778,7 @@ namespace ParticleStormControl
 
                 case Item.ItemType.WIPEOUT:
                     mapObjects.Add(DamageArea.CreateWipeout(contentManager));
+                    clearAllItems = true;
                     break;
             }
             // statistic
