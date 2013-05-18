@@ -107,7 +107,10 @@ namespace ParticleStormControl
 
         override public Color ComputeColor()
         {
-            return Color.Lerp(Color.White, Color.Black, PossessingPercentage);
+            Color resColor = Color.Lerp(Color.White, Color.Black, PossessingPercentage);
+            Vector4 w = resColor.ToVector4();
+            w.W = opacity;
+            return new Color(w);
         }
 
         public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime)
