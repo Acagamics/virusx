@@ -101,7 +101,7 @@ namespace ParticleStormControl
 
         public override void DrawToDamageMap(SpriteBatch spriteBatch)
         {
-            Color damage = VirusSwarm.TextureDamageValue[PlayerIndex] * (DEATH_DAMAGE * Size);
+            Color damage = VirusSwarm.GetDamageMapDrawColor(PlayerIndex) * (DEATH_DAMAGE * Size);
             spriteBatch.Draw(deadPlayerCursor, DamageMap.ComputePixelRect(Position, Size), null, damage, currentRotation, 
                                 new Vector2(deadPlayerCursor.Width, deadPlayerCursor.Height) * 0.5f, SpriteEffects.None, 0);
         }

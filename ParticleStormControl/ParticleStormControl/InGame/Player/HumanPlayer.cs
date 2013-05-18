@@ -45,19 +45,6 @@ namespace ParticleStormControl
                 level.PlayerUseItem(this);
                 ItemSlot = Item.ItemType.NONE;
             }
-            /*      
-      #if DEBUG
-                  // save particle textures on pressing space
-                  if (InputManager.Instance.PressedButton(Keys.Tab))
-                  {
-                      using (var file = new System.IO.FileStream("position target " + playerIndex + ".png", System.IO.FileMode.Create))
-                          positionTargets[currentTargetIndex].SaveAsPng(file, maxParticlesSqrt, maxParticlesSqrt);
-                      using (var file = new System.IO.FileStream("info target " + playerIndex + ".png", System.IO.FileMode.Create))
-                          infoTargets[currentTargetIndex].SaveAsPng(file, maxParticlesSqrt, maxParticlesSqrt);
-                      using (var file = new System.IO.FileStream("movement target " + playerIndex + ".png", System.IO.FileMode.Create))
-                          movementTexture[currentTargetIndex].SaveAsPng(file, maxParticlesSqrt, maxParticlesSqrt);
-                  }
-      #endif     */
         }
     }
 }
