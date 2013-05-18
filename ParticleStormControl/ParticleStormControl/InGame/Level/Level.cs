@@ -152,6 +152,9 @@ namespace ParticleStormControl
 
         public Level(GraphicsDevice device, ContentManager content)
         {
+            // TODO remove this as soon as the property is set by the settings
+            UseItems = true;
+
             this.contentManager = content;
 
             pickuptimer = new Stopwatch();
