@@ -108,6 +108,12 @@ namespace ParticleStormControl
         #region item possibilities
 
         /// <summary>
+        /// if this is set to true, all player items will be removed in the next level update step
+        /// the same goes for all items in the level.
+        /// </summary>
+        private bool clearAllItems = false;
+
+        /// <summary>
         /// item possebilities [0] = no item; [5] = no item; [1] = antibody; [2] = dangerZone; [3] = mutate; [4] = wipeout
         /// every value is [i-1] + possebility
         /// </summary>
@@ -147,6 +153,9 @@ namespace ParticleStormControl
 
         public Level(GraphicsDevice device, ContentManager content)
         {
+            // TODO remove this as soon as the property is set by the settings
+            UseItems = true;
+
             this.contentManager = content;
 
             pickuptimer = new Stopwatch();
@@ -391,6 +400,12 @@ namespace ParticleStormControl
             // remove dead objects
             for (int i = 0; i < mapObjects.Count; ++i)
             {
+                if (UseItems && clearAllItems)
+                {
+                    // remove all Items from the level after a wipeout
+                    if (mapObjects[i] is Item || mapObjects[i] is Debuff)
+                        mapObjects[i].Alive = false;
+                }
                 if (!mapObjects[i].Alive)
                 {
                     // if its a item, give it to a player if its 100% his
@@ -427,6 +442,13 @@ namespace ParticleStormControl
                     // restart timer
                     pickuptimer.Reset();
                     pickuptimer.Start();
+                }
+                // remove all player items after a wipeout
+                if (clearAllItems)
+                {
+                    foreach (Player p in players)
+                        p.ItemSlot = Item.ItemType.NONE;
+                    clearAllItems = false;
                 }
             }
 
@@ -758,6 +780,7 @@ namespace ParticleStormControl
 
                 case Item.ItemType.WIPEOUT:
                     mapObjects.Add(DamageArea.CreateWipeout(contentManager));
+                    clearAllItems = true;
                     break;
             }
             // statistic
