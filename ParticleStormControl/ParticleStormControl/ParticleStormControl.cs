@@ -24,6 +24,31 @@ using System.Diagnostics;
 
 #endif
 
+namespace CustomExtensions
+{
+    /// <summary>
+    /// some helpful methods for Points
+    /// sorry, no operator overloading :(
+    /// </summary>
+    public static class PointExtensions
+    {
+        public static Point Add(this Point p1, Point p2)
+        {
+            return new Point(p1.X + p2.X, p1.Y + p2.Y);
+        }
+
+        public static Point Add(this Point p, int value)
+        {
+            return new Point(p.X + value, p.Y + value);
+        }
+
+        public static Vector2 ToVector2(this Point p)
+        {
+            return new Vector2(p.X, p.Y);
+        }
+    }
+}
+
 namespace ParticleStormControl
 {
     /// <summary>
