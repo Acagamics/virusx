@@ -138,6 +138,7 @@ namespace ParticleStormControl
         /// </summary>
         public void ReadSettings()
         {
+            bool dirty = false;
             Reset();
             try
             {
@@ -153,10 +154,13 @@ namespace ParticleStormControl
                                 resolutionX = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionX"));
                                 resolutionY = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionY"));
                                 
-                            // validate resolution
-                                if (GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Single(x => x.Format == SurfaceFormat.Color && 
+                                // validate resolution
+                                if (GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Single(x => x.Format == SurfaceFormat.Color &&
                                                                                                 x.Height == resolutionY && x.Width == resolutionX) != null)
+                                {
                                     ChooseStandardResolution();
+                                    dirty = true;
+                                }
                                 break;
 
                             case "sound":
@@ -178,12 +182,15 @@ namespace ParticleStormControl
                 try
                 {
                     Reset();
-                    Save();
+                    dirty = true;
                 }
                 catch
                 {
                 }
             }
+
+            if(dirty)
+                Save();
         }
 
         public void Save()
