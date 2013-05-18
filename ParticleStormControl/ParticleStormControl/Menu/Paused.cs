@@ -42,8 +42,8 @@ namespace ParticleStormControl.Menu
             // continue & mainmenu
             const int BUTTON_WIDTH = 150;
             float y = positionPaused.Y + 180;
-            Interface.Add(new InterfaceButton("Continue", new Vector2((menu.ScreenWidth) / 2 - 20 - BUTTON_WIDTH, y), () => { return currentButton == Buttons.CONTINUE; }, BUTTON_WIDTH));
-            Interface.Add(new InterfaceButton("Quit to Menu", new Vector2(menu.ScreenWidth / 2 + 20, y), () => { return currentButton == Buttons.QUIT_TO_MAINMENU; }, BUTTON_WIDTH));
+            Interface.Add(new InterfaceButton("► Continue", new Vector2((menu.ScreenWidth) / 2 - 20 - BUTTON_WIDTH, y), () => { return currentButton == Buttons.CONTINUE; }, BUTTON_WIDTH));
+            Interface.Add(new InterfaceButton("► Quit to Menu", new Vector2(menu.ScreenWidth / 2 + 20, y), () => { return currentButton == Buttons.QUIT_TO_MAINMENU; }, BUTTON_WIDTH));
             y += 100;
 
             // disconnected message
@@ -101,6 +101,7 @@ namespace ParticleStormControl.Menu
                     InputManager.Instance.ResetWaitingForReconnect();
                     menu.ChangePage(Menu.Page.INGAME, gameTime);
                 }
+
                 // back to menu
                 if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, ControllingPlayer))
                 {

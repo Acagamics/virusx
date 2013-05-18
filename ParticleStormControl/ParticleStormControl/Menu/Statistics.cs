@@ -103,7 +103,7 @@ namespace ParticleStormControl.Menu
             Interface.Add(diagramDescription);
 
             // continue button
-            string text = "continue";
+            string text = "► Continue";
             int width = (int)menu.Font.MeasureString(text).X;
             Interface.Add(new InterfaceButton(text, new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, 
                                                                     menu.GetFontHeight() + InterfaceImageButton.PADDING * 2 + 50),

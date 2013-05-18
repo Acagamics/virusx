@@ -188,10 +188,10 @@ namespace ParticleStormControl.Menu
         /// </summary>
         /// <param name="selected"></param>
         /// <param name="maximum"></param>
-        /// <param name="control">If none, every control works</param>
+        /// <param name="control">If InputManager.ControlType.NONE, any control is working</param>
         /// <param name="horizontal">If true: left/right, if false: up/down</param>
         /// <returns></returns>
-        public static int LoopEnum(int selected, int maximum, InputManager.ControlType control = InputManager.ControlType.NONE, bool horizontal = false)
+        public static int Loop(int selected, int maximum, InputManager.ControlType control = InputManager.ControlType.NONE, bool horizontal = false)
         {
             // loopin
             if (control == InputManager.ControlType.NONE)
@@ -227,6 +227,31 @@ namespace ParticleStormControl.Menu
                     else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.UP, control))
                         selected = selected == 0 ? maximum - 1 : selected - 1;
                 }
+            }
+            return selected;
+        }
+
+        /// <summary>
+        /// helper function for toggling boolean settings in menus
+        /// </summary>
+        /// <param name="selected"></param>
+        /// <param name="control">If InputManager.ControlType.NONE, any control is working</param>
+        /// <returns></returns>
+        public static bool Toggle(bool selected, InputManager.ControlType control = InputManager.ControlType.NONE)
+        {
+            if (control == InputManager.ControlType.NONE)
+            {
+                if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT)
+                    || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT)
+                    || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION))
+                    return !selected;
+            }
+            else
+            {
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, control)
+                    || InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, control)
+                    || InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, control))
+                    return !selected;
             }
             return selected;
         }

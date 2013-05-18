@@ -23,6 +23,13 @@ namespace ParticleStormControl
             SpawnPoint ignoreSpawnPoint = null;
             float maxIgnoreTime = 2.5f;
             float ignoreTime = 0f;
+            
+            // items
+            bool ignoreItem = false;
+            float timeOnItem = 0f;
+            float maxTimeOnItem = 2.5f;
+            float ignoreItemTime = 0f;
+            float maxIgnoreItemTime = 4f;
 
             public Vector2 LastTargetPosition { get { return lastTarget != null ? lastTarget.Position : Vector2.Zero; } }
             public Vector2 IgnorePosition { get { return ignoreSpawnPoint != null ? ignoreSpawnPoint.Position : Vector2.Zero; } }
@@ -61,9 +68,9 @@ namespace ParticleStormControl
                         if (ignoreSpawnPoint == null)
                         {
                             ignoreSpawnPoint = possibleTarget;
-                            ignoreTime = 0f;
+                            ignoreTime = 0f + (float)Random.NextDouble(0.5) + 0.25f;
                         }
-                        timeOnTarget = 0f;
+                        timeOnTarget -= maxTimeOnTarget;
 
                         possibleTarget = SelectTarget(level, player);
 
@@ -73,22 +80,52 @@ namespace ParticleStormControl
                             possibleTarget = lastTarget;
                     }
                 }
-                else timeOnTarget = 0f;
+                else timeOnTarget = 0f + (float)Random.NextDouble(0.5) + 0.25f;
 
                 Item possibleItem = SelectItem(level, player);
 
-                // TODO better selection if the item should be collected or not (distance alone is not sufficant)
-                /*if (possibleItem != null && player.ItemSlot == Item.ItemType.NONE
-                    && (Vector2.DistanceSquared(possibleTarget.Position,possibleItem.Position) < Vector2.DistanceSquared(possibleItem.Position, ownTerritoriumMid)))
+                bool selectSpawnPoint = true;
+                float influenceCircle = 0.2f;
+                if (!ignoreItem && possibleItem != null && player.ItemSlot == Item.ItemType.NONE)
                 {
-                        newTarget = possibleItem.Position;
+                    if (possibleTarget.CapturingPlayer == player.Index && possibleTarget.PossessingPercentage > 0.75f)
+                    {
+                        selectSpawnPoint = true;
+                    }
+                    else
+                    {
+                        float distSq = Vector2.DistanceSquared(possibleItem.Position, player.ParticleAttractionPosition);
+                        if (influenceCircle >= distSq)
+                        {
+                            newTarget = possibleItem.Position;
+                            selectSpawnPoint = false;
+                        }
+                        timeOnItem += frameTimeInterval;
+                        if (timeOnItem >= maxTimeOnItem)
+                        {
+                            ignoreItem = true;
+                            ignoreItemTime = 0f - (float)Random.NextDouble(0.2) - 0.1f;
+                            selectSpawnPoint = true;
+                        }
+                    }
+                        
                 }
-                else
-                {*/
+                if (selectSpawnPoint)
+                {
                     newTarget = possibleTarget.Position;
                     lastTarget = possibleTarget;
                     lastTargetPossessingPercentage = lastTarget.PossessingPercentage;
-                //}
+                }
+
+                if (ignoreItem)
+                {
+                    ignoreItemTime += frameTimeInterval;
+                    if (ignoreItemTime >= maxIgnoreItemTime)
+                    {
+                        timeOnItem = 0f - (float)Random.NextDouble(0.3) - 0.1f;
+                        ignoreItem = false;
+                    }
+                }
                 return newTarget;
             }
 
@@ -168,8 +205,13 @@ namespace ParticleStormControl
 
                 var distanceList = items.OrderBy(x => Vector2.DistanceSquared(player.CursorPosition, x.Position));
 
-                // TODO check the type of item and the current game situation to determine which item is the most useful to collect
                 possibleTarget = distanceList.First() as Item;
+                if (player.PossessingSpawnPoints <= 3)
+                {
+                    var switchList = distanceList.Where(x => (x as Item).Type == Item.ItemType.MUTATION);
+                    if (switchList.Count() > 0)
+                        possibleTarget = switchList.First() as Item;
+                }
                 return possibleTarget;
             }
 

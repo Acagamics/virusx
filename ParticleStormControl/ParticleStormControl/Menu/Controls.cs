@@ -63,7 +63,7 @@ namespace ParticleStormControl.Menu
                 Alignment.TOP_CENTER));
 
             // back button
-            string label = "Back to Menu";
+            string label = "► Back to Menu";
             Interface.Add(new InterfaceButton(label, new Vector2(-(int)(menu.Font.MeasureString(label).X / 2), 100), () => { return true; }, Alignment.BOTTOM_CENTER));
         }
 
