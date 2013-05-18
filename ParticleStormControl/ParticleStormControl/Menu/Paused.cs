@@ -84,26 +84,28 @@ namespace ParticleStormControl.Menu
             // if keyboard, anybody is allowed!
             bool otherKeyboard = false;
             int controllerBefore = ControllingPlayer;
-            if(InputManager.IsKeyboardControlType(Settings.Instance.GetPlayer(ControllingPlayer).ControlType))
+            List<int> controls = new List<int>();
+            if (InputManager.IsKeyboardControlType(Settings.Instance.GetPlayer(ControllingPlayer).ControlType))
             {
-                int i = Array.IndexOf(Settings.Instance.GetPlayerSettingSelection(x => x.ControlType).ToArray(), Settings.Instance.GetPlayer(ControllingPlayer));
-                if (i >= 0)
+                for (int i = 0; i < Settings.Instance.NumPlayers; ++i)
                 {
-                    otherKeyboard = true;
-                    ControllingPlayer = i;
+                    if (InputManager.IsKeyboardControlType(Settings.Instance.GetPlayer(i).ControlType))
+                        controls.Add(i);
                 }
             }
-            do
+            else
+                controls.Add(ControllingPlayer);
+            foreach(int controllerIndex in controls)
             {
                 // back to game
-                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.PAUSE, ControllingPlayer))
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.PAUSE, controllerIndex))
                 {
                     InputManager.Instance.ResetWaitingForReconnect();
                     menu.ChangePage(Menu.Page.INGAME, gameTime);
                 }
 
                 // back to menu
-                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, ControllingPlayer))
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, controllerIndex))
                 {
                     InputManager.Instance.ResetWaitingForReconnect();
                     menu.ChangePage(Menu.Page.MAINMENU, gameTime);
@@ -114,7 +116,7 @@ namespace ParticleStormControl.Menu
                 //      menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
                 // selected?
-                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, ControllingPlayer))
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, controllerIndex))
                 {
                     InputManager.Instance.ResetWaitingForReconnect();
                     if (currentButton == Buttons.CONTINUE)
@@ -124,14 +126,10 @@ namespace ParticleStormControl.Menu
                 }
 
                 // changed option
-                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, ControllingPlayer) ||
-                    InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, ControllingPlayer))
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, controllerIndex) ||
+                    InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, controllerIndex))
                     currentButton = currentButton == Buttons.CONTINUE ? Buttons.QUIT_TO_MAINMENU : Buttons.CONTINUE;
-
-
-                otherKeyboard = ControllingPlayer != controllerBefore;
-                ControllingPlayer = controllerBefore;
-            } while (otherKeyboard);
+            }
 
 
             // unconnected players?
