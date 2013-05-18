@@ -180,6 +180,8 @@ namespace ParticleStormControl
             switchCountdownActive = false;
 
             // create level
+            spawnPoints.Clear();
+            mapObjects.Clear();
             mapObjects.AddRange(MapGenerator.GenerateLevel(mapType, device, contentManager, players.Length, background));
             spawnPoints.AddRange(mapObjects.OfType<SpawnPoint>());
 

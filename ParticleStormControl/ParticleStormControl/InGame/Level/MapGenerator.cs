@@ -12,7 +12,9 @@ namespace ParticleStormControl
     {
         private const float LEVEL_BORDER = 0.2f;
         private const float NORMAL_PLAYER_CELL_STRENGTH = 1000.0f;
-        private const float MONSTER_CELL_STRENGTH = NORMAL_PLAYER_CELL_STRENGTH * 2.5f;
+
+        private const float CTC_NORMAL_PLAYER_CELL_STRENGTH = 800.0f;
+        private const float MONSTER_CELL_STRENGTH = CTC_NORMAL_PLAYER_CELL_STRENGTH * 3;
 
         /// <summary>
         /// possible maps to generate
@@ -142,26 +144,27 @@ namespace ParticleStormControl
             List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
             spawnPoints.Add(new SpawnPoint(playerHQs[0], MONSTER_CELL_STRENGTH, 0, content));
             for(int i=1; i<numPlayers; ++i)
-                spawnPoints.Add(new SpawnPoint(playerHQs[i], NORMAL_PLAYER_CELL_STRENGTH, i, content));
+                spawnPoints.Add(new SpawnPoint(playerHQs[i], CTC_NORMAL_PLAYER_CELL_STRENGTH, i, content));
             
             // other cells
             Vector2[] otherCells = new Vector2[]
             {
                 // upper
-                new Vector2(Level.RELATIVE_MAX.X / 2 - Level.RELATIVE_MAX.X / 10, LEVEL_BORDER*0.8f),
-                new Vector2(Level.RELATIVE_MAX.X / 2 + Level.RELATIVE_MAX.X / 10, LEVEL_BORDER*0.8f),
+                new Vector2(Level.RELATIVE_MAX.X / 2 - Level.RELATIVE_MAX.X / 6, LEVEL_BORDER*0.6f),
+                new Vector2(Level.RELATIVE_MAX.X / 2, LEVEL_BORDER*0.9f),
+                new Vector2(Level.RELATIVE_MAX.X / 2 + Level.RELATIVE_MAX.X / 6, LEVEL_BORDER*0.6f),
 
                 // lower left
                 new Vector2(LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER),
                 new Vector2(LEVEL_BORDER + 0.4f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.05f),
                 new Vector2(LEVEL_BORDER + 0.1f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.2f),
-                new Vector2(LEVEL_BORDER + 0.2f, Level.RELATIVE_MAX.Y / 2),
+                new Vector2(LEVEL_BORDER, Level.RELATIVE_MAX.Y / 2),
 
                 // lower right
                 new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER),
                 new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER - 0.4f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.05f),
                 new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER - 0.1f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.2f),
-                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER - 0.2f, Level.RELATIVE_MAX.Y / 2),
+                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, Level.RELATIVE_MAX.Y / 2),
             };
             for(int i=0; i<otherCells.Length; ++i)
                 spawnPoints.Add(new SpawnPoint(otherCells[i], GetStandardSpawnSizeDependingFromArea(otherCells, otherCells[i]), -1, content));
