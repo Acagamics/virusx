@@ -22,7 +22,13 @@ namespace ParticleStormControl.Menu
 
         private Texture2D icons;
 
+        /// <summary>
+        /// winning player index
+        /// meaning differns with the game time
+        /// </summary>
         public int WinPlayerIndex { get; set; }
+        public Player.Teams WinningTeam { get; set; }
+
         public Player.Type[] PlayerTypes { get; set; }
         public int[] PlayerColorIndices { get; set; }
 
@@ -68,8 +74,23 @@ namespace ParticleStormControl.Menu
             // header um eins verschoben
 
             // draw winning string
-            winnerLabel = new InterfaceButton(() => { return Player.ColorNames[PlayerColorIndices[WinPlayerIndex]] + " wins!"; },
-                                                Vector2.Zero,   // positioning later - string size changes!
+            Func<string> winnerLabelString = () =>
+            {
+                switch (WinningTeam)
+                {
+                    case Player.Teams.NONE:
+                        return Player.ColorNames[PlayerColorIndices[WinPlayerIndex]] + " wins!";
+                    case Player.Teams.LEFT:
+                    case Player.Teams.RIGHT:
+                    case Player.Teams.ATTACKER:
+                        return Player.TEAM_NAMES[(int)WinningTeam] + " wins!";
+                    case Player.Teams.DEFENDER:
+                        return Player.TEAM_NAMES[(int)WinningTeam] + " win!";
+                    default:
+                        throw new NotImplementedException("Unknown team type - can't generate winning string!");
+                }
+            };
+            winnerLabel = new InterfaceButton(winnerLabelString, Vector2.Zero,   // positioning later - string size changes!
                                                 () => { return false; },
                                                 Color.White, Color.FromNonPremultiplied(255, 255, 255, 0), Alignment.TOP_CENTER);
             Interface.Add(winnerLabel); 
@@ -161,7 +182,10 @@ namespace ParticleStormControl.Menu
                 }
             }
 
-            winnerLabel.BackgroundColor = Player.Colors[PlayerColorIndices[WinPlayerIndex]];
+            if(WinPlayerIndex >= 0)
+                winnerLabel.BackgroundColor = Player.Colors[PlayerColorIndices[WinPlayerIndex]];
+            else
+                winnerLabel.BackgroundColor = Color.Black;
             winnerLabel.Position = new Vector2(-(int)menu.FontHeading.MeasureString(winnerLabel.Text()).X / 2, 60);
 
             timeUntilContinueIsAvailable = DURATION_CONTINUE_UNAVAILABLE;
@@ -219,7 +243,7 @@ namespace ParticleStormControl.Menu
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.SPAWN_POINTS:
-                    DrawDiagram(spriteBatch, (progress, player) => DataInterpolation(progress, x => statistics.getPossessingSpawnPointsInStep(player, x), statistics.Steps - 1) / statistics.OverallNumberOfSpawnPoints,
+                    DrawDiagram(spriteBatch, (progress, player) => ((float)statistics.getPossessingSpawnPointsInStep(player, (int)(progress * statistics.Steps)) / statistics.OverallNumberOfSpawnPoints),
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
             }

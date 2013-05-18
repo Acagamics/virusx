@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using Game = global::ParticleStormControl.InGame;
+
 namespace ParticleStormControl.Menu
 {
     class Mode : MenuPage
@@ -27,8 +29,6 @@ namespace ParticleStormControl.Menu
         };
         Button selectedButton = Button.MODE;
 
-        NewGame.GameMode gameMode = NewGame.GameMode.CLASSIC;
-
         InterfaceButton useItemsButton;
 
         public Mode(Menu menu)
@@ -37,7 +37,7 @@ namespace ParticleStormControl.Menu
             Interface.Add(new InterfaceButton("New Game", new Vector2(100, 100), true));
 
             Interface.Add(new InterfaceButton("Game mode", new Vector2(100, 220), () => { return selectedButton == Button.MODE; }));
-            Interface.Add(new InterfaceButton(() => { return "◄ " + NewGame.GAMEMODE_NAME[(int)gameMode] + " ►"; }, new Vector2(450, 220)));
+            Interface.Add(new InterfaceButton(() => { return "◄ " + Game.GAMEMODE_NAME[(int)Settings.Instance.GameMode] + " ►"; }, new Vector2(450, 220)));
             Interface.Add(new InterfaceButton("Items", new Vector2(100, 280), () => { return selectedButton == Button.ITEMS; }));
             useItemsButton = new InterfaceButton(() => { return Settings.Instance.UseItems ? "◄ ON ►" : "◄ OFF ►"; }, new Vector2(450, 280), () => { return false; }, Color.White, Settings.Instance.UseItems ? Color.Green : Color.Red);
             Interface.Add(useItemsButton);
@@ -69,7 +69,7 @@ namespace ParticleStormControl.Menu
             {
                 // loop game mode or take a shortcut
                 case Button.MODE:
-                    gameMode = (NewGame.GameMode)Menu.Loop((int)gameMode, (int)NewGame.GameMode.NUM_MODES, StartingControls, true);
+                    Settings.Instance.GameMode = (Game.GameMode)Menu.Loop((int)Settings.Instance.GameMode, (int)Game.GameMode.NUM_MODES, StartingControls, true);
                     GotoNewGame(gameTime);
                     break;
                 // toggle items
@@ -101,10 +101,7 @@ namespace ParticleStormControl.Menu
         private void GotoNewGame(GameTime gameTime)
         {
             if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, StartingControls))
-            {
-                ((NewGame)menu.GetPage(Menu.Page.NEWGAME)).Mode = gameMode;
                 menu.ChangePage(Menu.Page.NEWGAME, gameTime);
-            }
         }
     }
 }

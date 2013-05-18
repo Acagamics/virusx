@@ -68,7 +68,7 @@ namespace ParticleStormControl
         public int HighestUsedParticleIndex { get { return virusSwarm.HighestUsedParticleIndex; } }
 
         public Color DamageMapDrawColor { get { return virusSwarm.DamageMapDrawColor; } }
-        public Vector4 DamageMapMaskColor { get { return virusSwarm.DamageMapMaskColor; } }
+        public Vector4 DamageMapMask { get { return virusSwarm.DamageMapMask; } }
 
         #endregion
 
@@ -190,7 +190,16 @@ namespace ParticleStormControl
 
             cursorPosition = cursorStartPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex];
 
-            virusSwarm = new VirusSwarm(virusIndex, playerIndex, team, device, content, noiseTexture);
+            List<int> friendlyPlayers = new List<int>();
+            if (team != Teams.NONE)
+            {
+                for (int player = 0; player < Settings.Instance.NumPlayers; ++player)
+                {
+                    if (Settings.Instance.GetPlayer(player).Team == team)
+                        friendlyPlayers.Add(player);
+                }
+            }
+            virusSwarm = new VirusSwarm(virusIndex, playerIndex, friendlyPlayers, device, content, noiseTexture);
         }
 
         /// <summary>
