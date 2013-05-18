@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace ParticleStormControl.Menu
 {
-    public class Menu
+    class Menu
     {
         public enum Page
         {

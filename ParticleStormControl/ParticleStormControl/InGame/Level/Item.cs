@@ -9,7 +9,7 @@ using System.Text;
 
 namespace ParticleStormControl
 {
-    public class Item : CapturableObject
+    class Item : CapturableObject
     {
         public const float ROTATION_SPEED = 1.0f;
 

@@ -10,6 +10,10 @@ namespace ParticleStormControl
 {
     static class MapGenerator
     {
+        private const float LEVEL_BORDER = 0.2f;
+        private const float NORMAL_PLAYER_CELL_STRENGTH = 1000.0f;
+        private const float MONSTER_CELL_STRENGTH = NORMAL_PLAYER_CELL_STRENGTH * 2.5f;
+
         /// <summary>
         /// possible maps to generate
         /// </summary>
@@ -21,7 +25,10 @@ namespace ParticleStormControl
 
         static public IEnumerable<MapObject> GenerateLevel(MapType mapType, GraphicsDevice device, ContentManager content, int numPlayers, Background outBackground)
         {
-            return GenerateLevel(device, content, numPlayers, outBackground);
+            if (mapType == MapType.CAPTURE_THE_CELL)
+                return GenerateCaptureTheCellLevel(device, content, numPlayers, outBackground);
+            else
+                return GenerateNormalLevel(device, content, numPlayers, outBackground);
         }
 
         static public List<Vector2> GenerateCellPositionGrid(int numX, int numY, float positionJitter, Vector2 border, Vector2 valueRange)
@@ -54,12 +61,11 @@ namespace ParticleStormControl
             return spawnPositions;
         }
 
-        static private IEnumerable<MapObject> GenerateLevel(GraphicsDevice device, ContentManager content, int numPlayers, Background outBackground)
+        static private IEnumerable<MapObject> GenerateNormalLevel(GraphicsDevice device, ContentManager content, int numPlayers, Background outBackground)
         {
             // player starts
             List<Vector2> cellPositions = new List<Vector2>();
-            const float LEVEL_BORDER = 0.2f;
-            const float START_POINT_GLOW_SIZE = 0.35f;
+            
             cellPositions.Add(new Vector2(LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER));
             cellPositions.Add(new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER));
             cellPositions.Add(new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER));
@@ -71,7 +77,7 @@ namespace ParticleStormControl
                 if (Settings.Instance.GetPlayer(playerIndex).Type != Player.Type.NONE)
                 {
                     int slot = Settings.Instance.GetPlayer(playerIndex).SlotIndex;
-                    spawnPoints.Add(new SpawnPoint(cellPositions[slot], 1000.0f, START_POINT_GLOW_SIZE, playerIndex, content));
+                    spawnPoints.Add(new SpawnPoint(cellPositions[slot], NORMAL_PLAYER_CELL_STRENGTH, playerIndex, content));
                 }
             }
 
@@ -96,15 +102,7 @@ namespace ParticleStormControl
 #endif
             // spawn generation
             foreach (Vector2 pos in spawnPositions)
-            {
-                // brute force..
-                double nearestDist = spawnPositions.Min(x => { return x == pos ? 1 : (x - pos).LengthSquared(); });
-
-                float capturesize = (float)(100.0 + nearestDist * nearestDist * 25000);
-                capturesize = Math.Min(capturesize, 1100);
-
-                spawnPoints.Add(new SpawnPoint(pos, capturesize, (float)Math.Sqrt(nearestDist), -1, content));
-            }
+                spawnPoints.Add(new SpawnPoint(pos, GetStandardSpawnSizeDependingFromArea(spawnPositions, pos), -1, content));
 
             // background
             if (outBackground != null)
@@ -116,6 +114,64 @@ namespace ParticleStormControl
                     if (Settings.Instance.GetPlayer(playerIndex).Type == Player.Type.NONE)
                         renderCells.Add(cellPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex]);
                 }
+                outBackground.Generate(device, renderCells, Level.RELATIVE_MAX);
+            }
+
+            return spawnPoints.Cast<MapObject>();
+        }
+
+        static private float GetStandardSpawnSizeDependingFromArea(IEnumerable<Vector2> spawnPositions, Vector2 pos)
+        {
+            double nearestDist = spawnPositions.Min(x => { return x == pos ? 1 : (x - pos).LengthSquared(); });
+            float capturesize = (float)(100.0 + nearestDist * nearestDist * 25000);
+            capturesize = Math.Min(capturesize, 1100);
+            return capturesize;
+        }
+
+        static private IEnumerable<MapObject> GenerateCaptureTheCellLevel(GraphicsDevice device, ContentManager content, int numPlayers, Background outBackground)
+        {
+            Vector2[] playerHQs = new Vector2[]
+            {
+                new Vector2(Level.RELATIVE_MAX.X / 2, 0.45f),  // THE CELL
+                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER - 0.2f, LEVEL_BORDER+0.1f),  // upper right
+                new Vector2(Level.RELATIVE_MAX.X / 2, Level.RELATIVE_MAX.Y - LEVEL_BORDER+0.1f), // lower cell
+                new Vector2(LEVEL_BORDER + 0.2f, LEVEL_BORDER) // upper left
+            };
+
+            // create player cells
+            List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
+            spawnPoints.Add(new SpawnPoint(playerHQs[0], MONSTER_CELL_STRENGTH, 0, content));
+            for(int i=1; i<numPlayers; ++i)
+                spawnPoints.Add(new SpawnPoint(playerHQs[i], NORMAL_PLAYER_CELL_STRENGTH, i, content));
+            
+            // other cells
+            Vector2[] otherCells = new Vector2[]
+            {
+                // upper
+                new Vector2(Level.RELATIVE_MAX.X / 2 - Level.RELATIVE_MAX.X / 10, LEVEL_BORDER*0.8f),
+                new Vector2(Level.RELATIVE_MAX.X / 2 + Level.RELATIVE_MAX.X / 10, LEVEL_BORDER*0.8f),
+
+                // lower left
+                new Vector2(LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER),
+                new Vector2(LEVEL_BORDER + 0.4f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.05f),
+                new Vector2(LEVEL_BORDER + 0.1f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.2f),
+                new Vector2(LEVEL_BORDER + 0.2f, Level.RELATIVE_MAX.Y / 2),
+
+                // lower right
+                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER),
+                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER - 0.4f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.05f),
+                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER - 0.1f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.2f),
+                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER - 0.2f, Level.RELATIVE_MAX.Y / 2),
+            };
+            for(int i=0; i<otherCells.Length; ++i)
+                spawnPoints.Add(new SpawnPoint(otherCells[i], GetStandardSpawnSizeDependingFromArea(otherCells, otherCells[i]), -1, content));
+
+
+            // background
+            if (outBackground != null)
+            {
+                List<Vector2> renderCells = new List<Vector2>(spawnPoints.Select(x => x.Position));// to keep things simple, place spawnpoints at the beginning
+                renderCells.AddRange(playerHQs.Skip(numPlayers));
                 outBackground.Generate(device, renderCells, Level.RELATIVE_MAX);
             }
 

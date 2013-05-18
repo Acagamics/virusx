@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ParticleStormControl
 {
-    public abstract class CapturableObject : MapObject
+    abstract class CapturableObject : MapObject
     {
         private readonly Stopwatch lifeTimer = new Stopwatch();
         protected readonly float lifeTime;  // -1 means infinite

@@ -29,7 +29,7 @@ namespace ParticleStormControl
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class ParticleStormControl : Microsoft.Xna.Framework.Game
+    class ParticleStormControl : Microsoft.Xna.Framework.Game
     {
         public const string VERSION = "version 0.8 - 15.04.2013";
 

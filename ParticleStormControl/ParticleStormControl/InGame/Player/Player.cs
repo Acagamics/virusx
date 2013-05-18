@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ParticleStormControl
 {
-    public abstract class Player
+    abstract class Player
     {
         public const int MAX_NUM_PLAYERS = 4;
 

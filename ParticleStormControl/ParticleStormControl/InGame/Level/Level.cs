@@ -1,5 +1,4 @@
-﻿//#define EMPTY_LEVELDEBUG
-//#define NO_ITEMS
+﻿//#define NO_ITEMS
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -12,7 +11,7 @@ using System.Linq;
 
 namespace ParticleStormControl
 {
-    public class Level
+    class Level
     {
         // statistics
         public Statistics GameStatistics { get; set; }
@@ -176,12 +175,12 @@ namespace ParticleStormControl
             Resize(device);
         }
 
-        public void NewGame(GraphicsDevice device, Player[] players)
+        public void NewGame(MapGenerator.MapType mapType, GraphicsDevice device, Player[] players)
         {
             switchCountdownActive = false;
 
             // create level
-            mapObjects.AddRange(MapGenerator.GenerateLevel(MapGenerator.MapType.NORMAL, device, contentManager, players.Length, background));
+            mapObjects.AddRange(MapGenerator.GenerateLevel(mapType, device, contentManager, players.Length, background));
             spawnPoints.AddRange(mapObjects.OfType<SpawnPoint>());
 
             // crosshairs for players

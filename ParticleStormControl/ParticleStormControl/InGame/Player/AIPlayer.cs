@@ -10,7 +10,7 @@ using System.Text;
 
 namespace ParticleStormControl
 {
-    public class AIPlayer : Player
+    class AIPlayer : Player
     {
 
         class TargetSelector
