@@ -57,11 +57,12 @@ namespace ParticleStormControl
                     Color color = players[playerIndex].Color;
                     color.A = (byte)(255 * TRANSPARENCY);
                     int slot = Settings.Instance.GetPlayer(playerIndex).SlotIndex;
-
                     //Vector2 halfBoxSize = new Vector2(itemBox.Width, itemBox.Height);
                     spriteBatch.Draw(itemBox, itemDisplayRectangles[slot], null, color, 0.0f, Vector2.Zero, flips[slot], 0);
 
-                    DrawItem(spriteBatch, players[playerIndex].ItemSlot, itemDisplayRectangles[slot], corners[slot], color, Item.ROTATION_SPEED * (float)gameTime.TotalGameTime.TotalSeconds);
+                    color.A = (byte)(255 /* TRANSPARENCY*/ * players[playerIndex].ItemAlphaValue);
+                    
+                    DrawItem(spriteBatch, players[playerIndex].ItemSlot, itemDisplayRectangles[slot], corners[slot], color, Item.ROTATION_SPEED * (float)gameTime.TotalGameTime.TotalSeconds, players[playerIndex].ItemAlphaValue);
 
                     // countdown if this player is dying soon
                     if(players[playerIndex].RemainingTimeAlive <  Player.MAX_TIME_WITHOUT_SPAWNPOINT)
@@ -78,7 +79,7 @@ namespace ParticleStormControl
             spriteBatch.End();
         }
 
-        private void DrawItem(SpriteBatch spriteBatch, Item.ItemType type, Rectangle destination, Point corner, Color color, float rotation)
+        private void DrawItem(SpriteBatch spriteBatch, Item.ItemType type, Rectangle destination, Point corner, Color color, float rotation, float itemAlpha)
         {
             const int SIZE_OFFSET = 60;
 
@@ -90,19 +91,19 @@ namespace ParticleStormControl
 
             // centered for rotation
             itemRect.Offset(itemRect.Width / 2, itemRect.Height / 2);
-            
+            float transparency = itemAlpha;
             switch (type)
             {
                 case Item.ItemType.DANGER_ZONE:
-                    spriteBatch.Draw(itemDanger, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
+                    spriteBatch.Draw(itemDanger, itemRect, null, new Color(1.0f, 1.0f, 1.0f, transparency), rotation,
                                                    new Vector2(itemDanger.Width, itemDanger.Height) / 2,SpriteEffects.None, 1); // color);
                     break;
                 case Item.ItemType.MUTATION:
-                    spriteBatch.Draw(itemMutate, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
+                    spriteBatch.Draw(itemMutate, itemRect, null, new Color(1.0f, 1.0f, 1.0f, transparency), rotation,
                                                    new Vector2(itemMutate.Width, itemMutate.Height) / 2, SpriteEffects.None, 1); // color);
                     break;
                 case Item.ItemType.WIPEOUT:
-                    spriteBatch.Draw(itemWipeout, itemRect, null, new Color(1.0f, 1.0f, 1.0f, TRANSPARENCY), rotation,
+                    spriteBatch.Draw(itemWipeout, itemRect, null, new Color(1.0f, 1.0f, 1.0f, transparency), rotation,
                                                    new Vector2(itemWipeout.Width, itemWipeout.Height) / 2, SpriteEffects.None, 1); // color);
                     break;
             }
