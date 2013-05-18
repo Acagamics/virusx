@@ -86,6 +86,9 @@ namespace ParticleStormControl
             set { InputManager.Instance.ActivateRumble = value; forceFeedback = value; }
         }
 
+        private bool useItems = true;
+        public bool UseItems { get { return useItems; } set { useItems = value; } }
+
         #endregion
 
         public void Reset()

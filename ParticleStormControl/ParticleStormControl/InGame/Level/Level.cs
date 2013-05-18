@@ -108,11 +108,6 @@ namespace ParticleStormControl
         #region item possibilities
 
         /// <summary>
-        /// place items or not
-        /// </summary>
-        public bool UseItems { get; set; }
-
-        /// <summary>
         /// item possebilities [0] = no item; [5] = no item; [1] = antibody; [2] = dangerZone; [3] = mutate; [4] = wipeout
         /// every value is [i-1] + possebility
         /// </summary>
@@ -423,7 +418,7 @@ namespace ParticleStormControl
             }
 
             // items
-            if (UseItems)
+            if (Settings.Instance.UseItems)
             {
                 if (pickuptimer.Elapsed.TotalSeconds > itemSpawnTime)
                 {

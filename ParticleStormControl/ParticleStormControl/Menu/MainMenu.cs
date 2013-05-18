@@ -51,7 +51,7 @@ namespace ParticleStormControl.Menu
         {
 
             // loopin
-            selectedButton = (Button)(Menu.LoopEnum((int)selectedButton, (int)Button.NUM_BUTTONS));
+            selectedButton = (Button)(Menu.Loop((int)selectedButton, (int)Button.NUM_BUTTONS));
 
             // button selected
             if (InputManager.Instance.AnyPressedButton(Buttons.Start))
