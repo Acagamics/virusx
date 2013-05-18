@@ -137,7 +137,7 @@ namespace ParticleStormControl
                 new Vector2(Level.RELATIVE_MAX.X / 2, 0.45f),  // THE CELL
                 new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER - 0.2f, LEVEL_BORDER+0.1f),  // upper right
                 new Vector2(Level.RELATIVE_MAX.X / 2, Level.RELATIVE_MAX.Y - LEVEL_BORDER+0.1f), // lower cell
-                new Vector2(LEVEL_BORDER + 0.2f, LEVEL_BORDER) // upper left
+                new Vector2(LEVEL_BORDER + 0.2f, LEVEL_BORDER+0.1f) // upper left
             };
 
             // create player cells
@@ -151,23 +151,32 @@ namespace ParticleStormControl
             {
                 // upper
                 new Vector2(Level.RELATIVE_MAX.X / 2 - Level.RELATIVE_MAX.X / 6, LEVEL_BORDER*0.6f),
-                new Vector2(Level.RELATIVE_MAX.X / 2, LEVEL_BORDER*0.9f),
+                new Vector2(Level.RELATIVE_MAX.X / 2, LEVEL_BORDER*0.5f),
                 new Vector2(Level.RELATIVE_MAX.X / 2 + Level.RELATIVE_MAX.X / 6, LEVEL_BORDER*0.6f),
 
                 // lower left
-                new Vector2(LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER),
                 new Vector2(LEVEL_BORDER + 0.4f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.05f),
-                new Vector2(LEVEL_BORDER + 0.1f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.2f),
-                new Vector2(LEVEL_BORDER, Level.RELATIVE_MAX.Y / 2),
+                new Vector2(LEVEL_BORDER + 0.2f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.2f),
+                new Vector2(0.1f, Level.RELATIVE_MAX.Y / 2),
 
                 // lower right
-                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER),
                 new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER - 0.4f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.05f),
-                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER - 0.1f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.2f),
-                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, Level.RELATIVE_MAX.Y / 2),
+                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER - 0.2f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.2f),
+                new Vector2(Level.RELATIVE_MAX.X - 0.1f, Level.RELATIVE_MAX.Y / 2),
+
+                // corners
+                new Vector2(0.1f, Level.RELATIVE_MAX.Y - LEVEL_BORDER),
+                new Vector2(Level.RELATIVE_MAX.X - 0.1f, Level.RELATIVE_MAX.Y - LEVEL_BORDER),
+                new Vector2(0.1f, LEVEL_BORDER),
+                new Vector2(Level.RELATIVE_MAX.X - 0.1f, LEVEL_BORDER),
             };
-            for(int i=0; i<otherCells.Length; ++i)
+
+            const float JITTER = 0.07f;
+            for (int i = 0; i < otherCells.Length; ++i)
+            {
+                otherCells[i] += Random.NextDirection() * ((float)(Random.NextDouble() * 2.0 - 1.0) * JITTER);
                 spawnPoints.Add(new SpawnPoint(otherCells[i], GetStandardSpawnSizeDependingFromArea(otherCells, otherCells[i]), -1, content));
+            }
 
 
             // background
