@@ -47,10 +47,6 @@ namespace ParticleStormControl
         /// </summary>
         public Stopwatch glowtimer = new Stopwatch();
 
-        // sounds
-        private SoundEffect capture;
-        private SoundEffect captureExplosion;
-
         // textures
         private Texture2D glowTexture;
         private Texture2D explosionTexture;
@@ -63,8 +59,6 @@ namespace ParticleStormControl
         public SpawnPoint(Vector2 PositionIn, float spawnSize, float glowSize_Game, int startposession, ContentManager content)
             : base(PositionIn, startposession, 1.0f / spawnSize, -1.0f, 6)
         {
-            this.capture = content.Load<SoundEffect>("sound/capture");
-            this.captureExplosion = content.Load<SoundEffect>("sound/captureExplosion");
             this.glowTexture = content.Load<Texture2D>("glow");
             this.nucleusTexture_inner = content.Load<Texture2D>("nucleus_inner");
             this.nucleusTexture_outer = content.Load<Texture2D>("nucleus_outer");
@@ -84,8 +78,7 @@ namespace ParticleStormControl
         {
             if(PossessingPlayer != -1)
             {
-                if(Settings.Instance.Sound)
-                    captureExplosion.Play();
+                AudioManager.Instance.PlaySoundeffect("capture");
                 glowtimer.Start();
                 explosionTimer.Start();
                 explosionRotation = (float)(Random.NextDouble() * MathHelper.TwoPi);
@@ -103,8 +96,6 @@ namespace ParticleStormControl
                 if (effectseconds > duration)
                 {
                     explosionTimer.Reset();
-                    if (Settings.Instance.Sound)
-                        capture.Play();
                 }
                 else
                 {

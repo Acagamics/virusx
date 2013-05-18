@@ -97,7 +97,6 @@ namespace ParticleStormControl
 
         #region switch
 
-        private SoundEffect switchSound;
         private bool switchCountdownActive = false;
         private float switchCountdownTimer;
         public const float SWITCH_COUNTDOWN_LENGTH = 6.0f;
@@ -162,8 +161,6 @@ namespace ParticleStormControl
 
             spriteBatch = new SpriteBatch(device);
 
-            // switch
-            switchSound = content.Load<SoundEffect>("sound/switch");
             fontCountdownLarge = content.Load<SpriteFont>("fonts/fontCountdown");
 
             // background & vignetting
@@ -546,8 +543,7 @@ namespace ParticleStormControl
             switchCountdownTimer -= frameTimeSeconds;
             if (switchCountdownActive && switchCountdownTimer < 0.0f)
             {
-                if(Settings.Instance.Sound)
-                    switchSound.Play();
+                AudioManager.Instance.PlaySoundeffect("switch");
 
                 int[] playerIndices = { 0, 1, 2, 3 };
 

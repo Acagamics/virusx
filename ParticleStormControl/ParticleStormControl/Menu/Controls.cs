@@ -11,9 +11,14 @@ namespace ParticleStormControl.Menu
 {
     class Controls : MenuPage
     {
+        Menu.Page origin;
+
         public Controls(Menu menu)
             : base(menu)
         {
+            // background
+            Interface.Add(new InterfaceFiller(Vector2.Zero, menu.ScreenWidth, menu.ScreenHeight, Color.Black * 0.5f, () => { return origin == Menu.Page.INGAME; }));
+
             string[,] data = {
                                  { null,                 "Keyboard 1",   "Keyboard 2",  "Keyboard 3",   "Gamepad" },
                                  { "Up",                 "W",            "Arrow Up",    "Numpad 8",     null },
@@ -63,8 +68,13 @@ namespace ParticleStormControl.Menu
                 Alignment.TOP_CENTER));
 
             // back button
-            string label = "► Back to Menu";
+            string label = "► Back";
             Interface.Add(new InterfaceButton(label, new Vector2(-(int)(menu.Font.MeasureString(label).X / 2), 100), () => { return true; }, Alignment.BOTTOM_CENTER));
+        }
+
+        public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
+        {
+            origin = oldPage;
         }
 
         public override void LoadContent(ContentManager content)
@@ -74,7 +84,12 @@ namespace ParticleStormControl.Menu
 
         public override void Update(GameTime gameTime)
         {
-            menu.BackToMainMenu(gameTime);
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.PAUSE)
+                || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT)
+                || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION)
+                || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.HOLD)
+                || InputManager.Instance.IsButtonPressed(Keys.F1))
+                menu.ChangePage(origin, gameTime);
 
             base.Update(gameTime);
         }

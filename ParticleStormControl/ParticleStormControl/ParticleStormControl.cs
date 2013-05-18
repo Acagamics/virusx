@@ -82,6 +82,8 @@ namespace ParticleStormControl
             Window.AllowUserResizing = false;
             Window.ClientSizeChanged += new EventHandler<EventArgs>(WindowClientSizeChanged);
             Window.Title = "Virus X";
+
+            AudioManager.Instance.Initialize(Content);
         }
 
         void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
@@ -199,7 +201,7 @@ namespace ParticleStormControl
 
             inGame.Update(gameTime);
 
-            if (InputManager.Instance.IsButtonPressed(Keys.F1))
+            if (InputManager.Instance.IsButtonPressed(Keys.F12))
                 showStatistics = !showStatistics;
         }
 
