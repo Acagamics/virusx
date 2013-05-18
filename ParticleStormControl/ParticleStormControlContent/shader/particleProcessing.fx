@@ -75,10 +75,11 @@ struct VertexShaderOutput
 VertexShaderOutput ScreenAlignedTriangle(VertexShaderInput input)
 {
     VertexShaderOutput output;
-	output.Position.xy = input.Position + halfPixelCorrection;
+	output.Position.xy = input.Position;
 	output.Position.zw = float2(0.0f, 1.0f);
 	output.Texcoord.xy = input.Position * 0.5f + 0.5f;
 	output.Texcoord.y = 1.0f - output.Texcoord.y;
+	output.Texcoord += halfPixelCorrection;
     return output;
 }
 
@@ -144,7 +145,7 @@ struct VertexShaderOutput_Spawn
 VertexShaderOutput_Spawn SpawnVS(VertexShaderInput_Spawn input)
 {
     VertexShaderOutput_Spawn output;
-	output.Position.xy = input.Position - halfPixelCorrection;	// yep subtract
+	output.Position.xy = input.Position;
 	output.Position.zw = float2(0.0f, 1.0f);
 	output.ParticlePosition = input.ParticlePosition;
 	output.Movement = input.Movement;

@@ -46,6 +46,8 @@ namespace ParticleStormControl
         };
         private List<PlayerSettings> playerSettings = new List<PlayerSettings>(Player.MAX_NUM_PLAYERS);
 
+        public InGame.GameMode GameMode { get; set; }
+
         public int NumPlayers { get { return playerSettings.Count; } }
 
         public void AddPlayer(PlayerSettings settings)
@@ -85,6 +87,9 @@ namespace ParticleStormControl
             get { return forceFeedback; }
             set { InputManager.Instance.ActivateRumble = value; forceFeedback = value; }
         }
+
+        private bool useItems = true;
+        public bool UseItems { get { return useItems; } set { useItems = value; } }
 
         #endregion
 

@@ -67,42 +67,31 @@ namespace ParticleStormControl
 
         public override void ApplyDamage(DamageMap damageMap, float timeInterval)
         {
+            if (explosionTimer.IsRunning)
+                return;
+
             // does NOT use the damage function of CapturableObject since its agnostic of the capturing player
 
-            if (!explosionTimer.IsRunning)
-            {
-                float[] damage = new float[Player.MAX_NUM_PLAYERS+1];
-                for (int i = 0; i < damage.Length; ++i)
-                {
-                    damage[i] = 0.0f;
-                }
-                for (int y = damageMap_MinY; y <= damageMap_MaxY; ++y)
-                {
-                    for (int x = damageMap_MinX; x <= damageMap_MaxX; ++x)
-                    {
-                        for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
-                        {
-                            damage[i] += damageMap.GetPlayerDamageAt(x, y, i);
-                            damage[Player.MAX_NUM_PLAYERS] += damageMap.GetPlayerDamageAt(x, y, i);
-                        }
-                    }
-                }
-                PossessingPercentage += damage[Player.MAX_NUM_PLAYERS]*damageFactor*timeInterval;
+            float[] damage = GetDamageInArea(damageMap, timeInterval);
+            float totalDamage = 0.0f;
+            for (int i = 0; i<damage.Length; ++i) totalDamage += damage[i];
+            PossessingPercentage += totalDamage * damageFactor;
 
-                if (PossessingPercentage >= 1.0f)
+            // done?
+            if (PossessingPercentage >= 1.0f)
+            {
+                // who did this?
+                float maxDmg = damage[0];
+                CapturingPlayer = 0;
+                for (int i = 1; i < damage.Length; ++i)
                 {
-                    float maxDmg = damage[0];
-                    CapturingPlayer = 0;
-                    for (int i = 1; i < Player.MAX_NUM_PLAYERS; ++i)
+                    if (maxDmg < damage[i])
                     {
-                        if (maxDmg < damage[i])
-                        {
-                            maxDmg = damage[i];
-                            CapturingPlayer = i;
-                        }
+                        maxDmg = damage[i];
+                        CapturingPlayer = i;
                     }
-                    OnPossessingChanged();
                 }
+                OnPossessingChanged();
             }
         }
 

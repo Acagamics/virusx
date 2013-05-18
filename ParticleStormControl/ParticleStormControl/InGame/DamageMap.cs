@@ -96,14 +96,14 @@ namespace ParticleStormControl
             return new Rectangle(rectx - halfSizeX, recty - halfSizeY, rectSizeX, rectSizeY);
         }
       
-        public byte GetPlayerDamageAt(int x, int y, int damagingPlayer)
+        public byte GetPlayerDamageAt(int x, int y, int damageMapChannel)
         {
 #if DEBUG
             if (x < 0 || y < 0 || x > attackingMapSizeX - 1 || y > attackingMapSizeY - 1)
                 throw new Exception("invalid index!");
 #endif
 
-            return damageDataCache[(x + y * DamageMap.attackingMapSizeX) * 4 + damagingPlayer];
+            return damageDataCache[(x + y * DamageMap.attackingMapSizeX) * 4 + damageMapChannel];
         }
 
         public void UpdateCPUData()

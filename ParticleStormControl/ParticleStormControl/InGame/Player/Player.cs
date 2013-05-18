@@ -59,9 +59,14 @@ namespace ParticleStormControl
 
         #region Virus rendering access
 
+        // see VirusSwarm for descriptions
+
         public Texture2D HealthTexture { get { return virusSwarm.HealthTexture; } }
         public Texture2D PositionTexture { get { return virusSwarm.PositionTexture; } }
         public int HighestUsedParticleIndex { get { return virusSwarm.HighestUsedParticleIndex; } }
+
+        public Color DamageMapDrawColor { get { return virusSwarm.DamageMapDrawColor; } }
+        public Vector4 DamageMapMask { get { return virusSwarm.DamageMapMask; } }
 
         #endregion
 
@@ -223,7 +228,16 @@ namespace ParticleStormControl
 
             cursorPosition = cursorStartPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex];
 
-            virusSwarm = new VirusSwarm(virusIndex, colorIndex, device, content, noiseTexture);
+            List<int> friendlyPlayers = new List<int>();
+            if (team != Teams.NONE)
+            {
+                for (int player = 0; player < Settings.Instance.NumPlayers; ++player)
+                {
+                    if (Settings.Instance.GetPlayer(player).Team == team)
+                        friendlyPlayers.Add(player);
+                }
+            }
+            virusSwarm = new VirusSwarm(virusIndex, playerIndex, friendlyPlayers, device, content, noiseTexture);
         }
 
         /// <summary>
@@ -244,8 +258,7 @@ namespace ParticleStormControl
             if (!alive)
                 return;
 
-            virusSwarm.UpdateGPUPart(device, (float)gameTime.ElapsedGameTime.TotalSeconds, damageMapTexture,
-                                     particleAttractionPosition, playerIndex);
+            virusSwarm.UpdateGPUPart(device, (float)gameTime.ElapsedGameTime.TotalSeconds, damageMapTexture, particleAttractionPosition);
         }
 
         /// <summary>

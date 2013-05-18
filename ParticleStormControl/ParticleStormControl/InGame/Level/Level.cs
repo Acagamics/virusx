@@ -108,11 +108,6 @@ namespace ParticleStormControl
         #region item possibilities
 
         /// <summary>
-        /// place items or not
-        /// </summary>
-        public bool UseItems { get; set; }
-
-        /// <summary>
         /// if this is set to true, all player items will be removed in the next level update step
         /// the same goes for all items in the level.
         /// </summary>
@@ -158,9 +153,6 @@ namespace ParticleStormControl
 
         public Level(GraphicsDevice device, ContentManager content)
         {
-            // TODO remove this as soon as the property is set by the settings
-            UseItems = true;
-
             this.contentManager = content;
 
             pickuptimer = new Stopwatch();
@@ -405,7 +397,7 @@ namespace ParticleStormControl
             // remove dead objects
             for (int i = 0; i < mapObjects.Count; ++i)
             {
-                if (UseItems && clearAllItems)
+                if (Settings.Instance.UseItems && clearAllItems)
                 {
                     // remove all Items from the level after a wipeout
                     if (mapObjects[i] is Item || mapObjects[i] is Debuff)
@@ -438,7 +430,7 @@ namespace ParticleStormControl
             }
 
             // items
-            if (UseItems)
+            if (Settings.Instance.UseItems)
             {
                 if (pickuptimer.Elapsed.TotalSeconds > itemSpawnTime)
                 {

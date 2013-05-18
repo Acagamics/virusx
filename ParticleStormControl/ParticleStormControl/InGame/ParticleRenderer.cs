@@ -152,7 +152,7 @@ namespace ParticleStormControl
             particleEffect.Parameters["InfoTexture"].SetValue(player.HealthTexture);
 
             if (damage)
-                particleEffect.Parameters["Color"].SetValue(VirusSwarm.TextureDamageValue[player.Index].ToVector4());
+                particleEffect.Parameters["Color"].SetValue(player.DamageMapDrawColor.ToVector4());
             else
                 particleEffect.Parameters["Color"].SetValue(player.ParticleColor.ToVector4());
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace ParticleStormControl
@@ -182,30 +183,44 @@ namespace ParticleStormControl
 
         #endregion
 
-        #region Particle Color Definition
+        #region Particle Color
 
         public readonly static Color[] ParticleColors = { new Color(240, 80, 70), new Color(60, 70, 240), new Color(42, 216, 221), new Color(80, 200, 80), /*Color.DarkSlateGray,*/ Color.DeepPink, new Color(250, 120 + 60, 20 + 30) };
 
-#if XBOX
-        public readonly static Color[] TextureDamageValue = {  new Color(0, 0, 0, 1),
-                                                               new Color(0, 0, 1, 0),
-                                                               new Color(0, 1, 0, 0),
-                                                               new Color(1, 0, 0, 0)   };
 
-        private readonly static Vector4[] DamageMapMask = { new Vector4(1, 1, 1, 0),
-                                                            new Vector4(1, 1, 0, 1),
-                                                            new Vector4(1, 0, 1, 1),
-                                                            new Vector4(0, 1, 1, 1) };
-#else
-        public readonly static Color[] TextureDamageValue = {  new Color(1, 0, 0, 0),
+        // attention when porting: XBOX and other platforms might save BGR!
+
+        private readonly static Color[] TextureDamageValue = {  new Color(1, 0, 0, 0),
                                                                new Color(0, 1, 0, 0),
                                                                new Color(0, 0, 1, 0),
                                                                new Color(0, 0, 0, 1)   };
-        private readonly static Vector4[] DamageMapMask = { new Vector4(0, 1, 1, 1),
-                                                            new Vector4(1, 0, 1, 1),
-                                                            new Vector4(1, 1, 0, 1),
-                                                            new Vector4(1, 1, 1, 0)  };
-#endif
+        /// <summary>
+        /// color that this virusswarm will use to draw onto the damage map
+        /// </summary>
+        public Color DamageMapDrawColor
+        {
+            get { return TextureDamageValue[damageTextureValueIndex]; }
+        }
+
+        /// <summary>
+        /// static variant of the DamageMapDrawColor property
+        /// </summary>
+        /// <remarks>Uses the Settings singleton to determine the team</remarks>
+        public static Color GetDamageMapDrawColor(int playerIndex)
+        {
+            return TextureDamageValue[playerIndex];
+        }
+
+        /// <summary>
+        /// damage map mask for the damage map that this virus will apply
+        /// </summary>
+        public readonly Vector4 DamageMapMask;
+
+        /// <summary>
+        /// index giving the used TextureDamageValue 
+        /// ranges from 0 to 4
+        /// </summary>
+        private readonly int damageTextureValueIndex = 0;
 
         #endregion
 
@@ -225,10 +240,16 @@ namespace ParticleStormControl
 
         #endregion
 
-        public VirusSwarm(int virusIndex, int colorIndex, GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
+        public VirusSwarm(int virusIndex, int playerIndex, IEnumerable<int> friendlyPlayerIndices, GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
         {
             this.noiseTexture = noiseTexture;
             this.virusIndex = virusIndex;
+            this.damageTextureValueIndex = playerIndex;
+            this.DamageMapMask = new Vector4(playerIndex == 0 || friendlyPlayerIndices.Any(x=>x==0) ? 0.0f : 1.0f,
+                                             playerIndex == 1 || friendlyPlayerIndices.Any(x=>x==1) ? 0.0f : 1.0f,
+                                             playerIndex == 2 || friendlyPlayerIndices.Any(x=>x==2) ? 0.0f : 1.0f,
+                                             playerIndex == 3 || friendlyPlayerIndices.Any(x=>x==3) ? 0.0f : 1.0f);
+
 
             for (int i = 0; i < MAX_PARTICLES; ++i)
                 particleHealth[i] = -1.0f;
@@ -243,7 +264,7 @@ namespace ParticleStormControl
             renderTargetBindings = new RenderTargetBinding[][] { new RenderTargetBinding[] { positionTargets[0], movementTexture[0], infoTargets[0] }, 
                                                                 new RenderTargetBinding[] { positionTargets[1], movementTexture[1], infoTargets[1] } };
             particleProcessing = content.Load<Effect>("shader/particleProcessing");
-            particleProcessing.Parameters["halfPixelCorrection"].SetValue(new Vector2(-0.5f / MAX_PARTICLES_SQRT, 0.5f / MAX_PARTICLES_SQRT));
+            particleProcessing.Parameters["halfPixelCorrection"].SetValue(new Vector2(0.5f / MAX_PARTICLES_SQRT, 0.5f / MAX_PARTICLES_SQRT));
             particleProcessing.Parameters["RelativeCorMax"].SetValue(Level.RELATIVE_MAX);
 
             // reset data
@@ -301,8 +322,7 @@ namespace ParticleStormControl
             player2.HighestUsedParticleIndex = i;
         }
 
-        public void UpdateGPUPart(GraphicsDevice device, float timeInterval, Texture2D damageMapTexture,
-                                    Vector2 particleAttractionPosition, int playerIndex)
+        public void UpdateGPUPart(GraphicsDevice device, float timeInterval, Texture2D damageMapTexture, Vector2 particleAttractionPosition)
         {
             device.SetVertexBuffer(null);
             
@@ -327,7 +347,7 @@ namespace ParticleStormControl
             particleProcessing.Parameters["MovementChangeFactor"].SetValue(DISCIPLIN_CONSTANT * timeInterval / (Disciplin * 0.1f));
             particleProcessing.Parameters["TimeInterval"].SetValue(timeInterval);
             particleProcessing.Parameters["DamageMap"].SetValue(damageMapTexture);
-            particleProcessing.Parameters["DamageFactor"].SetValue(DamageMapMask[playerIndex] * (ATTACKING_PER_SECOND * timeInterval));
+            particleProcessing.Parameters["DamageFactor"].SetValue(DamageMapMask * (ATTACKING_PER_SECOND * timeInterval));
 
             particleProcessing.Parameters["MovementFactor"].SetValue(Speed * timeInterval);
 
@@ -358,6 +378,21 @@ namespace ParticleStormControl
             int target = currentTargetIndex;
             currentTargetIndex = currentTextureIndex;
             currentTextureIndex = target;
+
+    /*
+#if DEBUG
+            // save particle textures on pressing space
+        if (Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Tab))
+            {
+                using (var file = new System.IO.FileStream("position target " + damageColorIndex + ".png", System.IO.FileMode.Create))
+                    positionTargets[currentTargetIndex].SaveAsPng(file, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
+                using (var file = new System.IO.FileStream("info target " + damageColorIndex + ".png", System.IO.FileMode.Create))
+                    infoTargets[currentTargetIndex].SaveAsPng(file, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
+                using (var file = new System.IO.FileStream("movement target " + damageColorIndex + ".png", System.IO.FileMode.Create))
+                    movementTexture[currentTargetIndex].SaveAsPng(file, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
+            }
+#endif 
+ */
         }
 
         /* private bool IsAlive(int particleIndex)
@@ -415,7 +450,7 @@ namespace ParticleStormControl
             int biggestAliveIndex = 0;
             NumParticlesAlive = 0;
             int numAlreadySpawned = 0;
-            const float lineOffset = 0.5f / MAX_PARTICLES_SQRT;
+            const float lineOffset = 1.0f / MAX_PARTICLES_SQRT;
             int imax = (int)MathHelper.Clamp(HighestUsedParticleIndex + currentSpawnNumber + 1, 0, MAX_PARTICLES);
             for (int i = 0; i < imax; ++i)
             {
@@ -430,10 +465,10 @@ namespace ParticleStormControl
                 {
                     float x = (float)(i % MAX_PARTICLES_SQRT) / MAX_PARTICLES_SQRT;
                     float y = (float)(i / MAX_PARTICLES_SQRT) / MAX_PARTICLES_SQRT;
-                    spawnVerticesRAMBuffer[numAlreadySpawned * 2].texturePosition = new Vector2(x * 2.0f - 1.0f - lineOffset, 
-                                                                                                (1.0f - y) * 2.0f - 1.0f);
-                    spawnVerticesRAMBuffer[numAlreadySpawned * 2 + 1] = spawnVerticesRAMBuffer[numAlreadySpawned * 2]; // copytime
-                    spawnVerticesRAMBuffer[numAlreadySpawned * 2 + 1].texturePosition.X += lineOffset;
+
+                    spawnVerticesRAMBuffer[numAlreadySpawned * 2].texturePosition = new Vector2(x * 2.0f - 1.0f - lineOffset, (1.0f - y) * 2.0f - 1.0f);
+                    spawnVerticesRAMBuffer[numAlreadySpawned * 2 + 1] = spawnVerticesRAMBuffer[numAlreadySpawned * 2]; // copytime!
+                    spawnVerticesRAMBuffer[numAlreadySpawned * 2 + 1].texturePosition.X += lineOffset*2;
 
                     totalHealth += HealthStart;
                     ++numAlreadySpawned;

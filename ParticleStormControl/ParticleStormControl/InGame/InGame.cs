@@ -26,6 +26,31 @@ namespace ParticleStormControl
     {
         private GraphicsDevice graphicsDevice;
 
+        public enum GameMode
+        {
+            // no teams, up to 4 players
+            CLASSIC,
+
+            // start player -> defender, up to 3 others -> attackers
+            CAPTURE_THE_CELL,
+
+            // 2 teams, each up to 2 players
+            LEFT_VS_RIGHT,
+
+            // 1 player vs 1 computer
+            TUTORIAL,
+
+            NUM_MODES
+        };
+        static public readonly String[] GAMEMODE_NAME = new String[]
+        {
+            "Classic",
+            "Capture the Cell",
+            "Left vs. Right",
+            "Tutorial"
+        };
+
+
         /// <summary>
         /// Statistics
         /// </summary>
@@ -251,30 +276,59 @@ namespace ParticleStormControl
 
         private void CheckWinning(GameTime gameTime)
         {
-            // only one player alive
             int winPlayerIndex = -1;
-            for (int i = 0; i < players.Length; ++i)
+            Player.Teams winningTeam = Player.Teams.NONE;
+            switch (Settings.Instance.GameMode)
             {
-                if (players[i].Alive)
-                {
-                    if (winPlayerIndex != -1)
+                // only one player alive
+                case GameMode.CLASSIC:
+                    for (int i = 0; i < players.Length; ++i)
                     {
-                        winPlayerIndex = -1;
-                        break;
+                        if (players[i].Alive)
+                        {
+                            if (winPlayerIndex != -1)
+                            {
+                                winPlayerIndex = -1;
+                                break;
+                            }
+                            else
+                                winPlayerIndex = i;
+                        }
                     }
-                    else
-                        winPlayerIndex = i;
-                }
+                    break;
+
+                case GameMode.LEFT_VS_RIGHT:
+                    bool leftAlive = players.Any(x => x.Alive && x.Team == Player.Teams.LEFT);
+                    bool rightAlive = players.Any(x => x.Alive && x.Team == Player.Teams.RIGHT);
+                    if (leftAlive && !rightAlive)
+                        winningTeam = Player.Teams.LEFT;
+                    else if (!leftAlive && rightAlive)
+                        winningTeam = Player.Teams.RIGHT;
+                    break;
+
+                case GameMode.CAPTURE_THE_CELL:
+                    bool attackerAlive = players.Any(x => x.Alive && x.Team == Player.Teams.ATTACKER);
+                    bool defenderAlive = players.Any(x => x.Alive && x.Team == Player.Teams.DEFENDER);
+                    if (attackerAlive && !defenderAlive)
+                        winningTeam = Player.Teams.ATTACKER;
+                    else if (!attackerAlive && defenderAlive)
+                        winningTeam = Player.Teams.DEFENDER;
+                    break;
+
+                default:
+                    throw new NotImplementedException("Unknown GameType - can't evaluate win condition");
             }
-            if (winPlayerIndex != -1)
+
+            if (winPlayerIndex != -1 || winningTeam != Player.Teams.NONE)
             {
                 // statistics
                 level.GameStatistics.addWonMatches(winPlayerIndex);
 
+                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).WinningTeam = winningTeam;
                 ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).WinPlayerIndex = winPlayerIndex;
                 ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
                 ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
-                
+
                 menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
             }
 

@@ -111,7 +111,7 @@ namespace ParticleStormControl
             if (possessingPlayer < 0)
                 playerColor = Color.White;
             else
-                playerColor = VirusSwarm.TextureDamageValue[possessingPlayer];
+                playerColor = VirusSwarm.GetDamageMapDrawColor(possessingPlayer);
             Color damage = playerColor * (explosionDamage * alpha);
             spriteBatch.Draw(damageZoneTexture, DamageMap.ComputePixelRect(Position, Size), null, damage, currentRotation, textureCenterZone, SpriteEffects.None, 0);
         }
