@@ -22,7 +22,7 @@ namespace ParticleStormControl
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class InGame
+    class InGame
     {
         private GraphicsDevice graphicsDevice;
 
@@ -160,7 +160,7 @@ namespace ParticleStormControl
             }
 
             // restart stuff
-            level.NewGame(graphicsDevice, players);
+            level.NewGame(Settings.Instance.GameMode == GameMode.CAPTURE_THE_CELL ? MapGenerator.MapType.CAPTURE_THE_CELL : MapGenerator.MapType.NORMAL, graphicsDevice, players);
             particleRenderer = new ParticleRenderer(graphicsDevice, content, players.Length);
 
             // init statistics

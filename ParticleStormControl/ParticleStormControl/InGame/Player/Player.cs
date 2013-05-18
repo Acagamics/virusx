@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ParticleStormControl
 {
-    public abstract class Player
+    abstract class Player
     {
         public const int MAX_NUM_PLAYERS = 4;
 
@@ -130,7 +130,7 @@ namespace ParticleStormControl
         /// <summary>
         /// movementspeed of the cursor
         /// </summary>
-        protected const float CURSOR_SPEED = 1.0f;
+        public static readonly float CURSOR_SPEED = 1.0f;
 
 
         #endregion

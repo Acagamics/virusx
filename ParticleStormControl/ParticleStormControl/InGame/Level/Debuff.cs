@@ -11,7 +11,7 @@ namespace ParticleStormControl
     /// explosion object on the map
     /// currently nearly the same as DamageArea
     /// </summary>
-    public class Debuff : CapturableObject
+    class Debuff : CapturableObject
     {
         /// <summary>
         /// max explosion size
@@ -103,7 +103,10 @@ namespace ParticleStormControl
 
         override public Color ComputeColor()
         {
-            return Color.Lerp(Color.White, Color.Black, PossessingPercentage);
+            Color resColor = Color.Lerp(Color.White, Color.Black, PossessingPercentage);
+            Vector4 w = resColor.ToVector4();
+            w.W = opacity;
+            return new Color(w);
         }
 
         public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime)

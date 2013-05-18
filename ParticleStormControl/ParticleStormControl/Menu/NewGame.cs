@@ -1,5 +1,6 @@
 ﻿//#define QUICK_TWO_PLAYER_DEBUG
 //#define QUICK_FOUR_PLAYER_DEBUG
+#define QUICK_CTC_DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -268,6 +269,46 @@ namespace ParticleStormControl.Menu
             Settings.Instance.NumPlayers = 4;
             playerReady[0] = playerReady[1] = playerReady[2] = playerReady[3] = playerConnected[0] = playerConnected[1] = playerConnected[2] = playerConnected[3] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = Settings.Instance.PlayerConnected[2] = Settings.Instance.PlayerConnected[3] = true;
             menu.ChangePage(Menu.Page.INGAME,gameTime);
+#elif QUICK_CTC_DEBUG
+            Settings.Instance.ResetPlayerSettings();
+            Settings.Instance.AddPlayer(new Settings.PlayerSettings()
+            {
+                Team = Player.Teams.DEFENDER,
+                SlotIndex = 0,
+                ControlType = InputManager.ControlType.KEYBOARD0,
+                VirusIndex = 0,
+                ColorIndex = 0,
+                Type = Player.Type.HUMAN
+            });
+            Settings.Instance.AddPlayer(new Settings.PlayerSettings()
+            {
+                Team = Player.Teams.ATTACKER,
+                SlotIndex = 1,
+                ControlType = InputManager.ControlType.KEYBOARD1,
+                VirusIndex = 1,
+                ColorIndex = 1,
+                Type = Player.Type.HUMAN
+            });
+            Settings.Instance.AddPlayer(new Settings.PlayerSettings()
+            {
+                Team = Player.Teams.ATTACKER,
+                SlotIndex = 2,
+                ControlType = InputManager.ControlType.KEYBOARD2,
+                VirusIndex = 2,
+                ColorIndex = 2,
+                Type = Player.Type.HUMAN
+            });
+            Settings.Instance.AddPlayer(new Settings.PlayerSettings()
+            {
+                Team = Player.Teams.ATTACKER,
+                SlotIndex = 3,
+                ControlType = InputManager.ControlType.GAMEPAD0,
+                VirusIndex = 3,
+                ColorIndex = 3,
+                Type = Player.Type.HUMAN
+            });
+            Settings.Instance.GameMode = Game.GameMode.CAPTURE_THE_CELL;
+            menu.ChangePage(Menu.Page.INGAME, gameTime);
 #endif
             if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, StartingControls) ||
                 InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, StartingControls))

@@ -10,7 +10,7 @@ namespace ParticleStormControl
     /// Defines a virus swarm of a given type and color
     /// Every player posesses exactly one Swarm
     /// </summary>
-    public class VirusSwarm
+    class VirusSwarm
     {
         #region Virus Definitions
 
@@ -20,77 +20,74 @@ namespace ParticleStormControl
             HEPATITISB,
             HIV,
             EPSTEINBARR,
+            EBOLA,
 
             NUM_VIRUSES
         }
 
-        public readonly static VirusType[] Viruses = { VirusType.H5N1, VirusType.HEPATITISB, VirusType.HIV, VirusType.EPSTEINBARR };
-        public readonly static string[] VirusNames = { "Influenza A", "Hepatitis B", "Human immunodeficiency", "Epstein-Barr" };
+        public readonly static VirusType[] Viruses = { VirusType.H5N1, VirusType.HEPATITISB, VirusType.HIV, VirusType.EPSTEINBARR, VirusType.EBOLA };
+        public readonly static string[] VirusNames = { "Influenza A", "Hepatitis B", "Human immunodeficiency", "Epstein-Barr", "Ebola" };
         public readonly static string[] VirusAdditionalInfo = { "It is a highly contagious virus which is a potential pandemic threat.",
                                                                "Can also lead to cirrhosis and hepatocellular carcinoma.",
                                                                "Infection with HIV occurs by the transfer of blood, semen,\nvaginal fluid, pre-ejaculate, or breast milk.",
-                                                               "It is one of the most common viruses in humans." };
+                                                               "It is one of the most common viruses in humans.",
+                                                               "EBOV is a select agent, World Health Organization Risk Group 4 Pathogen (requiring Biosafety Level 4-equivalent containment)."};
         public readonly static string[] VirusClassification = { "Group V; Genus A; Family of Orthomyxoviridae",
                                                                   "Group VII; Genus Orthohepadnavirus; Family of Hepadnaviridae",
                                                                   "Group VI; Genus Lentivirus; Family of Retroviridae",
-                                                                  "Group I; Genus of Lymphocryptovirus; Family of Herpesviridae" };
+                                                                  "Group I; Genus of Lymphocryptovirus; Family of Herpesviridae",
+                                                                  "Group V; Genus Ebolavirus; Family of Filoviridae" };
         public readonly static string[] VirusShortName = { "H5N1",
                                                              "HBV",
                                                              "HIV",
-                                                             "EBV" };
+                                                             "EBV",
+                                                             "EBOV" };
         public readonly static string[] VirusCausedDisease = { "avian influenza (bird flu)",
                                                                  "hepatitis B",
                                                                  "acquired immunodeficiency syndrome (AIDS)",
-                                                                 "Implicated in several diseases that include infectious mononucleosis,\nmultiple sclerosis and Hodgkin lymphoma." };
+                                                                 "Implicated in several diseases that include infectious mononucleosis,\nmultiple sclerosis and Hodgkin lymphoma.",
+                                                                 "viral hemorrhagic fever (EBOLA fever)" };
 
 
         // IMPORTANT: The number '+' for each virus should add to the same sum. This is to imply that all virusses are equally strong. ;)
         // Currently the sum is 10
-        public static readonly string[] DESCRIPTOR_Mass = new string[] { "++", "++++", "+", "++++" };
-        public static readonly string[] DESCRIPTOR_Speed = new string[] { "+++", "+", "++", "++++" };
-        public static readonly string[] DESCRIPTOR_Health = new string[] { "+++", "+++", "++++", "+" };
-        public static readonly string[] DESCRIPTOR_Discipline = new string[] { "++", "++", "+++", "+" };
+        public static readonly string[] DESCRIPTOR_Mass = new string[] {        "++",   "++++", "+",    "++++", "+" };
+        public static readonly string[] DESCRIPTOR_Speed = new string[] {       "+++",  "+",    "++",   "++++", "++++" };
+        public static readonly string[] DESCRIPTOR_Health = new string[] {      "+++",  "+++",  "++++", "+",    "++++" };
+        public static readonly string[] DESCRIPTOR_Discipline = new string[] {  "++",   "++",   "+++",  "+",    "+" };
+
+        /// <summary>
+        /// spawns = basespawn / (SPAWN_CONSTANT - mass(virus))
+        /// </summary>
+        private const float SPAWN_CONSTANT = 18.0f;  // higher means LESS!
 
         // attributs
-        private static readonly float[] MASS_byVirus = new float[] { 0.5f, 0.63f, 0.075f, 1.0f };
-        private static readonly float[] SPEED_byVirus = new float[] { 0.44f, -0.40f, 0.3f, 1.0f };
-        private static readonly float[] HEALTH_byVirus = new float[] { 0.5f, 0.35f, 1.0f, -0.38f };
-        private static readonly float[] DISCIPLIN_byVirus = new float[] { 0.44f, 0.25f, 0.65f, 0.55f };
-
-        // speed stuff
-        private const float SPEED_CONSTANT = 0.18f; // 0.13f;
-        private const float SPEED_SETTING_FACTOR = 0.08f;
+        private static readonly float[] MASS_byVirus = new float[] {        5.0f,   6.3f,   0.75f,  10.0f,  0.15f };    // always smaller than SPAWN_CONSTANT!
+        private static readonly float[] SPEED_byVirus = new float[] {       0.2152f,0.148f, 0.204f, 0.26f,  0.233f };
+        private static readonly float[] HEALTH_byVirus = new float[] {      26.25f, 25.125f,30.0f,  25.35f, 30.0f };
+        private static readonly float[] DISCIPLIN_byVirus = new float[] {   0.56f,  0.75f,  0.35f,  0.45f,  0.77f };
 
         public float Speed
-        { get { return SPEED_CONSTANT + SPEED_SETTING_FACTOR * SPEED_byVirus[virusIndex]; } }
-
-        // life stuff
-        public const float HEALTH_CONSTANT = 15.0f;
-        public const float healthSettingFactor = 15.0f;
+        { get { return SPEED_byVirus[virusIndex]; } }
+        /// <summary>
+        /// returns the health of new particles
+        /// </summary>
+        public float HealthStart
+        { get { return HEALTH_byVirus[virusIndex]; } }
 
         /// <summary>
         /// returns a mass constant that implies how many particles are spawned per base
         /// </summary>
         public float Mass
-        { get { return -2 * MASS_byVirus[virusIndex]; } }
-
-        // spawn stuff!
-        private const float SPAWN_CONSTANT = 18.0f;  // higher means LESS!
-        private const float SPAWN_SETTING_FACTOR = 5.0f;  // remeber that high mass means mass_health=-1.0f
-
-        /// <summary>
-        /// returns the health of new particles
-        /// </summary>
-        public float HealthStart
-        { get { return ((HEALTH_byVirus[virusIndex] * 0.5f) + 1.5f) * HEALTH_CONSTANT; } }
+        { get { return MASS_byVirus[virusIndex]; } }
 
         /// <summary>
         /// discilplin constant - higher means that the particles will move more straight in player's direction
         /// </summary>
-        private const float DISCIPLIN_CONSTANT = 0.19f;// 0.15f;
+        private const float DISCIPLIN_CONSTANT = 1.9f;
 
         public float Disciplin
-        { get { return 1 - DISCIPLIN_byVirus[virusIndex]; } }
+        { get { return DISCIPLIN_byVirus[virusIndex]; } }
 
         // attacking constant
         private const float ATTACKING_PER_SECOND = 30.0f * 255;
@@ -344,7 +341,7 @@ namespace ParticleStormControl
             particleProcessing.Parameters["Health"].SetValue(HealthTexture);
 
             particleProcessing.Parameters["particleAttractionPosition"].SetValue(particleAttractionPosition);
-            particleProcessing.Parameters["MovementChangeFactor"].SetValue(DISCIPLIN_CONSTANT * timeInterval / (Disciplin * 0.1f));
+            particleProcessing.Parameters["MovementChangeFactor"].SetValue(DISCIPLIN_CONSTANT * timeInterval / Disciplin);
             particleProcessing.Parameters["TimeInterval"].SetValue(timeInterval);
             particleProcessing.Parameters["DamageMap"].SetValue(damageMapTexture);
             particleProcessing.Parameters["DamageFactor"].SetValue(DamageMapMask * (ATTACKING_PER_SECOND * timeInterval));
@@ -423,12 +420,12 @@ namespace ParticleStormControl
             foreach (SpawnPoint spawn in spawnPoints)
             {
                 spawn.SpawnTimeAccum += timeInterval;
-                float f = spawn.SpawnSize / (SPAWN_CONSTANT + SPAWN_SETTING_FACTOR * Mass);//Mass_health);
-                int spawnPointSpawns = (int)(spawn.SpawnTimeAccum * f);
+                float spawnsPerSecond = spawn.SpawnSize / (SPAWN_CONSTANT - Mass);
+                int spawnPointSpawns = (int)(spawn.SpawnTimeAccum * spawnsPerSecond);
 
                 if (spawnPointSpawns > 0)
                 {
-                    spawn.SpawnTimeAccum -= spawnPointSpawns / f; // don't miss anything!
+                    spawn.SpawnTimeAccum -= spawnPointSpawns / spawnsPerSecond; // don't miss anything!
                     for (int i = 0; i < spawnPointSpawns; ++i)
                     {
                         if (currentSpawnNumber == MAX_SPAWNS_PER_FRAME || NumParticlesAlive + currentSpawnNumber == MAX_PARTICLES - 2)

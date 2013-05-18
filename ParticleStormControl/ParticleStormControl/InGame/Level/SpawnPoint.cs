@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace ParticleStormControl
 {
-    public class SpawnPoint : CapturableObject
+    class SpawnPoint : CapturableObject
     {
         public float SpawnSize { get; private set; }
         public float SpawnTimeAccum { get; set; }
@@ -54,9 +54,8 @@ namespace ParticleStormControl
         private Texture2D nucleusTexture_outer;
 
         private readonly float randomAngle;
-        private readonly float glowSize_Game;
 
-        public SpawnPoint(Vector2 PositionIn, float spawnSize, float glowSize_Game, int startposession, ContentManager content)
+        public SpawnPoint(Vector2 PositionIn, float spawnSize, int startposession, ContentManager content)
             : base(PositionIn, startposession, 1.0f / spawnSize, -1.0f, 6)
         {
             this.glowTexture = content.Load<Texture2D>("glow");
@@ -64,7 +63,6 @@ namespace ParticleStormControl
             this.nucleusTexture_outer = content.Load<Texture2D>("nucleus_outer");
             this.explosionTexture = content.Load<Texture2D>("capture_glow");
             this.SpawnSize = spawnSize;
-            this.glowSize_Game = glowSize_Game;
 
             randomAngle = (float)Random.NextDouble(Math.PI * 2);
 

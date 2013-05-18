@@ -12,7 +12,7 @@ namespace ParticleStormControl
     /// <summary>
     /// a damage dealing area on the map
     /// </summary>
-    public class DamageArea : MapObject
+    class DamageArea : MapObject
     {
         /// <summary>
         /// max explosion size

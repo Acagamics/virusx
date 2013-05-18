@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ParticleStormControl.Menu
 {
-    public abstract class MenuPage
+    abstract class MenuPage
     {
         /// <summary>
         /// Collection of all interface elements for the page

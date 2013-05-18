@@ -9,7 +9,7 @@ namespace ParticleStormControl
     /// <summary>
     /// class to collect game statistics
     /// </summary>
-    public class Statistics
+    class Statistics
     {
         #region used items
         

@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace ParticleStormControl
 {
-    public class ScreenTriangleRenderer
+    class ScreenTriangleRenderer
     {
         /// <summary>
         /// singleton instance for all rendering processes

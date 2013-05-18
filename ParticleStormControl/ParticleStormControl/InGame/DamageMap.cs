@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace ParticleStormControl
 {
-    public class DamageMap
+    class DamageMap
     {
         // attacking
         // map is currently rgb 8bit because  a) 32bit min and b) single-float format does not support alpha blending

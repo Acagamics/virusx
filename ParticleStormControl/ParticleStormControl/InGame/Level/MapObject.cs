@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ParticleStormControl
 {
-    public abstract class MapObject
+    abstract class MapObject
     {
         protected MapObject(Vector2 PositionIn, float size /*= 0.05f*/)
         {

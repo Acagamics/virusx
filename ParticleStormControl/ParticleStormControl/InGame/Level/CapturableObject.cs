@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ParticleStormControl
 {
-    public abstract class CapturableObject : MapObject
+    abstract class CapturableObject : MapObject
     {
         private readonly Stopwatch lifeTimer = new Stopwatch();
         protected readonly float lifeTime;  // -1 means infinite
@@ -31,6 +31,11 @@ namespace ParticleStormControl
         private const float defenseFactor = 0.25f;
 
         protected readonly float damageFactor;
+
+        /// <summary>
+        /// the opacity of the object it is used to let objects blink
+        /// </summary>
+        protected float opacity = 1f;
 
         public CapturableObject(Vector2 Position, int possessingPlayer, float damageFactor, float lifeTime/* = -1.0f*/, int damageMapPixelHalfRange /*= 4*/, float size = 0.06f) :
             base(Position, size)
@@ -58,6 +63,14 @@ namespace ParticleStormControl
 
         public override void Update(GameTime gameTime)
         {
+            if (lifeTime > 0)
+            {
+                if(lifeTimer.Elapsed.TotalSeconds > lifeTime * 0.75f)
+                    opacity = ((float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * ((lifeTime - (lifeTime - lifeTimer.Elapsed.TotalSeconds)) * 0.25f)) * 0.4f + 0.5f);
+                else opacity = 1f;            
+            }
+            else opacity = 1f;
+            
             if (lifeTime > 0 && lifeTimer.Elapsed.TotalSeconds > lifeTime)
                 Alive = false;
         }
@@ -164,12 +177,17 @@ namespace ParticleStormControl
 
         virtual public Color ComputeColor()
         {
+            Color resColor;
             if (PossessingPlayer != -1)
-                return Color.Lerp(Color.White, Settings.Instance.GetPlayerColor(PossessingPlayer), PossessingPercentage);
+                resColor = Color.Lerp(Color.White, Settings.Instance.GetPlayerColor(PossessingPlayer), PossessingPercentage);
             else if (CapturingPlayer != -1)
-                return Color.Lerp(Color.White, Settings.Instance.GetPlayerColor(CapturingPlayer), PossessingPercentage);
+                resColor = Color.Lerp(Color.White, Settings.Instance.GetPlayerColor(CapturingPlayer), PossessingPercentage);
             else
-                return Color.White;
+                resColor = Color.White;
+
+            Vector4 w = resColor.ToVector4();
+            w.W = opacity;
+            return new Color(w);
         }
     }
 }

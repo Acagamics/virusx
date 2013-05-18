@@ -1,5 +1,4 @@
-﻿//#define EMPTY_LEVELDEBUG
-//#define NO_ITEMS
+﻿//#define NO_ITEMS
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -12,7 +11,7 @@ using System.Linq;
 
 namespace ParticleStormControl
 {
-    public class Level
+    class Level
     {
         // statistics
         public Statistics GameStatistics { get; set; }
@@ -176,110 +175,19 @@ namespace ParticleStormControl
             Resize(device);
         }
 
-        public void NewGame(GraphicsDevice device, Player[] players)
+        public void NewGame(MapGenerator.MapType mapType, GraphicsDevice device, Player[] players)
         {
-            mapObjects.Clear();
-            spawnPoints.Clear();
-
             switchCountdownActive = false;
+
             // create level
-            CreateLevel(device, contentManager, players.Length);
+            spawnPoints.Clear();
+            mapObjects.Clear();
+            mapObjects.AddRange(MapGenerator.GenerateLevel(mapType, device, contentManager, players.Length, background));
+            spawnPoints.AddRange(mapObjects.OfType<SpawnPoint>());
 
             // crosshairs for players
             for (int i = 0; i < players.Length; ++i)
                 mapObjects.Add(new Crosshair(i, contentManager));
-        }
-
-        static public List<Vector2> GenerateCellPositions(int numX, int numY, float positionJitter, Vector2 border, Vector2 valueRange)
-        {
-            List<Vector2> spawnPositions = new List<Vector2>();
-            for (int x = 0; x < numX; ++x)
-            {
-                for (int y = 0; y < numY; ++y)
-                {
-                    // "natural skip"
-                    if ((x == numX - 1 && y % 2 == 0) ||
-                        ((x == 0 || x == numX - 2 + y % 2) && (y == 0 || y == numY - 1)))
-                        continue;
-
-                    // position
-                    Vector2 pos = new Vector2((float)x / (numX - 1), (float)y / (numY - 1));
-                    if (y % 2 == 0)
-                        pos.X += 0.5f / (numX - 1);
-                    pos *= valueRange - border * 2.0f;
-                    pos += border;
-
-                    // position jitter
-                    float posJitter = (float)(Random.NextDouble() * 2.0 - 1.0) * positionJitter;
-                    pos += Random.NextDirection() * posJitter;
-
-                    spawnPositions.Add(pos);
-                }
-            }
-            return spawnPositions;
-        }
-
-        private void CreateLevel(GraphicsDevice device, ContentManager content, int numPlayers)
-        {
-            // player starts
-            List<Vector2> cellPositions = new List<Vector2>();
-            const float LEVEL_BORDER = 0.2f;
-            const float START_POINT_GLOW_SIZE = 0.35f;
-            cellPositions.Add(new Vector2(LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER));
-            cellPositions.Add(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER));
-            cellPositions.Add(new Vector2(RELATIVE_MAX.X - LEVEL_BORDER, RELATIVE_MAX.Y - LEVEL_BORDER));
-            cellPositions.Add(new Vector2(LEVEL_BORDER, LEVEL_BORDER));
-
-            for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; ++playerIndex)
-            {
-                if (Settings.Instance.GetPlayer(playerIndex).Type != Player.Type.NONE)
-                {
-                    int slot = Settings.Instance.GetPlayer(playerIndex).SlotIndex;
-                    spawnPoints.Add(new SpawnPoint(cellPositions[slot], 1000.0f, START_POINT_GLOW_SIZE, playerIndex, content));
-                }
-            }
-
-            // generate in a grid of equilateral triangles
-            const int SPAWNS_GRID_X = 6;
-            const int SPAWNS_GRID_Y = 3;
-            List<Vector2> spawnPositions = GenerateCellPositions(SPAWNS_GRID_X, SPAWNS_GRID_Y, 0.12f, new Vector2(LEVEL_BORDER), RELATIVE_MAX);
-
-
-            // random skipping - nonlinear randomness!
-            const int MAX_SKIPS = 5;
-            int numSkips = (int)(Math.Pow(Random.NextDouble(), 4) * MAX_SKIPS + 0.5f);
-            Vector2[] removedCells = new Vector2[numSkips];
-            for (int i = 0; i < numSkips; ++i)
-            {
-                int index = Random.Next(spawnPositions.Count);
-                removedCells[i] = spawnPositions[index];
-                spawnPositions.RemoveAt(index);
-            }
-#if EMPTY_LEVELDEBUG
-            spawnPositions.Clear();
-#endif
-            // spawn generation
-            foreach(Vector2 pos in spawnPositions)
-            {
-                // brute force..
-                double nearestDist = spawnPositions.Min(x => { return x == pos ? 1 : (x - pos).LengthSquared(); });
-
-                float capturesize = (float)(100.0 + nearestDist * nearestDist * 25000);
-                capturesize = Math.Min(capturesize, 1100);
-
-                spawnPoints.Add(new SpawnPoint(pos, capturesize, (float)Math.Sqrt(nearestDist), - 1, content));
-            }
-            mapObjects.AddRange(spawnPoints);
-
-            // background
-            List<Vector2> renderCells = new List<Vector2>(spawnPoints.Select(x => x.Position));// to keep things simple, place spawnpoints at the beginning
-            renderCells.AddRange(removedCells);
-            for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; ++playerIndex)
-            {
-                if (Settings.Instance.GetPlayer(playerIndex).Type == Player.Type.NONE)
-                    renderCells.Add(cellPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex]);
-            }
-            background.Generate(device, renderCells, Level.RELATIVE_MAX);
         }
 
         /// <summary>
@@ -378,7 +286,6 @@ namespace ParticleStormControl
                     //crosshair.Alive = players[crosshair.PlayerIndex].Alive;
                     crosshair.PlayerAlive = players[crosshair.PlayerIndex].Alive;
                 }
-
                 // statistics
                 else if (mapObject is SpawnPoint)
                 {
@@ -387,6 +294,21 @@ namespace ParticleStormControl
                     {
                         possesingSpawnPoints[sp.PossessingPlayer]++;
                         possesingSpawnPointsOverallSize[sp.PossessingPlayer] += sp.Size;
+                    }
+                }
+                // move antibodies to the nearest player
+                else if (mapObject is Debuff)
+                {
+                    var playerByDistance = players.OrderBy(x => Vector2.DistanceSquared(x.ParticleAttractionPosition, mapObject.Position));
+                    if(playerByDistance.Count() > 1)
+                    {
+                        Vector2 move = playerByDistance.First().ParticleAttractionPosition - mapObject.Position;
+                        if (move.Length() > 0.02f)
+                        {
+                            move /= move.Length();
+                            move *= (float)gameTime.ElapsedGameTime.TotalSeconds * (Player.CURSOR_SPEED * 0.015f);
+                            mapObject.Position += move;
+                        }
                     }
                 }
             }
