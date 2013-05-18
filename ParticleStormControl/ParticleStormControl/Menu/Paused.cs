@@ -82,7 +82,6 @@ namespace ParticleStormControl.Menu
         public override void Update(GameTime gameTime)
         {
             // if keyboard, anybody is allowed!
-            bool otherKeyboard = false;
             int controllerBefore = ControllingPlayer;
             List<int> controls = new List<int>();
             if (InputManager.IsKeyboardControlType(Settings.Instance.GetPlayer(ControllingPlayer).ControlType))
