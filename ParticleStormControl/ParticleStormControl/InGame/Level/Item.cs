@@ -24,7 +24,6 @@ namespace ParticleStormControl
         public ItemType Type { get; private set; }
 
         private Texture2D itemTexture;
-        private SoundEffect soundEffect;
 
         public Item(Vector2 position, ItemType type, ContentManager content) :
             base(position, -1, 0.01f, 15.0f, 3)
@@ -45,7 +44,6 @@ namespace ParticleStormControl
                 default:
                     break;
             }
-            soundEffect = content.Load<SoundEffect>("sound/cosmicd__light-switch-of-doom");
         }
 
         public override void Update(GameTime gameTime)
@@ -59,9 +57,7 @@ namespace ParticleStormControl
 
         protected override void OnPossessingChanged()
         {
-            // TODO insert gather sound here 
-            if (Settings.Instance.Sound)
-                soundEffect.Play();
+            AudioManager.Instance.PlaySoundeffect("collect");
 
             // doesn't work because Level can reject Alive=false
             // apparently a bad solution, but otherwise this item had to know about the player :/

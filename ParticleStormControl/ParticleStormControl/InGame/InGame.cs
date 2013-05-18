@@ -90,11 +90,6 @@ namespace ParticleStormControl
         private const float instantDeathProtectingDuration = 1.0f;
         private float instantDeathProtectingTime = 0.0f;
 
-        /// <summary>
-        /// background music
-        /// </summary>
-        Song song;
-
         // damaging is only every second frame - switch every frame to be xbox friendly
         bool levelDamageFrame = false;
 
@@ -121,7 +116,7 @@ namespace ParticleStormControl
         /// </summary>
         public void OnMenuPageChanged(Menu.Menu.Page newPage, Menu.Menu.Page oldPage)
         {
-            if (newPage == Menu.Menu.Page.PAUSED)
+            if (newPage == Menu.Menu.Page.PAUSED || (newPage == Menu.Menu.Page.CONTROLS && oldPage == Menu.Menu.Page.INGAME ))
                 State = InGame.GameState.Paused;
             else if (newPage == Menu.Menu.Page.INGAME)
                 State = InGame.GameState.Playing;
@@ -193,12 +188,7 @@ namespace ParticleStormControl
             level = new Level(graphicsDevice, content);
             inGameInterface = new InGameInterface(content);
             percentageBar = new PercentageBar(content);
-
-            song = content.Load<Song>("sound/09 Beach");
-            MediaPlayer.Volume = 0.5f;
-            MediaPlayer.IsRepeating = true;
         }
-
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -209,10 +199,7 @@ namespace ParticleStormControl
         {
             float passedFrameTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (Settings.Instance.Music && MediaPlayer.State == MediaState.Stopped)
-                MediaPlayer.Play(song);
-            else if (!Settings.Instance.Music && MediaPlayer.State == MediaState.Playing)
-                MediaPlayer.Stop();
+            AudioManager.Instance.PlaySongsRandom();
 
             // playing
             if (State == GameState.Playing)

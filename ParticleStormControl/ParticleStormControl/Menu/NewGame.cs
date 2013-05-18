@@ -33,7 +33,6 @@ namespace ParticleStormControl.Menu
         private int[] slotIndexToPlayerIndexMapper = new int[4];
 
         private Effect virusRenderEffect;
-        private SoundEffect addPlayerSoundEffect;
 
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
@@ -232,7 +231,6 @@ namespace ParticleStormControl.Menu
         {
             this.content = content;
             virusRenderEffect = content.Load<Effect>("shader/particleRendering");
-            addPlayerSoundEffect = content.Load<SoundEffect>("sound/room__snare-switchy");
 
             base.LoadContent(content);
         }
@@ -401,7 +399,7 @@ namespace ParticleStormControl.Menu
                     Type = ai ? Player.Type.AI : Player.Type.HUMAN,
                 });
 
-                addPlayerSoundEffect.Play();
+                AudioManager.Instance.PlaySoundeffect("click");
                 countdown = TimeSpan.FromSeconds(-1);
             }
 

@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
 
 namespace ParticleStormControl.Menu
 {
@@ -22,7 +23,7 @@ namespace ParticleStormControl.Menu
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
-            if (oldPage != Menu.Page.PAUSED)
+            if (oldPage != Menu.Page.PAUSED && oldPage != Menu.Page.CONTROLS)
             {
                 blendIn = GAME_BLEND_DURATION;
                 ignoreFirstUpdateStep = true;
@@ -53,6 +54,9 @@ namespace ParticleStormControl.Menu
                     menu.ChangePage(Menu.Page.PAUSED, gameTime);
                 }
             }
+
+            if (InputManager.Instance.IsButtonPressed(Keys.F1))
+                menu.ChangePage(Menu.Page.CONTROLS, gameTime);
 
             blendIn -= (float)gameTime.ElapsedGameTime.TotalSeconds;
         }

@@ -40,8 +40,7 @@ namespace ParticleStormControl
         /// </summary>
         public static DamageArea CreateDangerZone(ContentManager content, Vector2 Position, int possessingPlayer)
         {
-            if (Settings.Instance.Sound)
-                content.Load<SoundEffect>("sound/danger_zone").Play();
+            AudioManager.Instance.PlaySoundeffect("danger");
             return new DamageArea(content.Load<Texture2D>("danger_zone_inner"), Position, possessingPlayer,
                                             0.22f, 3, 8.0f, 7.0f, 0.2f);
         }
@@ -51,8 +50,7 @@ namespace ParticleStormControl
         /// </summary>
         public static DamageArea CreateWipeout(ContentManager content)
         {
-            if (Settings.Instance.Sound)
-                content.Load<SoundEffect>("sound/andromadax24__woosh-01").Play();
+            AudioManager.Instance.PlaySoundeffect("wipeout");
             return new DamageArea(content.Load<Texture2D>("Wipeout_big"), Level.RELATIVE_MAX / 2, -1,
                                             3.0f, 1.6f, 1000.0f, 0.6f, 0.6f);
         }
