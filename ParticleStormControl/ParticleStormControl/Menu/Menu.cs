@@ -167,7 +167,8 @@ namespace ParticleStormControl.Menu
             pages[(int)newPage].OnActivated(activePage, gameTime);
             activePage = newPage;
 
-            changePageSoundEffect.Play();
+            if(Settings.Instance.Sound)
+                changePageSoundEffect.Play();
             
             //if(newPage != Page.INGAME)
             //    InterfaceButton.Instance.ChangeHappened(gameTime, SoundEffect);

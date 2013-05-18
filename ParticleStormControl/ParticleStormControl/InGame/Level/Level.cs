@@ -425,15 +425,17 @@ namespace ParticleStormControl
                 }
             }
 
-            // random events
-            if (pickuptimer.Elapsed.TotalSeconds > itemSpawnTime)
+            // items
+            if (UseItems)
             {
-                if (UseItems)
+                if (pickuptimer.Elapsed.TotalSeconds > itemSpawnTime)
+                {
                     PlaceItems(players);
-                
-                // restart timer
-                pickuptimer.Reset();
-                pickuptimer.Start();
+
+                    // restart timer
+                    pickuptimer.Reset();
+                    pickuptimer.Start();
+                }
             }
 
             // statistics

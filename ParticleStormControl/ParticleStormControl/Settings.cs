@@ -156,7 +156,7 @@ namespace ParticleStormControl
                                 
                                 // validate resolution
                                 if (GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Single(x => x.Format == SurfaceFormat.Color &&
-                                                                                                x.Height == resolutionY && x.Width == resolutionX) != null)
+                                                                                                x.Height == resolutionY && x.Width == resolutionX) == null)
                                 {
                                     ChooseStandardResolution();
                                     dirty = true;
