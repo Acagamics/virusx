@@ -12,7 +12,7 @@ namespace ParticleStormControl
     /// <summary>
     /// highly optimized particle rendering
     /// </summary>
-    public class ParticleRenderer
+    class ParticleRenderer
     {
         struct vertex2dPosition
         {

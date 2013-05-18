@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace ParticleStormControl
 {
-    public class InputManager
+    class InputManager
     {
         #region singleton
         private static readonly InputManager instance = new InputManager();

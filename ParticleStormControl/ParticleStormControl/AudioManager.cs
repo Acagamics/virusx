@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace ParticleStormControl
 {
-    public class AudioManager
+    class AudioManager
     {
         #region singleton
         private static readonly AudioManager instance = new AudioManager();

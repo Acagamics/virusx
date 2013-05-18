@@ -10,7 +10,7 @@ namespace ParticleStormControl
     /// Defines a virus swarm of a given type and color
     /// Every player posesses exactly one Swarm
     /// </summary>
-    public class VirusSwarm
+    class VirusSwarm
     {
         #region Virus Definitions
 
