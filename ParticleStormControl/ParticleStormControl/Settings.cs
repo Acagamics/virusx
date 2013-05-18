@@ -46,6 +46,8 @@ namespace ParticleStormControl
         };
         private List<PlayerSettings> playerSettings = new List<PlayerSettings>(Player.MAX_NUM_PLAYERS);
 
+        public InGame.GameMode GameMode { get; set; }
+
         public int NumPlayers { get { return playerSettings.Count; } }
 
         public void AddPlayer(PlayerSettings settings)

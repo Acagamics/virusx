@@ -52,8 +52,6 @@ namespace ParticleStormControl
         
         public VirusSwarm.VirusType Virus { get { return virusSwarm.Virus; } }
 
-        public Item.ItemType ItemSlot { get; set; }
-
         public Teams Team { get { return team; } set { team = value; } }
         private Teams team;
 
@@ -68,7 +66,7 @@ namespace ParticleStormControl
         public int HighestUsedParticleIndex { get { return virusSwarm.HighestUsedParticleIndex; } }
 
         public Color DamageMapDrawColor { get { return virusSwarm.DamageMapDrawColor; } }
-        public Vector4 DamageMapMaskColor { get { return virusSwarm.DamageMapMaskColor; } }
+        public Vector4 DamageMapMask { get { return virusSwarm.DamageMapMask; } }
 
         #endregion
 
@@ -181,6 +179,46 @@ namespace ParticleStormControl
 
         #endregion
 
+        #region Items
+
+        Item.ItemType itemSlot = Item.ItemType.NONE; 
+        /// <summary>
+        /// The item a player currently possesses
+        /// </summary>
+        public Item.ItemType ItemSlot
+        {
+            get { return itemSlot; }
+            set
+            {
+                currentItemPossessionTime = 0f;
+                itemSlot = value;
+            }
+        }
+        /// <summary>
+        /// If true the item will be removed after a given amount of time
+        /// </summary>
+        private bool automaticItemDeletion = false;
+        /// <summary>
+        /// The time a player can possess an item, if the automatic deletion is active
+        /// </summary>
+        private float maxItemPossessionTime = 15f;
+        /// <summary>
+        /// The time how long a player possess an item
+        /// </summary>
+        private float currentItemPossessionTime = 0f;
+
+        private float blinkTimePercentage = 0.75f;
+        private float itemAlphaValue = 1f;
+        public float ItemAlphaValue 
+        {
+            get
+            {
+                return itemAlphaValue;
+            }
+        }
+
+        #endregion
+
         public Player(int playerIndex, int virusIndex, int colorIndex, Teams team, GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
         {
             this.playerIndex = playerIndex;
@@ -190,7 +228,16 @@ namespace ParticleStormControl
 
             cursorPosition = cursorStartPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex];
 
-            virusSwarm = new VirusSwarm(virusIndex, playerIndex, team, device, content, noiseTexture);
+            List<int> friendlyPlayers = new List<int>();
+            if (team != Teams.NONE)
+            {
+                for (int player = 0; player < Settings.Instance.NumPlayers; ++player)
+                {
+                    if (Settings.Instance.GetPlayer(player).Team == team)
+                        friendlyPlayers.Add(player);
+                }
+            }
+            virusSwarm = new VirusSwarm(virusIndex, playerIndex, friendlyPlayers, device, content, noiseTexture);
         }
 
         /// <summary>
@@ -246,6 +293,26 @@ namespace ParticleStormControl
                 }
                 else
                     timeWithoutSpawnPoint = 0.0f;
+
+                if (automaticItemDeletion)
+                {
+                    if (ItemSlot != Item.ItemType.NONE)
+                    {
+                        currentItemPossessionTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                        if (currentItemPossessionTime > blinkTimePercentage * maxItemPossessionTime)
+                        {
+                            itemAlphaValue = ((float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * ((maxItemPossessionTime-(maxItemPossessionTime - currentItemPossessionTime))*0.25f))*0.4f + 0.5f);
+                        }
+                        else itemAlphaValue = 1f;
+
+                        if (currentItemPossessionTime >= maxItemPossessionTime)
+                        {
+                            ItemSlot = Item.ItemType.NONE;
+                            itemAlphaValue = 1f;
+                        }
+                    }
+                }
             }
         }
 
@@ -255,6 +322,5 @@ namespace ParticleStormControl
         }
 
         abstract public void UserControl(float frameTimeInterval, Level level);
- 
     }
 }

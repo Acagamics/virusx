@@ -12,35 +12,12 @@ using ParticleStormControl;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
 
+using Game = global::ParticleStormControl.InGame;
+
 namespace ParticleStormControl.Menu
 {
     class NewGame : MenuPage
     {
-        public enum GameMode
-        {
-            // no teams, up to 4 players
-            CLASSIC,
-
-            // start player -> defender, up to 3 others -> attackers
-            CAPTURE_THE_CELL,
-
-            // 2 teams, each up to 2 players
-            LEFT_VS_RIGHT,
-
-            // 1 player vs 1 computer
-            TUTORIAL,
-
-            NUM_MODES
-        }
-
-        static public readonly String[] GAMEMODE_NAME = new String[]
-        {
-            "Classic",
-            "Capture the Cell",
-            "Left vs. Right",
-            "Tutorial"
-        };
-
         const int VIRUS_SIZE = 110;
         const int VIRUS_PADDING = 10;
         const int ARROW_VERTICAL_SIZE = 8;
@@ -59,9 +36,6 @@ namespace ParticleStormControl.Menu
 
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
-
-        public GameMode Mode { get { return mode; } set { mode = value; } }
-        private GameMode mode;
 
         /// <summary>
         /// reference to the content manager
@@ -399,15 +373,15 @@ namespace ParticleStormControl.Menu
                 slotIndexToPlayerIndexMapper[slotIndex] = playerIndex;
                 Player.Teams team = Player.Teams.NONE;
 
-                switch (mode)
+                switch (Settings.Instance.GameMode)
                 {
-                    case GameMode.CAPTURE_THE_CELL:
+                    case Game.GameMode.CAPTURE_THE_CELL:
                         if (slotIndex == 0)
                             team = Player.Teams.DEFENDER;
                         else
                             team = Player.Teams.ATTACKER;
                         break;
-                    case GameMode.LEFT_VS_RIGHT:
+                    case Game.GameMode.LEFT_VS_RIGHT:
                         if (slotIndex == 0 || slotIndex == 3)
                             team = Player.Teams.LEFT;
                         else

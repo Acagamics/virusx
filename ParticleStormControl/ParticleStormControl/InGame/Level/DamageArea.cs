@@ -46,7 +46,7 @@ namespace ParticleStormControl
         }
 
         /// <summary>
-        /// creates a new danger zone damaging area
+        /// creates a new wipeout damaging area
         /// </summary>
         public static DamageArea CreateWipeout(ContentManager content)
         {

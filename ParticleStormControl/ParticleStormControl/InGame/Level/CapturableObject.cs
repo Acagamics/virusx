@@ -73,28 +73,38 @@ namespace ParticleStormControl
                 CapturingPlayer = playerSwitchedTo[CapturingPlayer];
         }
 
-        public override void ApplyDamage(DamageMap damageMap, float timeInterval)
+        /// <summary>
+        /// computes summed and scaled (damageFactor) damage in the area of this object
+        /// </summary>
+        protected float[] GetDamageInArea(DamageMap damageMap, float timeInterval)
         {
-            float[] damage = new float[4];
-            for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
-                damage[i] = 0.0f;
+            float[] damage = new float[Settings.Instance.NumPlayers];
+          //  int[] damageMapChannels = new int[damage.Length];
+          //  for (int i = 0; i < damage.Length; ++i)
+          //      damageMapChannels[i] = VirusSwarm.GetDamageColorIndexFromTeam(i);
 
             for (int y = damageMap_MinY; y <= damageMap_MaxY; ++y)
             {
                 for (int x = damageMap_MinX; x <= damageMap_MaxX; ++x)
                 {
-                    for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
+                    for (int i = 0; i < damage.Length; ++i)
                         damage[i] += damageMap.GetPlayerDamageAt(x, y, i);
                 }
             }
-
-            for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
+            for (int i = 0; i < damage.Length; ++i)
                 damage[i] *= damageFactor*timeInterval;
+
+            return damage;
+        }
+
+        public override void ApplyDamage(DamageMap damageMap, float timeInterval)
+        {
+            float[] damage = GetDamageInArea(damageMap, timeInterval);
 
             // nobody owns this
             if (PossessingPlayer == -1)
             {
-                for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
+                for (int i = 0; i < damage.Length; ++i)
                 {
                     if (CapturingPlayer == i)
                         PossessingPercentage += damage[i];
@@ -118,7 +128,7 @@ namespace ParticleStormControl
             // owned
             else
             {
-                for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
+                for (int i = 0; i < damage.Length; ++i)
                 {
                     if (PossessingPlayer == i)
                         PossessingPercentage += damage[i] * defenseFactor;
@@ -142,7 +152,7 @@ namespace ParticleStormControl
             PossessingPercentage = 0.0f;
             CapturingPlayer = -1;
             float maxDamage = 0.0f;
-            for (int i = 0; i < Player.MAX_NUM_PLAYERS; ++i)
+            for (int i = 0; i < damage.Length; ++i)
             {
                 if (damage[i] > maxDamage)
                 {
@@ -152,7 +162,7 @@ namespace ParticleStormControl
             }
         }
 
-        public Color ComputeColor()
+        virtual public Color ComputeColor()
         {
             if (PossessingPlayer != -1)
                 return Color.Lerp(Color.White, Settings.Instance.GetPlayerColor(PossessingPlayer), PossessingPercentage);
