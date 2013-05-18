@@ -75,7 +75,7 @@ namespace ParticleStormControl
             float[] damage = GetDamageInArea(damageMap, timeInterval);
             float totalDamage = 0.0f;
             for (int i = 0; i<damage.Length; ++i) totalDamage += damage[i];
-            PossessingPercentage += totalDamage * damageFactor;
+            PossessingPercentage += totalDamage;
 
             // done?
             if (PossessingPercentage >= 1.0f)
