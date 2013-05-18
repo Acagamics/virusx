@@ -39,6 +39,8 @@ namespace ParticleStormControl.Menu
             Interface.Add(new InterfaceButton("How to Play", new Vector2(620, 100), Alignment.TOP_RIGHT));
             Interface.Add(new InterfaceImage("instructions", new Vector2(620, 100 + menu.GetFontHeight() + 2 * InterfaceElement.PADDING), Alignment.TOP_RIGHT));
 
+            Interface.Add(new InterfaceTooltip(() => { return "Tooltip"; }, () => { return "und zwar ein ganz toller\nmit mehreren\nzeilen und zeichen"; }, new Vector2(300, 0), () => true, 300, InterfaceTooltip.ArrowPosition.LEFT, Alignment.CENTER_LEFT));
+
             Interface.Add(new InterfaceButton(ParticleStormControl.VERSION, new Vector2(2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING) + menu.Font.MeasureString(ParticleStormControl.VERSION), Alignment.BOTTOM_RIGHT));
         }
 

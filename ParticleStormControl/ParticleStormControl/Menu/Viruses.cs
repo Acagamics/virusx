@@ -26,11 +26,10 @@ namespace ParticleStormControl.Menu
             int left = -400;
 
             // descriptions
-            // can't be put in a loop because of the anonymous method
             for (int i = 0; i < 4; i++)
             {
                 int index = i;
-                Interface.Add(new InterfaceButton(() => { return GetLabels(virusIndex)[index]; }, new Vector2(left, top), Alignment.TOP_CENTER));
+                Interface.Add(new InterfaceButton(() => { return GetLabels(virusIndex)[index]; }, new Vector2(left, top), index == 0, Alignment.TOP_CENTER));
                 top += (int)menu.Font.MeasureString(GetLabels(virusIndex)[index]).Y + padding;
                 if (i == 0)
                     top += padding;
