@@ -160,8 +160,8 @@ namespace ParticleStormControl
                                 resolutionY = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionY"));
                                 
                                 // validate resolution
-                                if (GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Single(x => x.Format == SurfaceFormat.Color &&
-                                                                                                x.Height == resolutionY && x.Width == resolutionX) == null)
+                                if (!GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Any(x => x.Format == SurfaceFormat.Color &&
+                                                                                                x.Height == resolutionY && x.Width == resolutionX))
                                 {
                                     ChooseStandardResolution();
                                     dirty = true;
