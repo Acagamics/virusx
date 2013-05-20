@@ -3,7 +3,7 @@ using System;
 using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("UnitTests")]
 
-namespace ParticleStormControl
+namespace VirusX
 {
 #if WINDOWS || XBOX
     static class Program

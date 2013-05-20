@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ParticleStormControl.Menu
+namespace VirusX.Menu
 {
     abstract class MenuPage
     {

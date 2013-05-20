@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ParticleStormControl
+namespace VirusX
 {
     /// <summary>
     /// explosion object on the map

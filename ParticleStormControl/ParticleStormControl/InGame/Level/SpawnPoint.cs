@@ -6,10 +6,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Audio;
-using ParticleStormControl;
+using VirusX;
 using Microsoft.Xna.Framework.Content;
 
-namespace ParticleStormControl
+namespace VirusX
 {
     class SpawnPoint : CapturableObject
     {

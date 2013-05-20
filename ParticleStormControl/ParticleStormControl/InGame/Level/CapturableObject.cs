@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using ParticleStormControl;
+using VirusX;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ParticleStormControl
+namespace VirusX
 {
     abstract class CapturableObject : MapObject
     {

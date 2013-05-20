@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ParticleStormControl
+namespace VirusX
 {
     abstract class MapObject
     {

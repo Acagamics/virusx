@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 
 
-namespace ParticleStormControl
+namespace VirusX
 {
     /// <summary>
     /// This is the main type for your game

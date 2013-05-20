@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 
-namespace ParticleStormControl.Menu
+namespace VirusX.Menu
 {
     class InGame : MenuPage
     {

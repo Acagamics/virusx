@@ -9,13 +9,13 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
-using ParticleStormControl;
+using VirusX;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
 
-using Game = global::ParticleStormControl.InGame;
+using Game = global::VirusX.InGame;
 
-namespace ParticleStormControl.Menu
+namespace VirusX.Menu
 {
     class NewGame : MenuPage
     {

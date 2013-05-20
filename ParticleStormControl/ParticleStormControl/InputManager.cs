@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 
-namespace ParticleStormControl
+namespace VirusX
 {
     class InputManager
     {
