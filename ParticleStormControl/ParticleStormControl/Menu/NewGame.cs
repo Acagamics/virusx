@@ -500,21 +500,7 @@ namespace VirusX.Menu
                     spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.Black);
                     virusImageRect.Inflate(-VIRUS_PADDING, -VIRUS_PADDING);
                     spriteBatch.End(); // yeah this sucks terrible! TODO better solution
-                    switch(VirusSwarm.Viruses[Settings.Instance.GetPlayer(playerIndex).VirusIndex])
-                    {
-                        case VirusSwarm.VirusType.EPSTEINBARR:
-                            virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["EpsteinBar_Spritebatch"];
-                            break;
-                        case VirusSwarm.VirusType.H5N1:
-                            virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["H5N1_Spritebatch"];
-                            break;
-                        case VirusSwarm.VirusType.HIV:
-                            virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["HIV_Spritebatch"];
-                            break;
-                        case VirusSwarm.VirusType.HEPATITISB:
-                            virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["HepatitisB_Spritebatch"];
-                            break;
-                    }
+                    ParticleRenderer.ChooseVirusDrawTechnique(VirusSwarm.Viruses[Settings.Instance.GetPlayer(playerIndex).VirusIndex], virusRenderEffect, true);
                     virusRenderEffect.Parameters["Color"].SetValue(VirusSwarm.ParticleColors[Settings.Instance.GetPlayer(playerIndex).ColorIndex].ToVector4() * 1.5f);
                     spriteBatch.Begin(0, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, virusRenderEffect);
                     spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.White);

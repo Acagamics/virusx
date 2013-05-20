@@ -121,32 +121,49 @@ namespace VirusX
             device.VertexTextures[1] = null;
         }
 
+        public static void ChooseVirusDrawTechnique(VirusSwarm.VirusType virus, Effect virusRenderEffect, bool spriteBatch)
+        {
+            string techniqueName = "";
+            switch (virus)
+            {
+                case VirusSwarm.VirusType.EPSTEINBARR:
+                    techniqueName = "EpsteinBar";
+                    break;
+                case VirusSwarm.VirusType.H5N1:
+                    techniqueName = "H5N1";
+                    break;
+                case VirusSwarm.VirusType.HIV:
+                    techniqueName = "HIV";
+                    break;
+                case VirusSwarm.VirusType.HEPATITISB:
+                    techniqueName = "HepatitisB";
+                    break;
+                case VirusSwarm.VirusType.MARV:
+                    techniqueName = "Marburg";
+                    break;
+                default:
+                    techniqueName = "DamageMap";
+                    spriteBatch = false;
+                    break;
+            }
+
+            if (techniqueName != "")
+            {
+                if (spriteBatch)
+                    techniqueName += "_Spritebatch";
+                virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques[techniqueName];
+            }
+        }
+
         private void DrawIntern(GraphicsDevice device, bool damage, Player player)
         {
             if (!player.Alive)
                 return;
-
-            switch(player.Virus)
-            {
-                case VirusSwarm.VirusType.H5N1:
-                    particleEffect.CurrentTechnique = particleEffect.Techniques["H5N1"];
-                    break;
-                case VirusSwarm.VirusType.HEPATITISB:
-                    particleEffect.CurrentTechnique = particleEffect.Techniques["HepatitisB"];
-                    break;
-                case VirusSwarm.VirusType.HIV:
-                    particleEffect.CurrentTechnique = particleEffect.Techniques["HIV"];
-                    break;
-                case VirusSwarm.VirusType.EPSTEINBARR:
-                    particleEffect.CurrentTechnique = particleEffect.Techniques["EpsteinBar"];
-                    break;
-                default:
-                    particleEffect.CurrentTechnique = particleEffect.Techniques["DamageMap"];
-                    break;
-            }
+          
             if (damage)
                 particleEffect.CurrentTechnique = particleEffect.Techniques["DamageMap"];
-
+            else
+                ChooseVirusDrawTechnique(player.Virus, particleEffect, false);
 
             particleEffect.Parameters["PositionTexture"].SetValue(player.PositionTexture);
             particleEffect.Parameters["InfoTexture"].SetValue(player.HealthTexture);
