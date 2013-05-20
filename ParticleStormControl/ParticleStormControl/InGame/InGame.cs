@@ -37,8 +37,14 @@ namespace VirusX
             // 2 teams, each up to 2 players
             LEFT_VS_RIGHT,
 
+            // no teams, up to 4 players
+            FUN,
+
             // 1 player vs 1 computer
             TUTORIAL,
+
+            // 1 player arcarde mode
+            ARCADE,
 
             NUM_MODES
         };
@@ -47,7 +53,9 @@ namespace VirusX
             "Classic",
             "Capture the Cell",
             "Left vs. Right",
-            "Tutorial"
+            "Fun",
+            "Tutorial",
+            "Arcade"
         };
 
 
@@ -160,7 +168,21 @@ namespace VirusX
             }
 
             // restart stuff
-            level.NewGame(Settings.Instance.GameMode == GameMode.CAPTURE_THE_CELL ? MapGenerator.MapType.CAPTURE_THE_CELL : MapGenerator.MapType.NORMAL, graphicsDevice, players);
+            MapGenerator.MapType mapType;
+            switch(Settings.Instance.GameMode)
+            {
+                case GameMode.CAPTURE_THE_CELL:
+                    mapType = MapGenerator.MapType.CAPTURE_THE_CELL;
+                    break;
+                case GameMode.FUN:
+                    mapType = MapGenerator.MapType.FUN;
+                    break;
+                default:
+                    mapType = MapGenerator.MapType.NORMAL;
+                    break;
+
+            }
+            level.NewGame(mapType, graphicsDevice, players);
             particleRenderer = new ParticleRenderer(graphicsDevice, content, players.Length);
 
             // init statistics
@@ -268,6 +290,7 @@ namespace VirusX
             switch (Settings.Instance.GameMode)
             {
                 // only one player alive
+                case GameMode.FUN:
                 case GameMode.CLASSIC:
                     for (int i = 0; i < players.Length; ++i)
                     {
@@ -300,6 +323,11 @@ namespace VirusX
                         winningTeam = Player.Teams.ATTACKER;
                     else if (!attackerAlive && defenderAlive)
                         winningTeam = Player.Teams.DEFENDER;
+                    break;
+
+                // player died
+                case GameMode.ARCADE:
+                    winPlayerIndex = players[0].Alive ? -1 : 0;
                     break;
 
                 default:
