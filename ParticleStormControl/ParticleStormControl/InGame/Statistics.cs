@@ -9,6 +9,7 @@ namespace VirusX
     /// <summary>
     /// class to collect game statistics
     /// </summary>
+    [Serializable]
     class Statistics
     {
         #region used items
@@ -95,6 +96,11 @@ namespace VirusX
         public float MaxOverallSimultaneousHealth { get { return maxOverallSimultaneousHealth; } }
         private float maxOverallSimultaneousHealth = 1;
 
+        /// <summary>
+        /// the used Virus types
+        /// </summary>
+        VirusSwarm.VirusType[] virusTypes;
+
         #endregion
 
         #region time depend statistics
@@ -130,7 +136,7 @@ namespace VirusX
             usedItems = new uint[playerCount];
             killedEnemies = new uint[playerCount];
             deathStep = new int[playerCount];
-
+            virusTypes = new VirusSwarm.VirusType[playerCount];
             
             dominationInStep = new List<float>[playerCount];
 
@@ -302,7 +308,19 @@ namespace VirusX
         /// <returns></returns>
         public uint getPossessingSpawnPointsInStep(int playerIndex, int step)
         { return (step < steps && playerIndex < playerCount && playerIndex >= 0) ? possessingSpawnPointsInStep[playerIndex][step] : possessingSpawnPointsInStep[0][steps-1]; }
-        
+
+        /// <summary>
+        /// the virus type used by the given player
+        /// </summary>
+        /// <param name="playerIndex"></param>
+        /// <returns></returns>
+        public VirusSwarm.VirusType? getVirusType(int playerIndex)
+        {
+            if(playerIndex < 0 || playerIndex >= playerCount) return null;
+            else return virusTypes[playerIndex];
+        }
+
+
         /// <summary>
         /// a List of all items a player used/activated in a specific time step. The List is empty if the player has not used/activated any item.
         /// </summary>
@@ -535,6 +553,13 @@ namespace VirusX
             itemsUsedByPlayer[playerIndex].Add(UsedItem.newItemUsed(_item,steps-1));
         }
 
+
+        public void SetVirusType(int playerIndex, VirusSwarm.VirusType virusType)
+        {
+            if (playerIndex < 0 || playerIndex >= playerCount) return;
+
+            virusTypes[playerIndex] = virusType;
+        }
         #endregion
 
         #region generate test data

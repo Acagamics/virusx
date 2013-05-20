@@ -188,6 +188,10 @@ namespace VirusX
             // init statistics
             level.GameStatistics = new Statistics(Settings.Instance.NumPlayers, 2400, (uint)level.SpawnPoints.Count);
 
+            // collect the virus types
+            foreach (Player player in players)
+                level.GameStatistics.SetVirusType(player.playerIndex, player.Virus);
+
             State = GameState.Playing;
             System.GC.Collect();
         }
