@@ -185,6 +185,7 @@ namespace VirusX.Menu
         /// <returns></returns>
         public static int Loop(int selected, int maximum, InputManager.ControlType control = InputManager.ControlType.NONE, bool horizontal = false)
         {
+            int oldSelected = selected;
             // loopin
             if (control == InputManager.ControlType.NONE)
             {
@@ -220,6 +221,11 @@ namespace VirusX.Menu
                         selected = selected == 0 ? maximum - 1 : selected - 1;
                 }
             }
+            
+            // if horizontal play sound
+            if (horizontal && oldSelected != selected)
+                AudioManager.Instance.PlaySoundeffect("click");
+
             return selected;
         }
 
@@ -231,20 +237,27 @@ namespace VirusX.Menu
         /// <returns></returns>
         public static bool Toggle(bool selected, InputManager.ControlType control = InputManager.ControlType.NONE)
         {
+            bool oldSelected = selected;
+
             if (control == InputManager.ControlType.NONE)
             {
                 if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT)
                     || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT)
                     || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION))
-                    return !selected;
+                    selected = !selected;
             }
             else
             {
                 if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, control)
                     || InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, control)
                     || InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, control))
-                    return !selected;
+                    selected = !selected;
             }
+
+            // if horizontal play sound
+            if (oldSelected != selected)
+                AudioManager.Instance.PlaySoundeffect("click");
+
             return selected;
         }
 

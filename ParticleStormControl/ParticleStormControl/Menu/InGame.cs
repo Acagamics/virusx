@@ -65,7 +65,7 @@ namespace VirusX.Menu
                 }
             }
 
-            if (InputManager.Instance.IsButtonPressed(Keys.F1))
+            if (InputManager.Instance.IsButtonPressed(Keys.F1) || InputManager.Instance.AnyPressedButton(Buttons.Y))
                 menu.ChangePage(Menu.Page.CONTROLS, gameTime);
 
             blendIn -= (float)gameTime.ElapsedGameTime.TotalSeconds;

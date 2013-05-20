@@ -226,7 +226,7 @@ namespace VirusX
                         bool alive = players[(int)index].Alive;
                         players[(int)index].UpdateCPUPart(gameTime, level.SpawnPoints, playerCantDie);
                         if (alive && !players[(int)index].Alive)
-                            playerRecentlyDied[(int)index] = true; //
+                            playerRecentlyDied[(int)index] = true;
                     }
                     catch(Exception exp)
                     {
