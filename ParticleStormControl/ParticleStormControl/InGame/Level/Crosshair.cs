@@ -76,15 +76,15 @@ namespace VirusX
             // normal cursor
             if (PlayerAlive)
             {
-                spriteBatch.Draw(crossHairTexture, level.ComputePixelRect(ParticleAttractionPosition, Size), null, color,
-                                    currentRotation, new Vector2(crossHairTexture.Width * 0.5f, crossHairTexture.Height * 0.5f),
+                spriteBatch.Draw(crossHairTexture, level.ComputePixelPosition(ParticleAttractionPosition), null, color,
+                                    currentRotation, new Vector2(crossHairTexture.Width * 0.5f, crossHairTexture.Height * 0.5f), level.ComputeTextureScale(Size, crossHairTexture.Width),
                                     SpriteEffects.None, 0.0f);
 
                 if (ParticleAttractionPosition != Position)
                 {
                     color.A = 150;
-                    spriteBatch.Draw(crossHairTexture, level.ComputePixelRect(Position, Size), null, color,
-                       currentRotation, new Vector2(crossHairTexture.Width * 0.5f, crossHairTexture.Height * 0.5f),
+                    spriteBatch.Draw(crossHairTexture, level.ComputePixelPosition(ParticleAttractionPosition), null, color,
+                       currentRotation, new Vector2(crossHairTexture.Width * 0.5f, crossHairTexture.Height * 0.5f), level.ComputeTextureScale(Size, crossHairTexture.Width),
                         SpriteEffects.None, 0.0f);
                 }
             }
@@ -92,8 +92,8 @@ namespace VirusX
             else
             {
                 color.A = 150;
-                spriteBatch.Draw(deadPlayerCursor, level.ComputePixelRect(Position, Size), null, color,
-                                    currentRotation, new Vector2(deadPlayerCursor.Width * 0.5f, deadPlayerCursor.Height * 0.5f),
+                spriteBatch.Draw(deadPlayerCursor, level.ComputePixelPosition(ParticleAttractionPosition)  , null, color,
+                                    currentRotation, new Vector2(deadPlayerCursor.Width * 0.5f, deadPlayerCursor.Height * 0.5f), level.ComputeTextureScale(Size, deadPlayerCursor.Width),
                                     SpriteEffects.None, 0.0f);
             }
         }

@@ -114,8 +114,8 @@ namespace VirusX
             // item
             if (!explosionTimer.IsRunning)
             {
-                spriteBatch.Draw(itemTexture, level.ComputePixelRect(Position, Size), null, ComputeColor(),
-                                    (float)gameTime.TotalGameTime.TotalSeconds, textureCenter, SpriteEffects.None, 0.9f);
+                spriteBatch.Draw(itemTexture, level.ComputePixelPosition(Position), null, ComputeColor(),
+                                    (float)gameTime.TotalGameTime.TotalSeconds, textureCenter, level.ComputeTextureScale(Size, itemTexture.Width), SpriteEffects.None, 0.9f);
             }
             // explosion
             if (explosionTimer.IsRunning)
