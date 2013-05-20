@@ -117,6 +117,11 @@ namespace VirusX
         /// </summary>
         private static readonly float[] itemPossibilities = new float[] { 0.0f, 0.17f, 0.45f, 0.60f, 0.73f, 1.0f };
         /// <summary>
+        /// item possebilities for CTC mode [0] = no item; [5] = no item; [1] = antibody; [2] = dangerZone; [3] = mutate; [4] = wipeout
+        /// every value is [i-1] + possebility
+        /// </summary>
+        private static readonly float[] itemPossibilitiesCTC = new float[] { 0.0f, 0.25f, 0.56f, 0.56f, 0.73f, 1.0f };
+        /// <summary>
         /// determines how many seconds should pass until the next item placement attemp will be started
         /// </summary>
         private static readonly float itemSpawnTime = 2.8f;
@@ -414,11 +419,24 @@ namespace VirusX
         {
             double next_item_pos = Random.NextDouble();
             int item = 0;
-            for (int i = 1; i < itemPossibilities.Length; i++)
+            if (Settings.Instance.GameMode == InGame.GameMode.CAPTURE_THE_CELL)
             {
-                if (itemPossibilities[i - 1] < next_item_pos && next_item_pos < itemPossibilities[i])
+                for (int i = 1; i < itemPossibilitiesCTC.Length; i++)
                 {
-                    item = i;
+                    if (itemPossibilitiesCTC[i - 1] < next_item_pos && next_item_pos < itemPossibilitiesCTC[i])
+                    {
+                        item = i;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 1; i < itemPossibilities.Length; i++)
+                {
+                    if (itemPossibilities[i - 1] < next_item_pos && next_item_pos < itemPossibilities[i])
+                    {
+                        item = i;
+                    }
                 }
             }
 
@@ -455,7 +473,7 @@ namespace VirusX
             }
             else
                 position = new Vector2((float)(Random.NextDouble()) * (RELATIVE_MAX.X - 0.2f) + 0.1f, (float)(Random.NextDouble()) * (RELATIVE_MAX.Y - 0.2f) + 0.1f);
-
+            
             AddItem(item, position);
         }
 

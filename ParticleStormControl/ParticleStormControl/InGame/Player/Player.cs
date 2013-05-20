@@ -124,6 +124,14 @@ namespace VirusX
                 new Vector2(Level.RELATIVE_MAX.X-0.2f - cursor_offset_x, Level.RELATIVE_MAX.Y-0.2f- cursor_offset_y),
                 new Vector2(0.2f + cursor_offset_x, 0.2f + cursor_offset_y)
             };
+
+        protected readonly static Vector2[] cursorStartPositionsCTC =
+            {
+                new Vector2(Level.RELATIVE_MAX.X / 2, 0.45f),  // THE CELL
+                new Vector2(Level.RELATIVE_MAX.X - MapGenerator.LEVEL_BORDER - 0.2f - (cursor_offset_x * 0.5f), MapGenerator.LEVEL_BORDER+0.1f - cursor_offset_y),  // upper right
+                new Vector2(Level.RELATIVE_MAX.X / 2, Level.RELATIVE_MAX.Y - MapGenerator.LEVEL_BORDER+0.1f - (cursor_offset_y * 2f)), // lower cell
+                new Vector2(MapGenerator.LEVEL_BORDER + 0.2f + (cursor_offset_x * 0.5f), MapGenerator.LEVEL_BORDER+0.1f - cursor_offset_y) // upper left
+            };
 #endif
         /// <summary>
         /// movementspeed of the cursor
@@ -224,7 +232,10 @@ namespace VirusX
             this.team = team;
             this.ItemSlot = global::VirusX.Item.ItemType.NONE;
 
-            cursorPosition = cursorStartPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex];
+            if(Settings.Instance.GameMode == InGame.GameMode.CAPTURE_THE_CELL)
+                cursorPosition = cursorStartPositionsCTC[Settings.Instance.GetPlayer(playerIndex).SlotIndex];
+            else
+                cursorPosition = cursorStartPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex];
 
             List<int> friendlyPlayers = new List<int>();
             if (team != Teams.NONE)

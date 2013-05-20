@@ -10,7 +10,7 @@ namespace VirusX
 {
     static class MapGenerator
     {
-        private const float LEVEL_BORDER = 0.2f;
+        public const float LEVEL_BORDER = 0.2f;
         private const float NORMAL_PLAYER_CELL_STRENGTH = 1000.0f;
 
         private const float CTC_NORMAL_PLAYER_CELL_STRENGTH = 800.0f;
