@@ -1,3 +1,12 @@
+texture VirusTexture;
+sampler2D sampVirus = sampler_state
+{	
+	Texture = <VirusTexture>;
+    MagFilter = LINEAR;
+    MinFilter = LINEAR;
+    Mipfilter = LINEAR;
+};
+
 texture PositionTexture;
 sampler2D sampPositions = sampler_state
 {	
@@ -14,17 +23,6 @@ sampler2D sampInfos = sampler_state
     MinFilter = POINT;
     Mipfilter = POINT;
 };
-
-texture VirusTexture;
-sampler2D sampVirus = sampler_state
-{	
-	Texture = <VirusTexture>;
-    MagFilter = LINEAR;
-    MinFilter = LINEAR;
-    Mipfilter = LINEAR;
-};
-
-
 
 float4 Color;
 float TextureSize;
@@ -63,7 +61,16 @@ VertexShaderOutput VS(VertexShaderInput input)
 	{
 		health += MinHealth;
 		float2 instancePosition = tex2Dlod(sampPositions, vertexTexcoord).xy;	
-		output.Position.xy = (input.Position * health * HealthToSizeScale + instancePosition / RelativeMax) * float2(2, -2) + float2(-1, 1);
+
+		// random rotation
+		float cosRot = cos(input.InstanceIndex);
+		float sinRot = sin(input.InstanceIndex);
+		float2 quadTransl = float2(dot(input.Position, float2(cosRot, -sinRot)),
+								   dot(input.Position, float2(sinRot,  cosRot)));
+
+		// positioning
+		output.Position.xy = (quadTransl * health * HealthToSizeScale + instancePosition / RelativeMax) * float2(2, -2) + float2(-1, 1);
+
 		output.Position.zw = float2(0.5f, 1.0f);
 	}
 	else
@@ -99,7 +106,7 @@ float4 PS_Virus(VertexShaderOutput input) : COLOR0
 {
 	float virus = tex2D(sampVirus, input.Texcoord).r;
 	clip(virus - 1.0f/255.0f);
-    return Color * virus;
+    return Color * virus * 2;
 }
 
 float4 PS_NoFalloff(VertexShaderOutput input) : COLOR0
