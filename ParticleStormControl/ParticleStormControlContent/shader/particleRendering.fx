@@ -106,7 +106,7 @@ float4 PS_Virus(VertexShaderOutput input) : COLOR0
 {
 	float virus = tex2D(sampVirus, input.Texcoord).r;
 	clip(virus - 1.0f/255.0f);
-    return Color * virus * 2;
+    return Color * virus;
 }
 
 float4 PS_NoFalloff(VertexShaderOutput input) : COLOR0

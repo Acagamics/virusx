@@ -15,25 +15,28 @@ namespace VirusX.Menu
         int width = 800;
         int startTop = 100;
         int padding = 40;
+        int left = -400;
 
         private ContentManager content;
 
         const int VIRUS_SIZE = 140;
 
         private InterfaceImage virusImage;
+        private List<InterfaceButton> descriptions = new List<InterfaceButton>();
 
         public Viruses(Menu menu)
             : base(menu)
         {
             // Update text and position
             int top = startTop;
-            int left = -400;
 
             // descriptions
             for (int i = 0; i < 4; i++)
             {
                 int index = i;
-                Interface.Add(new InterfaceButton(() => { return GetLabels(virusIndex)[index]; }, new Vector2(left, top), index == 0, Alignment.TOP_CENTER));
+                InterfaceButton button = new InterfaceButton(() => { return GetLabels(virusIndex)[index]; }, new Vector2(left, top), index == 0, Alignment.TOP_CENTER);
+                descriptions.Add(button);
+                Interface.Add(descriptions[index]);
                 top += (int)menu.Font.MeasureString(GetLabels(virusIndex)[index]).Y + padding;
                 if (i == 0)
                     top += padding;
@@ -87,6 +90,18 @@ namespace VirusX.Menu
             {
                 virusIndex = virusIndex == 0 ? (int)VirusSwarm.VirusType.NUM_VIRUSES - 1 : virusIndex - 1;
                 virusImage.Texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName((VirusSwarm.VirusType)virusIndex));
+            }
+
+            // Update text and position
+            int top = startTop;
+
+            // descriptions
+            for (int i = 0; i < 4; i++)
+            {
+                descriptions[i].Position = new Vector2(left, top);
+                top += (int)menu.Font.MeasureString(GetLabels(virusIndex)[i]).Y + padding;
+                if (i == 0)
+                    top += padding;
             }
 
             base.Update(gameTime);

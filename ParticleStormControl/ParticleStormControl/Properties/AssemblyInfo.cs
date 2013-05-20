@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Particle Storm Control Deluxe")]
-[assembly: AssemblyProduct("Particle Storm Control Deluxe")]
+[assembly: AssemblyTitle("VirusX")]
+[assembly: AssemblyProduct("VirusX")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyCopyright("")]

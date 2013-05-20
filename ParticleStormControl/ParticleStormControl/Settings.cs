@@ -96,6 +96,9 @@ namespace VirusX
         private bool useItems = true;
         public bool UseItems { get { return useItems; } set { useItems = value; } }
 
+        private InputManager.ControlType startingControls = InputManager.ControlType.NONE;
+        public InputManager.ControlType StartingControls { get { return startingControls; } set { startingControls = value; } }
+
         #endregion
 
         public void Reset()

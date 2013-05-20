@@ -34,11 +34,6 @@ namespace VirusX.Menu
         };
         Button selectedButton = Button.NEWGAME;
         ButtonSubmenu selectedButtonSubmenu = ButtonSubmenu.MODE;
-
-        /// <summary>
-        /// controls of the player who opened the submenu
-        /// </summary>
-        public InputManager.ControlType StartingControls { get; set; }
         
         InterfaceButton useItemsButton;
 
@@ -80,7 +75,7 @@ namespace VirusX.Menu
 
             // loopin
             if(submenu)
-                selectedButtonSubmenu = (ButtonSubmenu)(Menu.Loop((int)selectedButtonSubmenu, (int)ButtonSubmenu.NUM_BUTTONS, StartingControls));
+                selectedButtonSubmenu = (ButtonSubmenu)(Menu.Loop((int)selectedButtonSubmenu, (int)ButtonSubmenu.NUM_BUTTONS, Settings.Instance.StartingControls));
             else
                 selectedButton = (Button)(Menu.Loop((int)selectedButton, (int)Button.NUM_BUTTONS));
 
@@ -89,19 +84,19 @@ namespace VirusX.Menu
                 switch (selectedButtonSubmenu)
                 {
                     case ButtonSubmenu.MODE:
-                        Settings.Instance.GameMode = (Game.GameMode)Menu.Loop((int)Settings.Instance.GameMode, (int)Game.GameMode.NUM_MODES, StartingControls, true);
+                        Settings.Instance.GameMode = (Game.GameMode)Menu.Loop((int)Settings.Instance.GameMode, (int)Game.GameMode.NUM_MODES, Settings.Instance.StartingControls, true);
                         break;
                     case ButtonSubmenu.ITEMS:
-                        Settings.Instance.UseItems = Menu.Toggle(Settings.Instance.UseItems, StartingControls);
+                        Settings.Instance.UseItems = Menu.Toggle(Settings.Instance.UseItems, Settings.Instance.StartingControls);
                         break;
                     case ButtonSubmenu.CONTINUE:
-                        if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, StartingControls))
+                        if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, Settings.Instance.StartingControls))
                             menu.ChangePage(Menu.Page.NEWGAME, gameTime);
                         break;
                 }
 
-                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, StartingControls)
-                    || InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, StartingControls))
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, Settings.Instance.StartingControls)
+                    || InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, Settings.Instance.StartingControls))
                 {
                     submenu = false;
                     AudioManager.Instance.PlaySoundeffect("click");
@@ -117,8 +112,7 @@ namespace VirusX.Menu
                         switch (selectedButton)
                         {
                             case Button.NEWGAME:
-                                StartingControls = control;
-                                ((NewGame)menu.GetPage(Menu.Page.NEWGAME)).StartingControls = control;
+                                Settings.Instance.StartingControls = control;
                                 submenu = true;
                                 AudioManager.Instance.PlaySoundeffect("click");
                                 break;
