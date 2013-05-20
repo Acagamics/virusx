@@ -9,13 +9,13 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
-using ParticleStormControl;
+using VirusX;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
 
-using Game = global::ParticleStormControl.InGame;
+using Game = global::VirusX.InGame;
 
-namespace ParticleStormControl.Menu
+namespace VirusX.Menu
 {
     class NewGame : MenuPage
     {
@@ -177,28 +177,32 @@ namespace ParticleStormControl.Menu
                 ));
 
                 // description
-                int descpStrLen = (int)menu.Font.MeasureString("Discipline").X + 7 + InterfaceElement.PADDING;
-                int symbolLen = (int)menu.Font.MeasureString("++++").X + InterfaceElement.PADDING;
                 int backgroundLength = (BOX_WIDTH - SIDE_PADDING * 2 + InterfaceElement.PADDING * 2) / 2; //(descpStrLen + symbolLen) * 2 + 15;
+                int symbolLen = backgroundLength - TEXTBOX_HEIGHT - InterfaceButton.PADDING*3;//(int)menu.Font.MeasureString("++++").X + InterfaceElement.PADDING;
                 int descpX0 = SIDE_PADDING;
                 int descpX1 = descpX0 + backgroundLength;
-                float descpY = BOX_HEIGHT - TEXTBOX_HEIGHT * 2;
+                int descpY = BOX_HEIGHT - TEXTBOX_HEIGHT * 2;
 
-                Interface.Add(new InterfaceButton("Speed", origin + new Vector2(descpX0, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, descpStrLen));
+
+                Interface.Add(new InterfaceImage("symbols//Speed", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
+                                                    Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
                 Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Speed[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex]; },
-                            origin + new Vector2(descpX0 + descpStrLen, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
+                            origin + new Vector2(descpX0 + TEXTBOX_HEIGHT, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
-                Interface.Add(new InterfaceButton("Mass", origin + new Vector2(descpX0, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, descpStrLen));
+                Interface.Add(new InterfaceImage("symbols//Mass", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
+                                                    Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
                 Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Mass[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex]; },
-                              origin + new Vector2(descpX0 + descpStrLen, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
+                              origin + new Vector2(descpX0 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
-                Interface.Add(new InterfaceButton("Discipline", origin + new Vector2(descpX1, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, descpStrLen));
+                Interface.Add(new InterfaceImage("symbols//Discipline", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
+                                                    Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
                 Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Discipline[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex]; },
-                                origin + new Vector2(descpX1 + descpStrLen, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
+                                origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
-                Interface.Add(new InterfaceButton("Health", origin + new Vector2(descpX1, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, descpStrLen));
+                Interface.Add(new InterfaceImage("symbols//Health", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
+                                                    Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
                 Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Health[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex]; },
-                                origin + new Vector2(descpX1 + descpStrLen, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
+                                origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
             }
 
             // help text

@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using ParticleStormControl;
+using VirusX;
 using System;
 using System.Diagnostics;
 
-namespace ParticleStormControl
+namespace VirusX
 {
     class Crosshair:MapObject
     {

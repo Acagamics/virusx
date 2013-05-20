@@ -6,9 +6,9 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ParticleStormControl;
+using VirusX;
 
-namespace ParticleStormControl
+namespace VirusX
 {
     /// <summary>
     /// Singleton managing all game settings.
@@ -160,8 +160,8 @@ namespace ParticleStormControl
                                 resolutionY = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionY"));
                                 
                                 // validate resolution
-                                if (GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Single(x => x.Format == SurfaceFormat.Color &&
-                                                                                                x.Height == resolutionY && x.Width == resolutionX) == null)
+                                if (!GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Any(x => x.Format == SurfaceFormat.Color &&
+                                                                                                x.Height == resolutionY && x.Width == resolutionX))
                                 {
                                     ChooseStandardResolution();
                                     dirty = true;

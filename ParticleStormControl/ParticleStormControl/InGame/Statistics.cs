@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace ParticleStormControl
+namespace VirusX
 {
     /// <summary>
     /// class to collect game statistics

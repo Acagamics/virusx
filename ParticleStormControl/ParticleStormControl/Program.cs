@@ -1,6 +1,9 @@
 using System;
 
-namespace ParticleStormControl
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("UnitTests")]
+
+namespace VirusX
 {
 #if WINDOWS || XBOX
     static class Program

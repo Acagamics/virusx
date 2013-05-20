@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using CustomExtensions;
 
-namespace ParticleStormControl.Menu
+namespace VirusX.Menu
 {
     class InterfaceTooltip : InterfaceElement
     {

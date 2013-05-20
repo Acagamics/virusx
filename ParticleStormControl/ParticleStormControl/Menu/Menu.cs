@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 
-namespace ParticleStormControl.Menu
+namespace VirusX.Menu
 {
     class Menu
     {

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ParticleStormControl;
+using VirusX;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace ParticleStormControl.Menu
+namespace VirusX.Menu
 {
     class StatisticsScreen : MenuPage
     {
@@ -83,9 +83,9 @@ namespace ParticleStormControl.Menu
                     case Player.Teams.LEFT:
                     case Player.Teams.RIGHT:
                     case Player.Teams.ATTACKER:
-                        return Player.TEAM_NAMES[(int)WinningTeam] + " wins!";
-                    case Player.Teams.DEFENDER:
                         return Player.TEAM_NAMES[(int)WinningTeam] + " win!";
+                    case Player.Teams.DEFENDER:
+                        return Player.TEAM_NAMES[(int)WinningTeam] + " wins!";
                     default:
                         throw new NotImplementedException("Unknown team type - can't generate winning string!");
                 }

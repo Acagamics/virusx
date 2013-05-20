@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace ParticleStormControl
+namespace VirusX
 {
     /// <summary>
     /// Defines a virus swarm of a given type and color

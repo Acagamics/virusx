@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace ParticleStormControl
+namespace VirusX
 {
     class ScreenTriangleRenderer
     {

@@ -16,8 +16,8 @@ using System.Threading;
 #else
 
 using System.Threading.Tasks;
-using ParticleStormControl;
-using ParticleStormControl.Menu;
+using VirusX;
+using VirusX.Menu;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
@@ -49,7 +49,7 @@ namespace CustomExtensions
     }
 }
 
-namespace ParticleStormControl
+namespace VirusX
 {
     /// <summary>
     /// This is the main type for your game
@@ -245,7 +245,7 @@ namespace ParticleStormControl
             // draw backbuffer
             GraphicsDevice.Clear(Color.Black);
 
-            if (inGame.State == global::ParticleStormControl.InGame.GameState.Inactive)
+            if (inGame.State == global::VirusX.InGame.GameState.Inactive)
                 background.Draw(GraphicsDevice, (float)gameTime.TotalGameTime.TotalSeconds);
 
             inGame.Draw_Backbuffer(gameTime, spriteBatch);

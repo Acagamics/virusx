@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 
-namespace ParticleStormControl.Menu
+namespace VirusX.Menu
 {
     class InterfaceImage : InterfaceElement
     {
@@ -18,24 +18,25 @@ namespace ParticleStormControl.Menu
         Texture2D backgroundTexture;
         int width;
         int height;
+        bool scaleImage;
 
-        public InterfaceImage(string textureName, Rectangle destination, Alignment alignment = Alignment.TOP_LEFT)
-            : this(textureName, new Vector2(destination.X, destination.Y), destination.Width, destination.Height, Color.FromNonPremultiplied(0, 0, 0, 0), () => { return true; }, alignment)
+        public InterfaceImage(string textureName, Rectangle destination, Alignment alignment = Alignment.TOP_LEFT, bool scaleImage = false)
+            : this(textureName, new Vector2(destination.X, destination.Y), destination.Width, destination.Height, Color.FromNonPremultiplied(0, 0, 0, 0), () => { return true; }, alignment, scaleImage)
         { }
 
-        public InterfaceImage(string textureName, Rectangle destination, Color backgroundColor, Alignment alignment = Alignment.TOP_LEFT)
-            : this(textureName, new Vector2(destination.X, destination.Y), destination.Width, destination.Height, backgroundColor, () => { return true; }, alignment)
+        public InterfaceImage(string textureName, Rectangle destination, Color backgroundColor, Alignment alignment = Alignment.TOP_LEFT, bool scaleImage = false)
+            : this(textureName, new Vector2(destination.X, destination.Y), destination.Width, destination.Height, backgroundColor, () => { return true; }, alignment, scaleImage)
         { }
 
-        public InterfaceImage(string textureName, Rectangle destination, Color backgroundColor, Func<bool> visible, Alignment alignment = Alignment.TOP_LEFT)
-            : this(textureName, new Vector2(destination.X, destination.Y), destination.Width, destination.Height, backgroundColor, visible, alignment)
+        public InterfaceImage(string textureName, Rectangle destination, Color backgroundColor, Func<bool> visible, Alignment alignment = Alignment.TOP_LEFT, bool scaleImage = false)
+            : this(textureName, new Vector2(destination.X, destination.Y), destination.Width, destination.Height, backgroundColor, visible, alignment, scaleImage)
         { }
 
-        public InterfaceImage(string textureName, Vector2 position, Alignment alignment = Alignment.TOP_LEFT)
-            : this(textureName, position, -1, -1, Color.FromNonPremultiplied(0, 0, 0, 0), () => { return true; }, alignment)
+        public InterfaceImage(string textureName, Vector2 position, Alignment alignment = Alignment.TOP_LEFT, bool scaleImage = false)
+            : this(textureName, position, -1, -1, Color.FromNonPremultiplied(0, 0, 0, 0), () => { return true; }, alignment, scaleImage)
         { }
 
-        public InterfaceImage(string textureName, Vector2 position, int width, int height, Color backgroundColor, Func<bool> visible, Alignment alignment = Alignment.TOP_LEFT)
+        public InterfaceImage(string textureName, Vector2 position, int width, int height, Color backgroundColor, Func<bool> visible, Alignment alignment = Alignment.TOP_LEFT, bool scaleImage = false)
         {
             this.textureName = textureName;
             this.width = width;
@@ -44,6 +45,7 @@ namespace ParticleStormControl.Menu
             this.backgroundColor = backgroundColor;
             this.position = position;
             this.visible = visible;
+            this.scaleImage = scaleImage;
         }
 
         public override void LoadContent(ContentManager content)
@@ -66,7 +68,10 @@ namespace ParticleStormControl.Menu
                 spriteBatch.Draw(backgroundTexture, new Rectangle(_position.X, _position.Y, _width, _height), backgroundColor);
 
             // the image itself gets drawn centered
-            spriteBatch.Draw(texture, new Rectangle(_position.X + (_width - texture.Width) / 2, _position.Y + (_height - texture.Height) / 2, texture.Width, texture.Height), Color.White);
+            if(scaleImage)
+                spriteBatch.Draw(texture, new Rectangle(_position.X, _position.Y, _width, _height), Color.White);
+            else
+                spriteBatch.Draw(texture, new Rectangle(_position.X + (_width - texture.Width) / 2, _position.Y + (_height - texture.Height) / 2, texture.Width, texture.Height), Color.White);
         }
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 
-namespace ParticleStormControl.Menu
+namespace VirusX.Menu
 {
     class InterfaceImageButton : InterfaceElement
     {
@@ -76,9 +76,21 @@ namespace ParticleStormControl.Menu
         {
             Point _position = CalculateAlignedPosition(Position, alignment);
             Rectangle? _source = selectedNow ? sourceSelected : source;
-            int _width = width < 0 ? _source.Value.Width : width;
+            int _sourceWidth, _sourceHeight;
+            if(_source != null)
+            {
+                _sourceWidth = _source.Value.Width;
+                _sourceHeight = _source.Value.Height;
+            }
+            else
+            {
+                _sourceWidth = texture.Width;
+                _sourceHeight = texture.Height;
+            }
+
+            int _width = width < 0 ? _sourceWidth : width;
             _width += 2 * PADDING;
-            int _height = height < 0 ? _source.Value.Height : height;
+            int _height = height < 0 ? _sourceHeight : height;
             _height += 2 * PADDING;
             Color _backgroundColor = selectedNow ? COLOR_NORMAL : COLOR_HIGHLIGHT;
 
@@ -86,7 +98,7 @@ namespace ParticleStormControl.Menu
             spriteBatch.Draw(backgroundTexture, new Rectangle(_position.X, _position.Y, _width, _height), _backgroundColor);
             spriteBatch.Draw(
                 texture,
-                new Rectangle(_position.X + (_width - _source.Value.Width) / 2, _position.Y + (_height - _source.Value.Height) / 2, _source.Value.Width, _source.Value.Height),
+                new Rectangle(_position.X + (_width - _sourceWidth) / 2, _position.Y + (_height - _sourceHeight) / 2, _sourceWidth, _sourceHeight),
                 selectedNow ? sourceSelected : source,
                 Color.White
             );

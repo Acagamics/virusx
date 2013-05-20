@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ParticleStormControl
+namespace VirusX
 {
     abstract class Player
     {
@@ -224,7 +224,7 @@ namespace ParticleStormControl
             this.playerIndex = playerIndex;
             this.colorIndex = colorIndex;
             this.team = team;
-            this.ItemSlot = global::ParticleStormControl.Item.ItemType.NONE;
+            this.ItemSlot = global::VirusX.Item.ItemType.NONE;
 
             cursorPosition = cursorStartPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex];
 
