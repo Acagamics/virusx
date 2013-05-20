@@ -16,6 +16,10 @@ namespace VirusX.Menu
         int width;
         int height;
 
+        public InterfaceFiller(Vector2 position, Color color, Func<bool> visible) : 
+               this(position, -1, -1, color, visible)
+        {}
+
         public InterfaceFiller(Vector2 position, int width, int height, Color color, Func<bool> visible)
         {
             this.width = width;
@@ -35,7 +39,14 @@ namespace VirusX.Menu
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.Draw(texture, new Rectangle((int)position.X, (int)position.Y, width, height), color);
+            int _width = width;
+            int _height = height;
+            if(_width < 0)
+                _width = Settings.Instance.ResolutionX;
+            if(_height < 0)
+                _height = Settings.Instance.ResolutionY;
+
+            spriteBatch.Draw(texture, new Rectangle((int)position.X, (int)position.Y, _width, _height), color);
         }
     }
 }

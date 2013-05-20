@@ -36,7 +36,8 @@ namespace VirusX.Menu
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
 
-        private InterfaceImage[] virusImages = new InterfaceImage[4];
+        //private InterfaceImage[] virusImages = new InterfaceImage[4];
+        private Effect virusRenderEffect;
 
         /// <summary>
         /// reference to the content manager
@@ -173,10 +174,10 @@ namespace VirusX.Menu
                 ));
 
                 // virus
-                virusImages[i] = new InterfaceImage(Settings.Instance.NumPlayers > i ? ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(i).Virus) : "pix",
+               /* virusImages[i] = new InterfaceImage(Settings.Instance.NumPlayers > i ? ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(i).Virus) : "pix",
                                         new Rectangle((int)origin.X + BOX_WIDTH - VIRUS_SIZE - SIDE_PADDING, (int)origin.Y + TEXTBOX_HEIGHT + 40, VIRUS_SIZE, VIRUS_SIZE),   // historic rect..
                                                         Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true);
-                Interface.Add(virusImages[i]);
+                Interface.Add(virusImages[i]); */
 
                 // description
                 int backgroundLength = (BOX_WIDTH - SIDE_PADDING * 2 + InterfaceElement.PADDING * 2) / 2; //(descpStrLen + symbolLen) * 2 + 15;
@@ -210,14 +211,14 @@ namespace VirusX.Menu
             // help text
             int textBoxHeight = menu.GetFontHeight() + 2 * InterfaceElement.PADDING;
             Interface.Add(new InterfaceImage("ButtonImages/xboxControllerRightShoulder", new Rectangle(-290, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("add computer", new Vector2(-190, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("remove computer", new Vector2(-190, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
             Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(10, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("remove computer", new Vector2(110, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("add computer", new Vector2(110, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
 
-            Interface.Add(new InterfaceButton("  +", new Vector2(-230, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("add computer", new Vector2(-180, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("  -", new Vector2(0, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("remove computer", new Vector2(50, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("  -", new Vector2(-230, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("remove computer", new Vector2(-180, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("  +", new Vector2(0, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("add computer", new Vector2(50, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
 
             // countdown
             String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
@@ -237,6 +238,7 @@ namespace VirusX.Menu
         public override void LoadContent(ContentManager content)
         {
             this.content = content;
+            virusRenderEffect = content.Load<Effect>("shader/particleRendering");
             base.LoadContent(content);
         }
 
@@ -337,7 +339,7 @@ namespace VirusX.Menu
                         if (--Settings.Instance.GetPlayer(playerIndex).Virus < 0)
                             Settings.Instance.GetPlayer(playerIndex).Virus = (VirusSwarm.VirusType)((int)VirusSwarm.Viruses.Length - 1);
 
-                        virusImages[slot].Texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(playerIndex).Virus));
+                        //virusImages[slot].Texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(playerIndex).Virus));
                     }
                     else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.GetPlayer(playerIndex).ControlType, false) && !playerReadyBySlot[slot])
                     {
@@ -345,7 +347,7 @@ namespace VirusX.Menu
                         if ((int)Settings.Instance.GetPlayer(playerIndex).Virus >= VirusSwarm.Viruses.Length)
                             Settings.Instance.GetPlayer(playerIndex).Virus = 0;
 
-                        virusImages[slot].Texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(playerIndex).Virus));
+                        //virusImages[slot].Texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(playerIndex).Virus));
                     }
 
                     // color
@@ -451,8 +453,8 @@ namespace VirusX.Menu
                     Virus = (VirusSwarm.VirusType)Random.Next((int)VirusSwarm.VirusType.NUM_VIRUSES),
                     Type = ai ? Player.Type.AI : Player.Type.HUMAN,
                 });
-                if(virusImages[slotIndex] != null)
-                    virusImages[slotIndex].Texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[slotIndex]).Virus));
+                //if(virusImages[slotIndex] != null)
+                //    virusImages[slotIndex].Texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[slotIndex]).Virus));
 
                 AudioManager.Instance.PlaySoundeffect("click");
                 countdown = TimeSpan.FromSeconds(-1);
@@ -492,6 +494,32 @@ namespace VirusX.Menu
             int TEXTBOX_HEIGHT = menu.GetFontHeight() + 2 * InterfaceButton.PADDING;
             int ARROW_SIZE = TEXTBOX_HEIGHT;
             int SIDE_PADDING = ARROW_SIZE + 30;
+
+            virusRenderEffect.Parameters["ScreenSize"].SetValue(new Vector2(menu.ScreenWidth, menu.ScreenHeight));
+
+            // virus image for each player
+            for (int i = 0; i < 4; i++)
+            {
+                if (playerSlotOccupied[i])
+                {
+                    Vector2 origin = GetOrigin(i);
+                    int playerIndex = slotIndexToPlayerIndexMapper[i];
+
+                    Rectangle virusImageRect = new Rectangle((int)origin.X + BOX_WIDTH - VIRUS_SIZE - SIDE_PADDING, (int)origin.Y + TEXTBOX_HEIGHT + 40, VIRUS_SIZE, VIRUS_SIZE);
+                    virusImageRect.Inflate(VIRUS_PADDING, VIRUS_PADDING);
+                    spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.Black);
+                    virusImageRect.Inflate(-VIRUS_PADDING, -VIRUS_PADDING);
+                    spriteBatch.End(); // yeah this sucks terrible! TODO better solution
+                    virusRenderEffect.CurrentTechnique = virusRenderEffect.Techniques["Virus_Spritebatch"];
+                  //  virusRenderEffect.Parameters["VirusTexture"].SetValue());
+                    var texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(playerIndex).Virus));
+                    virusRenderEffect.Parameters["Color"].SetValue(VirusSwarm.ParticleColors[Settings.Instance.GetPlayer(playerIndex).ColorIndex].ToVector4() * 1.5f);
+                    spriteBatch.Begin(0, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, virusRenderEffect);
+                    spriteBatch.Draw(texture, virusImageRect, Color.White);
+                    spriteBatch.End();
+                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
+                }
+            }
 
             base.Draw(spriteBatch, gameTime);
 
