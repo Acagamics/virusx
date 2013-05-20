@@ -45,6 +45,8 @@ namespace VirusX
         private VertexBufferBinding particleVertexBufferBinding;
         private VertexBufferBinding[] instanceVertexBufferBinding;
 
+        private Texture2D[] virusTextures = new Texture2D[(int)VirusSwarm.VirusType.NUM_VIRUSES];
+
         private Effect particleEffect;
 
         private static readonly Vector2 RENDERING_SIZE_CONSTANT = new Vector2(0.009f / Level.RELATIVECOR_ASPECT_RATIO, 0.009f) / 15.0f;
@@ -80,7 +82,32 @@ namespace VirusX
                 instanceVertexBufferBinding[i] = new VertexBufferBinding(instanceVertexBuffer[i], 0, 1);
             }
 
+            // load virus textures
+            for(int i=0; i<virusTextures.Length; ++i)
+                virusTextures[i] = content.Load<Texture2D>(GetVirusTextureName((VirusSwarm.VirusType)i));
+
             UpdateVertexBuffers(numPlayers);
+        }
+
+        public static string GetVirusTextureName(VirusSwarm.VirusType type)
+        {
+            switch (type)
+            {
+                case VirusSwarm.VirusType.H5N1:
+                    return "viruses//h5n1";
+                case VirusSwarm.VirusType.HEPATITISB:
+                    return "viruses//hepatitisb";
+                case VirusSwarm.VirusType.HIV:
+                    return "viruses//hiv";
+                case VirusSwarm.VirusType.EPSTEINBARR:
+                    return "viruses//epsteinbarr";
+                case VirusSwarm.VirusType.EBOLA:
+                    return "viruses//ebola";
+                case VirusSwarm.VirusType.MARV:
+                    return "viruses//marv";
+                default:
+                    return "pix";
+            }
         }
 
         private void UpdateVertexBuffers(int numPlayers)
@@ -126,27 +153,13 @@ namespace VirusX
             if (!player.Alive)
                 return;
 
-            switch(player.Virus)
-            {
-                case VirusSwarm.VirusType.H5N1:
-                    particleEffect.CurrentTechnique = particleEffect.Techniques["H5N1"];
-                    break;
-                case VirusSwarm.VirusType.HEPATITISB:
-                    particleEffect.CurrentTechnique = particleEffect.Techniques["HepatitisB"];
-                    break;
-                case VirusSwarm.VirusType.HIV:
-                    particleEffect.CurrentTechnique = particleEffect.Techniques["HIV"];
-                    break;
-                case VirusSwarm.VirusType.EPSTEINBARR:
-                    particleEffect.CurrentTechnique = particleEffect.Techniques["EpsteinBar"];
-                    break;
-                default:
-                    particleEffect.CurrentTechnique = particleEffect.Techniques["DamageMap"];
-                    break;
-            }
             if (damage)
                 particleEffect.CurrentTechnique = particleEffect.Techniques["DamageMap"];
-
+            else
+            {
+                particleEffect.CurrentTechnique = particleEffect.Techniques["Virus"];
+                particleEffect.Parameters["VirusTexture"].SetValue(virusTextures[(int)player.Virus]);
+            }
 
             particleEffect.Parameters["PositionTexture"].SetValue(player.PositionTexture);
             particleEffect.Parameters["InfoTexture"].SetValue(player.HealthTexture);
@@ -158,26 +171,8 @@ namespace VirusX
 
             particleEffect.CurrentTechnique.Passes[0].Apply();
 
-            // sometimes there are problems with using linear - the effects prohibts this, but does still happen
-            for (int i = 0; i < 8; ++i)
-            {
-                if (device.Textures[i] != null)
-                    device.SamplerStates[i] = SamplerState.PointClamp;
-            }
-
             device.SetVertexBuffers(particleVertexBufferBinding, instanceVertexBufferBinding[player.Index]);
             device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 4, 0, 2, player.HighestUsedParticleIndex + 1);
-
-
-            // reset
-            for (int i = 0; i < 8; ++i)
-            {
-                if (device.Textures[i] != null)
-                {
-                    device.SamplerStates[i] = SamplerState.LinearWrap;
-                    device.Textures[i] = null;
-                }
-            }
         }
     }
 }

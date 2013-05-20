@@ -18,7 +18,9 @@ namespace VirusX
     {
         private static readonly Settings instance = new Settings();
         static public Settings Instance { get { return instance; } }
-        private Settings() { }
+        private Settings() {
+            playerSettings = new List<PlayerSettings>(maxNumPlayers);
+        }
 
         #region Graphics
 
@@ -35,16 +37,19 @@ namespace VirusX
 
         #region Game
 
+        private int maxNumPlayers = 4;
+        public int MaxNumPlayers { get { return maxNumPlayers; } set { maxNumPlayers = value; } }
+
         public class PlayerSettings
         {
             public int ColorIndex;
-            public int VirusIndex;
+            public VirusSwarm.VirusType Virus;
             public int SlotIndex;
             public Player.Teams Team;
             public Player.Type Type;
             public InputManager.ControlType ControlType;
         };
-        private List<PlayerSettings> playerSettings = new List<PlayerSettings>(Player.MAX_NUM_PLAYERS);
+        private List<PlayerSettings> playerSettings;
 
         public InGame.GameMode GameMode { get; set; }
 
@@ -52,7 +57,7 @@ namespace VirusX
 
         public void AddPlayer(PlayerSettings settings)
         {
-            Debug.Assert(NumPlayers < Player.MAX_NUM_PLAYERS);
+            Debug.Assert(NumPlayers < maxNumPlayers);
             playerSettings.Add(settings);
         }
 

@@ -242,7 +242,7 @@ namespace VirusX
 
         #endregion
 
-        public AIPlayer(int playerIndex, int virusIndex, int colorIndex, Teams team, GraphicsDevice device, ContentManager content, Texture2D noiseTexture) :
+        public AIPlayer(int playerIndex, VirusSwarm.VirusType virusIndex, int colorIndex, Teams team, GraphicsDevice device, ContentManager content, Texture2D noiseTexture) :
             base(playerIndex, virusIndex, colorIndex, team, device, content, noiseTexture)
         {
             targetPosition = particleAttractionPosition = cursorPosition = cursorStartPositions[playerIndex];

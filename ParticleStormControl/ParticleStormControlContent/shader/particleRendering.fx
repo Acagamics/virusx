@@ -15,6 +15,16 @@ sampler2D sampInfos = sampler_state
     Mipfilter = POINT;
 };
 
+texture VirusTexture;
+sampler2D sampVirus = sampler_state
+{	
+	Texture = <VirusTexture>;
+    MagFilter = LINEAR;
+    MinFilter = LINEAR;
+    Mipfilter = LINEAR;
+};
+
+
 
 float4 Color;
 float TextureSize;
@@ -43,6 +53,7 @@ VertexShaderOutput VS(VertexShaderInput input)
 	float4 vertexTexcoord;
 	vertexTexcoord.x = fmod(input.InstanceIndex, TextureSize);
 	vertexTexcoord.y = floor(input.InstanceIndex / TextureSize);
+	vertexTexcoord.xy += 0.5f;
 	vertexTexcoord.xy /= TextureSize;
 	vertexTexcoord.zw = 0;
 	float health = tex2Dlod(sampInfos, vertexTexcoord).x;
@@ -84,86 +95,10 @@ VertexShaderOutput VS_SpritebatchParticle(SpriteBatchVSInput input)
     return output;
 }
 
-float4 PS_EpsteinBar(VertexShaderOutput input) : COLOR0
+float4 PS_Virus(VertexShaderOutput input) : COLOR0
 {
-	const float rippling = 3.0f;
-
-	float2 v = input.Texcoord*2.0f - 1.0f;
-
-	// compute polar cordinates
-	float radius = length(v);
-	float angle = atan2(v.x, v.y) + input.InstanceIndex;
-	
-	// disturb radius
-	float disturbedRadius = radius * ((sin(angle*rippling) + sin(angle*rippling*2.0f)) * 0.1f + 1.1f);
-	float circle = 1.0f - saturate(lerp(radius, disturbedRadius, 0.8f + sin(input.InstanceIndex)*0.5));
-	clip(circle - 0.001f);
-
-	circle = smoothstep(0.0f, 0.3f, circle) - smoothstep(0.25f, 0.4f, circle)*0.5f;
-	
-    return Color * circle;
-
-
-//	return float4(1,0,1,1);
-}
-
-float4 PS_H5N1(VertexShaderOutput input) : COLOR0
-{
-	const float stickCount = 6.0;
-
-	float2 v = input.Texcoord *2 - 1.0;
-
-	float midDist = dot(v,v);
-	float midDistInv = 1.0-midDist;
-	float circle = smoothstep(0.5, 1.0, midDistInv);
-//	circle = sqrt(circle);
-	float angle = atan2(v.x, v.y) + input.InstanceIndex;
-	float sticks = smoothstep(0.0, 0.5, sin(angle * stickCount)) * 
-				   smoothstep(1.0, 0.4, midDistInv) * midDistInv;
-	float virus = (max(circle, sticks) - smoothstep(0.7, 1.0, midDistInv)*0.6) * 1.3f;
-	clip(virus - 0.001f);
-
-    return Color * virus;
-}
-
-float4 PS_HepatitisB(VertexShaderOutput input) : COLOR0
-{
-	const float stickCount = 6.0;
-
-	float2 v = input.Texcoord *2 - 1.0;
-
-	float angle = atan2(v.x, v.y) + input.InstanceIndex;
-	float sticks = sin(angle * 10.0)*0.5 + 0.5;
-
-	float distSq = dot(v,v);
-	float distSqInv = saturate(1.0 - distSq);
-	float virus = saturate(distSqInv + sticks*(distSqInv-0.6)) - distSqInv * distSqInv * 0.7;
-	
-	clip(virus - 0.001f);
-
-    return Color * virus * 1.5f;
-}
-
-float4 PS_HIV(VertexShaderOutput input) : COLOR0
-{
-	const float stickCount = 6.0;
-
-	float2 v = input.Texcoord *2 - 1.0;
-
-	float angle = atan2(v.x, v.y) + input.InstanceIndex;
-	float sticks = sin(angle * 10.0)*0.5 + 0.5;
-
-	float distSq = dot(v,v);
-	float distSqInv = saturate(1.0 - distSq);
-	
-	float distSqInvSq = distSqInv*distSqInv;
-	float circle = distSqInv - distSqInvSq*3.0;
-	float sticksSq = sticks*sticks;
-	float plates = saturate(circle * 15.0 * sticksSq);
-	float virus = saturate(saturate(plates + sticksSq * distSqInv) + distSqInvSq*1.5) - distSqInvSq*0.6;
-
-	clip(virus - 0.001f);
-
+	float virus = tex2D(sampVirus, input.Texcoord).r;
+	clip(virus - 1.0f/255.0f);
     return Color * virus;
 }
 
@@ -177,77 +112,24 @@ float4 PS_NoFalloff(VertexShaderOutput input) : COLOR0
     return Color * alpha;
 }
 
-technique H5N1
+technique Virus
 {
     pass Pass1
     {
         VertexShader = compile vs_3_0 VS();
-        PixelShader = compile ps_3_0 PS_H5N1();
+        PixelShader = compile ps_3_0 PS_Virus();
     }
 }
 
-technique EpsteinBar
-{
-    pass Pass1
-    {
-        VertexShader = compile vs_3_0 VS();
-        PixelShader = compile ps_3_0 PS_EpsteinBar();
-    }
-}
-
-technique HIV
-{
-    pass Pass1
-    {
-        VertexShader = compile vs_3_0 VS();
-        PixelShader = compile ps_3_0 PS_HIV();
-    }
-}
-
-technique HepatitisB
-{
-    pass Pass1
-    {
-        VertexShader = compile vs_3_0 VS();
-        PixelShader = compile ps_3_0 PS_HepatitisB();
-    }
-}
-
-technique EpsteinBar_Spritebatch
+technique Virus_Spritebatch
 {
     pass Pass1
     {
         VertexShader = compile vs_3_0 VS_SpritebatchParticle();
-        PixelShader = compile ps_3_0 PS_EpsteinBar();
+        PixelShader = compile ps_3_0 PS_Virus();
     }
 }
 
-technique H5N1_Spritebatch
-{
-    pass Pass1
-    {
-        VertexShader = compile vs_3_0 VS_SpritebatchParticle();
-        PixelShader = compile ps_3_0 PS_H5N1();
-    }
-}
-
-technique HIV_Spritebatch
-{
-    pass Pass1
-    {
-        VertexShader = compile vs_3_0 VS_SpritebatchParticle();
-        PixelShader = compile ps_3_0 PS_HIV();
-    }
-}
-
-technique HepatitisB_Spritebatch
-{
-    pass Pass1
-    {
-        VertexShader = compile vs_3_0 VS_SpritebatchParticle();
-        PixelShader = compile ps_3_0 PS_HepatitisB();
-    }
-}
 
 technique DamageMap
 {

@@ -73,18 +73,18 @@ namespace VirusX
         private static readonly float[] DISCIPLIN_byVirus = new float[] {   0.56f,  0.75f,  0.35f,  0.45f,  0.77f,  0.23f };
 
         public float Speed
-        { get { return SPEED_byVirus[virusIndex]; } }
+        { get { return SPEED_byVirus[VirusIndex]; } }
         /// <summary>
         /// returns the health of new particles
         /// </summary>
         public float HealthStart
-        { get { return HEALTH_byVirus[virusIndex]; } }
+        { get { return HEALTH_byVirus[VirusIndex]; } }
 
         /// <summary>
         /// returns a mass constant that implies how many particles are spawned per base
         /// </summary>
         public float Mass
-        { get { return MASS_byVirus[virusIndex]; } }
+        { get { return MASS_byVirus[VirusIndex]; } }
 
         /// <summary>
         /// discilplin constant - higher means that the particles will move more straight in player's direction
@@ -92,7 +92,7 @@ namespace VirusX
         private const float DISCIPLIN_CONSTANT = 1.9f;
 
         public float Disciplin
-        { get { return DISCIPLIN_byVirus[virusIndex]; } }
+        { get { return DISCIPLIN_byVirus[VirusIndex]; } }
 
         // attacking constant
         private const float ATTACKING_PER_SECOND = 30.0f * 255;
@@ -228,13 +228,13 @@ namespace VirusX
 
         #region Basic Swarm Properties
 
-        private readonly int virusIndex;
+        private readonly VirusType virus;
         public int VirusIndex
         {
-            get { return virusIndex; }
+            get { return (int)virus; }
         }
         public VirusType Virus
-        { get { return Viruses[virusIndex]; } }
+        { get { return virus; } }
 
 
         public float TotalHealth { get { return totalHealth; } }
@@ -242,10 +242,10 @@ namespace VirusX
 
         #endregion
 
-        public VirusSwarm(int virusIndex, int playerIndex, IEnumerable<int> friendlyPlayerIndices, GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
+        public VirusSwarm(VirusSwarm.VirusType virusIndex, int playerIndex, IEnumerable<int> friendlyPlayerIndices, GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
         {
             this.noiseTexture = noiseTexture;
-            this.virusIndex = virusIndex;
+            this.virus = virusIndex;
             this.damageTextureValueIndex = playerIndex;
             this.DamageMapMask = new Vector4(playerIndex == 0 || friendlyPlayerIndices.Any(x=>x==0) ? 0.0f : 1.0f,
                                              playerIndex == 1 || friendlyPlayerIndices.Any(x=>x==1) ? 0.0f : 1.0f,

@@ -16,7 +16,7 @@ namespace VirusX
 
         #endregion
 
-        public HumanPlayer(int playerIndex, int virusIndex, int colorIndex, Teams team, GraphicsDevice device, ContentManager content, Texture2D noiseTexture,
+        public HumanPlayer(int playerIndex, VirusSwarm.VirusType virusIndex, int colorIndex, Teams team, GraphicsDevice device, ContentManager content, Texture2D noiseTexture,
                                 InputManager.ControlType controlType) :
             base(playerIndex, virusIndex, colorIndex, team, device, content, noiseTexture)
         {

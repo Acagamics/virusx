@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
+using Game = global::VirusX.InGame;
+
 namespace VirusX.Menu
 {
     class MainMenu : MenuPage
@@ -22,7 +24,25 @@ namespace VirusX.Menu
 
             NUM_BUTTONS
         };
+        enum ButtonSubmenu
+        {
+            MODE,
+            ITEMS,
+            CONTINUE,
+
+            NUM_BUTTONS
+        };
         Button selectedButton = Button.NEWGAME;
+        ButtonSubmenu selectedButtonSubmenu = ButtonSubmenu.MODE;
+
+        /// <summary>
+        /// controls of the player who opened the submenu
+        /// </summary>
+        public InputManager.ControlType StartingControls { get; set; }
+        
+        InterfaceButton useItemsButton;
+
+        bool submenu;
 
         public MainMenu(Menu menu)
             : base(menu)
@@ -39,7 +59,13 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceButton("How to Play", new Vector2(620, 100), Alignment.TOP_RIGHT));
             Interface.Add(new InterfaceImage("instructions", new Vector2(620, 100 + menu.GetFontHeight() + 2 * InterfaceElement.PADDING), Alignment.TOP_RIGHT));
 
-            Interface.Add(new InterfaceTooltip(() => { return "Tooltip"; }, () => { return "und zwar ein ganz toller\nmit mehreren\nzeilen und zeichen"; }, new Vector2(300, 0), () => true, 300, InterfaceTooltip.ArrowPosition.LEFT, Alignment.CENTER_LEFT));
+            // submenu
+            Interface.Add(new InterfaceButton("Game mode", new Vector2(320, 370), () => { return selectedButtonSubmenu == ButtonSubmenu.MODE; }, () => submenu));
+            Interface.Add(new InterfaceButton(() => { return "◄ " + Game.GAMEMODE_NAME[(int)Settings.Instance.GameMode] + " ►"; }, new Vector2(480, 370), () => { return false; }, () => submenu));
+            Interface.Add(new InterfaceButton("Items", new Vector2(320, 430), () => { return selectedButtonSubmenu == ButtonSubmenu.ITEMS; }, () => submenu));
+            useItemsButton = new InterfaceButton(() => { return Settings.Instance.UseItems ? "◄ ON ►" : "◄ OFF ►"; }, new Vector2(480, 430), () => { return false; }, () => submenu, Color.White, Settings.Instance.UseItems ? Color.Green : Color.Red);
+            Interface.Add(useItemsButton);
+            Interface.Add(new InterfaceButton("► Start", new Vector2(320, 490), () => { return selectedButtonSubmenu == ButtonSubmenu.CONTINUE; }, () => submenu));
 
             Interface.Add(new InterfaceButton(ParticleStormControl.VERSION, new Vector2(2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING) + menu.Font.MeasureString(ParticleStormControl.VERSION), Alignment.BOTTOM_RIGHT));
         }
@@ -53,12 +79,32 @@ namespace VirusX.Menu
         {
 
             // loopin
-            selectedButton = (Button)(Menu.Loop((int)selectedButton, (int)Button.NUM_BUTTONS));
+            if(submenu)
+                selectedButtonSubmenu = (ButtonSubmenu)(Menu.Loop((int)selectedButtonSubmenu, (int)ButtonSubmenu.NUM_BUTTONS, StartingControls));
+            else
+                selectedButton = (Button)(Menu.Loop((int)selectedButton, (int)Button.NUM_BUTTONS));
 
-            // button selected
-            if (InputManager.Instance.AnyPressedButton(Buttons.Start))
+            if (submenu)
             {
-                menu.ChangePage(Menu.Page.NEWGAME, gameTime);
+                switch (selectedButtonSubmenu)
+                {
+                    case ButtonSubmenu.MODE:
+                        Settings.Instance.GameMode = (Game.GameMode)Menu.Loop((int)Settings.Instance.GameMode, (int)Game.GameMode.NUM_MODES, StartingControls, true);
+                        break;
+                    case ButtonSubmenu.ITEMS:
+                        Settings.Instance.UseItems = Menu.Toggle(Settings.Instance.UseItems, StartingControls);
+                        break;
+                    case ButtonSubmenu.CONTINUE:
+                        if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, StartingControls))
+                            menu.ChangePage(Menu.Page.NEWGAME, gameTime);
+                        break;
+                }
+
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, StartingControls)
+                    || InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, StartingControls))
+                {
+                    submenu = false;
+                }
             }
             else
             {
@@ -70,9 +116,9 @@ namespace VirusX.Menu
                         switch (selectedButton)
                         {
                             case Button.NEWGAME:
+                                StartingControls = control;
                                 ((NewGame)menu.GetPage(Menu.Page.NEWGAME)).StartingControls = control;
-                                ((Mode)menu.GetPage(Menu.Page.MODE)).StartingControls = control;
-                                menu.ChangePage(Menu.Page.MODE, gameTime);
+                                submenu = true;
                                 break;
 
                             case Button.CONTROLS:
@@ -98,6 +144,9 @@ namespace VirusX.Menu
                     }
                 }
             }
+
+            // change background colors
+            useItemsButton.BackgroundColor = Settings.Instance.UseItems ? Color.Green : Color.Red;
 
             base.Update(gameTime);
         }

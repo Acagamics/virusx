@@ -11,14 +11,21 @@ namespace VirusX.Menu
 {
     class Credits : MenuPage
     {
-        private TimeSpan entry;
+        TimeSpan entry;
+
+        int offset;
 
         public Credits(Menu menu)
             : base(menu)
         {
+            Initialize();
+        }
+
+        private void Initialize()
+        {
             Interface.Add(new InterfaceImage("logoNew", new Vector2(350, -250 / 2), Alignment.CENTER_RIGHT));
 
-            Interface.Add(new InterfaceButton("A game made by", new Vector2(100, Settings.Instance.ResolutionY), true)); 
+            Interface.Add(new InterfaceButton("A game made by", new Vector2(100, Settings.Instance.ResolutionY), true));
 
             List<string> names = new List<string>() {
                 "Andreas Reich", "Programming, Gameplay, Graphics",
@@ -34,8 +41,7 @@ namespace VirusX.Menu
             };
             AddNames(names, Settings.Instance.ResolutionY + 1100);
 
-
-            Interface.Add(new InterfaceButton("Sounds/Music", new Vector2(100, Settings.Instance.ResolutionY + 1500), true)); 
+            Interface.Add(new InterfaceButton("Sounds/Music", new Vector2(100, Settings.Instance.ResolutionY + 1500), true));
 
             names = new List<string>() {
                 "Beach - PaulFitzZaland", "soundcloud.com/paulfitzzaland",
@@ -53,6 +59,9 @@ namespace VirusX.Menu
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
             entry = gameTime.TotalGameTime;
+            Interface.Clear();
+            Initialize();
+            base.LoadContent(menu.Game.Content);
         }
 
         public override void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
@@ -67,6 +76,12 @@ namespace VirusX.Menu
             if (gameTime.TotalGameTime.Subtract(entry) > TimeSpan.FromSeconds(120))
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
+            offset /= 2;
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.UP))
+                offset = 10;
+            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.DOWN))
+                offset = -10;
+
             base.Update(gameTime);
         }
 
@@ -75,7 +90,7 @@ namespace VirusX.Menu
             // update position for scrolling effect
             for (int i = 0; i < Interface.Count; i++)
             {
-                Interface[i].Position -= new Vector2(0, (float)gameTime.ElapsedGameTime.Milliseconds / 10);
+                Interface[i].Position -= new Vector2(0, (float)gameTime.ElapsedGameTime.Milliseconds / 10 + offset);
             }
 
             base.Draw(spriteBatch, gameTime);
