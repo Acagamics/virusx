@@ -167,6 +167,36 @@ float4 PS_HIV(VertexShaderOutput input) : COLOR0
     return Color * virus;
 }
 
+float4 PS_Marburg(VertexShaderOutput input) : COLOR0
+{
+	const float stickCount = 6.0;
+
+	// random rotation
+	float cosRot = cos(input.InstanceIndex);
+	float sinRot = sin(input.InstanceIndex);
+	float2 vBasic = input.Texcoord *2 - 1.0;
+	float2 v = float2(dot(vBasic, float2(cosRot, -sinRot)),
+					  dot(vBasic, float2(sinRot,  cosRot)));
+	
+	// strain
+	v += sin(v.y*5.0 + input.InstanceIndex)*0.03;
+	v.y *= 1.1;
+	
+	float distSq = dot(v,v);
+	float distSqInv = saturate(1.0 - distSq);
+	
+	float stick = pow(saturate(1.0-v.x*v.x*8.0), 20.0);
+	stick *= distSqInv;
+
+	float virus = stick;
+	virus = saturate(smoothstep(virus, 0.0, 0.001)*0.2 - virus)*6.0 + virus * 2.0;
+
+	clip(virus - 0.001f);
+
+    return Color * virus;
+}
+
+
 float4 PS_NoFalloff(VertexShaderOutput input) : COLOR0
 {
 	float2 v = input.Texcoord*2.0f - 1.0f;
@@ -212,6 +242,14 @@ technique HepatitisB
         PixelShader = compile ps_3_0 PS_HepatitisB();
     }
 }
+technique Marburg
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_3_0 VS();
+        PixelShader = compile ps_3_0 PS_Marburg();
+    }
+}
 
 technique EpsteinBar_Spritebatch
 {
@@ -248,6 +286,16 @@ technique HepatitisB_Spritebatch
         PixelShader = compile ps_3_0 PS_HepatitisB();
     }
 }
+
+technique Marburg_Spritebatch
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_3_0 VS_SpritebatchParticle();
+        PixelShader = compile ps_3_0 PS_Marburg();
+    }
+}
+
 
 technique DamageMap
 {
