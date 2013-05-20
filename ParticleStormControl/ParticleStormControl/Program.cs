@@ -1,5 +1,8 @@
 using System;
 
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("UnitTests")]
+
 namespace ParticleStormControl
 {
 #if WINDOWS || XBOX
