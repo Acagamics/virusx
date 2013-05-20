@@ -32,7 +32,7 @@ namespace VirusX.Menu
         public Player.Type[] PlayerTypes { get; set; }
         public int[] PlayerColorIndices { get; set; }
 
-        const float DURATION_CONTINUE_UNAVAILABLE = 1.0f;
+        const float DURATION_CONTINUE_UNAVAILABLE = 2.0f;
         const int SIDE_PADDING = 30; // padding from left
         const int COLUMN_WIDTH = 145; // width of the columns WITH PADDING!
         const int COLUMN_PADDING = 20;
@@ -64,6 +64,15 @@ namespace VirusX.Menu
 
         private InterfaceButton winnerLabel;
         private InterfaceButton[] playerStatLabels = new InterfaceButton[4];
+
+        enum Button
+        {
+            AGAIN,
+            MAINMENU,
+
+            NUM_BUTTONS
+        };
+        Button selectedButton = Button.MAINMENU;
 
         public StatisticsScreen(Menu menu)
             : base(menu)
@@ -123,12 +132,23 @@ namespace VirusX.Menu
             diagramDescription = new InterfaceButton(() => DIAGRAM_DESCRIPTIONS[(int)currentDiagramType], Vector2.Zero);
             Interface.Add(diagramDescription);
 
-            // continue button
-            string text = "► Continue";
+            // play again button
+            string text = "► Play Again";
             int width = (int)menu.Font.MeasureString(text).X;
-            Interface.Add(new InterfaceButton(text, new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, 
-                                                                    menu.GetFontHeight() + InterfaceImageButton.PADDING * 2 + 50),
-                                        () => { return timeUntilContinueIsAvailable < 0.0f; }, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton(text,
+                new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() * 2 + InterfaceImageButton.PADDING * 8),
+                () => { return selectedButton == Button.AGAIN; },
+                () => { return timeUntilContinueIsAvailable < 0.0f; },
+                Alignment.BOTTOM_CENTER));
+
+            // main menu button
+            text = "► Back to Main Menu";
+            width = (int)menu.Font.MeasureString(text).X;
+            Interface.Add(new InterfaceButton(text,
+                new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() + InterfaceImageButton.PADDING * 4),
+                () => { return selectedButton == Button.MAINMENU; },
+                () => { return timeUntilContinueIsAvailable < 0.0f; },
+                Alignment.BOTTOM_CENTER));
 
             // arrows
             leftButton = new InterfaceImageButton(
@@ -137,7 +157,8 @@ namespace VirusX.Menu
                 ARROW_SIZE - InterfaceImageButton.PADDING*2, ARROW_SIZE - InterfaceImageButton.PADDING*2,
                 new Rectangle(0, 0, 16, 16),
                 new Rectangle(32, 0, 16, 16),
-                () => { return InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT, true); }, () => true
+                () => { return InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.StartingControls, true); },
+                () => { return timeUntilContinueIsAvailable < 0.0f; }
             );
             Interface.Add(leftButton);
             rightButton = new InterfaceImageButton(
@@ -146,7 +167,8 @@ namespace VirusX.Menu
                 ARROW_SIZE - InterfaceImageButton.PADDING * 2, ARROW_SIZE- InterfaceImageButton.PADDING*2,
                 new Rectangle(16, 0, 16, 16),
                 new Rectangle(48, 0, 16, 16),
-                () => { return InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT, true); }, () => true
+                () => { return InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.StartingControls, true); },
+                () => { return timeUntilContinueIsAvailable < 0.0f; }
             );
             Interface.Add(rightButton);
 
@@ -207,15 +229,29 @@ namespace VirusX.Menu
 
         public override void Update(GameTime gameTime)
         {
-            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION) && timeUntilContinueIsAvailable < 0.0f)
-                menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+            if (timeUntilContinueIsAvailable < 0.0f)
+            {
+                selectedButton = (Button)(Menu.Loop((int)selectedButton, (int)Button.NUM_BUTTONS, Settings.Instance.StartingControls));
 
-            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT))
-                currentDiagramType = (DiagramType)(((int)currentDiagramType + 1) % (int)DiagramType.NUM_VALUES);
+                if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION))
+                {
+                    switch (selectedButton)
+                    {
+                        case Button.AGAIN:
+                            menu.ChangePage(Menu.Page.NEWGAME, gameTime);
+                            break;
+                        case Button.MAINMENU:
+                            menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+                            break;
+                    }
+                }
 
-            if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT))
-                currentDiagramType = (DiagramType)((((int)currentDiagramType - 1) < 0 ? (int)DiagramType.NUM_VALUES : (int)(currentDiagramType)) -1);
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.StartingControls))
+                    currentDiagramType = (DiagramType)(((int)currentDiagramType + 1) % (int)DiagramType.NUM_VALUES);
 
+                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.StartingControls))
+                    currentDiagramType = (DiagramType)((((int)currentDiagramType - 1) < 0 ? (int)DiagramType.NUM_VALUES : (int)(currentDiagramType)) - 1);
+            }
             timeUntilContinueIsAvailable -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             base.Update(gameTime);

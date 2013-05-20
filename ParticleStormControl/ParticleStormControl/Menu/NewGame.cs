@@ -45,11 +45,6 @@ namespace VirusX.Menu
         /// </summary>
         private ContentManager content;
 
-        /// <summary>
-        /// controls of the player who opened this menu
-        /// </summary>
-        public InputManager.ControlType StartingControls {get;set;}
-
         public NewGame(Menu menu)
             : base(menu)
         {
@@ -72,8 +67,8 @@ namespace VirusX.Menu
                 slotIndexToPlayerIndexMapper[i] = i;
             }
 
-            if (StartingControls != InputManager.ControlType.NONE)
-                AddPlayer(false, StartingControls);
+            if (Settings.Instance.StartingControls != InputManager.ControlType.NONE)
+                AddPlayer(false, Settings.Instance.StartingControls);
 
             // create ui @ onActia
             Interface.Clear();
@@ -215,15 +210,15 @@ namespace VirusX.Menu
 
             // help text
             int textBoxHeight = menu.GetFontHeight() + 2 * InterfaceElement.PADDING;
-            Interface.Add(new InterfaceImage("ButtonImages/xboxControllerRightShoulder", new Rectangle(-290, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(StartingControls), Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("remove computer", new Vector2(-190, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(10, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(StartingControls), Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("add computer", new Vector2(110, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceImage("ButtonImages/xboxControllerRightShoulder", new Rectangle(-290, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("remove computer", new Vector2(-190, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(10, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("add computer", new Vector2(110, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
 
-            Interface.Add(new InterfaceButton("  -", new Vector2(-230, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(StartingControls), 50, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("remove computer", new Vector2(-180, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("  +", new Vector2(0, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(StartingControls), 50, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("add computer", new Vector2(50, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("  -", new Vector2(-230, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("remove computer", new Vector2(-180, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("  +", new Vector2(0, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("add computer", new Vector2(50, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
 
             // countdown
             String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
@@ -321,8 +316,7 @@ namespace VirusX.Menu
             Settings.Instance.GameMode = Game.GameMode.CAPTURE_THE_CELL;
             menu.ChangePage(Menu.Page.INGAME, gameTime);
 #endif
-            if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, StartingControls) ||
-                InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, StartingControls))
+            if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, Settings.Instance.StartingControls))
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
 
             TimeSpan oldCountdown = countdown;
@@ -370,7 +364,10 @@ namespace VirusX.Menu
                             ToggleReady(slot);
                         else
                         {
-                            RemovePlayer(slot);
+                            if(Settings.Instance.GetPlayer(playerIndex).ControlType == Settings.Instance.StartingControls)
+                                menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+                            else
+                                RemovePlayer(slot);
                             break; // this blocks other inputs, but @30fps min thats not that bad
                         }
                     }
@@ -391,13 +388,13 @@ namespace VirusX.Menu
             }
 
             // test add/remove ai
-            if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ADD_AI, StartingControls))
+            if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ADD_AI, Settings.Instance.StartingControls))
             {
                 int index = AddPlayer(true, InputManager.ControlType.NONE);
                 if (index != -1)    
                     ToggleReady(index);
             }
-            else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.REMOVE_AI, StartingControls))
+            else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.REMOVE_AI, Settings.Instance.StartingControls))
             {
                 // search for an ai player
                 for (int i = Settings.Instance.NumPlayers-1; i >= 0; --i)
@@ -595,8 +592,11 @@ namespace VirusX.Menu
         {
             // toggle ready
             if (countdown.TotalSeconds > safeCountdown || countdown.TotalSeconds <= 0)
+            {
+                if (playerReadyBySlot[slotIndex])
+                    AudioManager.Instance.PlaySoundeffect("click");
                 playerReadyBySlot[slotIndex] = !playerReadyBySlot[slotIndex];
-
+            }
             // countdown
             if (playerReadyBySlot[slotIndex] && countdown.TotalSeconds <= 0)
                 CheckStartCountdown();

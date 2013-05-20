@@ -32,7 +32,7 @@ namespace VirusX
                                                                 "Can also lead to cirrhosis and hepatocellular carcinoma.",
                                                                 "Infection with HIV occurs by the transfer of blood, semen,\nvaginal fluid, pre-ejaculate, or breast milk.",
                                                                 "It is one of the most common viruses in humans.",
-                                                                "EBOV is a select agent, World Health Organization Risk Group 4 Pathogen (requiring Biosafety Level 4-equivalent containment).",
+                                                                "EBOV is a select agent, World Health Organization Risk Group 4 Pathogen\n(requiring Biosafety Level 4-equivalent containment).",
                                                                 "Marburg virus disease often called Marburg hemorrhagic fever (MHF)" };
         public readonly static string[] VirusClassification = { "Group V; Genus A; Family of Orthomyxoviridae",
                                                                 "Group VII; Genus Orthohepadnavirus; Family of Hepadnaviridae",

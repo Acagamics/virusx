@@ -15,7 +15,6 @@ namespace VirusX.Menu
         {
             MAINMENU,
             NEWGAME,
-            MODE,
             CREDITS,
             OPTIONS,
             PAUSED,
@@ -72,7 +71,6 @@ namespace VirusX.Menu
             pages[(int)Page.PAUSED] = new Paused(this);
             pages[(int)Page.NEWGAME] = new NewGame(this);
             pages[(int)Page.STATS] = new StatisticsScreen(this);
-			pages[(int)Page.MODE] = new Mode(this);
             pages[(int)Page.INGAME] = new InGame(this);
             pages[(int)Page.CREDITS] = new Credits(this);
             pages[(int)Page.CONTROLS] = new Controls(this);
