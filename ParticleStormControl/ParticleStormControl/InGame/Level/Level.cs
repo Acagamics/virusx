@@ -202,12 +202,29 @@ namespace VirusX
 
         public Rectangle ComputePixelRect(Vector2 position, Vector2 size)
         {
-            int rectSizeX = (int)(size.X * fieldSize_pixel.X + 0.5f);
-            int rectSizeY = (int)(size.Y * fieldSize_pixel.Y + 0.5f);
-            int rectx = (int)(position.X / RELATIVE_MAX.X * FieldPixelSize.X + FieldPixelOffset.X);
-            int recty = (int)(position.Y / RELATIVE_MAX.Y * FieldPixelSize.Y + FieldPixelOffset.Y);
+            Vector2 outSize = ComputePixelScale(size) + new Vector2(0.5f);
+            Vector2 outpos = ComputePixelPosition(position) + new Vector2(0.5f);
+            return new Rectangle((int)outpos.X, (int)outpos.Y, (int)outSize.X, (int)outSize.Y);
+        }
 
-            return new Rectangle(rectx, recty, rectSizeX, rectSizeY);
+        public Vector2 ComputePixelPosition(Vector2 position)
+        {
+            return new Vector2(position.X / RELATIVE_MAX.X * FieldPixelSize.X + FieldPixelOffset.X,
+                               position.Y / RELATIVE_MAX.Y * FieldPixelSize.Y + FieldPixelOffset.Y);
+        }
+
+        public float ComputePixelScale(float relativeScale)
+        {
+            return relativeScale * fieldSize_pixel.Y;
+        }
+        public float ComputeTextureScale(float relativeSize, int textureSize)
+        {
+            return ComputePixelScale(relativeSize) / textureSize;
+        }
+        public Vector2 ComputePixelScale(Vector2 relativeScale)
+        {
+            return new Vector2(relativeScale.X * fieldSize_pixel.X,
+                               relativeScale.Y * fieldSize_pixel.Y);
         }
 
         /// <summary>
@@ -299,16 +316,14 @@ namespace VirusX
                 // move antibodies to the nearest player
                 else if (mapObject is Debuff)
                 {
-                    var playerByDistance = players.OrderBy(x => Vector2.DistanceSquared(x.ParticleAttractionPosition, mapObject.Position));
-                    if(playerByDistance.Count() > 1)
+                    var nearestPlayer = players.OrderBy(x => Vector2.DistanceSquared(x.ParticleAttractionPosition, mapObject.Position)).First();
+                    Vector2 move = nearestPlayer.ParticleAttractionPosition - mapObject.Position;
+                    float distanceToPlayerAttractionPos = move.Length();
+                    if (distanceToPlayerAttractionPos > 0.02f)
                     {
-                        Vector2 move = playerByDistance.First().ParticleAttractionPosition - mapObject.Position;
-                        if (move.Length() > 0.02f)
-                        {
-                            move /= move.Length();
-                            move *= (float)gameTime.ElapsedGameTime.TotalSeconds * (Player.CURSOR_SPEED * 0.015f);
-                            mapObject.Position += move;
-                        }
+                        move /= distanceToPlayerAttractionPos;
+                        move *= (float)gameTime.ElapsedGameTime.TotalSeconds * (Player.CURSOR_SPEED * 0.015f);
+                        mapObject.Position += move;
                     }
                 }
             }
