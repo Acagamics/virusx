@@ -11,3 +11,5 @@
 
 /ParticleStormControl/ParticleStormControl/ParticleStormControl.csproj.user
 /ParticleStormControl/ParticleStormControl/ParticleStormControl_TemporaryKey.pfx
+/UnitTests/obj
+/UnitTests/bin

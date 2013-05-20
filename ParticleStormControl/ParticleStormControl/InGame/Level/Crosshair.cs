@@ -92,7 +92,7 @@ namespace VirusX
             else
             {
                 color.A = 150;
-                spriteBatch.Draw(deadPlayerCursor, level.ComputePixelPosition(ParticleAttractionPosition), null, color,
+                spriteBatch.Draw(deadPlayerCursor, level.ComputePixelPosition(ParticleAttractionPosition)  , null, color,
                                     currentRotation, new Vector2(deadPlayerCursor.Width * 0.5f, deadPlayerCursor.Height * 0.5f), level.ComputeTextureScale(Size, deadPlayerCursor.Width),
                                     SpriteEffects.None, 0.0f);
             }
