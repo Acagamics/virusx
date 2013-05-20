@@ -20,7 +20,7 @@ namespace VirusX
         /// <summary>
         /// max explosion size
         /// </summary>
-        public const float explosionMaxSize = 0.75f;
+        public float ExplosionMaxSize { get; private set;}
 
         /// <summary>
         ///  current explosionsize
@@ -64,12 +64,23 @@ namespace VirusX
             this.explosionTexture = content.Load<Texture2D>("capture_glow");
             this.SpawnSize = spawnSize;
 
+            ExplosionMaxSize = 0.75f;
+
             randomAngle = (float)Random.NextDouble(Math.PI * 2);
 
             if(startposession != -1)
                 glowtimer.Start();
 
             Size = ((spawnSize - 100.0f)/ 900.0f) * (0.05f) + 0.03f;
+
+            // Fun mode modifications
+            if (Settings.Instance.GameMode == InGame.GameMode.FUN)
+            {
+                this.damageFactor *= 3f;
+                this.SpawnSize *= 2f;
+                ExplosionMaxSize += .55f;
+            }
+
         }
 
         protected override void OnPossessingChanged()
@@ -98,7 +109,7 @@ namespace VirusX
                 else
                 {
                     float scaling = MathHelper.Clamp((float) Math.Log(effectseconds*16 + 1.0f)/3, 0.0f, 1.0f);
-                    currentExplosionSize = explosionMaxSize*scaling;
+                    currentExplosionSize = ExplosionMaxSize*scaling;
                     currentExplosionAlpha = 1.0f - effectseconds/duration;
                 }
             }
@@ -133,6 +144,7 @@ namespace VirusX
         {
             if (explosionTimer.IsRunning && PossessingPlayer != -1)
             {
+                
                 Color damage = VirusSwarm.GetDamageMapDrawColor(PossessingPlayer) * explosionDamage * currentExplosionAlpha;
                 spriteBatch.Draw(explosionTexture, DamageMap.ComputePixelRect(Position, currentExplosionSize), null, damage, explosionRotation,
                                      new Vector2(explosionTexture.Width / 2, explosionTexture.Height / 2), SpriteEffects.None, 1.0f);
@@ -141,6 +153,15 @@ namespace VirusX
             // uncaptured? kills people!
             if (PossessingPlayer == -1)
             {
+                Color modifiedCapturingDamage = capturingDamage;
+                if (Settings.Instance.GameMode == InGame.GameMode.FUN)
+                {
+                    modifiedCapturingDamage.A /= 2;
+                    modifiedCapturingDamage.B /= 2;
+                    modifiedCapturingDamage.R /= 2;
+                    modifiedCapturingDamage.G /= 2;
+                }
+
                 spriteBatch.Draw(glowTexture, DamageMap.ComputePixelRect_Centred(Position, capturingDamageSize), capturingDamage);
             }
         }

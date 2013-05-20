@@ -22,15 +22,20 @@ namespace VirusX
         public enum MapType
         {
             NORMAL,
-            CAPTURE_THE_CELL
+            CAPTURE_THE_CELL,
+            FUN
         };
 
         static public IEnumerable<MapObject> GenerateLevel(MapType mapType, GraphicsDevice device, ContentManager content, int numPlayers, Background outBackground)
         {
-            if (mapType == MapType.CAPTURE_THE_CELL)
-                return GenerateCaptureTheCellLevel(device, content, numPlayers, outBackground);
-            else
-                return GenerateNormalLevel(device, content, numPlayers, outBackground);
+            switch(mapType){
+                case MapType.CAPTURE_THE_CELL:
+                    return GenerateCaptureTheCellLevel(device, content, numPlayers, outBackground);
+                case MapType.FUN:
+                    return GenerateFunLevel(device, content, numPlayers, outBackground);
+                default:
+                    return GenerateNormalLevel(device, content, numPlayers, outBackground);
+            }
         }
 
         static public List<Vector2> GenerateCellPositionGrid(int numX, int numY, float positionJitter, Vector2 border, Vector2 valueRange)
@@ -105,6 +110,69 @@ namespace VirusX
             // spawn generation
             foreach (Vector2 pos in spawnPositions)
                 spawnPoints.Add(new SpawnPoint(pos, GetStandardSpawnSizeDependingFromArea(spawnPositions, pos), -1, content));
+
+            // background
+            if (outBackground != null)
+            {
+                List<Vector2> renderCells = new List<Vector2>(spawnPoints.Select(x => x.Position));// to keep things simple, place spawnpoints at the beginning
+                renderCells.AddRange(removedCells);
+                for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; ++playerIndex)
+                {
+                    if (Settings.Instance.GetPlayer(playerIndex).Type == Player.Type.NONE)
+                        renderCells.Add(cellPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex]);
+                }
+                outBackground.Generate(device, renderCells, Level.RELATIVE_MAX);
+            }
+
+            return spawnPoints.Cast<MapObject>();
+        }
+
+        static private IEnumerable<MapObject> GenerateFunLevel(GraphicsDevice device, ContentManager content, int numPlayers, Background outBackground)
+        {
+            // player starts
+            List<Vector2> cellPositions = new List<Vector2>();
+
+            cellPositions.Add(new Vector2(LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER));
+            cellPositions.Add(new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER));
+            cellPositions.Add(new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER));
+            cellPositions.Add(new Vector2(LEVEL_BORDER, LEVEL_BORDER));
+
+            List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
+            for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; ++playerIndex)
+            {
+                if (Settings.Instance.GetPlayer(playerIndex).Type != Player.Type.NONE)
+                {
+                    int slot = Settings.Instance.GetPlayer(playerIndex).SlotIndex;
+                    spawnPoints.Add(new SpawnPoint(cellPositions[slot], NORMAL_PLAYER_CELL_STRENGTH*1.3f, playerIndex, content));
+                }
+            }
+
+            // generate in a grid of equilateral triangles
+            const int SPAWNS_GRID_X = 6;
+            const int SPAWNS_GRID_Y = 3;
+            List<Vector2> spawnPositions = GenerateCellPositionGrid(SPAWNS_GRID_X, SPAWNS_GRID_Y, 0.12f, new Vector2(LEVEL_BORDER), Level.RELATIVE_MAX);
+
+
+            // random skipping - nonlinear randomness!
+            //const int MAX_SKIPS = 5;
+            int numSkips = Random.NextDouble() < 0.5 ? numPlayers : 0;//(int)(Math.Pow(Random.NextDouble(), 4) * MAX_SKIPS + 0.5f);
+            Vector2[] removedCells = new Vector2[numSkips];
+            for (int i = 0; i < numSkips; ++i)
+            {
+                int index = Random.Next(spawnPositions.Count);
+                removedCells[i] = spawnPositions[index];
+                spawnPositions.RemoveAt(index);
+            }
+#if EMPTY_LEVELDEBUG
+            spawnPositions.Clear();
+#endif
+            // spawn generation
+            for (int i = 0; i < spawnPositions.Count; ++i)
+            {
+                Vector2 pos = spawnPositions[i];
+                spawnPoints.Add(new SpawnPoint(pos, GetStandardSpawnSizeDependingFromArea(spawnPositions, pos), i%numPlayers, content));
+            }
+
 
             // background
             if (outBackground != null)

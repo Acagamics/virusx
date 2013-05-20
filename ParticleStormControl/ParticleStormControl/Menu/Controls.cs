@@ -88,7 +88,8 @@ namespace VirusX.Menu
                 || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT)
                 || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION)
                 || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.HOLD)
-                || InputManager.Instance.IsButtonPressed(Keys.F1))
+                || InputManager.Instance.IsButtonPressed(Keys.F1)
+                || InputManager.Instance.AnyPressedButton(Buttons.Y))
                 menu.ChangePage(origin, gameTime);
 
             base.Update(gameTime);

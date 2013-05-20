@@ -104,6 +104,7 @@ namespace VirusX.Menu
                     || InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, StartingControls))
                 {
                     submenu = false;
+                    AudioManager.Instance.PlaySoundeffect("click");
                 }
             }
             else
@@ -119,6 +120,7 @@ namespace VirusX.Menu
                                 StartingControls = control;
                                 ((NewGame)menu.GetPage(Menu.Page.NEWGAME)).StartingControls = control;
                                 submenu = true;
+                                AudioManager.Instance.PlaySoundeffect("click");
                                 break;
 
                             case Button.CONTROLS:
