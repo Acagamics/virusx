@@ -1,3 +1,12 @@
+texture VirusTexture;
+sampler2D sampVirus = sampler_state
+{	
+	Texture = <VirusTexture>;
+    MagFilter = LINEAR;
+    MinFilter = LINEAR;
+    Mipfilter = LINEAR;
+};
+
 texture PositionTexture;
 sampler2D sampPositions = sampler_state
 {	
@@ -14,17 +23,6 @@ sampler2D sampInfos = sampler_state
     MinFilter = POINT;
     Mipfilter = POINT;
 };
-
-texture VirusTexture;
-sampler2D sampVirus = sampler_state
-{	
-	Texture = <VirusTexture>;
-    MagFilter = LINEAR;
-    MinFilter = LINEAR;
-    Mipfilter = LINEAR;
-};
-
-
 
 float4 Color;
 float TextureSize;
@@ -99,7 +97,7 @@ float4 PS_Virus(VertexShaderOutput input) : COLOR0
 {
 	float virus = tex2D(sampVirus, input.Texcoord).r;
 	clip(virus - 1.0f/255.0f);
-    return Color * virus;
+    return Color * virus * 2;
 }
 
 float4 PS_NoFalloff(VertexShaderOutput input) : COLOR0
