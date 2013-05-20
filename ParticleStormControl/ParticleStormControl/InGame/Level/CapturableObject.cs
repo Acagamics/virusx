@@ -30,7 +30,7 @@ namespace VirusX
         /// </summary>
         private const float defenseFactor = 0.25f;
 
-        protected readonly float damageFactor;
+        protected float damageFactor;
 
         /// <summary>
         /// the opacity of the object it is used to let objects blink

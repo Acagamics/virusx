@@ -43,7 +43,7 @@ namespace VirusX
         public class PlayerSettings
         {
             public int ColorIndex;
-            public int VirusIndex;
+            public VirusSwarm.VirusType Virus;
             public int SlotIndex;
             public Player.Teams Team;
             public Player.Type Type;

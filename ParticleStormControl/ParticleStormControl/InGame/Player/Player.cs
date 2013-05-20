@@ -217,7 +217,7 @@ namespace VirusX
 
         #endregion
 
-        public Player(int playerIndex, int virusIndex, int colorIndex, Teams team, GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
+        public Player(int playerIndex, VirusSwarm.VirusType virusIndex, int colorIndex, Teams team, GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
         {
             this.playerIndex = playerIndex;
             this.colorIndex = colorIndex;

@@ -322,7 +322,10 @@ namespace VirusX
                     if (distanceToPlayerAttractionPos > 0.02f)
                     {
                         move /= distanceToPlayerAttractionPos;
-                        move *= (float)gameTime.ElapsedGameTime.TotalSeconds * (Player.CURSOR_SPEED * 0.015f);
+                        if(Settings.Instance.GameMode == InGame.GameMode.FUN)
+                            move *= (float)gameTime.ElapsedGameTime.TotalSeconds * (Player.CURSOR_SPEED * 0.045f);
+                        else
+                            move *= (float)gameTime.ElapsedGameTime.TotalSeconds * (Player.CURSOR_SPEED * 0.015f);
                         mapObject.Position += move;
                     }
                 }
