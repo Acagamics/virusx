@@ -20,6 +20,12 @@ namespace VirusX.Menu
         int height;
         bool scaleImage;
 
+        public Texture2D Texture
+        {
+            get { return texture; }
+            set { texture = value; }
+        }
+
         public InterfaceImage(string textureName, Rectangle destination, Alignment alignment = Alignment.TOP_LEFT, bool scaleImage = false)
             : this(textureName, new Vector2(destination.X, destination.Y), destination.Width, destination.Height, Color.FromNonPremultiplied(0, 0, 0, 0), () => { return true; }, alignment, scaleImage)
         { }

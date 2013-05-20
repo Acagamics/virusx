@@ -33,10 +33,10 @@ namespace VirusX.Menu
         private bool[] playerReadyBySlot = new bool[4];
         private int[] slotIndexToPlayerIndexMapper = new int[4];
 
-        private Effect virusRenderEffect;
-
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
+
+        private InterfaceImage[] virusImages = new InterfaceImage[4];
 
         /// <summary>
         /// reference to the content manager
@@ -91,11 +91,12 @@ namespace VirusX.Menu
                 Vector2 origin = GetOrigin(index);
 
                 // join text
-                Interface.Add(new InterfaceButton(joinText, GetOrigin(index) + new Vector2((int)((BOX_WIDTH - stringSize.X) / 2), (int)((BOX_HEIGHT - stringSize.Y) / 2)), () => { return true; }, () => { return !playerSlotOccupied[index]; }));
+                Interface.Add(new InterfaceButton(joinText, GetOrigin(index) + new Vector2((int)((BOX_WIDTH - stringSize.X) / 2), 
+                                (int)((BOX_HEIGHT - stringSize.Y) / 2)), () => { return true; }, () => { return !playerSlotOccupied[index]; }));
 
                 // virus name
                 Interface.Add(new InterfaceButton(
-                    () => { return VirusSwarm.VirusNames[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex].ToString(); },
+                    () => { return VirusSwarm.VirusNames[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus].ToString(); },
                     origin + new Vector2(SIDE_PADDING, 0),
                     () => { return playerReadyBySlot[index]; },
                     () => { return playerSlotOccupied[index]; },
@@ -176,6 +177,12 @@ namespace VirusX.Menu
                     () => { return playerSlotOccupied[index]; }
                 ));
 
+                // virus
+                virusImages[i] = new InterfaceImage(Settings.Instance.NumPlayers > i ? ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(i).Virus) : "pix",
+                                        new Rectangle((int)origin.X + BOX_WIDTH - VIRUS_SIZE - SIDE_PADDING, (int)origin.Y + TEXTBOX_HEIGHT + 40, VIRUS_SIZE, VIRUS_SIZE),   // historic rect..
+                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true);
+                Interface.Add(virusImages[i]);
+
                 // description
                 int backgroundLength = (BOX_WIDTH - SIDE_PADDING * 2 + InterfaceElement.PADDING * 2) / 2; //(descpStrLen + symbolLen) * 2 + 15;
                 int symbolLen = backgroundLength - TEXTBOX_HEIGHT - InterfaceButton.PADDING*3;//(int)menu.Font.MeasureString("++++").X + InterfaceElement.PADDING;
@@ -186,22 +193,22 @@ namespace VirusX.Menu
 
                 Interface.Add(new InterfaceImage("symbols//Speed", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
                                                     Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
-                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Speed[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex]; },
+                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Speed[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                             origin + new Vector2(descpX0 + TEXTBOX_HEIGHT, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
                 Interface.Add(new InterfaceImage("symbols//Mass", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
                                                     Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
-                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Mass[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex]; },
+                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Mass[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                               origin + new Vector2(descpX0 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
                 Interface.Add(new InterfaceImage("symbols//Discipline", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
                                                     Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
-                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Discipline[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex]; },
+                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Discipline[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                                 origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
                 Interface.Add(new InterfaceImage("symbols//Health", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
                                                     Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
-                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Health[Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).VirusIndex]; },
+                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Health[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                                 origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
             }
 
@@ -235,8 +242,6 @@ namespace VirusX.Menu
         public override void LoadContent(ContentManager content)
         {
             this.content = content;
-            virusRenderEffect = content.Load<Effect>("shader/particleRendering");
-
             base.LoadContent(content);
         }
 
@@ -332,16 +337,21 @@ namespace VirusX.Menu
                 int slot = Settings.Instance.GetPlayer(playerIndex).SlotIndex;
                 if (playerSlotOccupied[slot] && Settings.Instance.GetPlayer(playerIndex).Type == Player.Type.HUMAN)
                 {
-                    // color
+                    // virus
                     if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.GetPlayer(playerIndex).ControlType, false) && !playerReadyBySlot[slot])
                     {
-                        if (--Settings.Instance.GetPlayer(playerIndex).VirusIndex < 0)
-                            Settings.Instance.GetPlayer(playerIndex).VirusIndex = VirusSwarm.Viruses.Length - 1;
+                        if (--Settings.Instance.GetPlayer(playerIndex).Virus < 0)
+                            Settings.Instance.GetPlayer(playerIndex).Virus = (VirusSwarm.VirusType)((int)VirusSwarm.Viruses.Length - 1);
+
+                        virusImages[slot].Texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(playerIndex).Virus));
                     }
                     else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.GetPlayer(playerIndex).ControlType, false) && !playerReadyBySlot[slot])
                     {
-                        if (++Settings.Instance.GetPlayer(playerIndex).VirusIndex >= VirusSwarm.Viruses.Length)
-                            Settings.Instance.GetPlayer(playerIndex).VirusIndex = 0;
+                        Settings.Instance.GetPlayer(playerIndex).Virus = (VirusSwarm.VirusType)((int)Settings.Instance.GetPlayer(playerIndex).Virus + 1);
+                        if ((int)Settings.Instance.GetPlayer(playerIndex).Virus >= VirusSwarm.Viruses.Length)
+                            Settings.Instance.GetPlayer(playerIndex).Virus = 0;
+
+                        virusImages[slot].Texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(playerIndex).Virus));
                     }
 
                     // color
@@ -440,9 +450,11 @@ namespace VirusX.Menu
                     ControlType = ai ? InputManager.ControlType.NONE : controlType,
                     ColorIndex = colorIndex,
                     Team = team,
-                    VirusIndex = Random.Next((int)VirusSwarm.VirusType.NUM_VIRUSES),
+                    Virus = (VirusSwarm.VirusType)Random.Next((int)VirusSwarm.VirusType.NUM_VIRUSES),
                     Type = ai ? Player.Type.AI : Player.Type.HUMAN,
                 });
+                if(virusImages[slotIndex] != null)
+                    virusImages[slotIndex].Texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[slotIndex]).Virus));
 
                 AudioManager.Instance.PlaySoundeffect("click");
                 countdown = TimeSpan.FromSeconds(-1);
@@ -482,30 +494,6 @@ namespace VirusX.Menu
             int TEXTBOX_HEIGHT = menu.GetFontHeight() + 2 * InterfaceButton.PADDING;
             int ARROW_SIZE = TEXTBOX_HEIGHT;
             int SIDE_PADDING = ARROW_SIZE + 30;
-
-            virusRenderEffect.Parameters["ScreenSize"].SetValue(new Vector2(menu.ScreenWidth, menu.ScreenHeight));
-
-            // virus image for each player
-            for (int i = 0; i < 4; i++)
-            {
-                if (playerSlotOccupied[i])
-                {
-                    Vector2 origin = GetOrigin(i);
-                    int playerIndex = slotIndexToPlayerIndexMapper[i];
-                    
-                    Rectangle virusImageRect = new Rectangle((int)origin.X + BOX_WIDTH - VIRUS_SIZE - SIDE_PADDING, (int)origin.Y + TEXTBOX_HEIGHT + 40, VIRUS_SIZE, VIRUS_SIZE);
-                    virusImageRect.Inflate(VIRUS_PADDING, VIRUS_PADDING);
-                    spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.Black);
-                    virusImageRect.Inflate(-VIRUS_PADDING, -VIRUS_PADDING);
-                    spriteBatch.End(); // yeah this sucks terrible! TODO better solution
-                    ParticleRenderer.ChooseVirusDrawTechnique(VirusSwarm.Viruses[Settings.Instance.GetPlayer(playerIndex).VirusIndex], virusRenderEffect, true);
-                    virusRenderEffect.Parameters["Color"].SetValue(VirusSwarm.ParticleColors[Settings.Instance.GetPlayer(playerIndex).ColorIndex].ToVector4() * 1.5f);
-                    spriteBatch.Begin(0, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, virusRenderEffect);
-                    spriteBatch.Draw(menu.TexPixel, virusImageRect, Color.White);
-                    spriteBatch.End();
-                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
-                }
-            }
 
             base.Draw(spriteBatch, gameTime);
 
