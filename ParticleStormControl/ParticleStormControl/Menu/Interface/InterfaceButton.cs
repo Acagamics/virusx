@@ -126,6 +126,10 @@ namespace VirusX.Menu
             : this(text, position, selected, () => { return true; }, width, textColor, backgroundColor, false, alignment)
         { }
 
+        public InterfaceButton(Func<string> text, Vector2 position, Func<bool> selected, Func<bool> visible, Color textColor, Color backgroundColor, Alignment alignment = Alignment.TOP_LEFT)
+            : this(text, position, selected, visible, -1, textColor, backgroundColor, false, alignment)
+        { }
+
         /// <summary>
         /// Button with fixed width, colors and font
         /// </summary>
