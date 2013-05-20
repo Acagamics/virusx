@@ -103,6 +103,14 @@ namespace VirusX
                 Alive = false;
         }
 
+        public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime)
+        {
+            // explosion
+            spriteBatch.Draw(damageZoneTexture, level.ComputePixelPosition(Position), null,
+                                Settings.Instance.GetPlayerColor(possessingPlayer) * alpha, currentRotation, textureCenterZone, 
+                                level.ComputeTextureScale(Size, damageZoneTexture.Width), SpriteEffects.None, 0);
+        }
+
         public override void DrawToDamageMap(SpriteBatch spriteBatch)
         {
             Color playerColor;
@@ -112,13 +120,6 @@ namespace VirusX
                 playerColor = VirusSwarm.GetDamageMapDrawColor(possessingPlayer);
             Color damage = playerColor * (explosionDamage * alpha);
             spriteBatch.Draw(damageZoneTexture, DamageMap.ComputePixelRect(Position, Size), null, damage, currentRotation, textureCenterZone, SpriteEffects.None, 0);
-        }
-
-        public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime)
-        {
-            // explosion
-            Rectangle rect = level.ComputePixelRect(Position, Size);
-            spriteBatch.Draw(damageZoneTexture, rect, null, Settings.Instance.GetPlayerColor(possessingPlayer) * alpha, currentRotation, textureCenterZone, SpriteEffects.None, 0);
         }
     }
 }
