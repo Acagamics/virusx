@@ -19,8 +19,7 @@ namespace VirusX.Menu
         }
         Buttons currentButton = Buttons.CONTINUE;
 
-
-        List<int> reconnectWaitingPlayerIndices = new List<int>();
+        InterfaceButton[] waitingDisplays = new InterfaceButton[4];
 
         /// <summary>
         /// player that controlls this menu
@@ -31,27 +30,28 @@ namespace VirusX.Menu
             : base(menu)
         {
             // background
-            Interface.Add(new InterfaceFiller(Vector2.Zero, menu.ScreenWidth, menu.ScreenHeight, Color.Black * 0.5f, () => { return true; }));
+            Interface.Add(new InterfaceFiller(Vector2.Zero, -1, -1, Color.Black * 0.5f, () => { return true; }));
 
             // paused string
             string label = "game paused";
             Vector2 stringSizePaused = menu.FontHeading.MeasureString(label);
-            Vector2 positionPaused = (new Vector2(menu.ScreenWidth, menu.ScreenHeight - 300) - stringSizePaused) / 2;
-            Interface.Add(new InterfaceButton(label, positionPaused, true));
+            Vector2 positionPaused = (new Vector2(0, 0 - 300) - stringSizePaused) / 2;
+            Interface.Add(new InterfaceButton(label, positionPaused, true, Alignment.CENTER_CENTER));
 
             // continue & mainmenu
             const int BUTTON_WIDTH = 150;
             float y = positionPaused.Y + 180;
-            Interface.Add(new InterfaceButton("► Continue", new Vector2((menu.ScreenWidth) / 2 - 20 - BUTTON_WIDTH, y), () => { return currentButton == Buttons.CONTINUE; }, BUTTON_WIDTH));
-            Interface.Add(new InterfaceButton("► Quit to Menu", new Vector2(menu.ScreenWidth / 2 + 20, y), () => { return currentButton == Buttons.QUIT_TO_MAINMENU; }, BUTTON_WIDTH));
+            Interface.Add(new InterfaceButton("► Continue", new Vector2(-20 - BUTTON_WIDTH, y), () => { return currentButton == Buttons.CONTINUE; }, BUTTON_WIDTH, Alignment.CENTER_CENTER));
+            Interface.Add(new InterfaceButton("► Quit to Menu", new Vector2(20, y), () => { return currentButton == Buttons.QUIT_TO_MAINMENU; }, BUTTON_WIDTH, Alignment.CENTER_CENTER));
             y += 100;
 
             // disconnected message
-            foreach (int playerIndex in reconnectWaitingPlayerIndices)
+            for(int i=0; i<4; ++i)
             {
-                string message = "Player " + (playerIndex + 1) + " is disconnected!";
-                Vector2 position = (new Vector2(menu.ScreenWidth / 2, y) - menu.Font.MeasureString(message) / 2);
-                Interface.Add(new InterfaceButton(message, position));
+                string message = "Player " + (i + 1) + " is disconnected!";
+                Vector2 position = (new Vector2(0, y) - menu.Font.MeasureString(message) / 2);
+                waitingDisplays[i] = new InterfaceButton(message, position, ()=>false, Color.White, Color.Black, Alignment.CENTER_CENTER);
+                Interface.Add(waitingDisplays[i]);
                 y += 50;
             }
         }
@@ -76,6 +76,15 @@ namespace VirusX.Menu
                 }
                 if (ControllingPlayer >= Settings.Instance.NumPlayers)
                     ControllingPlayer = 0;
+            }
+
+            // colors
+            for (int i = 0; i < Settings.Instance.NumPlayers; ++i)
+                waitingDisplays[i].BackgroundColor = Settings.Instance.GetPlayerColor(i);
+            for (int i = Settings.Instance.NumPlayers; i < waitingDisplays.Length; ++i)
+            {
+                waitingDisplays[i].BackgroundColor = Color.Black;
+                waitingDisplays[i].Visible = () => false;
             }
         }
 
@@ -130,20 +139,19 @@ namespace VirusX.Menu
                     currentButton = currentButton == Buttons.CONTINUE ? Buttons.QUIT_TO_MAINMENU : Buttons.CONTINUE;
             }
 
-
-            // unconnected players?
-            reconnectWaitingPlayerIndices.Clear();
-            for (int i = 0; i < Settings.Instance.NumPlayers; ++i)
-            {
-                if (InputManager.Instance.IsWaitingForReconnect(Settings.Instance.GetPlayer(i).ControlType))
-                    reconnectWaitingPlayerIndices.Add(i);
-            }
-
             base.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
+            // unconnected players?
+            // check here to prevent false drawing
+            for (int i = 0; i < Settings.Instance.NumPlayers; ++i)
+            {
+                int player = i;
+                waitingDisplays[i].Visible = () => InputManager.Instance.IsWaitingForReconnect(Settings.Instance.GetPlayer(player).ControlType);
+            }
+
             base.Draw(spriteBatch, gameTime);
         }
     }
