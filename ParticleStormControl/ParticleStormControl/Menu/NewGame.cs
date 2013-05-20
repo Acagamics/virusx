@@ -215,14 +215,14 @@ namespace VirusX.Menu
             // help text
             int textBoxHeight = menu.GetFontHeight() + 2 * InterfaceElement.PADDING;
             Interface.Add(new InterfaceImage("ButtonImages/xboxControllerRightShoulder", new Rectangle(-290, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(StartingControls), Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("add computer", new Vector2(-190, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("remove computer", new Vector2(-190, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
             Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(10, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(StartingControls), Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("remove computer", new Vector2(110, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("add computer", new Vector2(110, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
 
-            Interface.Add(new InterfaceButton("  +", new Vector2(-230, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(StartingControls), 50, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("add computer", new Vector2(-180, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("  -", new Vector2(0, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(StartingControls), 50, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("remove computer", new Vector2(50, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("  -", new Vector2(-230, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(StartingControls), 50, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("remove computer", new Vector2(-180, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("  +", new Vector2(0, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(StartingControls), 50, Alignment.BOTTOM_CENTER));
+            Interface.Add(new InterfaceButton("add computer", new Vector2(50, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(StartingControls), 180, Alignment.BOTTOM_CENTER));
 
             // countdown
             String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
