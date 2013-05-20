@@ -256,7 +256,7 @@ namespace VirusX
                 // level update
                 level.Update(gameTime, players);
 
-                // wining
+                // winning
                 CheckWinning(gameTime);
             }
         }

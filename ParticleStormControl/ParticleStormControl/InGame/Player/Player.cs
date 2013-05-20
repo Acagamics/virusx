@@ -9,8 +9,6 @@ namespace VirusX
 {
     abstract class Player
     {
-        public const int MAX_NUM_PLAYERS = 4;
-
         public enum Type
         {
             HUMAN,
