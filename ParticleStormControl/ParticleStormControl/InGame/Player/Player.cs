@@ -200,10 +200,7 @@ namespace VirusX
                 itemSlot = value;
             }
         }
-        /// <summary>
-        /// If true the item will be removed after a given amount of time
-        /// </summary>
-        private bool automaticItemDeletion = false;
+        
         /// <summary>
         /// The time a player can possess an item, if the automatic deletion is active
         /// </summary>
@@ -303,7 +300,7 @@ namespace VirusX
                 else
                     timeWithoutSpawnPoint = 0.0f;
 
-                if (automaticItemDeletion)
+                if (Settings.Instance.AutomaticItemDeletion)
                 {
                     if (ItemSlot != Item.ItemType.NONE)
                     {

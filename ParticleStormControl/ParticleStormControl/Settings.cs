@@ -96,6 +96,12 @@ namespace VirusX
         private bool useItems = true;
         public bool UseItems { get { return useItems; } set { useItems = value; } }
 
+        private bool automaticItemDeletion = false;
+        /// <summary>
+        /// If true the item will be removed after a given amount of time
+        /// </summary>
+        public bool AutomaticItemDeletion { get { return automaticItemDeletion; } set { automaticItemDeletion = value; } }
+
         private InputManager.ControlType startingControls = InputManager.ControlType.NONE;
         public InputManager.ControlType StartingControls { get { return startingControls; } set { startingControls = value; } }
 

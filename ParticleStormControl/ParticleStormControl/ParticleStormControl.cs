@@ -228,6 +228,9 @@ namespace VirusX
 
             if (InputManager.Instance.IsButtonPressed(Keys.F12))
                 showStatistics = !showStatistics;
+            // toggle automatic item deletion
+            if (InputManager.Instance.IsButtonPressed(Keys.F11))
+                Settings.Instance.AutomaticItemDeletion = !Settings.Instance.AutomaticItemDeletion;
         }
 
         /// <summary>
