@@ -24,6 +24,7 @@ namespace VirusX
             NUM_STAT_ITEMS
         }
 
+        [Serializable]
         public struct UsedItem 
         {
             public StatItems item;

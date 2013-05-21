@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define SAVE_STATISTICS
+//#define LOAD_STATISTICS
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +8,12 @@ using VirusX;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
+#if SAVE_STATISTICS || LOAD_STATISTICS
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+#endif
 
 namespace VirusX.Menu
 {
@@ -184,6 +192,27 @@ namespace VirusX.Menu
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
             statistics = menu.Game.InGame.Level.GameStatistics;
+#if SAVE_STATISTICS
+            // save statistics
+            String fileName = DateTime.Now.Date.Year.ToString()
+                + DateTime.Now.Date.Month.ToString()
+                + DateTime.Now.Date.Day.ToString()
+                + "_" + DateTime.Now.TimeOfDay.Hours.ToString()
+                + DateTime.Now.TimeOfDay.Minutes.ToString()
+                + DateTime.Now.TimeOfDay.Seconds.ToString()
+                + "_" + Settings.Instance.GameMode.ToString()
+                + "_VirusXStat.bin";
+            Stream streamWrite = File.Create(fileName);
+            BinaryFormatter binaryWrite = new BinaryFormatter();
+            binaryWrite.Serialize(streamWrite, statistics);
+            streamWrite.Close();
+#endif
+#if LOAD_STATISTICS
+            Stream streamRead = File.OpenRead("21.05.2013_VirusXStat.bin");
+            BinaryFormatter binaryRead = new BinaryFormatter();
+            statistics = (Statistics)binaryRead.Deserialize(streamRead);
+            streamRead.Close();
+#endif
             currentDiagramType = DiagramType.DOMINATION;
 
             values = new List<string>[statistics.PlayerCount];
