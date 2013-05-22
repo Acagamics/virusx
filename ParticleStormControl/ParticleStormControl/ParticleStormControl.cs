@@ -74,10 +74,18 @@ namespace VirusX
         private InGame inGame;
         private Menu.Menu menu;
         private Background background;
+        private Tutorial tutorial;
+
+        private bool firstUpdate = true;
 
         public InGame InGame // haaaack alert!
         {
             get { return inGame; }
+        }
+
+        public Menu.Menu Menu
+        {
+            get { return menu; }
         }
 
         public ParticleStormControl()
@@ -161,9 +169,11 @@ namespace VirusX
             spriteBatch = new SpriteBatch(GraphicsDevice);
             menu = new Menu.Menu(this);
             inGame = new InGame(menu);
+            tutorial = new Tutorial(this);
 
             menu.PageChangingEvent += OnMenuPageChanged;
             menu.PageChangingEvent += inGame.OnMenuPageChanged;
+            menu.PageChangingEvent += tutorial.OnMenuPageChanged;
 
             base.Initialize();
         }
@@ -176,6 +186,7 @@ namespace VirusX
         {
             inGame.LoadContent(GraphicsDevice, Content);
             menu.LoadContent(Content);
+            tutorial.LoadContent(Content);
 
             background = new Background(GraphicsDevice, Content);
             RegenerateBackground();
@@ -204,7 +215,7 @@ namespace VirusX
         /// </summary>
         public void OnMenuPageChanged(Menu.Menu.Page newPage, Menu.Menu.Page oldPage)
         {
-            if (newPage == Menu.Menu.Page.INGAME && inGame.State == InGame.GameState.Inactive)
+            if (newPage == VirusX.Menu.Menu.Page.INGAME && inGame.State == InGame.GameState.Inactive)
                 inGame.StartNewGame(GraphicsDevice, Content);
         }
 
@@ -220,11 +231,15 @@ namespace VirusX
 
             InputManager.Instance.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
 
+            if (firstUpdate)
+            {
+                menu.ChangePage(VirusX.Menu.Menu.Page.MAINMENU, gameTime);
+                firstUpdate = false;
+            }
+
             menu.Update(gameTime);
-
-            //InterfaceButton.Instance.Update(gameTime);
-
             inGame.Update(gameTime);
+            tutorial.Update(gameTime);
 
             if (InputManager.Instance.IsButtonPressed(Keys.F12))
                 showStatistics = !showStatistics;
@@ -251,8 +266,9 @@ namespace VirusX
             if (inGame.State == global::VirusX.InGame.GameState.Inactive)
                 background.Draw(GraphicsDevice, (float)gameTime.TotalGameTime.TotalSeconds);
 
-            inGame.Draw_Backbuffer(gameTime, spriteBatch);
-            menu.Draw(gameTime, spriteBatch);
+            inGame.Draw_Backbuffer(spriteBatch, gameTime);
+            menu.Draw(spriteBatch, gameTime);
+            tutorial.Draw(spriteBatch, gameTime);
 
             // show statistics
             if (showStatistics)
@@ -281,6 +297,8 @@ namespace VirusX
                     }
                     statistic += "\nTotalParticles: " + totalParticleCount;
                 }
+
+                statistic += "\nAutomaticItemDeletion: " + Settings.Instance.AutomaticItemDeletion;
 
                 spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
                 spriteBatch.DrawString(menu.Font, statistic, new Vector2(5, 5), Color.White);

@@ -25,6 +25,7 @@ namespace VirusX.Menu
             STATS,
 
             NUM_PAGES,
+            NONE
         };
 
         #region Fonts
@@ -46,12 +47,17 @@ namespace VirusX.Menu
         public int ScreenHeight { get { return game.GraphicsDevice.Viewport.Height; } }
         #endregion
 
-        private Page activePage = Page.MAINMENU;
+        private Page activePage = Page.NONE;
         public Page ActivePage
         {
             get { return activePage; }
         }
+
         private MenuPage[] pages = new MenuPage[(int)Page.NUM_PAGES];
+        internal MenuPage[] Pages
+        {
+            get { return pages; }
+        }
 
         private ParticleStormControl game;
         public ParticleStormControl Game // Haaaack (how else do I get the statistics outside the inGame?)
@@ -94,7 +100,7 @@ namespace VirusX.Menu
                 pages[(int)activePage].Update(gameTime);
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
             if(pages[(int)activePage] != null)

@@ -17,13 +17,7 @@ namespace VirusX.Menu
         private bool ignoreFirstUpdateStep;
 
         public InGame(Menu menu) : base(menu)
-        {
-
-            if (Settings.Instance.GameMode == VirusX.InGame.GameMode.TUTORIAL)
-            {
-                Interface.Add(new InterfaceTooltip(() => { return "Tooltip"; }, () => { return "und zwar ein ganz toller\nmit mehreren\nzeilen und zeichen"; }, new Vector2(300, 0), () => true, 300, InterfaceTooltip.ArrowPosition.LEFT, Alignment.CENTER_LEFT));
-            }
-        }
+        { }
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
@@ -31,6 +25,7 @@ namespace VirusX.Menu
             {
                 blendIn = GAME_BLEND_DURATION;
                 ignoreFirstUpdateStep = true;
+                Settings.Instance.FirstStart = false;
             }
         }
 

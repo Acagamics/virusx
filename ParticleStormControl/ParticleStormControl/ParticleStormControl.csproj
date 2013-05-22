@@ -185,6 +185,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="ParticleStormControl.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Tutorial.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

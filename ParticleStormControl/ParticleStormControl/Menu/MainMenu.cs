@@ -37,7 +37,8 @@ namespace VirusX.Menu
         
         InterfaceButton useItemsButton;
 
-        bool submenu;
+        bool submenuVisible;
+        public bool SubmenuVisible { get { return submenuVisible; } }
 
         public MainMenu(Menu menu)
             : base(menu)
@@ -55,12 +56,12 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceImage("instructions", new Vector2(620, 100 + menu.GetFontHeight() + 2 * InterfaceElement.PADDING), Alignment.TOP_RIGHT));
 
             // submenu
-            Interface.Add(new InterfaceButton("Game mode", new Vector2(320, 370), () => { return selectedButtonSubmenu == ButtonSubmenu.MODE; }, () => submenu));
-            Interface.Add(new InterfaceButton(() => { return "◄ " + Game.GAMEMODE_NAME[(int)Settings.Instance.GameMode] + " ►"; }, new Vector2(480, 370), () => { return false; }, () => submenu));
-            Interface.Add(new InterfaceButton("Items", new Vector2(320, 430), () => { return selectedButtonSubmenu == ButtonSubmenu.ITEMS; }, () => submenu));
-            useItemsButton = new InterfaceButton(() => { return Settings.Instance.UseItems ? "◄ ON ►" : "◄ OFF ►"; }, new Vector2(480, 430), () => { return false; }, () => submenu, Color.White, Settings.Instance.UseItems ? Color.Green : Color.Red);
+            Interface.Add(new InterfaceButton("Game mode", new Vector2(320, 370), () => { return selectedButtonSubmenu == ButtonSubmenu.MODE; }, () => submenuVisible));
+            Interface.Add(new InterfaceButton(() => { return "◄ " + Game.GAMEMODE_NAME[(int)Settings.Instance.GameMode] + " ►"; }, new Vector2(480, 370), () => { return false; }, () => submenuVisible));
+            Interface.Add(new InterfaceButton("Items", new Vector2(320, 430), () => { return selectedButtonSubmenu == ButtonSubmenu.ITEMS; }, () => submenuVisible));
+            useItemsButton = new InterfaceButton(() => { return Settings.Instance.UseItems ? "◄ ON ►" : "◄ OFF ►"; }, new Vector2(480, 430), () => { return false; }, () => submenuVisible, Color.White, Settings.Instance.UseItems ? Color.Green : Color.Red);
             Interface.Add(useItemsButton);
-            Interface.Add(new InterfaceButton("► Start", new Vector2(320, 490), () => { return selectedButtonSubmenu == ButtonSubmenu.CONTINUE; }, () => submenu));
+            Interface.Add(new InterfaceButton("► Start", new Vector2(320, 490), () => { return selectedButtonSubmenu == ButtonSubmenu.CONTINUE; }, () => submenuVisible));
 
             Interface.Add(new InterfaceButton(ParticleStormControl.VERSION, new Vector2(2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING) + menu.Font.MeasureString(ParticleStormControl.VERSION), Alignment.BOTTOM_RIGHT));
         }
@@ -68,7 +69,7 @@ namespace VirusX.Menu
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
             if (oldPage == Menu.Page.STATS)
-                submenu = false;
+                submenuVisible = false;
         }
 
         public override void LoadContent(ContentManager content)
@@ -80,12 +81,12 @@ namespace VirusX.Menu
         {
 
             // loopin
-            if(submenu)
+            if(submenuVisible)
                 selectedButtonSubmenu = (ButtonSubmenu)(Menu.Loop((int)selectedButtonSubmenu, (int)ButtonSubmenu.NUM_BUTTONS, Settings.Instance.StartingControls));
             else
                 selectedButton = (Button)(Menu.Loop((int)selectedButton, (int)Button.NUM_BUTTONS));
 
-            if (submenu)
+            if (submenuVisible)
             {
                 switch (selectedButtonSubmenu)
                 {
@@ -104,7 +105,7 @@ namespace VirusX.Menu
                 if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, Settings.Instance.StartingControls)
                     || InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, Settings.Instance.StartingControls))
                 {
-                    submenu = false;
+                    submenuVisible = false;
                     AudioManager.Instance.PlaySoundeffect("click");
                 }
             }
@@ -119,7 +120,7 @@ namespace VirusX.Menu
                         {
                             case Button.NEWGAME:
                                 Settings.Instance.StartingControls = control;
-                                submenu = true;
+                                submenuVisible = true;
                                 AudioManager.Instance.PlaySoundeffect("click");
                                 break;
 

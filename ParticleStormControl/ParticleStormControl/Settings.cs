@@ -68,7 +68,7 @@ namespace VirusX
 
         public PlayerSettings GetPlayer(int playerIndex)
         {
-            if (playerIndex > 0 || playerIndex < NumPlayers)
+            if (playerIndex >= 0 && playerIndex < NumPlayers)
                 return playerSettings[playerIndex];
             else
                 return null;
@@ -99,14 +99,20 @@ namespace VirusX
         private bool useItems = true;
         public bool UseItems { get { return useItems; } set { useItems = value; } }
 
-        private bool automaticItemDeletion = false;
         /// <summary>
         /// If true the item will be removed after a given amount of time
         /// </summary>
         public bool AutomaticItemDeletion { get { return automaticItemDeletion; } set { automaticItemDeletion = value; } }
+        private bool automaticItemDeletion = false;
 
         private InputManager.ControlType startingControls = InputManager.ControlType.NONE;
         public InputManager.ControlType StartingControls { get { return startingControls; } set { startingControls = value; } }
+
+        /// <summary>
+        /// Is the game running for the first time?
+        /// </summary>
+        public bool FirstStart { get { return firstStart; } set { firstStart = value; } }
+        private bool firstStart = true;
 
         #endregion
 
@@ -193,6 +199,10 @@ namespace VirusX
                             case "input":
                                 ForceFeedback = Convert.ToBoolean(xmlConfigReader.GetAttribute("forcefeedback"));
                                 break;
+
+                            case "misc":
+                                FirstStart = Convert.ToBoolean(xmlConfigReader.GetAttribute("firststart"));
+                                break;
                         }
                     }
                 }
@@ -240,6 +250,11 @@ namespace VirusX
             settingsXML.WriteStartElement("input");
             settingsXML.WriteStartAttribute("forcefeedback");
             settingsXML.WriteValue(ForceFeedback);
+            settingsXML.WriteEndElement();
+
+            settingsXML.WriteStartElement("misc");
+            settingsXML.WriteStartAttribute("firststart");
+            settingsXML.WriteValue(FirstStart);
             settingsXML.WriteEndElement();
 
             settingsXML.WriteEndElement();

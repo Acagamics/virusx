@@ -58,7 +58,7 @@ namespace VirusX.Menu
         /// <param name="gameTime"></param>
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
-            // if play again "unready" all human players
+            // if play again "unreadify" all human players
             if (oldPage == Menu.Page.STATS)
             {
                 for (int i = 0; i < 4; ++i)
@@ -95,6 +95,7 @@ namespace VirusX.Menu
                 int SIDE_PADDING = TEXTBOX_HEIGHT + 30;
                 int ARROW_SIZE = menu.GetFontHeight();
 
+                // Tutorial mode
                 if (IsTutorial())
                     Settings.Instance.MaxNumPlayers = 2;
                 else
@@ -160,7 +161,7 @@ namespace VirusX.Menu
                         new Rectangle(0, 16, 16, 16),
                         new Rectangle(32, 16, 16, 16),
                         () => { return isActive(InputManager.ControlActions.UP, index); },
-                        () => { return playerSlotOccupied[index]; }
+                        () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN; }
                     ));
                     Interface.Add(new InterfaceImageButton(
                         "icons",
@@ -168,7 +169,7 @@ namespace VirusX.Menu
                         new Rectangle(16, 16, 16, 16),
                         new Rectangle(48, 16, 16, 16),
                         () => { return isActive(InputManager.ControlActions.DOWN, index); },
-                        () => { return playerSlotOccupied[index]; }
+                        () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN; }
                     ));
 
                     // arrows left & right
@@ -179,7 +180,7 @@ namespace VirusX.Menu
                         new Rectangle(0, 0, 16, 16),
                         new Rectangle(32, 0, 16, 16),
                         () => { return isActive(InputManager.ControlActions.LEFT, index); },
-                        () => { return playerSlotOccupied[index]; }
+                        () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN; }
                     ));
                     Interface.Add(new InterfaceImageButton(
                         "icons",
@@ -187,7 +188,7 @@ namespace VirusX.Menu
                         new Rectangle(16, 0, 16, 16),
                         new Rectangle(48, 0, 16, 16),
                         () => { return isActive(InputManager.ControlActions.RIGHT, index); },
-                        () => { return playerSlotOccupied[index]; }
+                        () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN; }
                     ));
 
                     // virus

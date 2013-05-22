@@ -104,7 +104,7 @@ namespace VirusX
         /// <summary>
         /// size of particle-data rendertargets and textures
         /// </summary>
-        public const int MAX_PARTICLES_SQRT = 128;
+        public const int MAX_PARTICLES_SQRT = 256; // because we can ;)
         public const int MAX_PARTICLES = MAX_PARTICLES_SQRT * MAX_PARTICLES_SQRT;
 
         // info texture:

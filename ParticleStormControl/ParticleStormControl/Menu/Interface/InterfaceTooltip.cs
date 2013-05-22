@@ -93,13 +93,13 @@ namespace VirusX.Menu
             switch (arrowPosition)
             {
                 case ArrowPosition.TOP:
-                    return new Point(position.X - width / 2, position.Y + InterfaceElement.PADDING * 2);
+                    return new Point(position.X - width / 2, position.Y + ARROW_SIZE / 2);
                 case ArrowPosition.RIGHT:
-                    return new Point(position.X - width - InterfaceElement.PADDING * 2, position.Y - height / 2);
+                    return new Point(position.X - width - ARROW_SIZE / 2, position.Y - height / 2);
                 case ArrowPosition.BOTTOM:
-                    return new Point(position.X - width / 2, position.Y - height - InterfaceElement.PADDING * 2);
+                    return new Point(position.X - width / 2, position.Y - height - ARROW_SIZE / 2);
                 case ArrowPosition.LEFT:
-                    return new Point(position.X + InterfaceElement.PADDING * 2, position.Y - height / 2);
+                    return new Point(position.X + ARROW_SIZE / 2, position.Y - height / 2);
                 default:
                     return new Point();
             }

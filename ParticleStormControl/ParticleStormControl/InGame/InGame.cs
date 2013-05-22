@@ -296,6 +296,7 @@ namespace VirusX
                 // only one player alive
                 case GameMode.FUN:
                 case GameMode.CLASSIC:
+                case GameMode.TUTORIAL:
                     for (int i = 0; i < players.Length; ++i)
                     {
                         if (players[i].Alive)
@@ -392,7 +393,7 @@ namespace VirusX
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         /// <param name="spriteBatch">a unstarted spritebatch</param>
-        public void Draw_Backbuffer(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw_Backbuffer(SpriteBatch spriteBatch, GameTime gameTime)
         {
             if (State == GameState.Inactive)
                 return;
