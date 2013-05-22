@@ -68,7 +68,10 @@ namespace VirusX
 
         public PlayerSettings GetPlayer(int playerIndex)
         {
-            return playerSettings[playerIndex];
+            if (playerIndex > 0 || playerIndex < NumPlayers)
+                return playerSettings[playerIndex];
+            else
+                return null;
         }
 
         public IEnumerable<T> GetPlayerSettingSelection<T>(Func<PlayerSettings, T> selector)

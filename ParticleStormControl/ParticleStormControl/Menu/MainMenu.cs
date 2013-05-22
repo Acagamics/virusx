@@ -65,6 +65,12 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceButton(ParticleStormControl.VERSION, new Vector2(2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING) + menu.Font.MeasureString(ParticleStormControl.VERSION), Alignment.BOTTOM_RIGHT));
         }
 
+        public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
+        {
+            if (oldPage == Menu.Page.STATS)
+                submenu = false;
+        }
+
         public override void LoadContent(ContentManager content)
         {
             base.LoadContent(content);
