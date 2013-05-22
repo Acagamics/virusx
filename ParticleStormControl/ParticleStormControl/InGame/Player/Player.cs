@@ -279,44 +279,44 @@ namespace VirusX
                 return;
 
             var posessedSpawns = spawnPoints.Where(x => x.PossessingPlayer == playerIndex);
+            int numOwnedSpawnPoints = posessedSpawns.Count();
             virusSwarm.UpdateCPUPart((float)gameTime.ElapsedGameTime.TotalSeconds, posessedSpawns);
 
-            if (virusSwarm.CurrentSpawnNumber == 0 && alive)
+            // dead due to particle loss
+            if (virusSwarm.CurrentSpawnNumber == 0 && numOwnedSpawnPoints > 0)
                 alive = NumParticlesAlive > 0 || cantDie; // still alive *sing*
 
             PossessingSpawnPoints = (uint)posessedSpawns.Count();
             PossessingSpawnPointsOverallSize = posessedSpawns.Sum(x => x.Size);
 
             // alive due to number of spawnpoints?
-            if (alive)
+            if (numOwnedSpawnPoints == 0)
             {
-                if (posessedSpawns.Count() == 0)
-                {
-                    timeWithoutSpawnPoint += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                timeWithoutSpawnPoint += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                    if (timeWithoutSpawnPoint > MAX_TIME_WITHOUT_SPAWNPOINT)
-                        alive = false;
-                }
-                else
-                    timeWithoutSpawnPoint = 0.0f;
+                if (timeWithoutSpawnPoint > MAX_TIME_WITHOUT_SPAWNPOINT)
+                    alive = false;
+            }
+            else
+                timeWithoutSpawnPoint = 0.0f;
 
-                if (Settings.Instance.AutomaticItemDeletion)
+            // loose item
+            if (Settings.Instance.AutomaticItemDeletion)
+            {
+                if (ItemSlot != Item.ItemType.NONE)
                 {
-                    if (ItemSlot != Item.ItemType.NONE)
+                    currentItemPossessionTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                    if (currentItemPossessionTime > blinkTimePercentage * maxItemPossessionTime)
                     {
-                        currentItemPossessionTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        itemAlphaValue = ((float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10f)*0.4f + 0.5f);
+                    }
+                    else itemAlphaValue = 1f;
 
-                        if (currentItemPossessionTime > blinkTimePercentage * maxItemPossessionTime)
-                        {
-                            itemAlphaValue = ((float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10f)*0.4f + 0.5f);
-                        }
-                        else itemAlphaValue = 1f;
-
-                        if (currentItemPossessionTime >= maxItemPossessionTime)
-                        {
-                            ItemSlot = Item.ItemType.NONE;
-                            itemAlphaValue = 1f;
-                        }
+                    if (currentItemPossessionTime >= maxItemPossessionTime)
+                    {
+                        ItemSlot = Item.ItemType.NONE;
+                        itemAlphaValue = 1f;
                     }
                 }
             }

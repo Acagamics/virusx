@@ -142,7 +142,7 @@ namespace VirusX
         /// </summary>
         public void OnMenuPageChanged(Menu.Menu.Page newPage, Menu.Menu.Page oldPage)
         {
-            if (newPage == Menu.Menu.Page.PAUSED || (newPage == Menu.Menu.Page.CONTROLS && oldPage == Menu.Menu.Page.INGAME ))
+            if (newPage == Menu.Menu.Page.PAUSED || (newPage == Menu.Menu.Page.CONTROLS && oldPage == Menu.Menu.Page.INGAME))
                 State = InGame.GameState.Paused;
             else if (newPage == Menu.Menu.Page.INGAME)
                 State = InGame.GameState.Playing;
@@ -153,7 +153,8 @@ namespace VirusX
                 {
                     particleRenderer = null;
                     damageMap.Clear(graphicsDevice);
-                    level.NewGame(MapGenerator.MapType.BACKGROUND, graphicsDevice, new Player[0]);
+                    players = new Player[0];
+                    level.NewGame(MapGenerator.MapType.BACKGROUND, graphicsDevice, players);
                 }
 
                 State = InGame.GameState.Inactive;
@@ -449,9 +450,7 @@ namespace VirusX
 
             // draw level
             level.Draw(gameTime, spriteBatch.GraphicsDevice, players);
-
-            
-               
+   
             if (State == GameState.Playing || State == GameState.Paused)
             {
                 // apply postprocessing
