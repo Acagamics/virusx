@@ -451,20 +451,17 @@ namespace VirusX
             level.Draw(gameTime, spriteBatch.GraphicsDevice, players);
 
             
-            if(Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME)
-                inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime,winTimer);
-            else
-                inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime);
-            // apply postprocessing
-            postPro.Draw(graphicsDevice);
-
+               
             if (State == GameState.Playing || State == GameState.Paused)
             {
                 // apply postprocessing
                 postPro.Draw(graphicsDevice);
 
                 // ingame interface
-                inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime);
+                if (Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME)
+                    inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime, winTimer);
+                else
+                    inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime);
 
                 // debug draw damagemap
 #if DAMAGEMAP_DEBUGGING
