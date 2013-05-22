@@ -314,7 +314,7 @@ namespace VirusX
                 {
                     for(int index = 0;index < winTimer.Length;++index)
                     {
-                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count - players.Length) / 2)
+                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count - players.Length) / players.Length)
                             winTimer[index].Start();
                         else
                             winTimer[index].Stop();
