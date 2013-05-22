@@ -20,7 +20,7 @@ namespace VirusX
 
         static public readonly String[] CONTROL_NAMES = new String[]
         {
-            "WASD + SPACE",
+            "WASD + TAB",
             "Arrows + ENTER",
             "Numpad + 0",
             "Gamepad 1",
@@ -29,6 +29,19 @@ namespace VirusX
             "Gamepad 4",
             "Computer"
         };
+
+        static public readonly String[] ACTION_BUTTON_NAME = new String[]
+        {
+            "TAB",
+            "ENTER",
+            "NUMPAD 0",
+            "Gamepad A",
+            "Gamepad A",
+            "Gamepad A",
+            "Gamepad A",
+            "Computer"
+        };
+
 
         /// <summary>
         /// Contains all possible control types of the game.
@@ -540,9 +553,9 @@ namespace VirusX
                         case ControlActions.RIGHT:
                             return down ? IsButtonDown(Keys.D) : IsButtonPressed(Keys.D);
                         case ControlActions.HOLD:
-                            return down ? IsButtonDown(Keys.V) : IsButtonPressed(Keys.V);
+                            return down ? IsButtonDown(Keys.LeftShift) : IsButtonPressed(Keys.LeftShift);
                         case ControlActions.ACTION:
-                            return down ? IsButtonDown(Keys.Space) : IsButtonPressed(Keys.Space);
+                            return down ? IsButtonDown(Keys.Tab) : IsButtonPressed(Keys.Tab);
                         case ControlActions.PAUSE:
                             return down ? (IsButtonDown(Keys.P) || IsButtonDown(Keys.Escape)) : (IsButtonPressed(Keys.P) || IsButtonPressed(Keys.Escape));
                         case ControlActions.EXIT:

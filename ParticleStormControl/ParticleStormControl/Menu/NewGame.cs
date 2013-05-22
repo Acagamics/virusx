@@ -76,7 +76,7 @@ namespace VirusX.Menu
             // four boxes
             int TEXTBOX_HEIGHT = menu.GetFontHeight() + 2 * InterfaceButton.PADDING;
             int SIDE_PADDING = TEXTBOX_HEIGHT + 30;
-            int ARROW_SIZE = menu.GetFontHeight();
+            int ARROW_SIZE = menu.GetFontHeight(); 
 
             if (IsTutorial())
                 Settings.Instance.MaxNumPlayers = 2;
@@ -86,7 +86,7 @@ namespace VirusX.Menu
             for (int i = 0; i < Settings.Instance.MaxNumPlayers; i++)
             {
                 int index = i;
-                Vector2 origin = GetOrigin(index);
+                Vector2 origin = GetOrigin(index);     
 
                 // join text
                 Vector2 stringSize = menu.Font.MeasureString(GetJoinText(index));
