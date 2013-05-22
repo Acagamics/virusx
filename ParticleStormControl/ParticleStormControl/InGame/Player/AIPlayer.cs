@@ -140,6 +140,7 @@ namespace VirusX
                 var otherSpawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer != player.Index && x.PossessingPlayer != -1);
                 if(Settings.Instance.GameMode == InGame.GameMode.CAPTURE_THE_CELL || Settings.Instance.GameMode == InGame.GameMode.LEFT_VS_RIGHT)
                     otherSpawnPoints = otherSpawnPoints.Where(x => Settings.Instance.GetPlayer(x.PossessingPlayer).Team != player.Team);
+                otherSpawnPoints = otherSpawnPoints.Where(x => x.Captureable == true);
                 int numberOfOtherSPs = otherSpawnPoints.Count();
 
                 if (ignoreSpawnPoint != null)

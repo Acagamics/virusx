@@ -38,6 +38,7 @@ namespace VirusX
         protected float opacity = 1f;
 
         protected bool captureable = true;
+        public bool Captureable { get { return captureable; } }
 
         public CapturableObject(Vector2 Position, int possessingPlayer, float damageFactor, float lifeTime/* = -1.0f*/, int damageMapPixelHalfRange /*= 4*/, float size = 0.06f) :
             base(Position, size)

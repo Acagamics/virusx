@@ -87,7 +87,7 @@ namespace VirusX
         // for Game Mode INSERT_MODE_NAME
         private Stopwatch[] winTimer;
         public Stopwatch[] WinTimer { get { return winTimer; } }
-        public static float ModeWinTime = 5f;
+        public static float ModeWinTime = 25f;
 
         /// <summary>
         /// noise texture needed for players, generated only once!
@@ -309,11 +309,11 @@ namespace VirusX
                 // level update
                 level.Update(gameTime, players);
 
-                if(Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME)
+                if(Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME && State == GameState.Playing)
                 {
                     for(int index = 0;index < winTimer.Length;++index)
                     {
-                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count - 4) / 2)
+                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count - players.Length) / 2)
                             winTimer[index].Start();
                         else
                             winTimer[index].Stop();
@@ -378,6 +378,12 @@ namespace VirusX
                             winPlayerIndex = index;
                             break;
                         }
+                    if(winPlayerIndex != -1)
+                        for (int index = 0; index < winTimer.Length; ++index)
+                            if (winTimer[index].Elapsed.TotalSeconds > ModeWinTime)
+                            {
+                                winTimer[index].Stop();
+                            }
                     break;
                 default:
                     throw new NotImplementedException("Unknown GameType - can't evaluate win condition");
