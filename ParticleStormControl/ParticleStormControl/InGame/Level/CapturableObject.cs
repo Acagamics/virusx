@@ -69,7 +69,7 @@ namespace VirusX
             if (lifeTime > 0)
             {
                 if(lifeTimer.Elapsed.TotalSeconds > lifeTime * 0.75f)
-                    opacity = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * (lifeTimer.Elapsed.TotalSeconds / lifeTime - 0.75f) * 5.0f) * 0.4f + 0.5f;
+                    opacity = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10.0f) * 0.4f + 0.5f;
                 else opacity = 1f;            
             }
             else opacity = 1f;

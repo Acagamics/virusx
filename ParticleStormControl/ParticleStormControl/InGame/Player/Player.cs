@@ -308,7 +308,7 @@ namespace VirusX
 
                         if (currentItemPossessionTime > blinkTimePercentage * maxItemPossessionTime)
                         {
-                            itemAlphaValue = ((float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * ((maxItemPossessionTime-(maxItemPossessionTime - currentItemPossessionTime))*0.25f))*0.4f + 0.5f);
+                            itemAlphaValue = ((float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10f)*0.4f + 0.5f);
                         }
                         else itemAlphaValue = 1f;
 
