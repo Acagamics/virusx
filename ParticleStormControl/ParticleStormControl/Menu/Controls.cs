@@ -17,7 +17,7 @@ namespace VirusX.Menu
             : base(menu)
         {
             // background
-            Interface.Add(new InterfaceFiller(Vector2.Zero, Color.Black * 0.5f, () => { return origin == Menu.Page.INGAME; }));
+            Interface.Add(new InterfaceFiller(Vector2.Zero, Color.Black * 0.5f, () => { return origin == Menu.Page.INGAME || origin == Menu.Page.NEWGAME; }));
 
             string[,] data = {
                                  { null,                 "Keyboard 1",   "Keyboard 2",  "Keyboard 3",   "Gamepad" },
