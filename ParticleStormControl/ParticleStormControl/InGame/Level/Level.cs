@@ -17,14 +17,22 @@ namespace VirusX
         public Statistics GameStatistics { get; set; }
         private bool dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug = true;
 
+        // map objects
         private List<MapObject> mapObjects = new List<MapObject>();
         public List<MapObject> MapObjects { get { return mapObjects; } }
         public IEnumerable<MapObject> Items { get { return mapObjects.Where(x => x is Item); } }
         private List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
         public List<SpawnPoint> SpawnPoints { get { return spawnPoints; } }
 
+        /// <summary>
+        /// active map type
+        /// </summary>
+        private MapGenerator.MapType currentMapType = MapGenerator.MapType.BACKGROUND;
+
+        // background
         private Background background;
 
+        // textures
         private Texture2D pixelTexture;
         private Texture2D mutateBig;
 
@@ -36,19 +44,6 @@ namespace VirusX
                                                                     CullMode = CullMode.None,
                                                                     ScissorTestEnable = true,
                                                                 };
-
-
-
-        private VertexBuffer vignettingQuadVertexBuffer;
-        private Effect vignettingShader;
-        public static BlendState VignettingBlend = new BlendState
-                                                {
-                                                    ColorSourceBlend = Blend.Zero,
-                                                    ColorDestinationBlend = Blend.SourceAlpha,
-                                                    ColorBlendFunction = BlendFunction.Add,
-                                                    AlphaSourceBlend = Blend.Zero,
-                                                    AlphaDestinationBlend = Blend.One
-                                                };
 
         public static BlendState ShadowBlend = new BlendState
                                                    {
@@ -64,7 +59,7 @@ namespace VirusX
         /// <summary>
         /// all relative coordinates are from 0 to RELATIVE_MAX
         /// </summary>
-        static public readonly Vector2 RELATIVE_MAX = new Vector2(2, 1);
+        static public readonly Vector2 RELATIVE_MAX = new Vector2(2.0f, 1.0f);
 
         static public readonly float RELATIVECOR_ASPECT_RATIO = (float)RELATIVE_MAX.X / RELATIVE_MAX.Y;
 
@@ -99,6 +94,7 @@ namespace VirusX
         private bool switchCountdownActive = false;
         private float switchCountdownTimer;
         public const float SWITCH_COUNTDOWN_LENGTH = 6.0f;
+        public const float SWITCH_COUNTDOWN_LENGTH_FUN = 1.0f;
         private SpriteFont fontCountdownLarge;
 
         #endregion
@@ -169,9 +165,6 @@ namespace VirusX
 
             // background & vignetting
             background = new Background(device, content);
-            vignettingQuadVertexBuffer = new VertexBuffer(device, ScreenTriangleRenderer.ScreenAlignedTriangleVertex.VertexDeclaration, 4, BufferUsage.WriteOnly);
-            vignettingQuadVertexBuffer.SetData(new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) });
-            vignettingShader = content.Load<Effect>("shader/vignetting");
 
             // effects
             mutateBig = content.Load<Texture2D>("Mutate_big");
@@ -183,6 +176,7 @@ namespace VirusX
         public void NewGame(MapGenerator.MapType mapType, GraphicsDevice device, Player[] players)
         {
             switchCountdownActive = false;
+            currentMapType = mapType;
 
             // create level
             spawnPoints.Clear();
@@ -193,6 +187,10 @@ namespace VirusX
             // crosshairs for players
             for (int i = 0; i < players.Length; ++i)
                 mapObjects.Add(new Crosshair(i, contentManager));
+
+            // clear player rendering
+            BeginDrawInternParticleTarget(device);
+            EndDrawInternParticleTarget(device);
         }
 
         /// <summary>
@@ -257,7 +255,6 @@ namespace VirusX
 
         public void ApplyDamage(DamageMap damageMap, float timeInterval, Player[] playerList)
         {
-            
             int prevPosPlayer = -1;
             foreach (MapObject interest in mapObjects)
             {
@@ -404,15 +401,6 @@ namespace VirusX
                 }
                 else dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug = false;
             }
-
-            // background colors
-            var colors = spawnPoints.Select(x => {
-                Color color = x.ComputeColor();
-                float saturation = Vector3.Dot(color.ToVector3(), new Vector3(0.3f, 0.59f, 0.11f));
-                return Color.Lerp(color, new Color(saturation, saturation, saturation), 0.8f) * 1.5f;
-            })
-            .Concat(Enumerable.Repeat(Color.DimGray, background.NumBackgroundCells - spawnPoints.Count));
-            background.UpdateColors(colors.ToArray());
         }
 
         private void PlaceItems(Player[] players)
@@ -609,31 +597,28 @@ namespace VirusX
 
         public void Draw(GameTime gameTime, GraphicsDevice device, Player[] players)
         {
+            // background colors
+            var colors = spawnPoints.Select(x =>
+            {
+                Color color = x.ComputeColor();
+                float saturation = Vector3.Dot(color.ToVector3(), new Vector3(0.3f, 0.59f, 0.11f));
+                return Color.Lerp(color, new Color(saturation, saturation, saturation), 0.8f) * 1.5f;
+            })
+            .Concat(Enumerable.Repeat(Color.DimGray, background.NumBackgroundCells - spawnPoints.Count));
+            background.UpdateColors(colors.ToArray());
+
             // activate scissor test - is this a performance issue?
-            device.ScissorRectangle = fieldPixelRectangle;
-            device.RasterizerState = scissorTestRasterizerState;
+            if (currentMapType != MapGenerator.MapType.BACKGROUND)
+            {
+                device.ScissorRectangle = fieldPixelRectangle;
+                device.RasterizerState = scissorTestRasterizerState;
+            }
 
             // background
             background.Draw(device, (float)gameTime.TotalGameTime.TotalSeconds);
 
-            // screenblend stuff
-           /* spriteBatch.Begin(SpriteSortMode.BackToFront, ScreenBlend);
-            foreach (MapObject mapObject in mapObjects)
-            {
-                if (mapObject.Alive)
-                    mapObject.Draw_ScreenBlended(spriteBatch, this, totalTimeSeconds);
-            }
-            spriteBatch.End();*/
-
             // the particles!
             DrawParticles(device);
-
-            // vignetting
-            device.BlendState = VignettingBlend;
-            device.SetVertexBuffer(vignettingQuadVertexBuffer);
-            vignettingShader.CurrentTechnique.Passes[0].Apply();
-            device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
-            device.BlendState = BlendState.Opaque;
 
             // alphablended spritebatch stuff
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, scissorTestRasterizerState);
@@ -648,11 +633,7 @@ namespace VirusX
             // countdown
             DrawCountdown(device, (float)gameTime.TotalGameTime.TotalSeconds);
 
-
             spriteBatch.End();
-
-            // rest rasterizer state if not allready happend
-            device.RasterizerState = RasterizerState.CullNone;
         }
 
         private void DrawParticles(GraphicsDevice device)
@@ -695,26 +676,25 @@ namespace VirusX
             fieldPixelRectangle = new Rectangle(fieldOffset_pixel.X, fieldOffset_pixel.Y, fieldSize_pixel.X, fieldSize_pixel.Y);
 
             // setup background
-            Vector2 posScale = new Vector2(fieldSize_pixel.X, -fieldSize_pixel.Y) /
-                               new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) * 2;
-            Vector2 posOffset = new Vector2(fieldOffset_pixel.X, -fieldOffset_pixel.Y) /
-                                   new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) * 2 - new Vector2(1, -1);
-            vignettingShader.Parameters["PosScale"].SetValue(posScale);
-            vignettingShader.Parameters["PosOffset"].SetValue(posOffset);
-
             CreateParticleTarget(device);
 
             // bg particles
-            background.Resize(device, fieldPixelRectangle, Level.RELATIVE_MAX);
+            if (currentMapType == MapGenerator.MapType.BACKGROUND)
+                NewGame(MapGenerator.MapType.BACKGROUND, device, new Player[0]); //background.Resize(device, new Rectangle(0, 0, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY));
+            else
+                background.Resize(device, fieldPixelRectangle, Level.RELATIVE_MAX);
         }
 
         private void CreateParticleTarget(GraphicsDevice device)
         {
             if (particleTexture != null)
+            {
+                if (particleTexture.Width == FieldPixelSize.X && particleTexture.Height == FieldPixelSize.Y)
+                    return;
                 particleTexture.Dispose();
+            }
 
-            particleTexture = new RenderTarget2D(device, (int)(FieldPixelSize.X),
-                                                         (int)(FieldPixelSize.Y),
+            particleTexture = new RenderTarget2D(device, (int)(FieldPixelSize.X), (int)(FieldPixelSize.Y),
                                                     false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PlatformContents);
         }
 
@@ -733,7 +713,10 @@ namespace VirusX
                     break;
 
                 case Item.ItemType.MUTATION:
-                    switchCountdownTimer = SWITCH_COUNTDOWN_LENGTH;
+                    if (Settings.Instance.GameMode == InGame.GameMode.FUN)
+                        switchCountdownTimer = SWITCH_COUNTDOWN_LENGTH_FUN;
+                    else
+                        switchCountdownTimer = SWITCH_COUNTDOWN_LENGTH;
                     switchCountdownActive = true;
                     break;
 

@@ -68,8 +68,12 @@ namespace VirusX
 
             randomAngle = (float)Random.NextDouble(Math.PI * 2);
 
-            if(startposession != -1)
+            if (startposession != -1)
+            {
                 glowtimer.Start();
+                if(Settings.Instance.GameMode == InGame.GameMode.INSERT_MODE_NAME)
+                    captureable = false;
+            }
 
             Size = ((spawnSize - 100.0f)/ 900.0f) * (0.05f) + 0.03f;
 

@@ -16,6 +16,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
+using CustomExtensions;
+
 
 namespace VirusX
 {
@@ -25,6 +27,8 @@ namespace VirusX
     class InGame
     {
         private GraphicsDevice graphicsDevice;
+
+        #region GameMode
 
         public enum GameMode
         {
@@ -40,6 +44,9 @@ namespace VirusX
             // no teams, up to 4 players
             FUN,
 
+            // no teams, up to 4 plyers
+            INSERT_MODE_NAME,
+
             // 1 player vs 1 computer
             TUTORIAL,
 
@@ -54,23 +61,33 @@ namespace VirusX
             "Capture the Cell",
             "Left vs. Right",
             "Fun",
+            "Insert mode name",
             "Tutorial",
             "Arcade"
         };
 
+        #endregion
 
         /// <summary>
         /// Statistics
         /// </summary>
         public Statistics GameStatistics { get { if (level == null) return null; return level.GameStatistics; } }
 
+        /// <summary>
+        /// reference to the menu
+        /// </summary>
         private Menu.Menu menu;
 
         /// <summary>
         /// list of all players
         /// </summary>
         public Player[] Players { get { return players;  } }
-        private Player[] players;
+        private Player[] players = new Player[0];
+
+        // for Game Mode INSERT_MODE_NAME
+        private Stopwatch[] winTimer;
+        public Stopwatch[] WinTimer { get { return winTimer; } }
+        public static float ModeWinTime = 25f;
 
         /// <summary>
         /// noise texture needed for players, generated only once!
@@ -79,7 +96,7 @@ namespace VirusX
 
         private Level level;
         private InGameInterface inGameInterface;
-        private PercentageBar percentageBar;
+        private PostProcessing postPro;
         private ParticleRenderer particleRenderer;
         private DamageMap damageMap;
 
@@ -108,6 +125,7 @@ namespace VirusX
 
         public enum GameState
         {
+    //        Demo,
             Inactive,
             Playing,
             Paused,
@@ -124,7 +142,7 @@ namespace VirusX
         /// </summary>
         public void OnMenuPageChanged(Menu.Menu.Page newPage, Menu.Menu.Page oldPage)
         {
-            if (newPage == Menu.Menu.Page.PAUSED || (newPage == Menu.Menu.Page.CONTROLS && oldPage == Menu.Menu.Page.INGAME ))
+            if (newPage == Menu.Menu.Page.PAUSED || (newPage == Menu.Menu.Page.CONTROLS && oldPage == Menu.Menu.Page.INGAME))
                 State = InGame.GameState.Paused;
             else if (newPage == Menu.Menu.Page.INGAME)
                 State = InGame.GameState.Playing;
@@ -135,6 +153,8 @@ namespace VirusX
                 {
                     particleRenderer = null;
                     damageMap.Clear(graphicsDevice);
+                    players = new Player[0];
+                    level.NewGame(MapGenerator.MapType.BACKGROUND, graphicsDevice, players);
                 }
 
                 State = InGame.GameState.Inactive;
@@ -194,8 +214,15 @@ namespace VirusX
 
             State = GameState.Playing;
             System.GC.Collect();
-        }
 
+            // for Game Mode INSERT_MODE_NAME
+            //if (Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME)
+            //{
+                winTimer = new Stopwatch[players.Length];
+                for (int index = 0; index < players.Length; ++index)
+                    winTimer[index] = new Stopwatch();
+            //}
+        }
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -213,7 +240,8 @@ namespace VirusX
 
             level = new Level(graphicsDevice, content);
             inGameInterface = new InGameInterface(content);
-            percentageBar = new PercentageBar(content);
+
+            postPro = new PostProcessing(graphicsDevice, content, level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
         }
 
         /// <summary>
@@ -282,6 +310,16 @@ namespace VirusX
                 // level update
                 level.Update(gameTime, players);
 
+                if(Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME && State == GameState.Playing)
+                {
+                    for(int index = 0;index < winTimer.Length;++index)
+                    {
+                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count - players.Length) / 2)
+                            winTimer[index].Start();
+                        else
+                            winTimer[index].Stop();
+                    }
+                }
                 // winning
                 CheckWinning(gameTime);
             }
@@ -335,6 +373,20 @@ namespace VirusX
                     winPlayerIndex = players[0].Alive ? -1 : 0;
                     break;
 
+                case GameMode.INSERT_MODE_NAME:
+                    for(int index=0;index<winTimer.Length;++index)
+                        if (winTimer[index].Elapsed.TotalSeconds > ModeWinTime)
+                        {
+                            winPlayerIndex = index;
+                            break;
+                        }
+                    if(winPlayerIndex != -1)
+                        for (int index = 0; index < winTimer.Length; ++index)
+                            if (winTimer[index].Elapsed.TotalSeconds > ModeWinTime)
+                            {
+                                winTimer[index].Stop();
+                            }
+                    break;
                 default:
                     throw new NotImplementedException("Unknown GameType - can't evaluate win condition");
             }
@@ -363,7 +415,6 @@ namespace VirusX
             menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
 #endif
         }
-
 
         public void Draw_OffsiteBuffers(GameTime gameTime, GraphicsDevice graphicsDevice)
         {
@@ -395,26 +446,30 @@ namespace VirusX
         /// <param name="spriteBatch">a unstarted spritebatch</param>
         public void Draw_Backbuffer(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            if (State == GameState.Inactive)
-                return;
-
             float totalGameTime = (float)gameTime.TotalGameTime.TotalSeconds;
             float timeSinceLastFrame = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // draw level
             level.Draw(gameTime, spriteBatch.GraphicsDevice, players);
+   
+            if (State == GameState.Playing || State == GameState.Paused)
+            {
+                // apply postprocessing
+                postPro.Draw(graphicsDevice);
 
-            inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime);
+                // ingame interface
+                if (Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME)
+                    inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime, winTimer);
+                else
+                    inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime);
 
-            // debug draw damagemap
+                // debug draw damagemap
 #if DAMAGEMAP_DEBUGGING
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.Opaque);
-            spriteBatch.Draw(damageMap.DamageTexture, new Vector2(Settings.Instance.ResolutionX - DamageMap.attackingMapSizeX, 0), Color.White);
-            spriteBatch.End();  
+                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.Opaque);
+                spriteBatch.Draw(damageMap.DamageTexture, new Vector2(Settings.Instance.ResolutionX - DamageMap.attackingMapSizeX, 0), Color.White);
+                spriteBatch.End();  
 #endif
-
-            // draw the percentage bar
-            percentageBar.Draw(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset);
+            }
 
             // reading player gpu results
             for (int i = 0; i < players.Length; ++i)
@@ -423,8 +478,10 @@ namespace VirusX
 
         public void Resize(GraphicsDevice graphicsDevice)
         {
-            if(level != null)
+            if (level != null)
                 level.Resize(graphicsDevice);
+            if (postPro != null)
+                postPro.Resize(level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
         }
     }
 }

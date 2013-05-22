@@ -47,6 +47,38 @@ namespace VirusX
         //    ParticleStormControl.DeviceLostEvent += () => { Resize(device, areaInPixel, relativeCoordMax); };
         }
 
+        /// <summary>
+        /// generate + resize
+        /// </summary>
+        /// <param name="mapLetterBoxing">true if the background uses the level's letter box</param>
+        public void Generate(GraphicsDevice device, Rectangle areaInPixel, List<Vector2> cellPositions, Vector2 relativeCoordMax)
+        {
+            this.relativeCoordMax = relativeCoordMax;
+            this.areaInPixel = areaInPixel;
+
+            // resize background particles
+            backgroundParticles.Resize(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, new Point(areaInPixel.Width, areaInPixel.Height), areaInPixel.Location, relativeCoordMax);
+
+            // resize background texture if necessary
+            backgroundShader.Parameters["BackgroundTexture"].SetValue((Texture2D)null);
+            if (backgroundTexture == null || backgroundTexture.IsContentLost || 
+                backgroundTexture.Width != areaInPixel.Width || backgroundTexture.Height != areaInPixel.Height)
+            {
+                if (backgroundTexture != null)
+                    backgroundTexture.Dispose();
+                backgroundTexture = new RenderTarget2D(device, areaInPixel.Width, areaInPixel.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            }
+
+            // resize background and regenerate
+            Generate(device, cellPositions, relativeCoordMax);
+
+            // background shader
+            posScale = new Vector2(areaInPixel.Width, -areaInPixel.Height) /
+                                   new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) * 2.0f;
+            posOffset = new Vector2(areaInPixel.X, -areaInPixel.Y) /
+                                   new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) * 2.0f - new Vector2(1, -1);
+        }
+
         public void Generate(GraphicsDevice device, List<Vector2> cellPositions, Vector2 relativeMax)
         {
             this.cellPositions = cellPositions;
@@ -84,39 +116,13 @@ namespace VirusX
         /// Resizes the background.
         /// Please call once before using!
         /// </summary>
+        public void Resize(GraphicsDevice device, Rectangle areaInPixel)
+        {
+            Generate(device, areaInPixel, this.cellPositions, relativeCoordMax);
+        }
         public void Resize(GraphicsDevice device, Rectangle areaInPixel, Vector2 relativeCoordMax)
         {
-            Resize(device, areaInPixel, this.cellPositions, relativeCoordMax);
-        }
-
-        /// <summary>
-        /// resizing + new cellpositions
-        /// </summary>
-        public void Resize(GraphicsDevice device, Rectangle areaInPixel, List<Vector2> cellPositions, Vector2 relativeCoordMax)
-        {
-            this.relativeCoordMax = relativeCoordMax;
-            this.areaInPixel = areaInPixel;
-
-            // resize background particles
-            backgroundParticles.Resize(device.Viewport.Width, device.Viewport.Height, new Point(areaInPixel.Width, areaInPixel.Height), areaInPixel.Location, relativeCoordMax);
-
-            // resize background texture if necessary
-            backgroundShader.Parameters["BackgroundTexture"].SetValue((Texture2D)null);
-            if (backgroundTexture == null || backgroundTexture.IsContentLost || backgroundTexture.Width != areaInPixel.Width || backgroundTexture.Height != areaInPixel.Height)
-            {
-                if (backgroundTexture != null)
-                    backgroundTexture.Dispose();
-                backgroundTexture = new RenderTarget2D(device, areaInPixel.Width, areaInPixel.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            }
-
-            // resize background and regenerate
-            Generate(device, cellPositions, relativeCoordMax);
-
-            // background shader
-            posScale = new Vector2(areaInPixel.Width, -areaInPixel.Height) /
-                                   new Vector2(device.Viewport.Width, device.Viewport.Height) * 2.0f;
-            posOffset = new Vector2(areaInPixel.X, -areaInPixel.Y) /
-                                   new Vector2(device.Viewport.Width, device.Viewport.Height) * 2.0f - new Vector2(1, -1);
+            Generate(device, areaInPixel, this.cellPositions, relativeCoordMax);
         }
 
         public void UpdateColors(Color[] colors)
@@ -124,7 +130,8 @@ namespace VirusX
             cellColorTexture.GraphicsDevice.Textures[0] = null;
             cellColorTexture.GraphicsDevice.Textures[1] = null;
             System.Diagnostics.Debug.Assert(colors.Length == cellPositions.Count);
-            cellColorTexture.SetData(colors.Concat(Enumerable.Repeat(Color.Black, cellColorTexture.Width - colors.Length)).ToArray());
+            if(colors.Length < cellColorTexture.Width)
+                cellColorTexture.SetData(colors.Concat(Enumerable.Repeat(Color.Black, cellColorTexture.Width - colors.Length)).ToArray());
         }
 
         public void Draw(GraphicsDevice device, float totalTimeSeconds)
