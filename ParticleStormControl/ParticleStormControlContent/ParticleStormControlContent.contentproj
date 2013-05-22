@@ -378,13 +378,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="instructions.png">
-      <Name>instructions</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="sound\switch.wav">
       <Name>switch</Name>
       <Importer>WavImporter</Importer>

@@ -73,13 +73,13 @@ namespace VirusX
 
         private InGame inGame;
         private Menu.Menu menu;
-        private Background background;
-
+       // private Background background;
+        
         public InGame InGame // haaaack alert!
         {
             get { return inGame; }
         }
-
+        
         public ParticleStormControl()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -136,8 +136,8 @@ namespace VirusX
                 GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
 
             inGame.Resize(GraphicsDevice);
-            if (background != null)
-                RegenerateBackground();
+         //   if (background != null)
+         //       RegenerateBackground();
         }
 
         void WindowClientSizeChanged(object sender, EventArgs e)
@@ -177,18 +177,18 @@ namespace VirusX
             inGame.LoadContent(GraphicsDevice, Content);
             menu.LoadContent(Content);
 
-            background = new Background(GraphicsDevice, Content);
-            RegenerateBackground();
+          //  background = new Background(GraphicsDevice, Content);
+          //  RegenerateBackground();
         }
 
-        private void RegenerateBackground()
+      /*  private void RegenerateBackground()
         {
             // generate cell positions for menu background
             Vector2 relativeMax = new Vector2(GraphicsDevice.Viewport.AspectRatio, 1.0f);
             List<Vector2> cellPositions = MapGenerator.GenerateCellPositionGrid(7, 4, 0.09f, Vector2.Zero, relativeMax);
             background.Resize(GraphicsDevice, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), cellPositions, relativeMax);
             background.UpdateColors(Enumerable.Repeat(Color.White, cellPositions.Count).ToArray()); 
-        }
+        } */
         
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
@@ -247,9 +247,6 @@ namespace VirusX
 
             // draw backbuffer
             GraphicsDevice.Clear(Color.Black);
-
-            if (inGame.State == global::VirusX.InGame.GameState.Inactive)
-                background.Draw(GraphicsDevice, (float)gameTime.TotalGameTime.TotalSeconds);
 
             inGame.Draw_Backbuffer(gameTime, spriteBatch);
             menu.Draw(gameTime, spriteBatch);
