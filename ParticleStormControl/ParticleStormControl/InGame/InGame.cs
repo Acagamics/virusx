@@ -44,6 +44,9 @@ namespace VirusX
             // no teams, up to 4 players
             FUN,
 
+            // no teams, up to 4 plyers
+            INSERT_MODE_NAME,
+
             // 1 player vs 1 computer
             TUTORIAL,
 
@@ -58,6 +61,7 @@ namespace VirusX
             "Capture the Cell",
             "Left vs. Right",
             "Fun",
+            "Insert mode name",
             "Tutorial",
             "Arcade"
         };
@@ -79,6 +83,11 @@ namespace VirusX
         /// </summary>
         public Player[] Players { get { return players;  } }
         private Player[] players = new Player[0];
+
+        // for Game Mode INSERT_MODE_NAME
+        private Stopwatch[] winTimer;
+        public Stopwatch[] WinTimer { get { return winTimer; } }
+        public static float ModeWinTime = 25f;
 
         /// <summary>
         /// noise texture needed for players, generated only once!
@@ -204,6 +213,14 @@ namespace VirusX
 
             State = GameState.Playing;
             System.GC.Collect();
+
+            // for Game Mode INSERT_MODE_NAME
+            //if (Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME)
+            //{
+                winTimer = new Stopwatch[players.Length];
+                for (int index = 0; index < players.Length; ++index)
+                    winTimer[index] = new Stopwatch();
+            //}
         }
 
         /// <summary>
@@ -292,6 +309,16 @@ namespace VirusX
                 // level update
                 level.Update(gameTime, players);
 
+                if(Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME && State == GameState.Playing)
+                {
+                    for(int index = 0;index < winTimer.Length;++index)
+                    {
+                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count - players.Length) / 2)
+                            winTimer[index].Start();
+                        else
+                            winTimer[index].Stop();
+                    }
+                }
                 // winning
                 CheckWinning(gameTime);
             }
@@ -344,6 +371,20 @@ namespace VirusX
                     winPlayerIndex = players[0].Alive ? -1 : 0;
                     break;
 
+                case GameMode.INSERT_MODE_NAME:
+                    for(int index=0;index<winTimer.Length;++index)
+                        if (winTimer[index].Elapsed.TotalSeconds > ModeWinTime)
+                        {
+                            winPlayerIndex = index;
+                            break;
+                        }
+                    if(winPlayerIndex != -1)
+                        for (int index = 0; index < winTimer.Length; ++index)
+                            if (winTimer[index].Elapsed.TotalSeconds > ModeWinTime)
+                            {
+                                winTimer[index].Stop();
+                            }
+                    break;
                 default:
                     throw new NotImplementedException("Unknown GameType - can't evaluate win condition");
             }
@@ -408,6 +449,14 @@ namespace VirusX
 
             // draw level
             level.Draw(gameTime, spriteBatch.GraphicsDevice, players);
+
+            
+            if(Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME)
+                inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime,winTimer);
+            else
+                inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime);
+            // apply postprocessing
+            postPro.Draw(graphicsDevice);
 
             if (State == GameState.Playing || State == GameState.Paused)
             {

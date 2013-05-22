@@ -37,6 +37,9 @@ namespace VirusX
         /// </summary>
         protected float opacity = 1f;
 
+        protected bool captureable = true;
+        public bool Captureable { get { return captureable; } }
+
         public CapturableObject(Vector2 Position, int possessingPlayer, float damageFactor, float lifeTime/* = -1.0f*/, int damageMapPixelHalfRange /*= 4*/, float size = 0.06f) :
             base(Position, size)
         {
@@ -66,7 +69,7 @@ namespace VirusX
             if (lifeTime > 0)
             {
                 if(lifeTimer.Elapsed.TotalSeconds > lifeTime * 0.75f)
-                    opacity = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * (lifeTimer.Elapsed.TotalSeconds / lifeTime - 0.75f) * 5.0f) * 0.4f + 0.5f;
+                    opacity = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10.0f) * 0.4f + 0.5f;
                 else opacity = 1f;            
             }
             else opacity = 1f;
@@ -139,7 +142,7 @@ namespace VirusX
             }
 
             // owned
-            else
+            else if(captureable)
             {
                 for (int i = 0; i < damage.Length; ++i)
                 {

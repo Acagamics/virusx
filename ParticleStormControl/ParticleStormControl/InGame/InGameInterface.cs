@@ -72,6 +72,7 @@ namespace VirusX
                     if(players[playerIndex].RemainingTimeAlive <  Player.MAX_TIME_WITHOUT_SPAWNPOINT)
                     {
                         string countdownString = ((int)players[playerIndex].RemainingTimeAlive).ToString();
+
                         Vector2 dragToCorner = new Vector2(itemDisplayRectangles[slot].Width / 5 * Math.Sign(corners[slot].X - itemDisplayRectangles[slot].Center.X),
                                                            itemDisplayRectangles[slot].Height / 5 * Math.Sign(corners[slot].Y - itemDisplayRectangles[slot].Center.Y));
                         Vector2 position = new Vector2(itemDisplayRectangles[slot].Center.X, itemDisplayRectangles[slot].Center.Y) + dragToCorner;
@@ -84,6 +85,60 @@ namespace VirusX
 
             // draw the percentage bar
             percentageBar.Draw(players, spriteBatch, levelPixelSize, levelPixelOffset);
+        }
+
+        /// <summary>
+        /// draws all interface elements
+        /// </summary>
+        /// <param name="players">player array</param>
+        /// <param name="spriteBatch">spritebatch that is NOT already started</param>
+        public void DrawInterface(Player[] players, SpriteBatch spriteBatch, Point levelPixelSize, Point levelPixelOffset, GameTime gameTime, System.Diagnostics.Stopwatch[] winTimer )
+        {
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
+
+            Point[] corners = { new Point(levelPixelOffset.X, levelPixelOffset.Y + levelPixelSize.Y),
+                                new Point(levelPixelOffset.X + levelPixelSize.X, levelPixelOffset.Y),
+                                new Point(levelPixelOffset.X + levelPixelSize.X, levelPixelOffset.Y + levelPixelSize.Y),
+                                new Point(levelPixelOffset.X, levelPixelOffset.Y)
+                              };
+            Rectangle[] itemDisplayRectangles = { new Rectangle(corners[0].X, corners[0].Y - itemBox.Height, itemBox.Width, itemBox.Height),
+                                                  new Rectangle(corners[1].X - itemBox.Width, corners[1].Y, itemBox.Width, itemBox.Height),
+                                                  new Rectangle(corners[2].X - itemBox.Width, corners[2].Y - itemBox.Height, itemBox.Width, itemBox.Height),
+                                                  new Rectangle(corners[3].X, corners[3].Y, itemBox.Width, itemBox.Height) };
+
+            SpriteEffects[] flips = { SpriteEffects.None, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, SpriteEffects.FlipHorizontally, SpriteEffects.FlipVertically };
+
+            for (int playerIndex = 0; playerIndex < players.Length; ++playerIndex)
+            {
+                if (players[playerIndex].Alive)
+                {
+                    Color color = players[playerIndex].Color;
+                    color.A = (byte)(255 * TRANSPARENCY);
+                    int slot = Settings.Instance.GetPlayer(playerIndex).SlotIndex;
+                    //Vector2 halfBoxSize = new Vector2(itemBox.Width, itemBox.Height);
+                    spriteBatch.Draw(itemBox, itemDisplayRectangles[slot], null, color, 0.0f, Vector2.Zero, flips[slot], 0);
+
+                    color.A = (byte)(100 /* TRANSPARENCY*/ * players[playerIndex].ItemAlphaValue);
+
+                    DrawItem(spriteBatch, players[playerIndex].ItemSlot, itemDisplayRectangles[slot], corners[slot], color, Item.ROTATION_SPEED * (float)gameTime.TotalGameTime.TotalSeconds, players[playerIndex].ItemAlphaValue);
+
+                    // countdown if this player is dying soon
+                    //if (players[playerIndex].RemainingTimeAlive < Player.MAX_TIME_WITHOUT_SPAWNPOINT)
+                    //{
+                    string countdownString = (InGame.ModeWinTime - winTimer[playerIndex].Elapsed.TotalSeconds).ToString();
+                    int point = countdownString.IndexOf('.');
+                    if (point > 0)
+                        countdownString = countdownString.Remove(point);
+
+                    Vector2 dragToCorner = new Vector2(itemDisplayRectangles[slot].Width / 5 * Math.Sign(corners[slot].X - itemDisplayRectangles[slot].Center.X),
+                                                       itemDisplayRectangles[slot].Height / 5 * Math.Sign(corners[slot].Y - itemDisplayRectangles[slot].Center.Y));
+                    Vector2 position = new Vector2(itemDisplayRectangles[slot].Center.X, itemDisplayRectangles[slot].Center.Y) + dragToCorner;
+                    spriteBatch.DrawString(dieCountdownFont, countdownString, position, new Color(0f, 0f, 0f, 1f), 0.0f, dieCountdownFont.MeasureString(countdownString) / 2,
+                                              (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds) * 0.2f + 1.4f, SpriteEffects.None, 0);
+                    //}
+                }
+            }
+            spriteBatch.End();
         }
 
         private void DrawItem(SpriteBatch spriteBatch, Item.ItemType type, Rectangle destination, Point corner, Color color, float rotation, float itemAlpha)

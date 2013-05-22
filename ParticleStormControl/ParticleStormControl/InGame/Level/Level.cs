@@ -94,6 +94,7 @@ namespace VirusX
         private bool switchCountdownActive = false;
         private float switchCountdownTimer;
         public const float SWITCH_COUNTDOWN_LENGTH = 6.0f;
+        public const float SWITCH_COUNTDOWN_LENGTH_FUN = 1.0f;
         private SpriteFont fontCountdownLarge;
 
         #endregion
@@ -708,7 +709,10 @@ namespace VirusX
                     break;
 
                 case Item.ItemType.MUTATION:
-                    switchCountdownTimer = SWITCH_COUNTDOWN_LENGTH;
+                    if (Settings.Instance.GameMode == InGame.GameMode.FUN)
+                        switchCountdownTimer = SWITCH_COUNTDOWN_LENGTH_FUN;
+                    else
+                        switchCountdownTimer = SWITCH_COUNTDOWN_LENGTH;
                     switchCountdownActive = true;
                     break;
 
