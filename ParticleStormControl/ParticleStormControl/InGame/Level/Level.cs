@@ -187,6 +187,10 @@ namespace VirusX
             // crosshairs for players
             for (int i = 0; i < players.Length; ++i)
                 mapObjects.Add(new Crosshair(i, contentManager));
+
+            // clear player rendering
+            BeginDrawInternParticleTarget(device);
+            EndDrawInternParticleTarget(device);
         }
 
         /// <summary>
