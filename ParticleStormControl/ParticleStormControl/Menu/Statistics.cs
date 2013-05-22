@@ -42,8 +42,9 @@ namespace VirusX.Menu
 
         const float DURATION_CONTINUE_UNAVAILABLE = 2.0f;
         const int SIDE_PADDING = 30; // padding from left
-        const int COLUMN_WIDTH = 145; // width of the columns WITH PADDING!
+        const int COLUMN_WIDTH = 125; // width of the columns WITH PADDING!
         const int COLUMN_PADDING = 20;
+        const int ROW_HEIGHT = 50;
 
         /// <summary>
         /// if smaller than 0, continue button is available
@@ -115,7 +116,7 @@ namespace VirusX.Menu
             // draw all captions
             for (int i = 0; i < captions.Count; i++)
             {
-                Interface.Add(new InterfaceButton(captions[i], new Vector2(leftStart + COLUMN_WIDTH * (i + 1), 150), () => { return false; },
+                Interface.Add(new InterfaceButton(captions[i], new Vector2(leftStart + COLUMN_WIDTH * (i + 1), 100), () => { return false; },
                                         COLUMN_WIDTH - COLUMN_PADDING, Alignment.TOP_CENTER));
             }
 
@@ -123,7 +124,7 @@ namespace VirusX.Menu
             for (int i = 0; i < playerStatLabels.Length; i++)
             {
                 int index = i;
-                playerStatLabels[i] = new InterfaceButton(() => { return Player.ColorNames[PlayerColorIndices[index]]; }, new Vector2(leftStart, 210 + 60 * index),
+                playerStatLabels[i] = new InterfaceButton(() => { return Player.ColorNames[PlayerColorIndices[index]]; }, new Vector2(leftStart, 160 + ROW_HEIGHT * index),
                                 () => { return false; }, () => { return index < statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING, 
                                 Color.White, Color.Black, false, Alignment.TOP_CENTER);
                 Interface.Add(playerStatLabels[i]);
@@ -131,7 +132,7 @@ namespace VirusX.Menu
                 {
                     int x = i;
                     int y = j;
-                    Interface.Add(new InterfaceButton(() => values[x][y], new Vector2(leftStart + COLUMN_WIDTH * (y + 1), 210 + 60 * x),
+                    Interface.Add(new InterfaceButton(() => values[x][y], new Vector2(leftStart + COLUMN_WIDTH * (y + 1), 160 + ROW_HEIGHT * x),
                                     () => { return false; }, () => { return x < statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING, Alignment.TOP_CENTER));
                 }
             }
@@ -144,7 +145,7 @@ namespace VirusX.Menu
             string text = "► Play Again";
             int width = (int)menu.Font.MeasureString(text).X;
             Interface.Add(new InterfaceButton(text,
-                new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() * 2 + InterfaceImageButton.PADDING * 8),
+                new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() * 2 + InterfaceImageButton.PADDING * 7),
                 () => { return selectedButton == Button.AGAIN; },
                 () => { return timeUntilContinueIsAvailable < 0.0f; },
                 Alignment.BOTTOM_CENTER));
@@ -237,7 +238,7 @@ namespace VirusX.Menu
                 winnerLabel.BackgroundColor = Player.Colors[PlayerColorIndices[WinPlayerIndex]];
             else
                 winnerLabel.BackgroundColor = Color.Black;
-            winnerLabel.Position = new Vector2(-(int)menu.FontHeading.MeasureString(winnerLabel.Text()).X / 2, 60);
+            winnerLabel.Position = new Vector2(-(int)menu.FontHeading.MeasureString(winnerLabel.Text()).X / 2, 30);
 
             timeUntilContinueIsAvailable = DURATION_CONTINUE_UNAVAILABLE;
         }
@@ -289,8 +290,8 @@ namespace VirusX.Menu
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             // draw diagrams
-            int yPos = 220 + 60 * values.Length;
-            int height = Settings.Instance.ResolutionY - 400 - 60 * values.Length;
+            int yPos = 180 + ROW_HEIGHT * values.Length;
+            int height = Settings.Instance.ResolutionY - 360 - ROW_HEIGHT * values.Length;
             int maxWidth = Settings.Instance.ResolutionX - SIDE_PADDING * 2;
 
             switch (currentDiagramType)

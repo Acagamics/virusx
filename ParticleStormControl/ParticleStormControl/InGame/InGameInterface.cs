@@ -18,6 +18,8 @@ namespace VirusX
         private SpriteFont dieCountdownFont;
 
         private const float TRANSPARENCY = 0.6f;
+
+        private PercentageBar percentageBar;
      
         public InGameInterface(ContentManager content)
         {
@@ -27,6 +29,8 @@ namespace VirusX
             itemWipeout = content.Load<Texture2D>("items/wipeout");
 
             dieCountdownFont = content.Load<SpriteFont>("fonts/fontHeading");
+
+            percentageBar = new PercentageBar(content);
         }
 
         /// <summary>
@@ -78,6 +82,9 @@ namespace VirusX
                 }
             }
             spriteBatch.End();
+
+            // draw the percentage bar
+            percentageBar.Draw(players, spriteBatch, levelPixelSize, levelPixelOffset);
         }
 
         /// <summary>

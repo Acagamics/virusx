@@ -17,7 +17,7 @@ namespace VirusX.Menu
             : base(menu)
         {
             // background
-            Interface.Add(new InterfaceFiller(Vector2.Zero, Color.Black * 0.5f, () => { return origin == Menu.Page.INGAME; }));
+            Interface.Add(new InterfaceFiller(Vector2.Zero, Color.Black * 0.5f, () => { return origin == Menu.Page.INGAME || origin == Menu.Page.NEWGAME; }));
 
             string[,] data = {
                                  { null,                 "Keyboard 1",   "Keyboard 2",  "Keyboard 3",   "Gamepad" },
@@ -25,8 +25,8 @@ namespace VirusX.Menu
                                  { "Left",               "A",            "Arrow Left",  "Numpad 4",     null },
                                  { "Down",               "S",            "Arrow Down",   "Numpad 5/2",    null },
                                  { "Right",              "D",            "Arrow Right",  "Numpad 6",    null },
-                                 { "Action / Use Item",  "Space",        "Enter",        "Numpad 0",    null },
-                                 { "Back / Hold Cursor", "V",            "Shift",        "Numpad 7/9",    null },
+                                 { "Action / Use Item",  "Tab",        "Enter",        "Numpad 0",    null },
+                                 { "Back / Hold Cursor", "L-Shift",       "R-Shift",        "Numpad 7/9",    null },
                              };
 
             // big table

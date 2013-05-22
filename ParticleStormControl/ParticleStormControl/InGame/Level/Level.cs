@@ -17,14 +17,17 @@ namespace VirusX
         public Statistics GameStatistics { get; set; }
         private bool dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug = true;
 
+        // map objects
         private List<MapObject> mapObjects = new List<MapObject>();
         public List<MapObject> MapObjects { get { return mapObjects; } }
         public IEnumerable<MapObject> Items { get { return mapObjects.Where(x => x is Item); } }
         private List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
         public List<SpawnPoint> SpawnPoints { get { return spawnPoints; } }
 
+        // background
         private Background background;
 
+        // textures
         private Texture2D pixelTexture;
         private Texture2D mutateBig;
 
@@ -36,19 +39,6 @@ namespace VirusX
                                                                     CullMode = CullMode.None,
                                                                     ScissorTestEnable = true,
                                                                 };
-
-
-
-        private VertexBuffer vignettingQuadVertexBuffer;
-        private Effect vignettingShader;
-        public static BlendState VignettingBlend = new BlendState
-                                                {
-                                                    ColorSourceBlend = Blend.Zero,
-                                                    ColorDestinationBlend = Blend.SourceAlpha,
-                                                    ColorBlendFunction = BlendFunction.Add,
-                                                    AlphaSourceBlend = Blend.Zero,
-                                                    AlphaDestinationBlend = Blend.One
-                                                };
 
         public static BlendState ShadowBlend = new BlendState
                                                    {
@@ -64,7 +54,7 @@ namespace VirusX
         /// <summary>
         /// all relative coordinates are from 0 to RELATIVE_MAX
         /// </summary>
-        static public readonly Vector2 RELATIVE_MAX = new Vector2(2, 1);
+        static public readonly Vector2 RELATIVE_MAX = new Vector2(2.0f, 1.0f);
 
         static public readonly float RELATIVECOR_ASPECT_RATIO = (float)RELATIVE_MAX.X / RELATIVE_MAX.Y;
 
@@ -170,9 +160,6 @@ namespace VirusX
 
             // background & vignetting
             background = new Background(device, content);
-            vignettingQuadVertexBuffer = new VertexBuffer(device, ScreenTriangleRenderer.ScreenAlignedTriangleVertex.VertexDeclaration, 4, BufferUsage.WriteOnly);
-            vignettingQuadVertexBuffer.SetData(new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) });
-            vignettingShader = content.Load<Effect>("shader/vignetting");
 
             // effects
             mutateBig = content.Load<Texture2D>("Mutate_big");
@@ -617,24 +604,8 @@ namespace VirusX
             // background
             background.Draw(device, (float)gameTime.TotalGameTime.TotalSeconds);
 
-            // screenblend stuff
-           /* spriteBatch.Begin(SpriteSortMode.BackToFront, ScreenBlend);
-            foreach (MapObject mapObject in mapObjects)
-            {
-                if (mapObject.Alive)
-                    mapObject.Draw_ScreenBlended(spriteBatch, this, totalTimeSeconds);
-            }
-            spriteBatch.End();*/
-
             // the particles!
             DrawParticles(device);
-
-            // vignetting
-            device.BlendState = VignettingBlend;
-            device.SetVertexBuffer(vignettingQuadVertexBuffer);
-            vignettingShader.CurrentTechnique.Passes[0].Apply();
-            device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
-            device.BlendState = BlendState.Opaque;
 
             // alphablended spritebatch stuff
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, scissorTestRasterizerState);
@@ -649,11 +620,7 @@ namespace VirusX
             // countdown
             DrawCountdown(device, (float)gameTime.TotalGameTime.TotalSeconds);
 
-
             spriteBatch.End();
-
-            // rest rasterizer state if not allready happend
-            device.RasterizerState = RasterizerState.CullNone;
         }
 
         private void DrawParticles(GraphicsDevice device)
@@ -696,13 +663,6 @@ namespace VirusX
             fieldPixelRectangle = new Rectangle(fieldOffset_pixel.X, fieldOffset_pixel.Y, fieldSize_pixel.X, fieldSize_pixel.Y);
 
             // setup background
-            Vector2 posScale = new Vector2(fieldSize_pixel.X, -fieldSize_pixel.Y) /
-                               new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) * 2;
-            Vector2 posOffset = new Vector2(fieldOffset_pixel.X, -fieldOffset_pixel.Y) /
-                                   new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) * 2 - new Vector2(1, -1);
-            vignettingShader.Parameters["PosScale"].SetValue(posScale);
-            vignettingShader.Parameters["PosOffset"].SetValue(posOffset);
-
             CreateParticleTarget(device);
 
             // bg particles

@@ -51,8 +51,8 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceButton("Credits", new Vector2(100, 620), () => { return selectedButton == Button.CREDITS; }));
             Interface.Add(new InterfaceButton("Exit Game", new Vector2(100, 680), () => { return selectedButton == Button.END; }));
 
-            Interface.Add(new InterfaceButton("How to Play", new Vector2(620, 100), Alignment.TOP_RIGHT));
-            Interface.Add(new InterfaceImage("instructions", new Vector2(620, 100 + menu.GetFontHeight() + 2 * InterfaceElement.PADDING), Alignment.TOP_RIGHT));
+        //    Interface.Add(new InterfaceButton("How to Play", new Vector2(620, 100), Alignment.TOP_RIGHT));
+        //    Interface.Add(new InterfaceImage("instructions", new Vector2(620, 100 + menu.GetFontHeight() + 2 * InterfaceElement.PADDING), Alignment.TOP_RIGHT));
 
             // submenu
             Interface.Add(new InterfaceButton("Game mode", new Vector2(320, 370), () => { return selectedButtonSubmenu == ButtonSubmenu.MODE; }, () => submenu));
@@ -63,6 +63,12 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceButton("► Start", new Vector2(320, 490), () => { return selectedButtonSubmenu == ButtonSubmenu.CONTINUE; }, () => submenu));
 
             Interface.Add(new InterfaceButton(ParticleStormControl.VERSION, new Vector2(2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING) + menu.Font.MeasureString(ParticleStormControl.VERSION), Alignment.BOTTOM_RIGHT));
+        }
+
+        public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
+        {
+            if (oldPage == Menu.Page.STATS)
+                submenu = false;
         }
 
         public override void LoadContent(ContentManager content)

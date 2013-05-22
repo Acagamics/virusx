@@ -58,177 +58,200 @@ namespace VirusX.Menu
         /// <param name="gameTime"></param>
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
-            Settings.Instance.ResetPlayerSettings();
-            countdown = TimeSpan.Zero;
-            for (int i = 0; i < 4; ++i)
+            // if play again "unready" all human players
+            if (oldPage == Menu.Page.STATS)
             {
-                playerSlotOccupied[i] = false;
-                playerReadyBySlot[i] = false;
-                slotIndexToPlayerIndexMapper[i] = i;
+                for (int i = 0; i < 4; ++i)
+                {
+                    if(Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[i]) != null
+                        && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[i]).Type == Player.Type.HUMAN)
+                    {
+                        playerReadyBySlot[i] = false;
+                    }
+                }
             }
 
-            if (Settings.Instance.StartingControls != InputManager.ControlType.NONE)
-                AddPlayer(false, Settings.Instance.StartingControls);
-
-            // create ui @ onActia
-            Interface.Clear();
-
-            // four boxes
-            int TEXTBOX_HEIGHT = menu.GetFontHeight() + 2 * InterfaceButton.PADDING;
-            int SIDE_PADDING = TEXTBOX_HEIGHT + 30;
-            int ARROW_SIZE = menu.GetFontHeight();
-
-            if (IsTutorial())
-                Settings.Instance.MaxNumPlayers = 2;
-            else
-                Settings.Instance.MaxNumPlayers = 4;
-
-            for (int i = 0; i < Settings.Instance.MaxNumPlayers; i++)
+            // reset all slots if not play again
+            if (oldPage != Menu.Page.CONTROLS && oldPage != Menu.Page.STATS)
             {
-                int index = i;
-                Vector2 origin = GetOrigin(index);
 
-                // join text
-                Vector2 stringSize = menu.Font.MeasureString(GetJoinText(index));
-                Interface.Add(new InterfaceButton(GetJoinText(index), GetOrigin(index) + new Vector2((int)((BOX_WIDTH - stringSize.X) / 2), (int)((BOX_HEIGHT - stringSize.Y) / 2)), () => { return true; }, () => { return !playerSlotOccupied[index]; }));
+                Settings.Instance.ResetPlayerSettings();
+                countdown = TimeSpan.Zero;
+                for (int i = 0; i < 4; ++i)
+                {
+                    playerSlotOccupied[i] = false;
+                    playerReadyBySlot[i] = false;
+                    slotIndexToPlayerIndexMapper[i] = i;
+                }
 
-                // virus name
-                Interface.Add(new InterfaceButton(
-                    () => { return VirusSwarm.VirusNames[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus].ToString(); },
-                    origin + new Vector2(SIDE_PADDING, 0),
-                    () => { return playerReadyBySlot[index]; },
-                    () => { return playerSlotOccupied[index]; },
-                    true
-                ));
+                if (Settings.Instance.StartingControls != InputManager.ControlType.NONE)
+                    AddPlayer(false, Settings.Instance.StartingControls);
 
-                // teams
-                Interface.Add(new InterfaceButton(
-                    () =>
-                    { return Player.TEAM_NAMES[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Team]; },
-                    origin + new Vector2(SIDE_PADDING, TEXTBOX_HEIGHT * 2 - InterfaceElement.PADDING),
-                    () => { return false; },
-                    () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Team != Player.Teams.NONE; }
-                ));
+                // create ui @ onActia
+                Interface.Clear();
 
-                // controls
-                Interface.Add(new InterfaceButton(
-                    () => { return InputManager.CONTROL_NAMES[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).ControlType]; },
-                    origin + new Vector2(SIDE_PADDING, TEXTBOX_HEIGHT * 3),
-                    () => { return false; },
-                    () => { return playerSlotOccupied[index]; }
-                ));
+                // four boxes
+                int TEXTBOX_HEIGHT = menu.GetFontHeight() + 2 * InterfaceButton.PADDING;
+                int SIDE_PADDING = TEXTBOX_HEIGHT + 30;
+                int ARROW_SIZE = menu.GetFontHeight();
 
-                // ready
-                int top = TEXTBOX_HEIGHT * 4 + InterfaceElement.PADDING;
-                Interface.Add(new InterfaceButton(
-                    () => { return playerReadyBySlot[index] ? "ready!" : "not ready"; },
-                    origin + new Vector2(SIDE_PADDING + TEXTBOX_HEIGHT, top),
-                    () => { return playerReadyBySlot[index]; },
-                    () => { return playerSlotOccupied[index]; }
-                ));
-                Interface.Add(new InterfaceImageButton(
-                    "icons",
-                    new Rectangle((int)origin.X + SIDE_PADDING, (int)origin.Y + top, ARROW_SIZE, ARROW_SIZE),
-                    new Rectangle(0, 32, 16, 16),
-                    new Rectangle(48, 32, 16, 16),
-                    () => { return playerReadyBySlot[index]; },
-                    () => { return playerSlotOccupied[index]; }
-                ));
+                if (IsTutorial())
+                    Settings.Instance.MaxNumPlayers = 2;
+                else
+                    Settings.Instance.MaxNumPlayers = 4;
 
-                // arrows up & down
-                Rectangle virusImageRect = new Rectangle((int)origin.X + BOX_WIDTH - VIRUS_SIZE - SIDE_PADDING, (int)origin.Y + TEXTBOX_HEIGHT + 40, VIRUS_SIZE, VIRUS_SIZE);
-                Interface.Add(new InterfaceImageButton(
-                    "icons",
-                    new Rectangle(virusImageRect.Center.X - (ARROW_VERTICAL_SIZE + ARROW_WIDDEN) / 2 - InterfaceElement.PADDING, virusImageRect.Top - InterfaceElement.PADDING - 2 * ARROW_VERTICAL_SIZE, ARROW_VERTICAL_SIZE + ARROW_WIDDEN, ARROW_VERTICAL_SIZE),
-                    new Rectangle(0, 16, 16, 16),
-                    new Rectangle(32, 16, 16, 16),
-                    () => { return isActive(InputManager.ControlActions.UP, index); },
-                    () => { return playerSlotOccupied[index]; }
-                ));
-                Interface.Add(new InterfaceImageButton(
-                    "icons",
-                    new Rectangle(virusImageRect.Center.X - (ARROW_VERTICAL_SIZE + ARROW_WIDDEN) / 2 - InterfaceElement.PADDING, virusImageRect.Bottom - InterfaceElement.PADDING + ARROW_VERTICAL_SIZE, ARROW_VERTICAL_SIZE + ARROW_WIDDEN, ARROW_VERTICAL_SIZE),
-                    new Rectangle(16, 16, 16, 16),
-                    new Rectangle(48, 16, 16, 16),
-                    () => { return isActive(InputManager.ControlActions.DOWN, index); },
-                    () => { return playerSlotOccupied[index]; }
-                ));
+                for (int i = 0; i < Settings.Instance.MaxNumPlayers; i++)
+                {
+                    int index = i;
+                    Vector2 origin = GetOrigin(index);
 
-                // arrows left & right
-                int arrowY = TEXTBOX_HEIGHT * 4 - ARROW_SIZE;
-                Interface.Add(new InterfaceImageButton(
-                    "icons",
-                    new Rectangle((int)origin.X, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE),
-                    new Rectangle(0, 0, 16, 16),
-                    new Rectangle(32, 0, 16, 16),
-                    () => { return isActive(InputManager.ControlActions.LEFT, index); },
-                    () => { return playerSlotOccupied[index]; }
-                ));
-                Interface.Add(new InterfaceImageButton(
-                    "icons",
-                    new Rectangle((int)origin.X + BOX_WIDTH - ARROW_SIZE, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE),
-                    new Rectangle(16, 0, 16, 16),
-                    new Rectangle(48, 0, 16, 16),
-                    () => { return isActive(InputManager.ControlActions.RIGHT, index); },
-                    () => { return playerSlotOccupied[index]; }
-                ));
+                    // join text
+                    Vector2 stringSize = menu.Font.MeasureString(GetJoinText(index));
+                    Interface.Add(new InterfaceButton(GetJoinText(index), GetOrigin(index) + new Vector2((int)((BOX_WIDTH - stringSize.X) / 2), (int)((BOX_HEIGHT - stringSize.Y) / 2)), () => { return true; }, () => { return !playerSlotOccupied[index]; }));
 
-                // virus
-               /* virusImages[i] = new InterfaceImage(Settings.Instance.NumPlayers > i ? ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(i).Virus) : "pix",
-                                        new Rectangle((int)origin.X + BOX_WIDTH - VIRUS_SIZE - SIDE_PADDING, (int)origin.Y + TEXTBOX_HEIGHT + 40, VIRUS_SIZE, VIRUS_SIZE),   // historic rect..
-                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true);
-                Interface.Add(virusImages[i]); */
+                    // virus name
+                    Interface.Add(new InterfaceButton(
+                        () => { return VirusSwarm.VirusNames[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus].ToString(); },
+                        origin + new Vector2(SIDE_PADDING, 0),
+                        () => { return playerReadyBySlot[index]; },
+                        () => { return playerSlotOccupied[index]; },
+                        true
+                    ));
 
-                // description
-                int backgroundLength = (BOX_WIDTH - SIDE_PADDING * 2 + InterfaceElement.PADDING * 2) / 2; //(descpStrLen + symbolLen) * 2 + 15;
-                int symbolLen = backgroundLength - TEXTBOX_HEIGHT - InterfaceButton.PADDING*3;//(int)menu.Font.MeasureString("++++").X + InterfaceElement.PADDING;
-                int descpX0 = SIDE_PADDING;
-                int descpX1 = descpX0 + backgroundLength;
-                int descpY = BOX_HEIGHT - TEXTBOX_HEIGHT * 2;
+                    // teams
+                    Interface.Add(new InterfaceButton(
+                        () =>
+                        { return Player.TEAM_NAMES[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Team]; },
+                        origin + new Vector2(SIDE_PADDING, TEXTBOX_HEIGHT * 2 - InterfaceElement.PADDING),
+                        () => { return false; },
+                        () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Team != Player.Teams.NONE; }
+                    ));
+
+                    // controls
+                    Interface.Add(new InterfaceButton(
+                        () => { return InputManager.CONTROL_NAMES[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).ControlType]; },
+                        origin + new Vector2(SIDE_PADDING, TEXTBOX_HEIGHT * 3),
+                        () => { return false; },
+                        () => { return playerSlotOccupied[index]; }
+                    ));
+
+                    // ready
+                    int top = TEXTBOX_HEIGHT * 4 + InterfaceElement.PADDING;
+                    Interface.Add(new InterfaceButton(
+                        () => { return playerReadyBySlot[index] ? "ready!" : "not ready"; },
+                        origin + new Vector2(SIDE_PADDING + TEXTBOX_HEIGHT, top),
+                        () => { return playerReadyBySlot[index]; },
+                        () => { return playerSlotOccupied[index]; }
+                    ));
+                    Interface.Add(new InterfaceImageButton(
+                        "icons",
+                        new Rectangle((int)origin.X + SIDE_PADDING, (int)origin.Y + top, ARROW_SIZE, ARROW_SIZE),
+                        new Rectangle(0, 32, 16, 16),
+                        new Rectangle(48, 32, 16, 16),
+                        () => { return playerReadyBySlot[index]; },
+                        () => { return playerSlotOccupied[index]; }
+                    ));
+
+                    // arrows up & down
+                    Rectangle virusImageRect = new Rectangle((int)origin.X + BOX_WIDTH - VIRUS_SIZE - SIDE_PADDING, (int)origin.Y + TEXTBOX_HEIGHT + 40, VIRUS_SIZE, VIRUS_SIZE);
+                    Interface.Add(new InterfaceImageButton(
+                        "icons",
+                        new Rectangle(virusImageRect.Center.X - (ARROW_VERTICAL_SIZE + ARROW_WIDDEN) / 2 - InterfaceElement.PADDING, virusImageRect.Top - InterfaceElement.PADDING - 2 * ARROW_VERTICAL_SIZE, ARROW_VERTICAL_SIZE + ARROW_WIDDEN, ARROW_VERTICAL_SIZE),
+                        new Rectangle(0, 16, 16, 16),
+                        new Rectangle(32, 16, 16, 16),
+                        () => { return isActive(InputManager.ControlActions.UP, index); },
+                        () => { return playerSlotOccupied[index]; }
+                    ));
+                    Interface.Add(new InterfaceImageButton(
+                        "icons",
+                        new Rectangle(virusImageRect.Center.X - (ARROW_VERTICAL_SIZE + ARROW_WIDDEN) / 2 - InterfaceElement.PADDING, virusImageRect.Bottom - InterfaceElement.PADDING + ARROW_VERTICAL_SIZE, ARROW_VERTICAL_SIZE + ARROW_WIDDEN, ARROW_VERTICAL_SIZE),
+                        new Rectangle(16, 16, 16, 16),
+                        new Rectangle(48, 16, 16, 16),
+                        () => { return isActive(InputManager.ControlActions.DOWN, index); },
+                        () => { return playerSlotOccupied[index]; }
+                    ));
+
+                    // arrows left & right
+                    int arrowY = TEXTBOX_HEIGHT * 4 - ARROW_SIZE;
+                    Interface.Add(new InterfaceImageButton(
+                        "icons",
+                        new Rectangle((int)origin.X, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE),
+                        new Rectangle(0, 0, 16, 16),
+                        new Rectangle(32, 0, 16, 16),
+                        () => { return isActive(InputManager.ControlActions.LEFT, index); },
+                        () => { return playerSlotOccupied[index]; }
+                    ));
+                    Interface.Add(new InterfaceImageButton(
+                        "icons",
+                        new Rectangle((int)origin.X + BOX_WIDTH - ARROW_SIZE, (int)origin.Y + arrowY, ARROW_SIZE, ARROW_SIZE),
+                        new Rectangle(16, 0, 16, 16),
+                        new Rectangle(48, 0, 16, 16),
+                        () => { return isActive(InputManager.ControlActions.RIGHT, index); },
+                        () => { return playerSlotOccupied[index]; }
+                    ));
+
+                    // virus
+                    /* virusImages[i] = new InterfaceImage(Settings.Instance.NumPlayers > i ? ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(i).Virus) : "pix",
+                                             new Rectangle((int)origin.X + BOX_WIDTH - VIRUS_SIZE - SIDE_PADDING, (int)origin.Y + TEXTBOX_HEIGHT + 40, VIRUS_SIZE, VIRUS_SIZE),   // historic rect..
+                                                             Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true);
+                     Interface.Add(virusImages[i]); */
+
+                    // description
+                    int backgroundLength = (BOX_WIDTH - SIDE_PADDING * 2 + InterfaceElement.PADDING * 2) / 2; //(descpStrLen + symbolLen) * 2 + 15;
+                    int symbolLen = backgroundLength - TEXTBOX_HEIGHT - InterfaceButton.PADDING * 3;//(int)menu.Font.MeasureString("++++").X + InterfaceElement.PADDING;
+                    int descpX0 = SIDE_PADDING;
+                    int descpX1 = descpX0 + backgroundLength;
+                    int descpY = BOX_HEIGHT - TEXTBOX_HEIGHT * 2;
 
 
-                Interface.Add(new InterfaceImage("symbols//Speed", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
-                                                    Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
-                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Speed[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
-                            origin + new Vector2(descpX0 + TEXTBOX_HEIGHT, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
+                    Interface.Add(new InterfaceImage("symbols//Speed", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
+                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
+                    Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Speed[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
+                                origin + new Vector2(descpX0 + TEXTBOX_HEIGHT, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
-                Interface.Add(new InterfaceImage("symbols//Mass", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
-                                                    Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
-                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Mass[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
-                              origin + new Vector2(descpX0 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
+                    Interface.Add(new InterfaceImage("symbols//Mass", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
+                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
+                    Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Mass[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
+                                  origin + new Vector2(descpX0 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
-                Interface.Add(new InterfaceImage("symbols//Discipline", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
-                                                    Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
-                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Discipline[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
-                                origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
+                    Interface.Add(new InterfaceImage("symbols//Discipline", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
+                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
+                    Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Discipline[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
+                                    origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
-                Interface.Add(new InterfaceImage("symbols//Health", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
-                                                    Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
-                Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Health[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
-                                origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
+                    Interface.Add(new InterfaceImage("symbols//Health", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
+                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
+                    Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Health[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
+                                    origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
+                }
+
+                // help text pad
+                int textBoxHeight = menu.GetFontHeight() + 2 * InterfaceElement.PADDING;
+                Interface.Add(new InterfaceImage("ButtonImages/xboxControllerRightShoulder", new Rectangle(-395, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
+                Interface.Add(new InterfaceButton("remove computer", new Vector2(-295, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+                Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(-115, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
+                Interface.Add(new InterfaceButton("add computer", new Vector2(-15, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+                Interface.Add(new InterfaceImage("ButtonImages/xboxControllerButtonY", new Rectangle(165, textBoxHeight, 50, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
+                Interface.Add(new InterfaceButton("show controls", new Vector2(215, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+
+                // help text keyboard
+                Interface.Add(new InterfaceButton("  -", new Vector2(-345, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
+                Interface.Add(new InterfaceButton("remove computer", new Vector2(-295, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+                Interface.Add(new InterfaceButton("  +", new Vector2(-115, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
+                Interface.Add(new InterfaceButton("add computer", new Vector2(-65, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+                Interface.Add(new InterfaceButton(" F1", new Vector2(115, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
+                Interface.Add(new InterfaceButton("show controls", new Vector2(165, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+
+                // countdown
+                String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
+                Vector2 size = menu.FontHeading.MeasureString(text);
+                Interface.Add(new InterfaceFiller(Vector2.Zero, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, Color.FromNonPremultiplied(0, 0, 0, 128), () => { return countdown.TotalSeconds > 0; }));
+                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.White, () => { return countdown.TotalSeconds > 0; }));
+                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.Black, () => { return countdown.TotalSeconds > safeCountdown; }));
+                Interface.Add(new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true));
+
+                base.LoadContent(content);
             }
-
-            // help text
-            int textBoxHeight = menu.GetFontHeight() + 2 * InterfaceElement.PADDING;
-            Interface.Add(new InterfaceImage("ButtonImages/xboxControllerRightShoulder", new Rectangle(-290, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("remove computer", new Vector2(-190, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(10, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("add computer", new Vector2(110, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
-
-            Interface.Add(new InterfaceButton("  -", new Vector2(-230, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("remove computer", new Vector2(-180, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("  +", new Vector2(0, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
-            Interface.Add(new InterfaceButton("add computer", new Vector2(50, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
-
-            // countdown
-            String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
-            Vector2 size = menu.FontHeading.MeasureString(text);
-            Interface.Add(new InterfaceFiller(Vector2.Zero, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, Color.FromNonPremultiplied(0, 0, 0, 128), () => { return countdown.TotalSeconds > 0; }));
-            Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.White, () => { return countdown.TotalSeconds > 0; }));
-            Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.Black, () => { return countdown.TotalSeconds > safeCountdown; }));
-            Interface.Add(new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true));
-
-            base.LoadContent(content);
         }
 
         /// <summary>
@@ -326,6 +349,10 @@ namespace VirusX.Menu
                 menu.ChangePage(Menu.Page.INGAME, gameTime);
                 return;
             }
+
+            // overlay controls screen
+            if (InputManager.Instance.IsButtonPressed(Keys.F1) || InputManager.Instance.AnyPressedButton(Buttons.Y))
+                menu.ChangePage(Menu.Page.CONTROLS, gameTime);
 
             // test various buttons
             for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; playerIndex++)
