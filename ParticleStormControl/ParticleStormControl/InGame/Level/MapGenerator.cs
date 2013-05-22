@@ -23,7 +23,10 @@ namespace VirusX
         {
             NORMAL,
             CAPTURE_THE_CELL,
-            FUN
+            FUN,
+            BACKGROUND,
+
+            NONE
         };
 
         static public IEnumerable<MapObject> GenerateLevel(MapType mapType, GraphicsDevice device, ContentManager content, int numPlayers, Background outBackground)
@@ -33,6 +36,8 @@ namespace VirusX
                     return GenerateCaptureTheCellLevel(device, content, numPlayers, outBackground);
                 case MapType.FUN:
                     return GenerateFunLevel(device, content, numPlayers, outBackground);
+                case MapType.BACKGROUND:
+                    return GenerateBackground(device, content, outBackground);
                 default:
                     return GenerateNormalLevel(device, content, numPlayers, outBackground);
             }
@@ -173,7 +178,6 @@ namespace VirusX
                 spawnPoints.Add(new SpawnPoint(pos, GetStandardSpawnSizeDependingFromArea(spawnPositions, pos), i%numPlayers, content));
             }
 
-
             // background
             if (outBackground != null)
             {
@@ -188,6 +192,19 @@ namespace VirusX
             }
 
             return spawnPoints.Cast<MapObject>();
+        }
+
+        static private IEnumerable<MapObject> GenerateBackground(GraphicsDevice device, ContentManager content, Background outBackground)
+        {
+            // generate cell positions for menu background
+            Vector2 relativeMax = new Vector2((float)Settings.Instance.ResolutionX / Settings.Instance.ResolutionY, 1.0f);
+            const int NUM_CELLS_Y = 4;
+            int numCellsX = (int)(NUM_CELLS_Y * relativeMax.X + 0.5f);
+            List<Vector2> cellPositions = MapGenerator.GenerateCellPositionGrid(numCellsX, NUM_CELLS_Y, 0.09f, Vector2.Zero, relativeMax);
+            outBackground.Generate(device, new Rectangle(0,0, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY), cellPositions, relativeMax);
+            outBackground.UpdateColors(Enumerable.Repeat(Color.White, cellPositions.Count).ToArray());
+
+            return new List<MapObject>();
         }
 
         static private float GetStandardSpawnSizeDependingFromArea(IEnumerable<Vector2> spawnPositions, Vector2 pos)

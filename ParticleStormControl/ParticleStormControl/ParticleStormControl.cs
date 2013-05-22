@@ -136,8 +136,6 @@ namespace VirusX
                 GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
 
             inGame.Resize(GraphicsDevice);
-         //   if (background != null)
-         //       RegenerateBackground();
         }
 
         void WindowClientSizeChanged(object sender, EventArgs e)
@@ -146,7 +144,7 @@ namespace VirusX
             graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
             graphics.ApplyChanges();
             inGame.Resize(GraphicsDevice);
-            RegenerateBackground(); */
+             */
             ApplyChangedGraphicsSettings();
         }
 
@@ -176,20 +174,8 @@ namespace VirusX
         {
             inGame.LoadContent(GraphicsDevice, Content);
             menu.LoadContent(Content);
-
-          //  background = new Background(GraphicsDevice, Content);
-          //  RegenerateBackground();
         }
 
-      /*  private void RegenerateBackground()
-        {
-            // generate cell positions for menu background
-            Vector2 relativeMax = new Vector2(GraphicsDevice.Viewport.AspectRatio, 1.0f);
-            List<Vector2> cellPositions = MapGenerator.GenerateCellPositionGrid(7, 4, 0.09f, Vector2.Zero, relativeMax);
-            background.Resize(GraphicsDevice, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), cellPositions, relativeMax);
-            background.UpdateColors(Enumerable.Repeat(Color.White, cellPositions.Count).ToArray()); 
-        } */
-        
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// all content.

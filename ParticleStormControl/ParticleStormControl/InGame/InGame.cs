@@ -144,6 +144,7 @@ namespace VirusX
                 {
                     particleRenderer = null;
                     damageMap.Clear(graphicsDevice);
+                    level.NewGame(MapGenerator.MapType.BACKGROUND, graphicsDevice, new Player[0]);
                 }
 
                 State = InGame.GameState.Inactive;
@@ -204,7 +205,6 @@ namespace VirusX
             State = GameState.Playing;
             System.GC.Collect();
         }
-
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -373,7 +373,6 @@ namespace VirusX
 #endif
         }
 
-
         public void Draw_OffsiteBuffers(GameTime gameTime, GraphicsDevice graphicsDevice)
         {
             if (State == GameState.Playing)
@@ -410,11 +409,11 @@ namespace VirusX
             // draw level
             level.Draw(gameTime, spriteBatch.GraphicsDevice, players);
 
-            // apply postprocessing
-            postPro.Draw(graphicsDevice);
-
             if (State == GameState.Playing || State == GameState.Paused)
             {
+                // apply postprocessing
+                postPro.Draw(graphicsDevice);
+
                 // ingame interface
                 inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime);
 
@@ -433,7 +432,7 @@ namespace VirusX
 
         public void Resize(GraphicsDevice graphicsDevice)
         {
-            if(level != null)
+            if (level != null)
                 level.Resize(graphicsDevice);
             if (postPro != null)
                 postPro.Resize(level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
