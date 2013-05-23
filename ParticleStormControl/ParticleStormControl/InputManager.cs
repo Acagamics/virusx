@@ -562,9 +562,9 @@ namespace VirusX
                             return down ? IsButtonDown(Keys.Escape) : IsButtonPressed(Keys.Escape);
 
                         case ControlActions.ADD_AI:
-                            return IsButtonPressed(Keys.OemPlus);
+                            return IsButtonPressed(Keys.OemPlus) || IsButtonPressed(Keys.Add);
                         case ControlActions.REMOVE_AI:
-                            return IsButtonPressed(Keys.OemMinus);
+                            return IsButtonPressed(Keys.OemMinus) || IsButtonPressed(Keys.Subtract);
 	                }
                     break;
                 case ControlType.KEYBOARD1:
@@ -588,9 +588,9 @@ namespace VirusX
                             return down ? IsButtonDown(Keys.Escape) : IsButtonPressed(Keys.Escape);
 
                         case ControlActions.ADD_AI:
-                            return IsButtonPressed(Keys.OemPlus);
+                            return IsButtonPressed(Keys.OemPlus) || IsButtonPressed(Keys.Add);
                         case ControlActions.REMOVE_AI:
-                            return IsButtonPressed(Keys.OemMinus);
+                            return IsButtonPressed(Keys.OemMinus) || IsButtonPressed(Keys.Subtract);
                     }
                     break;
                 case ControlType.KEYBOARD2:
@@ -616,9 +616,9 @@ namespace VirusX
                             return down ? IsButtonDown(Keys.Escape) : IsButtonPressed(Keys.Escape);
 
                         case ControlActions.ADD_AI:
-                            return IsButtonPressed(Keys.OemPlus);
+                            return IsButtonPressed(Keys.OemPlus) || IsButtonPressed(Keys.Add);
                         case ControlActions.REMOVE_AI:
-                            return IsButtonPressed(Keys.OemMinus);
+                            return IsButtonPressed(Keys.OemMinus) || IsButtonPressed(Keys.Subtract);
                     }
                     break;
 
