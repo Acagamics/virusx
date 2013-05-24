@@ -283,8 +283,8 @@ namespace VirusX
             virusSwarm.UpdateCPUPart((float)gameTime.ElapsedGameTime.TotalSeconds, posessedSpawns);
 
             // dead due to particle loss
-            if (virusSwarm.CurrentSpawnNumber == 0 && numOwnedSpawnPoints > 0)
-                alive = NumParticlesAlive > 0 || cantDie; // still alive *sing*
+            if (virusSwarm.CurrentSpawnNumber == 0 && numOwnedSpawnPoints == 0)
+                alive = NumParticlesAlive > 0 || cantDie;
 
             PossessingSpawnPoints = (uint)posessedSpawns.Count();
             PossessingSpawnPointsOverallSize = posessedSpawns.Sum(x => x.Size);
