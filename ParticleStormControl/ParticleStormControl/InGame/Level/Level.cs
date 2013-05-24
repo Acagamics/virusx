@@ -15,7 +15,7 @@ namespace VirusX
     {
         // statistics
         public Statistics GameStatistics { get; set; }
-        private bool dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug = true;
+        private bool skipFirstStatisticStep = true;
 
         // map objects
         private List<MapObject> mapObjects = new List<MapObject>();
@@ -297,6 +297,7 @@ namespace VirusX
             uint[] possesingSpawnPoints = new uint[players.Length];
             float[] possesingSpawnPointsOverallSize = new float[players.Length];
             for (int i = 0; i < possesingSpawnPoints.Length; ++i) { possesingSpawnPoints[i] = 0; possesingSpawnPointsOverallSize[i] = 0.0f; }
+
             // update
             foreach (MapObject mapObject in mapObjects)
             {
@@ -307,7 +308,6 @@ namespace VirusX
                 {
                     crosshair.Position = players[crosshair.PlayerIndex].CursorPosition;
                     crosshair.ParticleAttractionPosition = players[crosshair.PlayerIndex].ParticleAttractionPosition;
-                    //crosshair.Alive = players[crosshair.PlayerIndex].Alive;
                     crosshair.PlayerAlive = players[crosshair.PlayerIndex].Alive;
                 }
                 // statistics
@@ -341,36 +341,31 @@ namespace VirusX
             // remove dead objects
             for (int i = 0; i < mapObjects.Count; ++i)
             {
-                if (Settings.Instance.UseItems && clearAllItems)
-                {
-                    // remove all Items from the level after a wipeout
-                    if (mapObjects[i] is Item || mapObjects[i] is Debuff)
-                        mapObjects[i].Alive = false;
-                }
-                if (!mapObjects[i].Alive)
-                {
-                    // if its a item, give it to a player if its 100% his
-                    Item item = mapObjects[i] as Item;
-                    if (item != null && !item.Timeouted && item.PossessingPlayer != -1 && item.PossessingPercentage == 1.0f)
-                    {
-                        players[item.PossessingPlayer].ItemSlot = item.Type;
-                        // statistics
-                        GameStatistics.addCollectedItems(item.PossessingPlayer);
-                        InputManager.Instance.StartRumble(item.PossessingPlayer, 0.25f, 0.37f);
-                    }
+                if (mapObjects[i].Alive)
+                    continue;
 
-                    // statistics (a debuff has been activated)
-                    Debuff debuff = mapObjects[i] as Debuff;
-                    if (debuff != null)
-                    if(debuff.CapturingPlayer != -1 && debuff.PossessingPercentage >= 1.0f)
-                    {
-                        GameStatistics.ItemUsed(debuff.CapturingPlayer);
-                        InputManager.Instance.StartRumble(debuff.CapturingPlayer, 0.25f, 0.22f);
-                    }
-
-                    mapObjects.RemoveAt(i);
-                    --i;
+                // if its a item, give it to a player if its 100% his
+                Item item = mapObjects[i] as Item;
+                if (item != null && !item.Timeouted && item.PossessingPlayer != -1 && item.PossessingPercentage == 1.0f)
+                {
+                    players[item.PossessingPlayer].ItemSlot = item.Type;
+                    // statistics
+                    GameStatistics.addCollectedItems(item.PossessingPlayer);
+                    InputManager.Instance.StartRumble(item.PossessingPlayer, 0.25f, 0.37f);
                 }
+
+                // statistics (a debuff has been activated)
+                Debuff debuff = mapObjects[i] as Debuff;
+                if (debuff != null)
+                if(debuff.CapturingPlayer != -1 && debuff.PossessingPercentage >= 1.0f)
+                {
+                    GameStatistics.ItemUsed(debuff.CapturingPlayer);
+                    InputManager.Instance.StartRumble(debuff.CapturingPlayer, 0.25f, 0.22f);
+                }
+
+                // remove itself
+                mapObjects.RemoveAt(i);
+                --i;
             }
 
             // items
@@ -384,11 +379,17 @@ namespace VirusX
                     pickuptimer.Reset();
                     pickuptimer.Start();
                 }
-                // remove all player items after a wipeout
+                
                 if (clearAllItems)
                 {
+                    // remove all Items from the level after a wipeout
+                    foreach (var item in mapObjects.OfType<Item>())
+                        item.Alive = false;
+
+                    // remove all player items after a wipeout
                     foreach (Player p in players)
                         p.ItemSlot = Item.ItemType.NONE;
+
                     clearAllItems = false;
                 }
             }
@@ -396,7 +397,7 @@ namespace VirusX
             // statistics
             if (GameStatistics.UpdateTimer((float)gameTime.ElapsedGameTime.TotalSeconds))
             {
-                if (!dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug)
+                if (!skipFirstStatisticStep)
                 {
                     for (int i = 0; i < players.Length; ++i)
                     {
@@ -404,7 +405,8 @@ namespace VirusX
                     }
                     GameStatistics.UpdateDomination(players);
                 }
-                else dontSaveTheFirstStepBecauseThatLeadsToSomeUglyStatisticsBug = false;
+                else
+                    skipFirstStatisticStep = false;
             }
         }
 
@@ -629,11 +631,8 @@ namespace VirusX
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, scissorTestRasterizerState);
 
             // all alpha blended objects
-            foreach (MapObject mapObject in mapObjects)
-            {
-                if (mapObject.Alive)
-                    mapObject.Draw_AlphaBlended(spriteBatch, this, gameTime);
-            }
+            foreach (MapObject mapObject in mapObjects.Where(x=>x.Alive))
+                mapObject.Draw_AlphaBlended(spriteBatch, this, gameTime);
 
             // countdown
             DrawCountdown(device, (float)gameTime.TotalGameTime.TotalSeconds);

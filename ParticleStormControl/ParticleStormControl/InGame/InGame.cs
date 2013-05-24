@@ -339,6 +339,7 @@ namespace VirusX
                             winTimer[index].Stop();
                     }
                 }
+
                 // winning
                 if (State == GameState.Playing)
                     CheckWinning(gameTime);

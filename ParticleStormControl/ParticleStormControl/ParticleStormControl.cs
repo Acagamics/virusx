@@ -308,11 +308,9 @@ namespace VirusX
                     } while (System.IO.File.Exists(filename));
 
                     // save to disk
-                    using (var stream = System.IO.File.OpenWrite(filename))
-                    {
-                        texture.SaveAsPng(stream, w, h);
-                        stream.Close();
-                    }
+                    var stream = System.IO.File.OpenWrite(filename);
+                    texture.SaveAsPng(stream, w, h);
+                    stream.Close();
                 }
             }
 #endif
