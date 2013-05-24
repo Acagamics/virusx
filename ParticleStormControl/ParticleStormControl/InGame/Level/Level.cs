@@ -178,6 +178,12 @@ namespace VirusX
             switchCountdownActive = false;
             currentMapType = mapType;
 
+            // init statistics
+            GameStatistics = new Statistics(Settings.Instance.NumPlayers, 2400, (uint)SpawnPoints.Count);
+            // collect the virus types for statistic
+            foreach (Player player in players)
+                GameStatistics.SetVirusType(player.playerIndex, player.Virus);
+
             // create level
             spawnPoints.Clear();
             mapObjects.Clear();
@@ -256,30 +262,29 @@ namespace VirusX
         public void ApplyDamage(DamageMap damageMap, float timeInterval, Player[] playerList)
         {
             int prevPosPlayer = -1;
-            foreach (MapObject interest in mapObjects)
+            foreach (MapObject mapObject in mapObjects)
             {
                 // statistics
-                if (interest is SpawnPoint)
-                {
-                    //if((interest as SpawnPoint).PossessingPercentage == 1f)
-                        prevPosPlayer = (interest as SpawnPoint).PossessingPlayer;
-                }
-                // original line
-                interest.ApplyDamage(damageMap, timeInterval);
+                if (mapObject is SpawnPoint)
+                    prevPosPlayer = (mapObject as SpawnPoint).PossessingPlayer;
+
+                // damage
+                mapObject.ApplyDamage(damageMap, timeInterval);
+
                 // statistics
-                if (interest is SpawnPoint)
+                if (mapObject is SpawnPoint)
                 {
-                    if (prevPosPlayer != (interest as SpawnPoint).PossessingPlayer)
+                    if (prevPosPlayer != (mapObject as SpawnPoint).PossessingPlayer)
                     {
                         if (prevPosPlayer != -1)
                         {
                             GameStatistics.addLostSpawnPoints(prevPosPlayer);
                             InputManager.Instance.StartRumble(prevPosPlayer, 0.42f, 0.6f);
                         }
-                        if ((interest as SpawnPoint).PossessingPercentage == 1f && (interest as SpawnPoint).PossessingPlayer != -1)
+                        if ((mapObject as SpawnPoint).PossessingPercentage == 1f && (mapObject as SpawnPoint).PossessingPlayer != -1)
                         {
-                            GameStatistics.addCaptueredSpawnPoints((interest as SpawnPoint).PossessingPlayer);
-                            InputManager.Instance.StartRumble((interest as SpawnPoint).PossessingPlayer,0.42f,0.5f);
+                            GameStatistics.addCaptueredSpawnPoints((mapObject as SpawnPoint).PossessingPlayer);
+                            InputManager.Instance.StartRumble((mapObject as SpawnPoint).PossessingPlayer,0.42f,0.5f);
                         }
                     }
                 }
@@ -316,7 +321,7 @@ namespace VirusX
                     }
                 }
                 // move antibodies to the nearest player
-                else if (mapObject is Debuff)
+                else if (mapObject is Debuff && players.Length > 0)
                 {
                     var nearestPlayer = players.OrderBy(x => Vector2.DistanceSquared(x.ParticleAttractionPosition, mapObject.Position)).First();
                     Vector2 move = nearestPlayer.ParticleAttractionPosition - mapObject.Position;

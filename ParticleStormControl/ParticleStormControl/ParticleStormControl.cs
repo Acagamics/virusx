@@ -169,7 +169,6 @@ namespace VirusX
             inGame = new InGame(menu);
             tutorial = new Tutorial(this);
 
-            menu.PageChangingEvent += OnMenuPageChanged;
             menu.PageChangingEvent += inGame.OnMenuPageChanged;
             menu.PageChangingEvent += tutorial.OnMenuPageChanged;
 
@@ -200,24 +199,13 @@ namespace VirusX
         }
 
         /// <summary>
-        /// callback for menu page changed
-        /// </summary>
-        public void OnMenuPageChanged(Menu.Menu.Page newPage, Menu.Menu.Page oldPage)
-        {
-            if (newPage == VirusX.Menu.Menu.Page.INGAME && inGame.State == InGame.GameState.Inactive)
-                inGame.StartNewGame(GraphicsDevice, Content);
-        }
-
-
-        /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            float passedFrameTime = (float) gameTime.ElapsedGameTime.TotalSeconds;
-
+            AudioManager.Instance.PlaySongsRandom();
             InputManager.Instance.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
 
             if (firstUpdate)

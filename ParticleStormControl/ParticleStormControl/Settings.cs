@@ -19,7 +19,7 @@ namespace VirusX
         private static readonly Settings instance = new Settings();
         static public Settings Instance { get { return instance; } }
         private Settings() {
-            playerSettings = new List<PlayerSettings>(maxNumPlayers);
+            playerSettings = new List<PlayerSettings>(MAX_NUM_PLAYERS);
         }
 
         #region Graphics
@@ -37,8 +37,18 @@ namespace VirusX
 
         #region Game
 
-        private int maxNumPlayers = 4;
-        public int MaxNumPlayers { get { return maxNumPlayers; } set { maxNumPlayers = value; } }
+        public const int MAX_NUM_PLAYERS = 4;
+
+        public int MaxNumPlayers_AllowedByGameMode
+        {
+            get
+            {
+                if (GameMode == InGame.GameMode.TUTORIAL)
+                    return 2;
+                else
+                    return 4;
+            } 
+        }
 
         public class PlayerSettings
         {
@@ -51,13 +61,17 @@ namespace VirusX
         };
         private List<PlayerSettings> playerSettings;
 
+        /// <summary>
+        /// active gamemode
+        /// </summary>
         public InGame.GameMode GameMode { get; set; }
+
 
         public int NumPlayers { get { return playerSettings.Count; } }
 
         public void AddPlayer(PlayerSettings settings)
         {
-            Debug.Assert(NumPlayers < maxNumPlayers);
+            Debug.Assert(NumPlayers < MaxNumPlayers_AllowedByGameMode);
             playerSettings.Add(settings);
         }
 

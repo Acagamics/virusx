@@ -95,13 +95,7 @@ namespace VirusX.Menu
                 int SIDE_PADDING = TEXTBOX_HEIGHT + 30;
                 int ARROW_SIZE = menu.GetFontHeight();
 
-                // Tutorial mode
-                if (IsTutorial())
-                    Settings.Instance.MaxNumPlayers = 2;
-                else
-                    Settings.Instance.MaxNumPlayers = 4;
-
-                for (int i = 0; i < Settings.Instance.MaxNumPlayers; i++)
+                for (int i = 0; i < Settings.Instance.MaxNumPlayers_AllowedByGameMode; i++)
                 {
                     int index = i;
                     Vector2 origin = GetOrigin(index);
@@ -411,7 +405,7 @@ namespace VirusX.Menu
             if(InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION, out controlTypePressingContinue))
             {
                 if (!Settings.Instance.GetPlayerSettingSelection(x => x.ControlType).Contains(controlTypePressingContinue)
-                    && ((IsTutorial() && Settings.Instance.NumPlayers == 0) || !IsTutorial()))
+                    && ((Settings.Instance.GameMode == Game.GameMode.TUTORIAL && Settings.Instance.NumPlayers == 0) || Settings.Instance.GameMode != Game.GameMode.TUTORIAL))
                         AddPlayer(false, controlTypePressingContinue);
             }
 
@@ -585,7 +579,7 @@ namespace VirusX.Menu
         // if all slots are full -1 is returned
         private int GetFreeSlotIndex()
         {
-            if (Settings.Instance.NumPlayers >= Settings.Instance.MaxNumPlayers)
+            if (Settings.Instance.NumPlayers >= Settings.Instance.MaxNumPlayers_AllowedByGameMode)
                 return -1;
             int i = 0;
             while (i < 4 && playerSlotOccupied[i])
@@ -634,7 +628,7 @@ namespace VirusX.Menu
 
         private Vector2 GetOrigin(int i)
         {
-            if (IsTutorial())
+            if (Settings.Instance.GameMode == Game.GameMode.TUTORIAL)
             {
                 switch (i)
                 {
@@ -664,14 +658,9 @@ namespace VirusX.Menu
             }
         }
 
-        private bool IsTutorial()
-        {
-            return Settings.Instance.GameMode == Game.GameMode.TUTORIAL;
-        }
-
         private string GetJoinText(int index)
         {
-            if (IsTutorial())
+            if (Settings.Instance.GameMode == Game.GameMode.TUTORIAL)
                 return "< add a computer player >";
             else if (Settings.Instance.GameMode == Game.GameMode.CAPTURE_THE_CELL)
                 return "< press action button to join game >\n\n(you need four players for this mode)";

@@ -39,11 +39,11 @@ namespace VirusX
         /// <summary>
         /// vertexbuffer with instance data, one per player
         /// </summary>
-        private VertexBuffer[] instanceVertexBuffer;
+        private VertexBuffer[] instanceVertexBuffer = new VertexBuffer[Settings.MAX_NUM_PLAYERS];
 
         // bindings
         private VertexBufferBinding particleVertexBufferBinding;
-        private VertexBufferBinding[] instanceVertexBufferBinding;
+        private VertexBufferBinding[] instanceVertexBufferBinding = new VertexBufferBinding[Settings.MAX_NUM_PLAYERS];
 
         private Texture2D[] virusTextures = new Texture2D[(int)VirusSwarm.VirusType.NUM_VIRUSES];
 
@@ -52,11 +52,8 @@ namespace VirusX
         private static readonly Vector2 RENDERING_SIZE_CONSTANT = new Vector2(0.009f / Level.RELATIVECOR_ASPECT_RATIO, 0.009f) / 15.0f;
         private const float minimumHealth = 5.0f;  // added to the health in rendering shader
 
-        public ParticleRenderer(GraphicsDevice device, ContentManager content, int numPlayers)
+        public ParticleRenderer(GraphicsDevice device, ContentManager content)
         {
-            instanceVertexBufferBinding = new VertexBufferBinding[numPlayers];
-            instanceVertexBuffer = new VertexBuffer[numPlayers];
-
             particleEffect = content.Load<Effect>("shader/particleRendering");
             particleEffect.Parameters["TextureSize"].SetValue(VirusSwarm.MAX_PARTICLES_SQRT);
             particleEffect.Parameters["HealthToSizeScale"].SetValue(RENDERING_SIZE_CONSTANT);
@@ -76,7 +73,7 @@ namespace VirusX
 
             particleVertexBufferBinding = new VertexBufferBinding(particleVertexBuffer, 0, 0);
 
-            for (int i = 0; i < numPlayers; ++i)
+            for (int i = 0; i < instanceVertexBuffer.Length; ++i)
             {
                 instanceVertexBuffer[i] = new VertexBuffer(device, vertex2dInstance.VertexDeclaration, VirusSwarm.MAX_PARTICLES, BufferUsage.WriteOnly);
                 instanceVertexBufferBinding[i] = new VertexBufferBinding(instanceVertexBuffer[i], 0, 1);
@@ -86,7 +83,7 @@ namespace VirusX
             for(int i=0; i<virusTextures.Length; ++i)
                 virusTextures[i] = content.Load<Texture2D>(GetVirusTextureName((VirusSwarm.VirusType)i));
 
-            UpdateVertexBuffers(numPlayers);
+            UpdateVertexBuffers(instanceVertexBuffer.Length);
         }
 
         public static string GetVirusTextureName(VirusSwarm.VirusType type)
@@ -121,7 +118,7 @@ namespace VirusX
             }
         }
 
-        private bool renderingOrderX = true;
+        private bool renderingOrderFlag = true;
 
         public void Draw(GraphicsDevice device, Player[] players, bool damage /*= false*/)
         {
@@ -130,15 +127,15 @@ namespace VirusX
 
             // reversing rendering order every frame - this seems to affect the player damaging!
             if (damage)
-                renderingOrderX = !renderingOrderX;
-            if (renderingOrderX)
+                renderingOrderFlag = !renderingOrderFlag;
+            if (renderingOrderFlag)
             {
-                for (int i = instanceVertexBufferBinding.Length - 1; i > -1; --i)
+                for (int i = players.Length - 1; i > -1; --i)
                     DrawIntern(device, damage, players[i]);
             }
             else
             {
-                for (int i = 0; i < instanceVertexBufferBinding.Length; ++i)
+                for (int i = 0; i < players.Length; ++i)
                     DrawIntern(device, damage, players[i]);
             }
 

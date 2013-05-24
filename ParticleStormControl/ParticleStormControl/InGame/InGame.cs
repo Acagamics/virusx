@@ -71,7 +71,7 @@ namespace VirusX
         /// <summary>
         /// Statistics
         /// </summary>
-        public Statistics GameStatistics { get { if (level == null) return null; return level.GameStatistics; } }
+        public Statistics GameStatistics { get { return GameStatistics; } }
 
         /// <summary>
         /// reference to the menu
@@ -125,7 +125,7 @@ namespace VirusX
 
         public enum GameState
         {
-    //        Demo,
+            Demo,
             Inactive,
             Playing,
             Paused,
@@ -134,7 +134,7 @@ namespace VirusX
         public InGame(Menu.Menu menu)
         {
             this.menu = menu;
-            State = GameState.Inactive;
+            State = GameState.Demo;
         }
 
         /// <summary>
@@ -142,29 +142,29 @@ namespace VirusX
         /// </summary>
         public void OnMenuPageChanged(Menu.Menu.Page newPage, Menu.Menu.Page oldPage)
         {
-            if (newPage == Menu.Menu.Page.PAUSED || (newPage == Menu.Menu.Page.CONTROLS && oldPage == Menu.Menu.Page.INGAME))
+            if (newPage == VirusX.Menu.Menu.Page.INGAME && State == InGame.GameState.Inactive)
+                StartNewGame();
+            else if (newPage == Menu.Menu.Page.PAUSED || (newPage == Menu.Menu.Page.CONTROLS && oldPage == Menu.Menu.Page.INGAME))
                 State = InGame.GameState.Paused;
             else if (newPage == Menu.Menu.Page.INGAME)
                 State = InGame.GameState.Playing;
+            else if (newPage != Menu.Menu.Page.NEWGAME)
+                StartDemo();
             else
-            {
-                // generic level as background
-                if (State != InGame.GameState.Inactive)
-                {
-                    particleRenderer = null;
-                    damageMap.Clear(graphicsDevice);
-                    players = new Player[0];
-                    level.NewGame(MapGenerator.MapType.BACKGROUND, graphicsDevice, players);
-                }
-
-                State = InGame.GameState.Inactive;
-            }
+                SetupBackground();
         }
 
-        public void StartNewGame(GraphicsDevice graphicsDevice, ContentManager content)
+        #region "start new game" methods
+
+        /// <summary>
+        /// starts a new game
+        /// </summary>
+        private void StartNewGame()
         {
+            State = GameState.Playing;
             instantDeathProtectingTime = 0.0f;
 
+            // player setup
             players = new Player[Settings.Instance.NumPlayers];
             int count = 0;
             for (int i = 0; i < 4; ++i)
@@ -187,7 +187,7 @@ namespace VirusX
                 }
             }
 
-            // restart stuff
+            // new map
             MapGenerator.MapType mapType;
             switch(Settings.Instance.GameMode)
             {
@@ -203,17 +203,6 @@ namespace VirusX
 
             }
             level.NewGame(mapType, graphicsDevice, players);
-            particleRenderer = new ParticleRenderer(graphicsDevice, content, players.Length);
-
-            // init statistics
-            level.GameStatistics = new Statistics(Settings.Instance.NumPlayers, 2400, (uint)level.SpawnPoints.Count);
-
-            // collect the virus types
-            foreach (Player player in players)
-                level.GameStatistics.SetVirusType(player.playerIndex, player.Virus);
-
-            State = GameState.Playing;
-            System.GC.Collect();
 
             // for Game Mode INSERT_MODE_NAME
             //if (Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME)
@@ -222,7 +211,38 @@ namespace VirusX
                 for (int index = 0; index < players.Length; ++index)
                     winTimer[index] = new Stopwatch();
             //}
+
+
+            // run gc now!
+            //System.GC.Collect();
         }
+
+        private void StartDemo()
+        {
+            if (State == InGame.GameState.Demo)
+                return;
+
+            Settings.Instance.GameMode = GameMode.CLASSIC;
+
+            damageMap.Clear(graphicsDevice);
+            players = new Player[0];
+            level.NewGame(MapGenerator.MapType.BACKGROUND, graphicsDevice, players);
+
+            State = InGame.GameState.Demo;
+        }
+
+        private void SetupBackground()
+        {
+            if (State == InGame.GameState.Inactive)
+                return;
+
+            players = new Player[0];
+            level.NewGame(MapGenerator.MapType.BACKGROUND, graphicsDevice, players);
+            State = InGame.GameState.Inactive;
+        }
+
+        #endregion
+
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -233,6 +253,7 @@ namespace VirusX
             this.graphicsDevice = graphicsDevice;
             this.content = content;
 
+            particleRenderer = new ParticleRenderer(graphicsDevice, content);
             damageMap = new DamageMap();
             noiseWhite2D = NoiseTexture.GenerateNoise2D16f(graphicsDevice, 64, 64);
 
@@ -253,10 +274,8 @@ namespace VirusX
         {
             float passedFrameTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            AudioManager.Instance.PlaySongsRandom();
-
             // playing
-            if (State == GameState.Playing)
+            if (State == GameState.Playing || State == InGame.GameState.Demo)
             {
                 // do controlling
                 foreach (Player player in players)
@@ -299,7 +318,7 @@ namespace VirusX
                         GameStatistics.playerDied(i);
                 }
 
-                // damaging - switch every frame to be xbox friendly (preserve content stuff)
+                // damaging - switch every frame to be fast and xbox friendly (preserve content stuff)
                 // see also correlating gpu-functions
                 if (levelDamageFrame)
                 {
@@ -321,7 +340,8 @@ namespace VirusX
                     }
                 }
                 // winning
-                CheckWinning(gameTime);
+                if (State == GameState.Playing)
+                    CheckWinning(gameTime);
             }
         }
 
@@ -394,7 +414,7 @@ namespace VirusX
             if (winPlayerIndex != -1 || winningTeam != Player.Teams.NONE)
             {
                 // statistics
-                level.GameStatistics.addWonMatches(winPlayerIndex);
+                GameStatistics.addWonMatches(winPlayerIndex);
 
                 ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).WinningTeam = winningTeam;
                 ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).WinPlayerIndex = winPlayerIndex;
@@ -406,7 +426,7 @@ namespace VirusX
 
 #if STATS_TEST
             // statistics
-            level.GameStatistics.FillWithTestdata(1000);
+            GameStatistics.FillWithTestdata(1000);
 
             ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).WinPlayerIndex = 0;
             ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
