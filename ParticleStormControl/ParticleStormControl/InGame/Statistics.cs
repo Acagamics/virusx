@@ -475,10 +475,8 @@ namespace VirusX
 
 
             float [] percentage = ComputeDomination(players);
-            for (int i = 0; i < playerCount; ++i)
-            {
+            for (int i = 0; i < percentage.Length; ++i)
                 dominationInStep[i].Add(percentage[i]);
-            }
 
             if (steps == maxStoredSteps)
             {
