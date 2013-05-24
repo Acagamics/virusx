@@ -19,7 +19,7 @@ namespace VirusX.Menu
 {
     class StatisticsScreen : MenuPage
     {
-        private Statistics statistics;
+        public Statistics Statistics { get; set; }
         private List<string> captions = new List<string> { "Captured", "Lost", "Max #", "Average #", "Average HP", "Items" };
         private List<string>[] values = new List<string>[0];
 
@@ -125,7 +125,7 @@ namespace VirusX.Menu
             {
                 int index = i;
                 playerStatLabels[i] = new InterfaceButton(() => { return Player.ColorNames[PlayerColorIndices[index]]; }, new Vector2(leftStart, 160 + ROW_HEIGHT * index),
-                                () => { return false; }, () => { return index < statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING, 
+                                () => { return false; }, () => { return index < Statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING, 
                                 Color.White, Color.Black, false, Alignment.TOP_CENTER);
                 Interface.Add(playerStatLabels[i]);
                 for (int j = 0; j < captions.Count; j++)
@@ -133,7 +133,7 @@ namespace VirusX.Menu
                     int x = i;
                     int y = j;
                     Interface.Add(new InterfaceButton(() => values[x][y], new Vector2(leftStart + COLUMN_WIDTH * (y + 1), 160 + ROW_HEIGHT * x),
-                                    () => { return false; }, () => { return x < statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING, Alignment.TOP_CENTER));
+                                    () => { return false; }, () => { return x < Statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING, Alignment.TOP_CENTER));
                 }
             }
 
@@ -192,7 +192,6 @@ namespace VirusX.Menu
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
-            statistics = menu.Game.InGame.Level.GameStatistics;
 #if SAVE_STATISTICS
             // save statistics
             String fileName = DateTime.Now.Date.Year.ToString()
@@ -205,7 +204,7 @@ namespace VirusX.Menu
                 + "_VirusXStat.bin";
             Stream streamWrite = File.Create(fileName);
             BinaryFormatter binaryWrite = new BinaryFormatter();
-            binaryWrite.Serialize(streamWrite, statistics);
+            binaryWrite.Serialize(streamWrite, Statistics);
             streamWrite.Close();
 #endif
 #if LOAD_STATISTICS
@@ -216,19 +215,19 @@ namespace VirusX.Menu
 #endif
             currentDiagramType = DiagramType.DOMINATION;
 
-            values = new List<string>[statistics.PlayerCount];
+            values = new List<string>[Statistics.PlayerCount];
             int counter = 0;
             for (int i = 0; i < PlayerTypes.Length; i++)
             {
                 if (PlayerTypes[i] != Player.Type.NONE)
                 {
                     values[counter] = new List<string>();
-                    values[counter].Add(statistics.getCapturedSpawnPoints(i).ToString());
-                    values[counter].Add(statistics.getLostSpawnPoints(i).ToString());
-                    values[counter].Add(statistics.getMaxSimultaneousParticles(i).ToString());
-                    values[counter].Add(statistics.getAverageParticles(i).ToString());
-                    values[counter].Add(statistics.getAverageHealth(i).ToString());
-                    values[counter].Add(statistics.getCollectedItems(i).ToString());
+                    values[counter].Add(Statistics.getCapturedSpawnPoints(i).ToString());
+                    values[counter].Add(Statistics.getLostSpawnPoints(i).ToString());
+                    values[counter].Add(Statistics.getMaxSimultaneousParticles(i).ToString());
+                    values[counter].Add(Statistics.getAverageParticles(i).ToString());
+                    values[counter].Add(Statistics.getAverageHealth(i).ToString());
+                    values[counter].Add(Statistics.getCollectedItems(i).ToString());
                     playerStatLabels[i].BackgroundColor = Settings.Instance.GetPlayerColor(i);
                     counter++;
                 }
@@ -297,19 +296,19 @@ namespace VirusX.Menu
             switch (currentDiagramType)
             {
                 case DiagramType.DOMINATION:
-                    DrawDiagram(spriteBatch, (progress, player) => DataInterpolation(progress,  x=>statistics.getDominationInStep(player, x), statistics.Steps-1),
+                    DrawDiagram(spriteBatch, (progress, player) => DataInterpolation(progress,  x=>Statistics.getDominationInStep(player, x), Statistics.Steps-1),
                                                     (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.HEALTH:
-                    DrawDiagram(spriteBatch, (progress, player) => DataInterpolation(progress,  x=>statistics.getHealthInStep(player, x), statistics.Steps-1) / statistics.MaxOverallSimultaneousHealth,
+                    DrawDiagram(spriteBatch, (progress, player) => DataInterpolation(progress,  x=>Statistics.getHealthInStep(player, x), Statistics.Steps-1) / Statistics.MaxOverallSimultaneousHealth,
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.MASS:
-                    DrawDiagram(spriteBatch, (progress, player) => DataInterpolation(progress, x => statistics.getParticlesInStep(player, x), statistics.Steps - 1) / statistics.MaxOverallSimultaneousParticles,
+                    DrawDiagram(spriteBatch, (progress, player) => DataInterpolation(progress, x => Statistics.getParticlesInStep(player, x), Statistics.Steps - 1) / Statistics.MaxOverallSimultaneousParticles,
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
                 case DiagramType.SPAWN_POINTS:
-                    DrawDiagram(spriteBatch, (progress, player) => ((float)statistics.getPossessingSpawnPointsInStep(player, (int)(progress * statistics.Steps)) / statistics.OverallNumberOfSpawnPoints),
+                    DrawDiagram(spriteBatch, (progress, player) => ((float)Statistics.getPossessingSpawnPointsInStep(player, (int)(progress * Statistics.Steps)) / Statistics.OverallNumberOfSpawnPoints),
                                                                      (float)gameTime.ElapsedGameTime.TotalSeconds, maxWidth, height, yPos);
                     break;
             }
@@ -320,7 +319,7 @@ namespace VirusX.Menu
 
         private float DataInterpolation(float progress, Func<int, float> stepToDataFunc, int maxStep)
         {
-            float stepFloat = progress * statistics.Steps;
+            float stepFloat = progress * Statistics.Steps;
             int stepFloor = (int)(stepFloat);
             int stepCeil = Math.Min((int)Math.Ceiling(stepFloat), maxStep);
             float stepPercentage = stepFloat - stepFloor;
@@ -363,7 +362,7 @@ namespace VirusX.Menu
             {
                 int offset = 0;
                 float progress = (float)pixel / area.Width;
-                for (int playerIndex = statistics.PlayerCount-1; playerIndex >= 0; --playerIndex)
+                for (int playerIndex = Statistics.PlayerCount-1; playerIndex >= 0; --playerIndex)
                 {
                     float percentage = heightFunction(progress, playerIndex);
                     int height = (int)(percentage * area.Height);
@@ -382,12 +381,12 @@ namespace VirusX.Menu
             spriteBatch.Draw(menu.TexPixel, rouningHide, Color.Black);
 
             // draw items
-            float stepWidth = (float)area.Width / statistics.Steps;
-            for (int step = 0; step < statistics.Steps; step++)    
+            float stepWidth = (float)area.Width / Statistics.Steps;
+            for (int step = 0; step < Statistics.Steps; step++)    
             {
                 int offset = 0;
-                float progress = (float)step / (statistics.Steps-1);
-                for (int playerIndex = statistics.PlayerCount - 1; playerIndex >= 0; --playerIndex)
+                float progress = (float)step / (Statistics.Steps-1);
+                for (int playerIndex = Statistics.PlayerCount - 1; playerIndex >= 0; --playerIndex)
                 {
                     float percentage = heightFunction(progress, playerIndex);
                     int height = (int)(percentage * area.Height);
@@ -395,7 +394,7 @@ namespace VirusX.Menu
                     offset += height;
 
                     // render
-                    Statistics.StatItems? itemUsed = statistics.getFirstUsedItemInStep(playerIndex, step + statistics.FirstStep);
+                    Statistics.StatItems? itemUsed = Statistics.getFirstUsedItemInStep(playerIndex, step + Statistics.FirstStep);
                     if (itemUsed != null)
                     {
                         int y = (int)MathHelper.Clamp(area.Bottom - offset + (height - ITEM_DISPLAY_SIZE) / 2, area.Y, area.Y + area.Height - ITEM_DISPLAY_SIZE);
@@ -403,9 +402,9 @@ namespace VirusX.Menu
 
                         if ((Statistics.StatItems)itemUsed == Statistics.StatItems.MUTATION)
                         {
-                            if (Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime + step > statistics.Steps)  // never happen?
+                            if (Level.SWITCH_COUNTDOWN_LENGTH / Statistics.StepTime + step > Statistics.Steps)  // never happen?
                                 continue;
-                            x += (int)(Level.SWITCH_COUNTDOWN_LENGTH / statistics.StepTime * stepWidth);
+                            x += (int)(Level.SWITCH_COUNTDOWN_LENGTH / Statistics.StepTime * stepWidth);
                         }
 
                         x = (int)MathHelper.Clamp(x, area.X, area.X + area.Width - ITEM_DISPLAY_SIZE);
@@ -419,12 +418,12 @@ namespace VirusX.Menu
             }
             
             // draw deaths
-            for (int playerIndex = 0; playerIndex<statistics.PlayerCount; ++playerIndex)
+            for (int playerIndex = 0; playerIndex<Statistics.PlayerCount; ++playerIndex)
             {
-                int depthStep = statistics.getDeathStepOfPlayer(playerIndex) - statistics.FirstStep;
+                int depthStep = Statistics.getDeathStepOfPlayer(playerIndex) - Statistics.FirstStep;
                 if (depthStep >= 0)
                 {
-                    float percentage = (float)depthStep / statistics.Steps;
+                    float percentage = (float)depthStep / Statistics.Steps;
                     int xPos = (int)MathHelper.Clamp(area.X + percentage * area.Width - ITEM_DISPLAY_SIZE / 2, area.X, area.X + area.Width - ITEM_DISPLAY_SIZE);
                     spriteBatch.Draw(playerDiedTexture, new Rectangle(xPos, area.Bottom - ITEM_DISPLAY_SIZE + 5, ITEM_DISPLAY_SIZE, ITEM_DISPLAY_SIZE),
                                             Player.Colors[PlayerColorIndices[playerIndex]]);
@@ -437,7 +436,7 @@ namespace VirusX.Menu
             for (int i = 0; i < timeDisplays.Length; ++i)
             {
                 float progress = (float)i / (timeDisplays.Length-1);
-                float time = statistics.LastStep * progress * statistics.StepTime;
+                float time = Statistics.LastStep * progress * Statistics.StepTime;
                 string endTimeString = GenerateTimeString(time);
                 float textLen = menu.Font.MeasureString(endTimeString).X;
                 

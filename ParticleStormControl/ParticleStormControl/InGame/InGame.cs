@@ -71,7 +71,7 @@ namespace VirusX
         /// <summary>
         /// Statistics
         /// </summary>
-        public Statistics GameStatistics { get { return GameStatistics; } }
+        public Statistics GameStatistics { get { return level.GameStatistics; } }
 
         /// <summary>
         /// reference to the menu
@@ -416,10 +416,12 @@ namespace VirusX
                 // statistics
                 GameStatistics.addWonMatches(winPlayerIndex);
 
-                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).WinningTeam = winningTeam;
-                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).WinPlayerIndex = winPlayerIndex;
-                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
-                ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
+                Menu.StatisticsScreen statScreen = ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS));
+                statScreen.WinningTeam          = winningTeam;
+                statScreen.WinPlayerIndex       = winPlayerIndex;
+                statScreen.PlayerTypes          = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
+                statScreen.PlayerColorIndices   = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
+                statScreen.Statistics           = GameStatistics;
 
                 menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
             }
@@ -431,6 +433,7 @@ namespace VirusX
             ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).WinPlayerIndex = 0;
             ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
             ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS)).PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
+            statScreen.Statistics = GameStatistics;
 
             menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
 #endif
