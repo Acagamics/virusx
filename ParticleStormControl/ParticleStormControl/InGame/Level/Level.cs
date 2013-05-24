@@ -178,12 +178,6 @@ namespace VirusX
             switchCountdownActive = false;
             currentMapType = mapType;
 
-            // init statistics
-            GameStatistics = new Statistics(Settings.Instance.NumPlayers, 2400, (uint)SpawnPoints.Count);
-            // collect the virus types for statistic
-            foreach (Player player in players)
-                GameStatistics.SetVirusType(player.playerIndex, player.Virus);
-
             // create level
             spawnPoints.Clear();
             mapObjects.Clear();
@@ -197,6 +191,12 @@ namespace VirusX
             // clear player rendering
             BeginDrawInternParticleTarget(device);
             EndDrawInternParticleTarget(device);
+
+            // init statistics
+            GameStatistics = new Statistics(Settings.Instance.NumPlayers, 2400, (uint)SpawnPoints.Count);
+            // collect the virus types for statistic
+            foreach (Player player in players)
+                GameStatistics.SetVirusType(player.playerIndex, player.Virus);
         }
 
         /// <summary>
