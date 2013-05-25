@@ -47,6 +47,7 @@ namespace VirusX
                     screenTarget.Dispose();
                 screenTarget = new RenderTarget2D(device, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, false, SurfaceFormat.Color, DepthFormat.None);
                 vignettingShader.Parameters["HalfPixelCorrection"].SetValue(new Vector2(0.5f / screenTarget.Width, 0.5f / screenTarget.Height));
+                vignettingShader.Parameters["InversePixelSize"].SetValue(new Vector2(1.0f / screenTarget.Width, 1.0f / screenTarget.Height));
             }
         }
 
@@ -56,7 +57,7 @@ namespace VirusX
             this.vignettingOn = vignettingOn;
 
             Vector2 posScale = new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) / new Vector2(fieldSize_pixel.X, fieldSize_pixel.Y);
-            Vector2 posOffset = -new Vector2(fieldOffset_pixel.X, fieldOffset_pixel.Y) / new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY);
+            Vector2 posOffset = -new Vector2(fieldOffset_pixel.X, fieldOffset_pixel.Y) / new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) * posScale;
             vignettingShader.Parameters["Vignetting_PosScale"].SetValue(posScale);
             vignettingShader.Parameters["Vignetting_PosOffset"].SetValue(posOffset);
         }
