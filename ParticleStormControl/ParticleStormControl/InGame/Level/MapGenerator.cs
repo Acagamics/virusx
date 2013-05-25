@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CustomExtensions;
 
 namespace VirusX
 {
@@ -16,6 +17,9 @@ namespace VirusX
         private const float CTC_NORMAL_PLAYER_CELL_STRENGTH = 800.0f;
         private const float MONSTER_CELL_STRENGTH = CTC_NORMAL_PLAYER_CELL_STRENGTH * 3;
 
+        private const int SPAWNS_GRID_NORMAL_X = 6;
+        private const int SPAWNS_GRID_NORMAL_Y = 3;
+
         /// <summary>
         /// possible maps to generate
         /// </summary>
@@ -24,12 +28,14 @@ namespace VirusX
             NORMAL,
             CAPTURE_THE_CELL,
             FUN,
+
             BACKGROUND,
 
             NONE
         };
 
-        static public IEnumerable<MapObject> GenerateLevel(MapType mapType, GraphicsDevice device, ContentManager content, int numPlayers, Background outBackground)
+        static public IEnumerable<MapObject> GenerateLevel(MapType mapType, GraphicsDevice device, ContentManager content, int numPlayers, Background outBackground,
+                                                                    Point levelFieldPixelSize, Point levelFieldPixelOffset)
         {
             switch(mapType){
                 case MapType.CAPTURE_THE_CELL:
@@ -37,7 +43,7 @@ namespace VirusX
                 case MapType.FUN:
                     return GenerateFunLevel(device, content, numPlayers, outBackground);
                 case MapType.BACKGROUND:
-                    return GenerateBackground(device, content, outBackground);
+                    return GenerateBackground(device, content, numPlayers, outBackground, levelFieldPixelSize, levelFieldPixelOffset);
                 default:
                     return GenerateNormalLevel(device, content, numPlayers, outBackground);
             }
@@ -94,9 +100,7 @@ namespace VirusX
             }
 
             // generate in a grid of equilateral triangles
-            const int SPAWNS_GRID_X = 6;
-            const int SPAWNS_GRID_Y = 3;
-            List<Vector2> spawnPositions = GenerateCellPositionGrid(SPAWNS_GRID_X, SPAWNS_GRID_Y, 0.12f, new Vector2(LEVEL_BORDER), Level.RELATIVE_MAX);
+            List<Vector2> spawnPositions = GenerateCellPositionGrid(SPAWNS_GRID_NORMAL_X, SPAWNS_GRID_NORMAL_Y, 0.12f, new Vector2(LEVEL_BORDER), Level.RELATIVE_MAX);
 
 
             // random skipping - nonlinear randomness!
@@ -128,7 +132,6 @@ namespace VirusX
                 }
                 outBackground.Generate(device, renderCells, Level.RELATIVE_MAX);
             }
-
             return spawnPoints.Cast<MapObject>();
         }
 
@@ -194,17 +197,57 @@ namespace VirusX
             return spawnPoints.Cast<MapObject>();
         }
 
-        static private IEnumerable<MapObject> GenerateBackground(GraphicsDevice device, ContentManager content, Background outBackground)
+        static private IEnumerable<MapObject> GenerateBackground(GraphicsDevice device, ContentManager content, int numPlayers, Background outBackground,
+                                                                    Point levelFieldPixelSize, Point levelFieldPixelOffset)
         {
-            // generate cell positions for menu background
-            Vector2 relativeMax = new Vector2((float)Settings.Instance.ResolutionX / Settings.Instance.ResolutionY, 1.0f);
-            const int NUM_CELLS_Y = 4;
-            int numCellsX = (int)(NUM_CELLS_Y * relativeMax.X + 0.5f);
-            List<Vector2> cellPositions = MapGenerator.GenerateCellPositionGrid(numCellsX, NUM_CELLS_Y, 0.09f, Vector2.Zero, relativeMax);
-            outBackground.Generate(device, new Rectangle(0,0, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY), cellPositions, relativeMax);
-            outBackground.UpdateColors(Enumerable.Repeat(Color.White, cellPositions.Count).ToArray());
+            List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
 
-            return new List<MapObject>();
+            // basic idea:
+            // - generate a quite normal map
+            // - add additional cells above and below to be fullscreen capable
+            // -> do some position computation for background output
+
+
+           // add for the area above and below
+            Vector2 addedAreaPixel = new Vector2(Settings.Instance.ResolutionX - levelFieldPixelSize.X, Settings.Instance.ResolutionY - levelFieldPixelSize.Y);
+            Vector2 addedAreaRelative = addedAreaPixel / levelFieldPixelSize.ToVector2() * Level.RELATIVE_MAX;
+            Vector2 totalAreaSize = Level.RELATIVE_MAX + addedAreaRelative;
+            Vector2 relativeOffset = levelFieldPixelOffset.ToVector2() / levelFieldPixelSize.ToVector2() * Level.RELATIVE_MAX;
+
+            int numCellsX = (int)(SPAWNS_GRID_NORMAL_X + addedAreaRelative.X * ((float)SPAWNS_GRID_NORMAL_X / Level.RELATIVE_MAX.X) + 1);
+            int numCellsY = (int)(SPAWNS_GRID_NORMAL_Y + addedAreaRelative.Y * ((float)SPAWNS_GRID_NORMAL_Y / Level.RELATIVE_MAX.Y) + 1);
+            List<Vector2> normalCellPositions = MapGenerator.GenerateCellPositionGrid(numCellsX, numCellsY, 0.09f, Vector2.Zero, totalAreaSize);
+            for (int i = 0; i < normalCellPositions.Count; ++i)
+                normalCellPositions[i] -= relativeOffset;
+
+            if (numPlayers != 0) // no spawns at all if there are no players
+            {
+                var spawnPositions = normalCellPositions.Where(x => x.X > Level.RELATIVE_MAX.X / 3 && x.X < Level.RELATIVE_MAX.X - 0.1f &&
+                                                                      x.Y > 0.1f && x.Y < Level.RELATIVE_MAX.Y - 0.1f).ToList();
+
+                // choose random positions for player spawns
+                for(int player=0; player<numPlayers; ++player)
+                {
+                    int playerSpawnPos = Random.Next(spawnPositions.Count);
+                    spawnPoints.Add(new SpawnPoint(spawnPositions[playerSpawnPos], NORMAL_PLAYER_CELL_STRENGTH, player, content));
+                    spawnPositions.RemoveAt(playerSpawnPos);
+                }
+
+                // add regular spawns
+                foreach (Vector2 spawn in spawnPositions)
+                {
+                    spawnPoints.Add(new SpawnPoint(spawn, GetStandardSpawnSizeDependingFromArea(normalCellPositions, spawn), -1, content));
+                }
+            }
+            
+            // generate background - spawn point at first
+            List<Vector2> renderCells = new List<Vector2>(spawnPoints.Select(x=>x.Position));
+            renderCells.AddRange(normalCellPositions.Except(renderCells));
+            for (int i = 0; i < renderCells.Count; ++i) // bring into positive area
+                renderCells[i] += relativeOffset;
+            outBackground.Generate(device, new Rectangle(0, 0, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY), renderCells, totalAreaSize);
+
+            return spawnPoints;
         }
 
         static private float GetStandardSpawnSizeDependingFromArea(IEnumerable<Vector2> spawnPositions, Vector2 pos)

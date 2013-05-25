@@ -24,7 +24,7 @@ namespace VirusX
         private Texture2D cellColorTexture;
 
         // last settings
-        private List<Vector2> cellPositions = new List<Vector2>();
+        private Vector2[] cellPositions = new Vector2[0];
         private Vector2 relativeCoordMax;
         private Vector2 posScale;
         private Vector2 posOffset;
@@ -32,7 +32,7 @@ namespace VirusX
 
 
 
-        public int NumBackgroundCells { get { return cellPositions.Count;  } }
+        public int NumBackgroundCells { get { return cellPositions.Length;  } }
 
         public Background(GraphicsDevice device, ContentManager content)
         {
@@ -79,20 +79,27 @@ namespace VirusX
                                    new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) * 2.0f - new Vector2(1, -1);
         }
 
-        public void Generate(GraphicsDevice device, List<Vector2> cellPositions, Vector2 relativeMax)
+        /// <summary>
+        /// regenerates the background
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="newCellPositions">null if you want to keep old cellpositions</param>
+        /// <param name="relativeMax"></param>
+        public void Generate(GraphicsDevice device, IEnumerable<Vector2> newCellPositions, Vector2 relativeMax)
         {
-            this.cellPositions = cellPositions;
+            if(newCellPositions != null)
+                this.cellPositions = newCellPositions.ToArray();
             this.relativeCoordMax = relativeMax;
 
-            if (cellPositions.Count == 0)
-                return;
+        //    if (this.cellPositions.Length == 0)
+        //        return;
 
             // new cellcolors
             backgroundShader.Parameters["CellColorTexture"].SetValue((Texture2D)null);
 
             // new settings
-            backgroundShader.Parameters["NumCells"].SetValue(cellPositions.Count);
-            backgroundShader.Parameters["Cells_Pos2D"].SetValue(cellPositions.ToArray());
+            backgroundShader.Parameters["NumCells"].SetValue(this.cellPositions.Length);
+            backgroundShader.Parameters["Cells_Pos2D"].SetValue(this.cellPositions);
             backgroundShader.Parameters["RelativeMax"].SetValue(relativeCoordMax);
             backgroundShader.Parameters["PosScale"].SetValue(new Vector2(2.0f, -2.0f));
             backgroundShader.Parameters["PosOffset"].SetValue(new Vector2(-1.0f, 1.0f));
@@ -100,6 +107,7 @@ namespace VirusX
 
             // precompute background
             device.SetRenderTarget(backgroundTexture);
+            device.Clear(Color.Black);
             device.SetVertexBuffer(quadVertexBuffer);
             backgroundShader.CurrentTechnique.Passes[0].Apply();
             device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
@@ -118,18 +126,18 @@ namespace VirusX
         /// </summary>
         public void Resize(GraphicsDevice device, Rectangle areaInPixel)
         {
-            Generate(device, areaInPixel, this.cellPositions, relativeCoordMax);
+            Generate(device, areaInPixel, null, relativeCoordMax);
         }
         public void Resize(GraphicsDevice device, Rectangle areaInPixel, Vector2 relativeCoordMax)
         {
-            Generate(device, areaInPixel, this.cellPositions, relativeCoordMax);
+            Generate(device, areaInPixel, null, relativeCoordMax);
         }
 
         public void UpdateColors(Color[] colors)
         {
             cellColorTexture.GraphicsDevice.Textures[0] = null;
             cellColorTexture.GraphicsDevice.Textures[1] = null;
-            System.Diagnostics.Debug.Assert(colors.Length == cellPositions.Count);
+            System.Diagnostics.Debug.Assert(colors.Length == cellPositions.Length);
             if(colors.Length < cellColorTexture.Width)
                 cellColorTexture.SetData(colors.Concat(Enumerable.Repeat(Color.Black, cellColorTexture.Width - colors.Length)).ToArray());
         }

@@ -178,10 +178,14 @@ namespace VirusX
             switchCountdownActive = false;
             currentMapType = mapType;
 
+            // recompute dimensions (offset can be variable!) without influencing the coming-soon-updated background
+            Resize(device, false);
+
             // create level
             spawnPoints.Clear();
             mapObjects.Clear();
-            mapObjects.AddRange(MapGenerator.GenerateLevel(mapType, device, contentManager, players.Length, background));
+            mapObjects.AddRange(MapGenerator.GenerateLevel(mapType, device, contentManager, players.Length, background,
+                                    fieldSize_pixel, fieldOffset_pixel));
             spawnPoints.AddRange(mapObjects.OfType<SpawnPoint>());
 
             // crosshairs for players
@@ -665,7 +669,7 @@ namespace VirusX
             }
         }
 
-        public void Resize(GraphicsDevice device)
+        public void Resize(GraphicsDevice device, bool resizeBackground = true)
         {
             // letterboxing
             float sizeY = Settings.Instance.ResolutionX / RELATIVECOR_ASPECT_RATIO;
@@ -673,20 +677,24 @@ namespace VirusX
                 sizeY = Settings.Instance.ResolutionY - PercentageBar.HEIGHT;
             fieldSize_pixel = new Point((int)(sizeY * RELATIVECOR_ASPECT_RATIO), (int)sizeY);
 
-            fieldOffset_pixel = new Point(Settings.Instance.ResolutionX - fieldSize_pixel.X, Settings.Instance.ResolutionY - fieldSize_pixel.Y + PercentageBar.HEIGHT);
+            fieldOffset_pixel = new Point(Settings.Instance.ResolutionX - fieldSize_pixel.X, Settings.Instance.ResolutionY - fieldSize_pixel.Y + 
+                                                                                (currentMapType != MapGenerator.MapType.BACKGROUND ? PercentageBar.HEIGHT : 0));
             fieldOffset_pixel.X /= 2;
             fieldOffset_pixel.Y /= 2;
 
             fieldPixelRectangle = new Rectangle(fieldOffset_pixel.X, fieldOffset_pixel.Y, fieldSize_pixel.X, fieldSize_pixel.Y);
 
-            // setup background
-            CreateParticleTarget(device);
+            if (resizeBackground)
+            {
+                // setup background
+                CreateParticleTarget(device);
 
-            // bg particles
-            if (currentMapType == MapGenerator.MapType.BACKGROUND)
-                NewGame(MapGenerator.MapType.BACKGROUND, device, new Player[0]); //background.Resize(device, new Rectangle(0, 0, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY));
-            else
-                background.Resize(device, fieldPixelRectangle, Level.RELATIVE_MAX);
+                // bg particles
+                if (currentMapType == MapGenerator.MapType.BACKGROUND)
+                    NewGame(MapGenerator.MapType.BACKGROUND, device, new Player[0]); //background.Resize(device, new Rectangle(0, 0, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY));
+                else
+                    background.Resize(device, fieldPixelRectangle, Level.RELATIVE_MAX);
+            }
         }
 
         private void CreateParticleTarget(GraphicsDevice device)

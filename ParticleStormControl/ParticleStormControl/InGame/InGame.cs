@@ -134,7 +134,7 @@ namespace VirusX
         public InGame(Menu.Menu menu)
         {
             this.menu = menu;
-            State = GameState.Demo;
+            State = GameState.Inactive;
         }
 
         /// <summary>
@@ -156,6 +156,28 @@ namespace VirusX
 
         #region "start new game" methods
 
+        private void PlayerSetupFromSettingsSingleton()
+        {
+            // player setup
+            players = new Player[Settings.Instance.NumPlayers];
+            for (int i = 0; i < Settings.Instance.NumPlayers; ++i)
+            {
+                if (Settings.Instance.GetPlayer(i).Type != Player.Type.NONE)
+                {
+                    if (Settings.Instance.GetPlayer(i).Type == Player.Type.AI)
+                    {
+                        players[i] = new AIPlayer(i, Settings.Instance.GetPlayer(i).Virus, Settings.Instance.GetPlayer(i).ColorIndex,
+                            Settings.Instance.GetPlayer(i).Team, graphicsDevice, content, noiseWhite2D);
+                    }
+                    else
+                    {
+                        players[i] = new HumanPlayer(i, Settings.Instance.GetPlayer(i).Virus, Settings.Instance.GetPlayer(i).ColorIndex,
+                            Settings.Instance.GetPlayer(i).Team, graphicsDevice, content, noiseWhite2D, Settings.Instance.GetPlayer(i).ControlType);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// starts a new game
         /// </summary>
@@ -164,28 +186,7 @@ namespace VirusX
             State = GameState.Playing;
             instantDeathProtectingTime = 0.0f;
 
-            // player setup
-            players = new Player[Settings.Instance.NumPlayers];
-            int count = 0;
-            for (int i = 0; i < 4; ++i)
-            {
-                if (Settings.Instance.GetPlayer(i).Type != Player.Type.NONE)
-                {
-                    if (Settings.Instance.GetPlayer(i).Type == Player.Type.AI)
-                    {
-                        players[count] = new AIPlayer(i, Settings.Instance.GetPlayer(i).Virus, Settings.Instance.GetPlayer(i).ColorIndex,
-                            Settings.Instance.GetPlayer(i).Team, graphicsDevice, content, noiseWhite2D);
-                    }
-                    else
-                    {
-                        players[count] = new HumanPlayer(i, Settings.Instance.GetPlayer(i).Virus, Settings.Instance.GetPlayer(i).ColorIndex,
-                            Settings.Instance.GetPlayer(i).Team, graphicsDevice, content, noiseWhite2D, Settings.Instance.GetPlayer(i).ControlType);
-                    }
-                    count++;
-                    if (count == Settings.Instance.NumPlayers)
-                        break;
-                }
-            }
+            PlayerSetupFromSettingsSingleton();
 
             // new map
             MapGenerator.MapType mapType;
@@ -203,6 +204,8 @@ namespace VirusX
 
             }
             level.NewGame(mapType, graphicsDevice, players);
+            // starting a new game can change the game size and offset!
+            postPro.Resize(level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
 
             // for Game Mode INSERT_MODE_NAME
             //if (Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME)
@@ -219,13 +222,25 @@ namespace VirusX
 
         private void StartDemo()
         {
-            if (State == InGame.GameState.Demo)
-                return;
+//            players = new Player[0];
 
-            Settings.Instance.GameMode = GameMode.CLASSIC;
+            Settings.Instance.ResetPlayerSettings();
+        //    Settings.Instance.GameMode = GameMode.CLASSIC;
+            for (int i = 0; i < 2; ++i)
+            {
+                Settings.Instance.AddPlayer(new Settings.PlayerSettings()
+                {
+                    ColorIndex = i,
+                    ControlType = InputManager.ControlType.NONE,
+                    SlotIndex = i,
+                    Team = Player.Teams.NONE,
+                    Type = Player.Type.AI,
+                    Virus = (VirusSwarm.VirusType)Random.Next((int)VirusSwarm.VirusType.NUM_VIRUSES)
+                });
+            }
+            PlayerSetupFromSettingsSingleton();
 
             damageMap.Clear(graphicsDevice);
-            players = new Player[0];
             level.NewGame(MapGenerator.MapType.BACKGROUND, graphicsDevice, players);
 
             State = InGame.GameState.Demo;
@@ -343,6 +358,11 @@ namespace VirusX
                 // winning
                 if (State == GameState.Playing)
                     CheckWinning(gameTime);
+                else // restart demo
+                {
+                    if(players.Count(x=>x.Alive) == 1)
+                        StartDemo();
+                }
             }
         }
 
@@ -442,7 +462,7 @@ namespace VirusX
 
         public void Draw_OffsiteBuffers(GameTime gameTime, GraphicsDevice graphicsDevice)
         {
-            if (State == GameState.Playing)
+            if (State == GameState.Playing || State == GameState.Demo)
             {
                 // update damagemap (GPU)
                 if (levelDamageFrame)

@@ -253,24 +253,27 @@ namespace VirusX
                                              playerIndex == 3 || friendlyPlayerIndices.Any(x=>x==3) ? 0.0f : 1.0f);
 
 
-            for (int i = 0; i < MAX_PARTICLES; ++i)
-                particleHealth[i] = -1.0f;
+
 
             // create rendertargets (they are pingponging ;) )
-            positionTargets[0] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            positionTargets[1] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            infoTargets[0] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            infoTargets[1] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            movementTexture[0] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            movementTexture[1] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            positionTargets[0] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.PlatformContents);
+            positionTargets[1] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.PlatformContents);
+            infoTargets[0] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.PlatformContents);
+            infoTargets[1] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.PlatformContents);
+            movementTexture[0] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.PlatformContents);
+            movementTexture[1] = new RenderTarget2D(device, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT, false, SurfaceFormat.HalfVector2, DepthFormat.None, 0, RenderTargetUsage.PlatformContents);
             renderTargetBindings = new RenderTargetBinding[][] { new RenderTargetBinding[] { positionTargets[0], movementTexture[0], infoTargets[0] }, 
                                                                 new RenderTargetBinding[] { positionTargets[1], movementTexture[1], infoTargets[1] } };
             particleProcessing = content.Load<Effect>("shader/particleProcessing");
             particleProcessing.Parameters["halfPixelCorrection"].SetValue(new Vector2(0.5f / MAX_PARTICLES_SQRT, 0.5f / MAX_PARTICLES_SQRT));
             particleProcessing.Parameters["RelativeCorMax"].SetValue(Level.RELATIVE_MAX);
 
-            // reset data
-            HealthTexture.SetData<float>(particleHealth);
+            // clear targets
+            device.SetRenderTargets(renderTargetBindings[0]);
+            device.Clear(Color.Black);
+            device.SetRenderTargets(renderTargetBindings[1]);
+            device.Clear(Color.Black);
+            device.SetRenderTarget(null);
 
             // spawn vb
             spawnVertexBuffer = new DynamicVertexBuffer(device, SpawnVertex.VertexDeclaration, 
@@ -396,16 +399,6 @@ namespace VirusX
 #endif 
  */
         }
-
-        /* private bool IsAlive(int particleIndex)
-        {
-            // halffloat2
-            //return (particleHealth[particleIndex].PackedValue & (((UInt32)1) << 15)) == 0;
-            // save version - use this temporary in case of bad xbox behaviour
-            // return particleHealth[particleIndex].ToVector4().Z < 0;
-
-            return particleHealth[particleIndex] > 0;
-        }*/
 
         public void ReadGPUResults()
         {
