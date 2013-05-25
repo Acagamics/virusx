@@ -335,7 +335,10 @@ namespace VirusX.Menu
             menu.ChangePage(Menu.Page.INGAME, gameTime);
 #endif
             if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, Settings.Instance.StartingControls))
+            {
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+                return;
+            }
 
             TimeSpan oldCountdown = countdown;
             countdown = countdown.Subtract(gameTime.ElapsedGameTime);
@@ -347,7 +350,10 @@ namespace VirusX.Menu
 
             // overlay controls screen
             if (InputManager.Instance.IsButtonPressed(Keys.F1) || InputManager.Instance.AnyPressedButton(Buttons.Y))
+            {
                 menu.ChangePage(Menu.Page.CONTROLS, gameTime);
+                return;
+            }
 
             // test various buttons
             for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; playerIndex++)

@@ -12,7 +12,7 @@ namespace VirusX
         /// <summary>
         /// singleton instance for all rendering processes
         /// </summary>
-        public static readonly ScreenTriangleRenderer instance = new ScreenTriangleRenderer();
+        public static readonly ScreenTriangleRenderer Instance = new ScreenTriangleRenderer();
 
         private bool initalised = false;
         private ScreenTriangleRenderer() { }

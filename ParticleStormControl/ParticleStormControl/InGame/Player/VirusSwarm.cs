@@ -265,7 +265,7 @@ namespace VirusX
             renderTargetBindings = new RenderTargetBinding[][] { new RenderTargetBinding[] { positionTargets[0], movementTexture[0], infoTargets[0] }, 
                                                                 new RenderTargetBinding[] { positionTargets[1], movementTexture[1], infoTargets[1] } };
             particleProcessing = content.Load<Effect>("shader/particleProcessing");
-            particleProcessing.Parameters["halfPixelCorrection"].SetValue(new Vector2(0.5f / MAX_PARTICLES_SQRT, 0.5f / MAX_PARTICLES_SQRT));
+            particleProcessing.Parameters["HalfPixelCorrection"].SetValue(new Vector2(0.5f / MAX_PARTICLES_SQRT, 0.5f / MAX_PARTICLES_SQRT));
             particleProcessing.Parameters["RelativeCorMax"].SetValue(Level.RELATIVE_MAX);
 
             // clear targets
@@ -365,7 +365,7 @@ namespace VirusX
             device.BlendState = BlendState.Opaque;
             particleProcessing.CurrentTechnique = particleProcessing.Techniques[0];
             particleProcessing.CurrentTechnique.Passes[0].Apply();
-            ScreenTriangleRenderer.instance.DrawScreenAlignedTriangle(device);
+            ScreenTriangleRenderer.Instance.DrawScreenAlignedTriangle(device);
             #endregion
 
             #region spawn

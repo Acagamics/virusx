@@ -204,8 +204,7 @@ namespace VirusX
 
             }
             level.NewGame(mapType, graphicsDevice, players);
-            // starting a new game can change the game size and offset!
-            postPro.Resize(level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
+            postPro.UpdateVignettingSettings(true, level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
 
             // for Game Mode INSERT_MODE_NAME
             //if (Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME)
@@ -242,7 +241,7 @@ namespace VirusX
 
             damageMap.Clear(graphicsDevice);
             level.NewGame(MapGenerator.MapType.BACKGROUND, graphicsDevice, players);
-
+            postPro.UpdateVignettingSettings(false, level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
             State = InGame.GameState.Demo;
         }
 
@@ -253,6 +252,7 @@ namespace VirusX
 
             players = new Player[0];
             level.NewGame(MapGenerator.MapType.BACKGROUND, graphicsDevice, players);
+            postPro.UpdateVignettingSettings(false, level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
             State = InGame.GameState.Inactive;
         }
 
@@ -490,17 +490,18 @@ namespace VirusX
         /// <param name="spriteBatch">a unstarted spritebatch</param>
         public void Draw_Backbuffer(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            float totalGameTime = (float)gameTime.TotalGameTime.TotalSeconds;
-            float timeSinceLastFrame = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            // postpro start
+            postPro.Begin(graphicsDevice);
 
             // draw level
             level.Draw(gameTime, spriteBatch.GraphicsDevice, players);
-   
+
+            // postpro end
+            postPro.EndAndApply(graphicsDevice);
+
+            // interface
             if (State == GameState.Playing || State == GameState.Paused)
             {
-                // apply postprocessing
-                postPro.Draw(graphicsDevice);
-
                 // ingame interface
                 if (Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME)
                     inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime, winTimer);

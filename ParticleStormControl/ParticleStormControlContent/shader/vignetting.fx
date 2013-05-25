@@ -1,5 +1,15 @@
-float2 PosOffset;
-float2 PosScale;
+texture ScreenTexture;
+sampler2D sampScreen = sampler_state
+{	
+	Texture = <ScreenTexture>;
+    MagFilter = POINT;
+    MinFilter = POINT;
+    Mipfilter = POINT;
+};
+
+float2 Vignetting_PosOffset;
+float2 Vignetting_PosScale;
+float2 HalfPixelCorrection;
 
 struct VertexShaderInput
 {
@@ -15,20 +25,25 @@ struct VertexShaderOutput
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
     VertexShaderOutput output;
-	output.Position.xy = input.Position * PosScale + PosOffset;
+	output.Position.xy = input.Position;
 	output.Position.zw = float2(0,1);
-	output.Texcoord = input.Position;
+	output.Texcoord.xy = input.Position * 0.5f + 0.5f;
+	output.Texcoord.y = 1.0f - output.Texcoord.y;
+	output.Texcoord += HalfPixelCorrection;
     return output;
 }
 
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-	float2 v = input.Texcoord * 2 - 1;
+	float4 color = tex2D(sampScreen, input.Texcoord);
+
+	float2 vignettCord = saturate(input.Texcoord * Vignetting_PosScale + Vignetting_PosOffset);
+	float2 v = vignettCord * 2 - 1;
 	v = pow(v, 10);
-	float f = sqrt(max(0, dot(v,v)*0.5));
-	clip(f - 0.001f);
-	return 1.0 - f;
+	float vignettFactor = 1.0f - sqrt(max(0, dot(v,v)*0.5));
+	
+	return color * vignettFactor;
 }
 
 technique Normal

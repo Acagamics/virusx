@@ -1,6 +1,6 @@
 // the old direct3d9 accurate pixel mapping dillema >.< http://drilian.com/2008/11/25/understanding-half-pixel-and-half-texel-offsets/
 // set x to -halfpixelsize.x and y to halfpixelsize.y
-float2 halfPixelCorrection;
+float2 HalfPixelCorrection;
 
 texture Positions;
 sampler2D sampPositions = sampler_state
@@ -79,7 +79,7 @@ VertexShaderOutput ScreenAlignedTriangle(VertexShaderInput input)
 	output.Position.zw = float2(0.0f, 1.0f);
 	output.Texcoord.xy = input.Position * 0.5f + 0.5f;
 	output.Texcoord.y = 1.0f - output.Texcoord.y;
-	output.Texcoord += halfPixelCorrection;
+	output.Texcoord += HalfPixelCorrection;
     return output;
 }
 
