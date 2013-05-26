@@ -165,7 +165,7 @@ namespace VirusX.Menu
             activePage = newPage;
 
             AudioManager.Instance.PlaySoundeffect("click");
-            
+
             //if(newPage != Page.INGAME)
             //    InterfaceButton.Instance.ChangeHappened(gameTime, SoundEffect);
         }

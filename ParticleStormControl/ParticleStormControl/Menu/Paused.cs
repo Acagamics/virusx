@@ -86,6 +86,8 @@ namespace VirusX.Menu
                 waitingDisplays[i].BackgroundColor = Color.Black;
                 waitingDisplays[i].Visible = () => false;
             }
+
+            base.Update(gameTime);  // reduces flicker
         }
 
         public override void Update(GameTime gameTime)

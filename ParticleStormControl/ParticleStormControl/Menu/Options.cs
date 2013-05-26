@@ -97,6 +97,7 @@ namespace VirusX.Menu
             music = Settings.Instance.Music;
 
             selectedButton = Button.BACK;
+            base.Update(gameTime);  // reduces flicker
         }
 
         public override void LoadContent(ContentManager content)

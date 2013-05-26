@@ -76,6 +76,12 @@ namespace VirusX.Menu
             base.LoadContent(content);
         }
 
+        public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
+        {
+            base.OnActivated(oldPage, gameTime);
+            base.Update(gameTime);  // reduces flicker
+        }
+
         public override void Update(GameTime gameTime)
         {
             menu.BackToMainMenu(gameTime);
