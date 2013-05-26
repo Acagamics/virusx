@@ -154,7 +154,8 @@ namespace VirusX
                 postPro.DeactivatePauseBlur();
                 State = InGame.GameState.Playing;
             }
-            else if (newPage != Menu.Menu.Page.NEWGAME && newPage != Menu.Menu.Page.STATS)
+            else if (newPage != Menu.Menu.Page.NEWGAME && newPage != Menu.Menu.Page.STATS &&    // no demo in stats and newgame
+                     (oldPage != Menu.Menu.Page.NEWGAME || newPage != Menu.Menu.Page.CONTROLS)) // switching from newgame to controls should not start demo!
                 StartDemo(false);
             else
                 SetupBackground();
