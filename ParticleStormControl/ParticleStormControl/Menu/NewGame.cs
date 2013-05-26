@@ -392,8 +392,11 @@ namespace VirusX.Menu
                             ToggleReady(slot);
                         else
                         {
-                            if(Settings.Instance.GetPlayer(playerIndex).ControlType == Settings.Instance.StartingControls)
+                            if (Settings.Instance.GetPlayer(playerIndex).ControlType == Settings.Instance.StartingControls)
+                            {
                                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+                                return;
+                            }
                             else
                                 RemovePlayer(slot);
                             break; // this blocks other inputs, but @30fps min thats not that bad
