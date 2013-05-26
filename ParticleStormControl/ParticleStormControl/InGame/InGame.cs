@@ -148,8 +148,8 @@ namespace VirusX
                 State = InGame.GameState.Paused;
             else if (newPage == Menu.Menu.Page.INGAME)
                 State = InGame.GameState.Playing;
-            else if (newPage != Menu.Menu.Page.NEWGAME)
-                StartDemo();
+            else if (newPage != Menu.Menu.Page.NEWGAME && newPage != Menu.Menu.Page.STATS)
+                StartDemo(false);
             else
                 SetupBackground();
         }
@@ -219,8 +219,11 @@ namespace VirusX
             //System.GC.Collect();
         }
 
-        private void StartDemo()
+        private void StartDemo(bool forceRestart)
         {
+            if (State == GameState.Demo && !forceRestart)
+                return;
+
 //            players = new Player[0];
 
             Settings.Instance.ResetPlayerSettings();
@@ -361,7 +364,7 @@ namespace VirusX
                 else // restart demo
                 {
                     if(players.Count(x=>x.Alive) == 1)
-                        StartDemo();
+                        StartDemo(true);
                 }
             }
         }
