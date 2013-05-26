@@ -22,7 +22,7 @@ namespace VirusX
 
         private float groundBlurRaiseTo = 0.0f;
         private float groundBlurFactor = 0.0f;
-        private const float BLUR_TRANSITION_SPEED = 15.0f;
+        private const float BLUR_TRANSITION_SPEED = 20.0f;
         private const float PAUSE_BLUR_FACTOR = 5.0f;
         
         private readonly static BlendState VignettingBlend = new BlendState

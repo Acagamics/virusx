@@ -536,9 +536,12 @@ namespace VirusX
         public void Resize(GraphicsDevice graphicsDevice)
         {
             if (level != null)
-                level.Resize(graphicsDevice);
+                 level.Resize(graphicsDevice);
             if (postPro != null)
                 postPro.Resize(level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
+
+            if (State == GameState.Demo)
+                StartDemo(true);
         }
     }
 }
