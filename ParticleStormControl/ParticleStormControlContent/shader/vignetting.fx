@@ -71,7 +71,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 	float3 color = float3(0.0f,0.0f,0.0f);
 	[branch] if(blur > 0.001)
 	{
-		float textureOffsetFactor = blur * InversePixelSize;
+		float2 textureOffsetFactor = blur * InversePixelSize;
 		[unroll]for(int i=0; i<NUM_POISSON_SAMPLES; ++i)
 		{
 			color += tex2Dlod(sampScreen, float4(input.Texcoord + PoissonDisk[i] * textureOffsetFactor, 0.0f, 0.0f)).rgb;
