@@ -52,7 +52,7 @@ namespace VirusX
         {
             AudioManager.Instance.PlaySoundeffect("wipeout");
             return new DamageArea(content.Load<Texture2D>("Wipeout_big"), Level.RELATIVE_MAX / 2, -1,
-                                            3.0f, 1.6f, 1000.0f, 0.6f, 0.6f);
+                                            3.5f, 1.6f, 1000.0f, 0.6f, 0.6f);
         }
 
         /// <summary>
@@ -75,6 +75,8 @@ namespace VirusX
             this.possessingPlayer = possessingPlayer;
             this.explosionScaleSpeed = explosionScaleSpeed;
             this.fadeOutTime = fadeoutTime;
+
+            this.currentRotation = (float)Random.NextDouble(MathHelper.TwoPi);
 
             explosionTimer = new Stopwatch();
 
