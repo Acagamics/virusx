@@ -290,13 +290,13 @@ namespace VirusX
                 // lower right
                 new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER - 0.4f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.05f),
                 new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER - 0.2f, Level.RELATIVE_MAX.Y - LEVEL_BORDER - 0.2f),
-                new Vector2(Level.RELATIVE_MAX.X - 0.1f, Level.RELATIVE_MAX.Y / 2),
+                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, Level.RELATIVE_MAX.Y / 2),
 
                 // corners
-                new Vector2(0.1f, Level.RELATIVE_MAX.Y - LEVEL_BORDER),
-                new Vector2(Level.RELATIVE_MAX.X - 0.1f, Level.RELATIVE_MAX.Y - LEVEL_BORDER),
-                new Vector2(0.1f, LEVEL_BORDER),
-                new Vector2(Level.RELATIVE_MAX.X - 0.1f, LEVEL_BORDER),
+                new Vector2(LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER),
+                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER),
+                new Vector2(LEVEL_BORDER, LEVEL_BORDER),
+                new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER),
             };
 
             const float JITTER = 0.07f;
