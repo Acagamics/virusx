@@ -20,6 +20,11 @@ namespace VirusX
 
         private bool vignettingOn = true;
 
+        private float groundBlurRaiseTo = 0.0f;
+        private float groundBlurFactor = 0.0f;
+        private const float BLUR_TRANSITION_SPEED = 15.0f;
+        private const float PAUSE_BLUR_FACTOR = 5.0f;
+        
         private readonly static BlendState VignettingBlend = new BlendState
         {
             ColorSourceBlend = Blend.Zero,
@@ -51,7 +56,6 @@ namespace VirusX
             }
         }
 
-
         public void UpdateVignettingSettings(bool vignettingOn, Vector2 fieldSize_pixel, Vector2 fieldOffset_pixel)
         {
             this.vignettingOn = vignettingOn;
@@ -66,6 +70,42 @@ namespace VirusX
         {
             UpdateVignettingSettings(vignettingOn, fieldSize_pixel, fieldOffset_pixel);
             CreateRenderTarget(screenTarget.GraphicsDevice);
+        }
+
+        /// <summary>
+        /// activates a general blur, meant for pause screen
+        /// </summary>
+        public void ActivatePauseBlur()
+        {
+            groundBlurRaiseTo = PAUSE_BLUR_FACTOR;
+        }
+
+        /// <summary>
+        /// deactivates the general blur for pause screen
+        /// </summary>
+        public void DeactivatePauseBlur()
+        {
+            groundBlurRaiseTo = 0.0f;
+        }
+
+        public void UpdateTransitions(GameTime gameTime)
+        {
+            if (groundBlurFactor != groundBlurRaiseTo)
+            {
+                if (groundBlurFactor < groundBlurRaiseTo)
+                {
+                    groundBlurFactor += (float)gameTime.ElapsedGameTime.TotalSeconds * BLUR_TRANSITION_SPEED;
+                    if (groundBlurFactor > groundBlurRaiseTo)
+                        groundBlurFactor = groundBlurRaiseTo;
+                }
+                else
+                {
+                    groundBlurFactor -= (float)gameTime.ElapsedGameTime.TotalSeconds * BLUR_TRANSITION_SPEED;
+                    if (groundBlurFactor < groundBlurRaiseTo)
+                        groundBlurFactor = groundBlurRaiseTo;
+                }
+                vignettingShader.Parameters["GroundBlur"].SetValue(groundBlurFactor);
+            }
         }
 
         /// <summary>

@@ -12,8 +12,10 @@ float2 Vignetting_PosScale;
 float2 HalfPixelCorrection;
 float2 InversePixelSize;
 
+float GroundBlur;
+
 #define NUM_POISSON_SAMPLES 12
-static const float BlurFactor = 9.0f;
+static const float VignettBlurFactor = 9.0f;
 static const float2 PoissonDisk[NUM_POISSON_SAMPLES] =
 {
         float2(-0.326212f, -0.40581f),
@@ -59,14 +61,17 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 	[flatten] if(all(vignettCord != saturate(vignettCord)))
 		discard;
 
+	// compute vignett
 	float2 v = vignettCord * 2 - 1;
 	v = pow(v, 10);
 	float vignettFactor = sqrt(max(0, dot(v,v)*0.5));
-	
+
+	// blur
+	float blur = vignettFactor * VignettBlurFactor + GroundBlur;
 	float3 color = float3(0.0f,0.0f,0.0f);
-	[branch] if(vignettFactor > 0.01)
+	[branch] if(blur > 0.001)
 	{
-		float textureOffsetFactor = (vignettFactor * BlurFactor) * InversePixelSize;
+		float textureOffsetFactor = blur * InversePixelSize;
 		[unroll]for(int i=0; i<NUM_POISSON_SAMPLES; ++i)
 		{
 			color += tex2Dlod(sampScreen, float4(input.Texcoord + PoissonDisk[i] * textureOffsetFactor, 0.0f, 0.0f)).rgb;

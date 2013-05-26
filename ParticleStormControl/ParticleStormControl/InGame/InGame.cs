@@ -145,9 +145,15 @@ namespace VirusX
             if (newPage == VirusX.Menu.Menu.Page.INGAME && State == InGame.GameState.Inactive)
                 StartNewGame();
             else if (newPage == Menu.Menu.Page.PAUSED || (newPage == Menu.Menu.Page.CONTROLS && oldPage == Menu.Menu.Page.INGAME))
+            {
+                postPro.ActivatePauseBlur();
                 State = InGame.GameState.Paused;
+            }
             else if (newPage == Menu.Menu.Page.INGAME)
+            {
+                postPro.DeactivatePauseBlur();
                 State = InGame.GameState.Playing;
+            }
             else if (newPage != Menu.Menu.Page.NEWGAME && newPage != Menu.Menu.Page.STATS)
                 StartDemo(false);
             else
@@ -367,6 +373,8 @@ namespace VirusX
                         StartDemo(true);
                 }
             }
+
+            postPro.UpdateTransitions(gameTime);
         }
 
         private void CheckWinning(GameTime gameTime)
