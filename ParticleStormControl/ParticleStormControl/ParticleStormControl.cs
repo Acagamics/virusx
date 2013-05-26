@@ -56,7 +56,7 @@ namespace VirusX
     /// </summary>
     class ParticleStormControl : Microsoft.Xna.Framework.Game
     {
-        public const string VERSION = "version 0.8 - 15.04.2013";
+        public const string VERSION = "version 0.9 - Campus Days + Lange Nacht Edition (2013)";
 
         private bool showStatistics = false;
      

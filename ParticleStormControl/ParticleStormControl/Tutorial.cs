@@ -73,7 +73,7 @@ namespace VirusX
             {
                 case VirusX.Menu.Menu.Page.MAINMENU:
                     //if(Settings.Instance.FirstStart)
-                        Interface.Add(new InterfaceTooltip(() => { return "Tutorial"; }, () => { return "we recommend to play the tutorial mode..."; }, new Vector2(550, 350), () => { return ((Menu.MainMenu)game.Menu.Pages[(int)newPage]).SubmenuVisible; }, 500, InterfaceTooltip.ArrowPosition.BOTTOM));
+                 //       Interface.Add(new InterfaceTooltip(() => { return "Tutorial"; }, () => { return "we recommend to play the tutorial mode..."; }, new Vector2(550, 350), () => { return ((Menu.MainMenu)game.Menu.Pages[(int)newPage]).SubmenuVisible == MainMenu.SubMenu.NEWGAME; }, 500, InterfaceTooltip.ArrowPosition.BOTTOM));
                     break;
                 case VirusX.Menu.Menu.Page.NEWGAME:
                     break;
