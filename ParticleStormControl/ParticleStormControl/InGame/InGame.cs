@@ -150,15 +150,15 @@ namespace VirusX
                 State = InGame.GameState.Paused;
             }
             else if (newPage == Menu.Menu.Page.INGAME)
-            {
-                postPro.DeactivatePauseBlur();
                 State = InGame.GameState.Playing;
-            }
             else if (newPage != Menu.Menu.Page.NEWGAME && newPage != Menu.Menu.Page.STATS &&    // no demo in stats and newgame
                      (oldPage != Menu.Menu.Page.NEWGAME || newPage != Menu.Menu.Page.CONTROLS)) // switching from newgame to controls should not start demo!
                 StartDemo(false);
             else
                 SetupBackground();
+
+            if(State != GameState.Paused)
+                postPro.DeactivatePauseBlur();
         }
 
         #region "start new game" methods
@@ -252,6 +252,7 @@ namespace VirusX
             damageMap.Clear(graphicsDevice);
             level.NewGame(MapGenerator.MapType.BACKGROUND, graphicsDevice, players);
             postPro.UpdateVignettingSettings(false, level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
+            
             State = InGame.GameState.Demo;
         }
 
