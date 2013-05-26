@@ -624,8 +624,8 @@ namespace VirusX.Menu
             // toggle ready
             if (countdown.TotalSeconds > safeCountdown || countdown.TotalSeconds <= 0)
             {
-                if (playerReadyBySlot[slotIndex])
-                    AudioManager.Instance.PlaySoundeffect("click");
+               // if (playerReadyBySlot[slotIndex]) 
+               //     AudioManager.Instance.PlaySoundeffect("click");
                 playerReadyBySlot[slotIndex] = !playerReadyBySlot[slotIndex];
             }
             // countdown

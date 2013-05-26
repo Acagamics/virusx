@@ -47,6 +47,8 @@ namespace VirusX
         /// <param name="sound">click, capture, switch, explosion, danger, wipeout, collect</param>
         public void PlaySoundeffect(string sound)
         {
+            System.Diagnostics.Debug.Assert(soundEffects.ContainsKey(sound));
+
             if (Settings.Instance.Sound)
                 soundEffects[sound].Play();
         }
