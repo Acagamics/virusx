@@ -37,8 +37,14 @@ namespace VirusX
 
             Vector2 ownTerritoriumMid;
 
-            public TargetSelector()
+            /// <summary>
+            /// game mode influences behaviour
+            /// </summary>
+            readonly InGame.GameMode gameMode;
+
+            public TargetSelector(InGame.GameMode gameMode)
             {
+                this.gameMode = gameMode;
             }
 
             public Vector2 Update(Level level, Player player, float frameTimeInterval)
@@ -138,7 +144,7 @@ namespace VirusX
                 int numberOfNoOwnerSPs = noOwnerSpawnPoints.Count();
 
                 var otherSpawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer != player.Index && x.PossessingPlayer != -1);
-                if(Settings.Instance.GameMode == InGame.GameMode.CAPTURE_THE_CELL || Settings.Instance.GameMode == InGame.GameMode.LEFT_VS_RIGHT)
+                if (gameMode == InGame.GameMode.CAPTURE_THE_CELL || gameMode == InGame.GameMode.LEFT_VS_RIGHT)
                     otherSpawnPoints = otherSpawnPoints.Where(x => Settings.Instance.GetPlayer(x.PossessingPlayer).Team != player.Team);
                 otherSpawnPoints = otherSpawnPoints.Where(x => x.Captureable == true);
                 int numberOfOtherSPs = otherSpawnPoints.Count();
@@ -239,13 +245,14 @@ namespace VirusX
         private float currentRndMovmentTime = 2.5f;
         private bool TargetRndMoveTimeReached { get { return currentRndMovmentTime >= maxRndMovementTime; } }
 
-        private TargetSelector targetSelector = new TargetSelector();
+        private readonly TargetSelector targetSelector;
 
         #endregion
 
-        public AIPlayer(int playerIndex, VirusSwarm.VirusType virusIndex, int colorIndex, Teams team, GraphicsDevice device, ContentManager content, Texture2D noiseTexture) :
-            base(playerIndex, virusIndex, colorIndex, team, device, content, noiseTexture)
+        public AIPlayer(int playerIndex, VirusSwarm.VirusType virusIndex, int colorIndex, Teams team, InGame.GameMode gameMode, GraphicsDevice device, ContentManager content, Texture2D noiseTexture) :
+            base(playerIndex, virusIndex, colorIndex, team, gameMode, device, content, noiseTexture)
         {
+            targetSelector = new TargetSelector(gameMode);
             targetPosition = particleAttractionPosition = cursorPosition = cursorStartPositions[playerIndex];
         }
 

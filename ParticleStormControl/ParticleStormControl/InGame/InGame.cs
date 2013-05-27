@@ -174,12 +174,12 @@ namespace VirusX
                     if (Settings.Instance.GetPlayer(i).Type == Player.Type.AI)
                     {
                         players[i] = new AIPlayer(i, Settings.Instance.GetPlayer(i).Virus, Settings.Instance.GetPlayer(i).ColorIndex,
-                            Settings.Instance.GetPlayer(i).Team, graphicsDevice, content, noiseWhite2D);
+                            Settings.Instance.GetPlayer(i).Team, Settings.Instance.GameMode, graphicsDevice, content, noiseWhite2D);
                     }
                     else
                     {
                         players[i] = new HumanPlayer(i, Settings.Instance.GetPlayer(i).Virus, Settings.Instance.GetPlayer(i).ColorIndex,
-                            Settings.Instance.GetPlayer(i).Team, graphicsDevice, content, noiseWhite2D, Settings.Instance.GetPlayer(i).ControlType);
+                            Settings.Instance.GetPlayer(i).Team, Settings.Instance.GameMode, graphicsDevice, content, noiseWhite2D, Settings.Instance.GetPlayer(i).ControlType);
                     }
                 }
             }
@@ -210,7 +210,7 @@ namespace VirusX
                     break;
 
             }
-            level.NewGame(mapType, graphicsDevice, players);
+            level.NewGame(mapType, Settings.Instance.GameMode, Settings.Instance.UseItems, graphicsDevice, players);
             postPro.UpdateVignettingSettings(true, level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
 
             // for Game Mode INSERT_MODE_NAME
@@ -247,10 +247,16 @@ namespace VirusX
                     Virus = (VirusSwarm.VirusType)Random.Next((int)VirusSwarm.VirusType.NUM_VIRUSES)
                 });
             }
-            PlayerSetupFromSettingsSingleton();
+              // player setup
+            players = new Player[Settings.Instance.NumPlayers];
+            for (int i = 0; i < players.Length; ++i)
+            {
+                players[i] = new AIPlayer(i, Settings.Instance.GetPlayer(i).Virus, Settings.Instance.GetPlayer(i).ColorIndex,
+                            Settings.Instance.GetPlayer(i).Team, GameMode.CLASSIC, graphicsDevice, content, noiseWhite2D);
+            }
 
             damageMap.Clear(graphicsDevice);
-            level.NewGame(MapGenerator.MapType.BACKGROUND, graphicsDevice, players);
+            level.NewGame(MapGenerator.MapType.BACKGROUND, GameMode.CLASSIC, false, graphicsDevice, players);
             postPro.UpdateVignettingSettings(false, level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
             
             State = InGame.GameState.Demo;
@@ -262,7 +268,7 @@ namespace VirusX
                 return;
 
             players = new Player[0];
-            level.NewGame(MapGenerator.MapType.BACKGROUND, graphicsDevice, players);
+            level.NewGame(MapGenerator.MapType.BACKGROUND, GameMode.CLASSIC, false, graphicsDevice, players);
             postPro.UpdateVignettingSettings(false, level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
             State = InGame.GameState.Inactive;
         }

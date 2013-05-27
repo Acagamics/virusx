@@ -222,14 +222,15 @@ namespace VirusX
 
         #endregion
 
-        public Player(int playerIndex, VirusSwarm.VirusType virusIndex, int colorIndex, Teams team, GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
+        public Player(int playerIndex, VirusSwarm.VirusType virusIndex, int colorIndex, Teams team, InGame.GameMode gameMode,
+                        GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
         {
             this.playerIndex = playerIndex;
             this.colorIndex = colorIndex;
             this.team = team;
             this.ItemSlot = global::VirusX.Item.ItemType.NONE;
 
-            if(Settings.Instance.GameMode == InGame.GameMode.CAPTURE_THE_CELL)
+            if (gameMode == InGame.GameMode.CAPTURE_THE_CELL)
                 cursorPosition = cursorStartPositionsCTC[Settings.Instance.GetPlayer(playerIndex).SlotIndex];
             else
                 cursorPosition = cursorStartPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex];

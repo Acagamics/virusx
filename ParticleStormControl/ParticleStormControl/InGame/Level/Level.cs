@@ -54,6 +54,11 @@ namespace VirusX
                                                        AlphaDestinationBlend = Blend.One
                                                    };
 
+        /// <summary>
+        /// on/off for itemplacement
+        /// </summary>
+        private bool spawnItems;
+
         #region field dimension & cordinates
 
         /// <summary>
@@ -140,6 +145,11 @@ namespace VirusX
         /// </summary>
         private RenderTarget2D particleTexture;
 
+        /// <summary>
+        /// gamemode changes various properties
+        /// </summary>
+        private InGame.GameMode gameMode;
+
         private BlendState ScreenBlend = new BlendState()
                                              {
                                                  ColorBlendFunction = BlendFunction.Add,
@@ -173,8 +183,10 @@ namespace VirusX
             Resize(device);
         }
 
-        public void NewGame(MapGenerator.MapType mapType, GraphicsDevice device, Player[] players)
+        public void NewGame(MapGenerator.MapType mapType, InGame.GameMode gameMode, bool spawnItems, GraphicsDevice device, Player[] players)
         {
+            this.spawnItems = spawnItems;
+            this.gameMode = gameMode;
             switchCountdownActive = false;
             currentMapType = mapType;
 
@@ -333,7 +345,7 @@ namespace VirusX
                     if (distanceToPlayerAttractionPos > 0.02f)
                     {
                         move /= distanceToPlayerAttractionPos;
-                        if(Settings.Instance.GameMode == InGame.GameMode.FUN)
+                        if(gameMode == InGame.GameMode.FUN)
                             move *= (float)gameTime.ElapsedGameTime.TotalSeconds * (Player.CURSOR_SPEED * 0.045f);
                         else
                             move *= (float)gameTime.ElapsedGameTime.TotalSeconds * (Player.CURSOR_SPEED * 0.015f);
@@ -373,7 +385,7 @@ namespace VirusX
             }
 
             // items
-            if (Settings.Instance.UseItems)
+            if (spawnItems)
             {
                 if (pickuptimer.Elapsed.TotalSeconds > itemSpawnTime)
                 {
@@ -418,7 +430,7 @@ namespace VirusX
         {
             double next_item_pos = Random.NextDouble();
             int item = 0;
-            if (Settings.Instance.GameMode == InGame.GameMode.CAPTURE_THE_CELL)
+            if (gameMode == InGame.GameMode.CAPTURE_THE_CELL)
             {
                 for (int i = 1; i < itemPossibilitiesCTC.Length; i++)
                 {
@@ -494,7 +506,7 @@ namespace VirusX
                     mapObjects.Add(new Item(position, Item.ItemType.DANGER_ZONE, contentManager));
                     break;
                 case 3:
-                    if(Settings.Instance.GameMode != InGame.GameMode.CAPTURE_THE_CELL)
+                    if(gameMode != InGame.GameMode.CAPTURE_THE_CELL)
                         mapObjects.Add(new Item(position, Item.ItemType.MUTATION, contentManager));
                     break;
                 case 4:
@@ -691,7 +703,7 @@ namespace VirusX
 
                 // bg particles
                 if (currentMapType == MapGenerator.MapType.BACKGROUND)
-                    NewGame(MapGenerator.MapType.BACKGROUND, device, new Player[0]); //background.Resize(device, new Rectangle(0, 0, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY));
+                    NewGame(MapGenerator.MapType.BACKGROUND, gameMode, spawnItems, device, new Player[0]); //background.Resize(device, new Rectangle(0, 0, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY));
                 else
                     background.Resize(device, fieldPixelRectangle, Level.RELATIVE_MAX);
             }
@@ -725,7 +737,7 @@ namespace VirusX
                     break;
 
                 case Item.ItemType.MUTATION:
-                    if (Settings.Instance.GameMode == InGame.GameMode.FUN)
+                    if (gameMode == InGame.GameMode.FUN)
                         switchCountdownTimer = SWITCH_COUNTDOWN_LENGTH_FUN;
                     else
                         switchCountdownTimer = SWITCH_COUNTDOWN_LENGTH;

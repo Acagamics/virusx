@@ -61,11 +61,6 @@ namespace VirusX
         };
         private List<PlayerSettings> playerSettings;
 
-        /// <summary>
-        /// active gamemode
-        /// </summary>
-        public InGame.GameMode GameMode { get; set; }
-
 
         public int NumPlayers { get { return playerSettings.Count; } }
 
@@ -93,6 +88,22 @@ namespace VirusX
             return playerSettings.Select(selector);
         }
 
+
+        /// <summary>
+        /// active gamemode
+        /// </summary>
+        public InGame.GameMode GameMode { get; set; }
+
+        private bool useItems = true;
+        public bool UseItems { get { return useItems; } set { useItems = value; } }
+
+        /// <summary>
+        /// If true the item will be removed after a given amount of time
+        /// </summary>
+        public bool AutomaticItemDeletion { get { return automaticItemDeletion; } set { automaticItemDeletion = value; } }
+        private bool automaticItemDeletion = false;
+
+
         #endregion
 
         #region Misc
@@ -109,15 +120,6 @@ namespace VirusX
             get { return forceFeedback; }
             set { InputManager.Instance.ActivateRumble = value; forceFeedback = value; }
         }
-
-        private bool useItems = true;
-        public bool UseItems { get { return useItems; } set { useItems = value; } }
-
-        /// <summary>
-        /// If true the item will be removed after a given amount of time
-        /// </summary>
-        public bool AutomaticItemDeletion { get { return automaticItemDeletion; } set { automaticItemDeletion = value; } }
-        private bool automaticItemDeletion = false;
 
         private InputManager.ControlType startingControls = InputManager.ControlType.NONE;
         public InputManager.ControlType StartingControls { get { return startingControls; } set { startingControls = value; } }
