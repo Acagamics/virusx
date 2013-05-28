@@ -114,6 +114,7 @@ namespace VirusX.Menu
                                 menu.Exit();
                             AudioManager.Instance.PlaySoundeffect("click");
                             selectedButton = Button.END;
+                            break;
                         }
 
                         if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, control))
