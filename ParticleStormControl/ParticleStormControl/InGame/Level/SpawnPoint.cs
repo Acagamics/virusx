@@ -71,8 +71,12 @@ namespace VirusX
             if (startposession != -1)
             {
                 glowtimer.Start();
-                if(Settings.Instance.GameMode == InGame.GameMode.INSERT_MODE_NAME)
+                if (Settings.Instance.GameMode == InGame.GameMode.INSERT_MODE_NAME)
+                {
                     captureable = false;
+                    this.nucleusTexture_outer = content.Load<Texture2D>("nucleus_outer_uncaptureable");
+                }
+
             }
 
             Size = ((spawnSize - 100.0f)/ 900.0f) * (0.05f) + 0.03f;
