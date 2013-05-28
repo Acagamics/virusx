@@ -43,23 +43,30 @@ namespace VirusX
             // no teams, up to 4 plyers
             INSERT_MODE_NAME,
 
-            // 1 player vs 1 computer
-            //TUTORIAL,
-
             // 1 player arcarde mode
             ARCADE,
 
             NUM_MODES
         };
+
         static public readonly String[] GAMEMODE_NAME = new String[]
         {
             "Classic",
             "Capture the Cell",
             "Left vs. Right",
             "Fun",
-            "Insert mode name",
-            //"Tutorial",
+            "Domination",
             "Arcade"
+        };
+
+        static public readonly String[] GAMEMODE_DESCRIPTION = new String[]
+        {
+            "standard deathmatch (2-4 players)",
+            "one player with a big cell against\na team of three players (4 players)",
+            "two teams with one or two\nplayers each (2-4 players)",
+            "like classic mode but with\nsome extra twists (2-4 players)",
+            "control a number of bases\nfor a certain time (2-4 players)",
+            "survive as long as you can (1 player)"
         };
 
         #endregion

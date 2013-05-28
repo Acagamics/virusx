@@ -71,6 +71,8 @@ namespace VirusX.Menu
             Interface.Add(useItemsButton);
             Interface.Add(new InterfaceButton("► Start", new Vector2(320, 470), () => { return selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.CONTINUE; }, () => submenuVisible == SubMenu.NEWGAME));
 
+            Interface.Add(new InterfaceTooltip(() => { return VirusX.InGame.GAMEMODE_NAME[(int)Settings.Instance.GameMode]; }, () => { return VirusX.InGame.GAMEMODE_DESCRIPTION[(int)Settings.Instance.GameMode]; }, new Vector2(550, 350), () => submenuVisible == SubMenu.NEWGAME && selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.MODE, 350, InterfaceTooltip.ArrowPosition.BOTTOM));
+
             // submenu 
             Interface.Add(new InterfaceButton("► Gameplay", new Vector2(320, 370), () => { return selectedButton_HelpSubmenu == ButtonHelpSubmenu.GAMEPLAY; }, () => submenuVisible == SubMenu.HELP));
             Interface.Add(new InterfaceButton("► Controls", new Vector2(320, 420), () => { return selectedButton_HelpSubmenu == ButtonHelpSubmenu.CONTROLS; }, () => submenuVisible == SubMenu.HELP));
