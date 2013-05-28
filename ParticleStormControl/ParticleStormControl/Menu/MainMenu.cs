@@ -154,8 +154,8 @@ namespace VirusX.Menu
                         case ButtonNewGameSubmenu.MODE:
                             Settings.Instance.GameMode = (Game.GameMode)Menu.Loop((int)Settings.Instance.GameMode, (int)Game.GameMode.NUM_MODES, Settings.Instance.StartingControls, true);
                             // if action butten is pressed jump to the continue button
-                            if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, Settings.Instance.StartingControls))
-                                selectedButton_NewGameSubmenu = ButtonNewGameSubmenu.CONTINUE;
+                            //if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, Settings.Instance.StartingControls))
+                            //    selectedButton_NewGameSubmenu = ButtonNewGameSubmenu.CONTINUE;
                             break;
                         case ButtonNewGameSubmenu.ITEMS:
                             Settings.Instance.UseItems = Menu.Toggle(Settings.Instance.UseItems, Settings.Instance.StartingControls);

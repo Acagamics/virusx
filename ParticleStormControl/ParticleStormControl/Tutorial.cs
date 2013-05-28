@@ -75,11 +75,11 @@ namespace VirusX
                 case VirusX.Menu.Menu.Page.NEWGAME:
                     break;
                 case VirusX.Menu.Menu.Page.INGAME:
-                    if (Settings.Instance.GameMode == InGame.GameMode.TUTORIAL)
-                    {
-                        Interface.Add(new InterfaceTooltip(() => { return "Your base"; }, () => { return "this is your start base. you better not lose it..."; }, game.InGame.Level.ComputePixelPosition(game.InGame.Level.SpawnPoints[0].Position) + new Vector2(50, 0), () => true, 500, InterfaceTooltip.ArrowPosition.LEFT));
-                        Interface.Add(new InterfaceTooltip(() => { return "Enemy base"; }, () => { return "try to own this one"; }, game.InGame.Level.ComputePixelPosition(game.InGame.Level.SpawnPoints[1].Position) - new Vector2(50, 0), () => true, 500, InterfaceTooltip.ArrowPosition.RIGHT));
-                    }    
+                    //if (Settings.Instance.GameMode == InGame.GameMode.TUTORIAL)
+                    //{
+                    //    Interface.Add(new InterfaceTooltip(() => { return "Your base"; }, () => { return "this is your start base. you better not lose it..."; }, game.InGame.Level.ComputePixelPosition(game.InGame.Level.SpawnPoints[0].Position) + new Vector2(50, 0), () => true, 500, InterfaceTooltip.ArrowPosition.LEFT));
+                    //    Interface.Add(new InterfaceTooltip(() => { return "Enemy base"; }, () => { return "try to own this one"; }, game.InGame.Level.ComputePixelPosition(game.InGame.Level.SpawnPoints[1].Position) - new Vector2(50, 0), () => true, 500, InterfaceTooltip.ArrowPosition.RIGHT));
+                    //}    
                 break;
             }
             LoadContent(game.Content);

@@ -40,7 +40,7 @@ namespace VirusX.Menu
         public Player.Type[] PlayerTypes { get; set; }
         public int[] PlayerColorIndices { get; set; }
 
-        const float DURATION_CONTINUE_UNAVAILABLE = 2.0f;
+        const float DURATION_CONTINUE_UNAVAILABLE = 1.5f;
         const int SIDE_PADDING = 30; // padding from left
         const int COLUMN_WIDTH = 125; // width of the columns WITH PADDING!
         const int COLUMN_PADDING = 20;

@@ -48,7 +48,7 @@ namespace VirusX
             INSERT_MODE_NAME,
 
             // 1 player vs 1 computer
-            TUTORIAL,
+            //TUTORIAL,
 
             // 1 player arcarde mode
             ARCADE,
@@ -62,7 +62,7 @@ namespace VirusX
             "Left vs. Right",
             "Fun",
             "Insert mode name",
-            "Tutorial",
+            //"Tutorial",
             "Arcade"
         };
 
@@ -394,7 +394,6 @@ namespace VirusX
                 // only one player alive
                 case GameMode.FUN:
                 case GameMode.CLASSIC:
-                case GameMode.TUTORIAL:
                     for (int i = 0; i < players.Length; ++i)
                     {
                         if (players[i].Alive)

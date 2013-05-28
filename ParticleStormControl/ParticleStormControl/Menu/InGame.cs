@@ -42,11 +42,6 @@ namespace VirusX.Menu
                 return;
             }
 
-            if (Settings.Instance.GameMode == VirusX.InGame.GameMode.TUTORIAL)
-            {
-                UpdateTutorial();
-            }
-
             // controller disconnect -> pause
             for (int i = 0; i < Settings.Instance.NumPlayers; ++i)
             {
@@ -74,14 +69,6 @@ namespace VirusX.Menu
 
             if(blendIn > 0.0f)
                spriteBatch.Draw(menu.TexPixel, new Rectangle(0, 0, menu.ScreenWidth, menu.ScreenHeight), Color.Black * (blendIn / GAME_BLEND_DURATION));
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void UpdateTutorial()
-        {
-
         }
     }
 }

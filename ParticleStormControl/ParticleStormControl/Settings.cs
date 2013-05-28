@@ -39,17 +39,6 @@ namespace VirusX
 
         public const int MAX_NUM_PLAYERS = 4;
 
-        public int MaxNumPlayers_AllowedByGameMode
-        {
-            get
-            {
-                if (GameMode == InGame.GameMode.TUTORIAL)
-                    return 2;
-                else
-                    return 4;
-            } 
-        }
-
         public class PlayerSettings
         {
             public int ColorIndex;
@@ -66,7 +55,7 @@ namespace VirusX
 
         public void AddPlayer(PlayerSettings settings)
         {
-            Debug.Assert(NumPlayers < MaxNumPlayers_AllowedByGameMode);
+            Debug.Assert(NumPlayers < 4);
             playerSettings.Add(settings);
         }
 

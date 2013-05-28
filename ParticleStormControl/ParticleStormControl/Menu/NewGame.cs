@@ -90,7 +90,7 @@ namespace VirusX.Menu
                 int SIDE_PADDING = TEXTBOX_HEIGHT + 30;
                 int ARROW_SIZE = menu.GetFontHeight();
 
-                for (int i = 0; i < Settings.Instance.MaxNumPlayers_AllowedByGameMode; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     int index = i;
                     Vector2 origin = GetOrigin(index);
@@ -408,9 +408,8 @@ namespace VirusX.Menu
             InputManager.ControlType controlTypePressingContinue; 
             if(InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION, out controlTypePressingContinue))
             {
-                if (!Settings.Instance.GetPlayerSettingSelection(x => x.ControlType).Contains(controlTypePressingContinue)
-                    && ((Settings.Instance.GameMode == Game.GameMode.TUTORIAL && Settings.Instance.NumPlayers == 0) || Settings.Instance.GameMode != Game.GameMode.TUTORIAL))
-                        AddPlayer(false, controlTypePressingContinue);
+                if (!Settings.Instance.GetPlayerSettingSelection(x => x.ControlType).Contains(controlTypePressingContinue))
+                    AddPlayer(false, controlTypePressingContinue);
             }
 
             // test add/remove ai
@@ -583,7 +582,7 @@ namespace VirusX.Menu
         // if all slots are full -1 is returned
         private int GetFreeSlotIndex()
         {
-            if (Settings.Instance.NumPlayers >= Settings.Instance.MaxNumPlayers_AllowedByGameMode)
+            if (Settings.Instance.NumPlayers >= 4)
                 return -1;
             int i = 0;
             while (i < 4 && playerSlotOccupied[i])
@@ -632,20 +631,20 @@ namespace VirusX.Menu
 
         private Vector2 GetOrigin(int i)
         {
-            if (Settings.Instance.GameMode == Game.GameMode.TUTORIAL)
-            {
-                switch (i)
-                {
-                    case 1:
-                        return new Vector2(Settings.Instance.ResolutionX / 4 * 3 - BOX_WIDTH / 2, (Settings.Instance.ResolutionY - BOX_HEIGHT) / 2);
-                    case 0:
-                        return new Vector2(Settings.Instance.ResolutionX / 4 - BOX_WIDTH / 2, (Settings.Instance.ResolutionY - BOX_HEIGHT) / 2);
-                    default:
-                        return Vector2.Zero;
-                }
-            }
-            else
-            {
+            //if (Settings.Instance.GameMode == Game.GameMode.TUTORIAL)
+            //{
+            //    switch (i)
+            //    {
+            //        case 1:
+            //            return new Vector2(Settings.Instance.ResolutionX / 4 * 3 - BOX_WIDTH / 2, (Settings.Instance.ResolutionY - BOX_HEIGHT) / 2);
+            //        case 0:
+            //            return new Vector2(Settings.Instance.ResolutionX / 4 - BOX_WIDTH / 2, (Settings.Instance.ResolutionY - BOX_HEIGHT) / 2);
+            //        default:
+            //            return Vector2.Zero;
+            //    }
+            //}
+            //else
+            //{
                 switch (i)
                 {
                     case 3:
@@ -659,14 +658,15 @@ namespace VirusX.Menu
                     default:
                         return Vector2.Zero;
                 }
-            }
+            //}
         }
 
         private string GetJoinText(int index)
         {
-            if (Settings.Instance.GameMode == Game.GameMode.TUTORIAL)
-                return "< add a computer player >";
-            else if (Settings.Instance.GameMode == Game.GameMode.CAPTURE_THE_CELL)
+            //if (Settings.Instance.GameMode == Game.GameMode.TUTORIAL)
+            //    return "< add a computer player >";
+            //else
+            if (Settings.Instance.GameMode == Game.GameMode.CAPTURE_THE_CELL)
                 return "< press action button to join game >\n\n(you need four players for this mode)";
             else
                 return "< press action button to join game >";
