@@ -195,22 +195,22 @@ namespace VirusX.Menu
 
 
                     Interface.Add(new InterfaceImage("symbols//Speed", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
-                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
+                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, false));
                     Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Speed[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                                 origin + new Vector2(descpX0 + TEXTBOX_HEIGHT, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
                     Interface.Add(new InterfaceImage("symbols//Mass", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
-                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
+                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, false));
                     Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Mass[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                                   origin + new Vector2(descpX0 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
                     Interface.Add(new InterfaceImage("symbols//Discipline", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
-                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
+                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, false));
                     Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Discipline[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                                     origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
                     Interface.Add(new InterfaceImage("symbols//Health", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
-                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, true));
+                                                        Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, false));
                     Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Health[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                                     origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
                 }
@@ -238,7 +238,9 @@ namespace VirusX.Menu
                 Interface.Add(new InterfaceFiller(Vector2.Zero, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, Color.FromNonPremultiplied(0, 0, 0, 128), () => { return countdown.TotalSeconds > 0; }));
                 Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.White, () => { return countdown.TotalSeconds > 0; }));
                 Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.Black, () => { return countdown.TotalSeconds > safeCountdown; }));
-                Interface.Add(new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true));
+                InterfaceButton countdownButton = new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true);
+                countdownButton.Silent = true;
+                Interface.Add(countdownButton);
 
                 base.LoadContent(content);
             }

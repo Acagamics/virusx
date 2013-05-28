@@ -110,11 +110,11 @@ namespace VirusX.Menu
                 }
 
                 // back to menu
-                if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, controllerIndex))
-                {
-                    InputManager.Instance.ResetWaitingForReconnect();
-                    menu.ChangePage(Menu.Page.MAINMENU, gameTime);
-                }
+                //if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, controllerIndex))
+                //{
+                //    InputManager.Instance.ResetWaitingForReconnect();
+                //    menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+                //}
 
                 // shutdown per (any) pad
                 //   if (InputManager.Instance.PressedButton(Buttons.Back) || InputManager.Instance.PressedButton(Keys.Escape))

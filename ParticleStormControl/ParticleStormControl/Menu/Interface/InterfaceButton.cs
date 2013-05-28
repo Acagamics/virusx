@@ -15,6 +15,7 @@ namespace VirusX.Menu
         bool selectedPrevious;
         bool selectedNow;
         bool useBigFont;
+        bool silent;
         int width;
         Color textColor;
         Color backgroundColor;
@@ -36,6 +37,12 @@ namespace VirusX.Menu
         {
             get { return text; }
             set { text = value; }
+        }
+
+        public bool Silent
+        {
+            get { return silent; }
+            set { silent = value; }
         }
 
         #endregion
@@ -170,7 +177,7 @@ namespace VirusX.Menu
             selectedNow = selected();
             
             // play sound if button got selected
-            if(selectedNow && !selectedPrevious)
+            if(selectedNow && !selectedPrevious && !silent)
                 AudioManager.Instance.PlaySoundeffect("click");
         }
 

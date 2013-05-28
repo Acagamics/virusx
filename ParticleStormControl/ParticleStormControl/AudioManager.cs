@@ -32,6 +32,7 @@ namespace VirusX
             soundEffects.Add("danger", content.Load<SoundEffect>("sound/danger_zone"));
             soundEffects.Add("wipeout", content.Load<SoundEffect>("sound/andromadax24__woosh-01"));
             soundEffects.Add("collect", content.Load<SoundEffect>("sound/cosmicd__light-switch-of-doom"));
+            soundEffects.Add("swoosh", content.Load<SoundEffect>("sound/chripei__whoosh-1"));
 
             songs.Add("beach", content.Load<Song>("sound/09 Beach"));
         }
