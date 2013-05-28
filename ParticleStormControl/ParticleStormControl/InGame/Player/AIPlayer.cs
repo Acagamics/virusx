@@ -276,12 +276,12 @@ namespace VirusX
             else
             {
                 currentSleepTime = (float)Random.NextDouble(minSleepTime, maxSleepTime);
-
+            */
                 targetPosition = targetSelector.Update(level, this, frameTimeInterval);
                 targetSpawnPoint = targetSelector.TargetSpawnPoint;
 
                 CheckItems(level);
-            }*/
+            /*}*/
 
             
 
