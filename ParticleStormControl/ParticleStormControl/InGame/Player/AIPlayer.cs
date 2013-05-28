@@ -132,13 +132,16 @@ namespace VirusX
                         ignoreItem = false;
                     }
                 }
+
                 return newTarget;
             }
 
             private SpawnPoint SelectTarget(Level level, Player player)
             {
-                var ownSpawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer == player.Index);
+                var ownSpawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer == player.Index).OrderBy(x=> x.PossessingPercentage);
                 int numberOfOwnSPs = ownSpawnPoints.Count();
+
+                if (numberOfOwnSPs > 0 && ownSpawnPoints.First().PossessingPercentage < 0.75f && ownSpawnPoints.First().PossessingPercentage > 0.3f) return ownSpawnPoints.First();
 
                 var noOwnerSpawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer == -1);
                 int numberOfNoOwnerSPs = noOwnerSpawnPoints.Count();
@@ -247,17 +250,7 @@ namespace VirusX
 
         private readonly TargetSelector targetSelector;
 
-        /// <summary>
-        /// let the ai player sleep a bit so that it is not as responsive as before ;)
-        /// It is the minimum amount of time in seconds the ai player will sleep
-        /// </summary>
-        private float minSleepTime = 0.05f;
-        /// <summary>
-        /// let the ai player sleep a bit so that it is not as responsive as before ;)
-        /// It is the maximum amount of time in seconds the ai player will sleep
-        /// </summary>
-        private float maxSleepTime = 0.15f;
-        private float currentSleepTime = 0.1f;
+        
         #endregion
 
         public AIPlayer(int playerIndex, VirusSwarm.VirusType virusIndex, int colorIndex, Teams team, InGame.GameMode gameMode, GraphicsDevice device, ContentManager content, Texture2D noiseTexture) :
@@ -332,13 +325,18 @@ namespace VirusX
                         if ((float)NumParticlesAlive / overall < 0.25f)
                         {
                             UseItem(level);
+                            break;
                         }
                         for (int i = 0; i < level.GameStatistics.PlayerCount; ++i)
                         {
                             if (i != Index)
                                 if (level.GameStatistics.getPossessingSpawnPointsInStep(i, step) == 0)
                                 {
-                                    UseItem(level);
+                                    if (level.GameStatistics.getDeathStepOfPlayer(i) < 0)
+                                    {
+                                        UseItem(level);
+                                        break;
+                                    }
                                 }
                         }
                     }
