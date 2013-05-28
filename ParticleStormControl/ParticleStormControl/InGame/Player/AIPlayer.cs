@@ -247,6 +247,17 @@ namespace VirusX
 
         private readonly TargetSelector targetSelector;
 
+        /// <summary>
+        /// let the ai player sleep a bit so that it is not as responsive as before ;)
+        /// It is the minimum amount of time in seconds the ai player will sleep
+        /// </summary>
+        private float minSleepTime = 0.05f;
+        /// <summary>
+        /// let the ai player sleep a bit so that it is not as responsive as before ;)
+        /// It is the maximum amount of time in seconds the ai player will sleep
+        /// </summary>
+        private float maxSleepTime = 0.15f;
+        private float currentSleepTime = 0.1f;
         #endregion
 
         public AIPlayer(int playerIndex, VirusSwarm.VirusType virusIndex, int colorIndex, Teams team, InGame.GameMode gameMode, GraphicsDevice device, ContentManager content, Texture2D noiseTexture) :
@@ -258,10 +269,21 @@ namespace VirusX
 
         public override void UserControl(float frameTimeInterval, Level level)
         {
-            targetPosition = targetSelector.Update(level, this, frameTimeInterval);
-            targetSpawnPoint = targetSelector.TargetSpawnPoint;
+            /*if (currentSleepTime > 0f)
+            {
+                currentSleepTime -= frameTimeInterval;
+            }
+            else
+            {
+                currentSleepTime = (float)Random.NextDouble(minSleepTime, maxSleepTime);
+            */
+                targetPosition = targetSelector.Update(level, this, frameTimeInterval);
+                targetSpawnPoint = targetSelector.TargetSpawnPoint;
 
-            CheckItems(level);
+                CheckItems(level);
+            /*}*/
+
+            
 
             if (TargetRndMoveTimeReached)
             {
