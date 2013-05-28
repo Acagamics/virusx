@@ -3,26 +3,8 @@
 
 using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-
-
-#if XBOX
-
-using System.Threading;
-
-#else
-
-using System.Threading.Tasks;
-using VirusX;
-using VirusX.Menu;
-using System.Collections.Generic;
-using System.Linq;
-using System.Diagnostics;
-
-#endif
 
 namespace CustomExtensions
 {

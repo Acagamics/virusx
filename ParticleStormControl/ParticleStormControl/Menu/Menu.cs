@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace VirusX.Menu
 {
@@ -195,7 +190,8 @@ namespace VirusX.Menu
             {
                 if (horizontal)
                 {
-                    if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT))
+                    if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT)
+                        || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION))
                         selected = selected == maximum - 1 ? 0 : selected + 1;
                     else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT))
                         selected = selected == 0 ? maximum - 1 : selected - 1;
@@ -212,7 +208,8 @@ namespace VirusX.Menu
             {
                 if (horizontal)
                 {
-                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, control))
+                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, control)
+                        || InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.ACTION, control))
                         selected = selected == maximum - 1 ? 0 : selected + 1;
                     else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, control))
                         selected = selected == 0 ? maximum - 1 : selected - 1;
