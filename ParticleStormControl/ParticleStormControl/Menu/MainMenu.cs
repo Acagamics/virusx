@@ -109,7 +109,8 @@ namespace VirusX.Menu
                     foreach (InputManager.ControlType control in Enum.GetValues(typeof(InputManager.ControlType)))
                     {
                         // if an back or escape button is pressed then jump to exit
-                        if(InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, control))
+                        if(InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, control) ||
+                            InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, control))
                         {
                             // if alrady on exit, quit the game
                             if (selectedButton == Button.END)
