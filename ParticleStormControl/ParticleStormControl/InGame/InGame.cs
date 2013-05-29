@@ -364,17 +364,6 @@ namespace VirusX
                 // level update
                 level.Update(gameTime, players);
 
-                if(Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME && State == GameState.Playing)
-                {
-                    for(int index = 0;index < winTimer.Length;++index)
-                    {
-                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count - players.Length) / players.Length)
-                            winTimer[index].Start();
-                        else
-                            winTimer[index].Stop();
-                    }
-                }
-
                 // winning
                 if (State == GameState.Playing)
                     CheckWinning(gameTime);
@@ -436,6 +425,14 @@ namespace VirusX
                     break;
 
                 case GameMode.INSERT_MODE_NAME:
+                    for (int index = 0; index < winTimer.Length; ++index)
+                    {
+                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count - players.Length) / players.Length)
+                            winTimer[index].Start();
+                        else
+                            winTimer[index].Stop();
+                    }
+
                     for(int index=0;index<winTimer.Length;++index)
                         if (winTimer[index].Elapsed.TotalSeconds > ModeWinTime)
                         {
@@ -458,6 +455,7 @@ namespace VirusX
                 // statistics
                 GameStatistics.addWonMatches(winPlayerIndex);
 
+                // fill stat screen
                 Menu.StatisticsScreen statScreen = ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS));
                 statScreen.WinningTeam          = winningTeam;
                 statScreen.WinPlayerIndex       = winPlayerIndex;

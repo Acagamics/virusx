@@ -210,7 +210,7 @@ namespace VirusX
         /// </summary>
         private float currentItemPossessionTime = 0f;
 
-        private float blinkTimePercentage = 0.75f;
+        private float itemBlinkTimePercentage = 0.75f;
         private float itemAlphaValue = 1f;
         public float ItemAlphaValue 
         {
@@ -252,11 +252,23 @@ namespace VirusX
         /// </summary>
         public static void SwitchPlayer(Player player1, Player player2)
         {
+            // if one of the player isn't alive, do nothing
+            // this shouldn't happen at all, but just to be safe..
+            if (!player1.Alive || !player2.Alive)
+            {
+#if DEBUG
+                throw new Exception("SwitchPlayer: One of the player isn't alive!");
+#else
+                return;
+#endif
+            }
+
+            // swarm posession switch
             VirusSwarm.SwitchSwarm(player1.virusSwarm, player2.virusSwarm);
 
-        /*    Item.ItemType item = player1.ItemSlot;
-            player1.ItemSlot = player2.ItemSlot;
-            player2.ItemSlot = item; */
+            // reset time since no spawnpoint to zero, just to be fair
+            player1.timeWithoutSpawnPoint = 0.0f;
+            player2.timeWithoutSpawnPoint = 0.0f;
         }
         
 
@@ -308,7 +320,7 @@ namespace VirusX
                 {
                     currentItemPossessionTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                    if (currentItemPossessionTime > blinkTimePercentage * maxItemPossessionTime)
+                    if (currentItemPossessionTime > itemBlinkTimePercentage * maxItemPossessionTime)
                     {
                         itemAlphaValue = ((float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10f)*0.4f + 0.5f);
                     }
