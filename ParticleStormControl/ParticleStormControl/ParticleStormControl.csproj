@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="background\Background.cs" />
+    <Compile Include="InGame\Crosshair.cs" />
     <Compile Include="InGame\Level\MapGenerator.cs" />
     <Compile Include="InGame\Level\DamageArea.cs" />
     <Compile Include="InGame\Level\MovingSpawnPoints.cs" />
@@ -170,7 +171,6 @@
     <Compile Include="InGame\NoiseTexture.cs" />
     <Compile Include="InGame\ScreenTriangleRenderer.cs" />
     <Compile Include="InGame\Level\SpawnPoint.cs" />
-    <Compile Include="InGame\Level\Crosshair.cs" />
     <Compile Include="InGame\DamageMap.cs" />
     <Compile Include="InGame\Level\Debuff.cs">
       <SubType>Code</SubType>

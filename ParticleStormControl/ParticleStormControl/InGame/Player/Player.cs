@@ -102,6 +102,9 @@ namespace VirusX
         }
         protected Vector2 cursorPosition;
 
+
+        private Crosshair crosshair;
+
 #if ALL_CURSORS_IN_CENTER_POSITION
         private readonly static Vector2[] cursorStartPositions =
             {
@@ -230,11 +233,13 @@ namespace VirusX
             this.team = team;
             this.ItemSlot = global::VirusX.Item.ItemType.NONE;
 
+            // place cursor
             if (gameMode == InGame.GameMode.CAPTURE_THE_CELL)
                 cursorPosition = cursorStartPositionsCTC[Settings.Instance.GetPlayer(playerIndex).SlotIndex];
             else
                 cursorPosition = cursorStartPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex];
 
+            // create virusswarm
             List<int> friendlyPlayers = new List<int>();
             if (team != Teams.NONE)
             {
@@ -245,6 +250,9 @@ namespace VirusX
                 }
             }
             virusSwarm = new VirusSwarm(virusIndex, playerIndex, friendlyPlayers, device, content, noiseTexture);
+
+            // create crosshair
+            crosshair = new Crosshair(content);
         }
 
         /// <summary>
@@ -288,6 +296,8 @@ namespace VirusX
         /// <param name="cantDie">set to true if this player should be invincible in this update step</param>
         public void UpdateCPUPart(GameTime gameTime, IEnumerable<SpawnPoint> spawnPoints, bool cantDie)
         {
+            crosshair.Update(gameTime, this);
+
             if (!alive)
                 return;
 
@@ -341,5 +351,16 @@ namespace VirusX
         }
 
         abstract public void UserControl(float frameTimeInterval, Level level);
+
+
+        public void DrawCrosshairDamageMap(SpriteBatch spriteBatch)
+        {
+            crosshair.DrawToDamageMap(spriteBatch, DamageMapDrawColor);
+        }
+
+        public void DrawCrosshairAlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime)
+        {
+            crosshair.Draw_AlphaBlended(spriteBatch, level, gameTime, Color);
+        }
     }
 }

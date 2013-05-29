@@ -491,11 +491,10 @@ namespace VirusX
             {
                 // update damagemap (GPU)
                 if (levelDamageFrame)
-                    damageMap.UpdateGPU_Map(graphicsDevice, level);
+                    damageMap.UpdateGPU_Objects(graphicsDevice, level, players);
                 else
                     damageMap.UpdateGPU_Particles(graphicsDevice, particleRenderer, players);
                 levelDamageFrame = !levelDamageFrame;
-             //   graphicsDevice.SetRenderTarget(null);
                 
                 // update player gpu
                 for (int i = 0; i < players.Length; ++i)
@@ -523,6 +522,12 @@ namespace VirusX
 
             // postpro end
             postPro.EndAndApply(graphicsDevice);
+
+            // crosshairs
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, Level.ScissorTestRasterizerState);
+            foreach (Player player in players)
+                player.DrawCrosshairAlphaBlended(spriteBatch, level, gameTime);
+            spriteBatch.End();
 
             // interface
             if (State == GameState.Playing || State == GameState.Paused)

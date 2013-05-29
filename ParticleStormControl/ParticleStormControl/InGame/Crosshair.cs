@@ -1,21 +1,27 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace VirusX
 {
-    class Crosshair:MapObject
+    class Crosshair
     {
-        public int PlayerIndex { get; private set; }
-        public bool PlayerAlive { get; set; }
+        private bool playerAlive;
 
         /// <summary>
         /// position of the cursor the particles are attracted to
-        /// MapObject.Position stands for the moving cursor position
         /// </summary>
-        public Vector2 ParticleAttractionPosition { get; set; }
+        private Vector2 particleAttractionPosition;
 
+        /// <summary>
+        /// position of the particle cursor (under direct player control)
+        /// </summary>
+        private Vector2 cursorPosition;
+
+        /// <summary>
+        /// texture for the normal cursor
+        /// </summary>
         private Texture2D crossHairTexture;
 
         private float currentRotation;
@@ -31,23 +37,29 @@ namespace VirusX
         private const float MAX_DEATH_EXPL_SIZE = 0.35f;
         private const float EXPL_SCALE_SPEED = 2.0f;
         private const float DEATH_DAMAGE = 60; // is multiplied by the size, so don't be afraid, this value isn't as high as it looks
-       
-        public Crosshair (int playerindex, ContentManager contentManager) :
-            base(Vector2.One, CURSOR_SIZE)
+
+        private float Size;
+
+        public Crosshair (ContentManager contentManager)
         {
-            PlayerIndex = playerindex;
             this.crossHairTexture = contentManager.Load<Texture2D>("basic_crosshair");
             this.deadPlayerCursor = contentManager.Load<Texture2D>("death");
 
             currentRotation = (float)Random.NextDouble() * MathHelper.TwoPi;
-            PlayerAlive = true;
+            playerAlive = true;
+
+            Size = CURSOR_SIZE;
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, Player player)
         {
+            cursorPosition = player.CursorPosition;
+            particleAttractionPosition = player.ParticleAttractionPosition;
+            playerAlive = player.Alive;
+
             currentRotation -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (!PlayerAlive)
+            if (!playerAlive)
             {
                 deathTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
                 float scaling = deathTimer * EXPL_SCALE_SPEED;
@@ -60,28 +72,25 @@ namespace VirusX
 
                 Size = MAX_DEATH_EXPL_SIZE * scaling;
             }
-
-            base.Update(gameTime);
         }
 
-        public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime)
+        public void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime, Color color)
         {
-            Color color = Settings.Instance.GetPlayerColor(PlayerIndex);
             float saturation = Vector3.Dot(color.ToVector3(), new Vector3(0.3f, 0.59f, 0.11f));
             float modificator = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds) * 0.5f;
             color = Color.Lerp(color, new Color(saturation, saturation, saturation), 0.4f /*+ modificator*/) * (1.0f + 0.5f + modificator);
 
             // normal cursor
-            if (PlayerAlive)
+            if (playerAlive)
             {
-                spriteBatch.Draw(crossHairTexture, level.ComputePixelPosition(ParticleAttractionPosition), null, color,
+                spriteBatch.Draw(crossHairTexture, level.ComputePixelPosition(particleAttractionPosition), null, color,
                                     currentRotation, new Vector2(crossHairTexture.Width * 0.5f, crossHairTexture.Height * 0.5f), level.ComputeTextureScale(Size, crossHairTexture.Width),
                                     SpriteEffects.None, 0.0f);
 
-                if (ParticleAttractionPosition != Position)
+                if (particleAttractionPosition != cursorPosition)
                 {
                     color.A = 150;
-                    spriteBatch.Draw(crossHairTexture, level.ComputePixelPosition(Position), null, color,
+                    spriteBatch.Draw(crossHairTexture, level.ComputePixelPosition(cursorPosition), null, color,
                        currentRotation, new Vector2(crossHairTexture.Width * 0.5f, crossHairTexture.Height * 0.5f), level.ComputeTextureScale(Size, crossHairTexture.Width),
                         SpriteEffects.None, 0.0f);
                 }
@@ -90,16 +99,16 @@ namespace VirusX
             else
             {
                 color.A = 150;
-                spriteBatch.Draw(deadPlayerCursor, level.ComputePixelPosition(Position), null, color,
+                spriteBatch.Draw(deadPlayerCursor, level.ComputePixelPosition(cursorPosition), null, color,
                                     currentRotation, new Vector2(deadPlayerCursor.Width * 0.5f, deadPlayerCursor.Height * 0.5f), level.ComputeTextureScale(Size, deadPlayerCursor.Width),
                                     SpriteEffects.None, 0.0f);
             }
         }
 
-        public override void DrawToDamageMap(SpriteBatch spriteBatch)
+        public void DrawToDamageMap(SpriteBatch spriteBatch, Color damageMapDrawColor)
         {
-            Color damage = VirusSwarm.GetDamageMapDrawColor(PlayerIndex) * (DEATH_DAMAGE * Size);
-            spriteBatch.Draw(deadPlayerCursor, DamageMap.ComputePixelRect(Position, Size), null, damage, currentRotation, 
+            Color damage = damageMapDrawColor * (DEATH_DAMAGE * Size);
+            spriteBatch.Draw(deadPlayerCursor, DamageMap.ComputePixelRect(cursorPosition, Size), null, damage, currentRotation, 
                                 new Vector2(deadPlayerCursor.Width, deadPlayerCursor.Height) * 0.5f, SpriteEffects.None, 0);
         }
     }

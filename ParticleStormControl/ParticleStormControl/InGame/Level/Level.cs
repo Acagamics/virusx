@@ -1,11 +1,11 @@
 ﻿//#define NO_ITEMS
 
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace VirusX
 {
@@ -37,7 +37,7 @@ namespace VirusX
         private SpriteBatch spriteBatch;
         private ContentManager contentManager;
 
-        private RasterizerState scissorTestRasterizerState = new RasterizerState
+        public readonly RasterizerState ScissorTestRasterizerState = new RasterizerState
                                                                 {
                                                                     CullMode = CullMode.None,
                                                                     ScissorTestEnable = true,
@@ -198,10 +198,6 @@ namespace VirusX
                                     fieldSize_pixel, fieldOffset_pixel));
             spawnPoints.AddRange(mapObjects.OfType<SpawnPoint>());
 
-            // crosshairs for players
-            for (int i = 0; i < players.Length; ++i)
-                mapObjects.Add(new Crosshair(i, contentManager));
-
             // clear player rendering
             BeginDrawInternParticleTarget(device);
             EndDrawInternParticleTarget(device);
@@ -317,15 +313,8 @@ namespace VirusX
             {
                 mapObject.Update(gameTime);
 
-                Crosshair crosshair = mapObject as Crosshair;
-                if (crosshair != null)
-                {
-                    crosshair.Position = players[crosshair.PlayerIndex].CursorPosition;
-                    crosshair.ParticleAttractionPosition = players[crosshair.PlayerIndex].ParticleAttractionPosition;
-                    crosshair.PlayerAlive = players[crosshair.PlayerIndex].Alive;
-                }
                 // statistics
-                else if (mapObject is SpawnPoint)
+                if (mapObject is SpawnPoint)
                 {
                     SpawnPoint sp = mapObject as SpawnPoint;
                     if (sp.PossessingPlayer != -1)
@@ -632,7 +621,7 @@ namespace VirusX
             if (currentMapType != MapGenerator.MapType.BACKGROUND)
             {
                 device.ScissorRectangle = fieldPixelRectangle;
-                device.RasterizerState = scissorTestRasterizerState;
+                device.RasterizerState = ScissorTestRasterizerState;
             }
 
             // background
@@ -642,7 +631,7 @@ namespace VirusX
             DrawParticles(device);
 
             // alphablended spritebatch stuff
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, scissorTestRasterizerState);
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, ScissorTestRasterizerState);
 
             // all alpha blended objects
             foreach (MapObject mapObject in mapObjects.Where(x=>x.Alive))
