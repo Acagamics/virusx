@@ -234,10 +234,12 @@ namespace VirusX
             if (State == GameState.Demo && !forceRestart)
                 return;
 
-//            players = new Player[0];
+            // workaround for certain map object properties
+            GameMode oldGameMode = Settings.Instance.GameMode;
+            Settings.Instance.GameMode = GameMode.CLASSIC;
+            // -----
 
-            Settings.Instance.ResetPlayerSettings();
-        //    Settings.Instance.GameMode = GameMode.CLASSIC;
+            Settings.Instance.ResetPlayerSettings(); 
             for (int i = 0; i < 2; ++i)
             {
                 Settings.Instance.AddPlayer(new Settings.PlayerSettings()
@@ -263,6 +265,10 @@ namespace VirusX
             postPro.UpdateVignettingSettings(false, level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
             
             State = InGame.GameState.Demo;
+
+            // workaround for certain map object properties
+            Settings.Instance.GameMode = oldGameMode;
+            // -----
         }
 
         private void SetupBackground()
