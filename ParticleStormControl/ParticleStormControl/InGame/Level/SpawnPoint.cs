@@ -112,14 +112,37 @@ namespace VirusX
             }
         }
 
+        public override void Draw_Additive(SpriteBatch spriteBatch, Level level, GameTime gameTime)
+        {
+            if (PossessingPlayer != -1)
+            {
+                Vector2 pixelPosition = level.ComputePixelPosition(Position);
+                Color glowColor = Settings.Instance.GetPlayerColor(PossessingPlayer) * 0.4f * MathHelper.Clamp(PossessingPercentage * 7.0f, 0.0f, 1.0f);
+                spriteBatch.Draw(glowTexture, pixelPosition, null, glowColor, 0.0f, new Vector2(glowTexture.Width * 0.5f, glowTexture.Height * 0.5f),
+                                level.ComputeTextureScale(Size * 4.0f, glowTexture.Width), SpriteEffects.None, 1.0f);
+            }
+        }
+
         public override void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime)
         {
             // main
             Color color = ComputeColor();
+
             const float PULSING = 0.01f;
-         //   spriteBatch.Draw(outerTexture, rect, null, color, totalTimeSeconds, new Vector2(outerTexture.Width * 0.5f, outerTexture.Height * 0.5f), SpriteEffects.None, 0.8f);
+
+            Vector2 pixelPosition = level.ComputePixelPosition(Position);
+
+            if (PossessingPlayer != -1)
+            {
+                Color glowColor = Settings.Instance.GetPlayerColor(PossessingPlayer);
+                glowColor.A = (byte)(150 * MathHelper.Clamp(PossessingPercentage * 10, 0.0f, 1.0f));
+                spriteBatch.Draw(glowTexture, pixelPosition, null, glowColor, 0.0f, new Vector2(glowTexture.Width * 0.5f, glowTexture.Height * 0.5f),
+                                level.ComputeTextureScale(Size * 2.5f, glowTexture.Width), SpriteEffects.None, 1.0f);
+            }
+
+
             float innerSize = Size + (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 1.7 + randomAngle) * PULSING - PULSING;
-            spriteBatch.Draw(nucleusTexture_inner, level.ComputePixelPosition(Position),
+            spriteBatch.Draw(nucleusTexture_inner, pixelPosition,
                              null, color, (float)gameTime.TotalGameTime.TotalSeconds + randomAngle,
                              new Vector2(nucleusTexture_inner.Width * 0.5f, nucleusTexture_inner.Height * 0.5f),
                              level.ComputeTextureScale(innerSize, nucleusTexture_inner.Width), SpriteEffects.None, 0.7f);
@@ -131,7 +154,7 @@ namespace VirusX
             if (explosionTimer.IsRunning && PossessingPlayer != -1)
             {
                 Color explosionColor = Settings.Instance.GetPlayerColor(PossessingPlayer) * currentExplosionAlpha;   // using premultiplied values, the whole color has to be multiplied for alphablending
-                spriteBatch.Draw(explosionTexture, level.ComputePixelPosition(Position), null, explosionColor, explosionRotation,
+                spriteBatch.Draw(explosionTexture, pixelPosition, null, explosionColor, explosionRotation,
                                         new Vector2(explosionTexture.Width / 2, explosionTexture.Height / 2), 
                                         level.ComputeTextureScale(currentExplosionSize, explosionTexture.Width), SpriteEffects.None, 0.1f);
             }

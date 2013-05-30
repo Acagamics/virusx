@@ -633,16 +633,21 @@ namespace VirusX
             // the particles!
             DrawParticles(device);
 
+            // additive spritebatch stuff
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, ScissorTestRasterizerState);
+            foreach (MapObject mapObject in mapObjects.Where(x => x.Alive))
+                mapObject.Draw_Additive(spriteBatch, this, gameTime);
+            spriteBatch.End();
+
             // alphablended spritebatch stuff
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, ScissorTestRasterizerState);
-
-            // all alpha blended objects
             foreach (MapObject mapObject in mapObjects.Where(x=>x.Alive))
                 mapObject.Draw_AlphaBlended(spriteBatch, this, gameTime);
+            spriteBatch.End();
 
             // countdown
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, ScissorTestRasterizerState);
             DrawCountdown(device, (float)gameTime.TotalGameTime.TotalSeconds);
-
             spriteBatch.End();
         }
 
