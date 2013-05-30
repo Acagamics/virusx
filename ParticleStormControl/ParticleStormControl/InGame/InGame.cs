@@ -380,7 +380,7 @@ namespace VirusX
                 }
             }
 
-            postPro.UpdateTransitions(gameTime);
+            postPro.Update(gameTime, level);
         }
 
         private void CheckWinning(GameTime gameTime)

@@ -20,6 +20,9 @@ namespace VirusX
         private float groundBlurFactor = 0.0f;
         private const float BLUR_TRANSITION_SPEED = 20.0f;
         private const float PAUSE_BLUR_FACTOR = 5.0f;
+
+       // private const float SPAWN_POINT_DISPLACEMENT_SIZE = 0.04f;
+      //  private const float SPAWN_POINT_DISPLACEMENT_STRENGTH = 4.0f;
         
         private readonly static BlendState VignettingBlend = new BlendState
         {
@@ -34,7 +37,7 @@ namespace VirusX
         {
             vignettingQuadVertexBuffer = new VertexBuffer(device, ScreenTriangleRenderer.ScreenAlignedTriangleVertex.VertexDeclaration, 4, BufferUsage.WriteOnly);
             vignettingQuadVertexBuffer.SetData(new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) });
-            vignettingShader = content.Load<Effect>("shader/vignetting");
+            vignettingShader = content.Load<Effect>("shader/postprocess");
 
             CreateRenderTarget(device);
             Resize(fieldSize_pixel, fieldOffset_pixel);
@@ -56,10 +59,22 @@ namespace VirusX
         {
             this.vignettingOn = vignettingOn;
 
-            Vector2 posScale = new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) / new Vector2(fieldSize_pixel.X, fieldSize_pixel.Y);
-            Vector2 posOffset = -new Vector2(fieldOffset_pixel.X, fieldOffset_pixel.Y) / new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) * posScale;
-            vignettingShader.Parameters["Vignetting_PosScale"].SetValue(posScale);
-            vignettingShader.Parameters["Vignetting_PosOffset"].SetValue(posOffset);
+            if (vignettingOn)
+            {
+                Vector2 posScale = new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) / new Vector2(fieldSize_pixel.X, fieldSize_pixel.Y);
+                Vector2 posOffset = -new Vector2(fieldOffset_pixel.X, fieldOffset_pixel.Y) / new Vector2(Settings.Instance.ResolutionX, Settings.Instance.ResolutionY) * posScale;
+                vignettingShader.Parameters["Vignetting_PosScale"].SetValue(posScale);
+                vignettingShader.Parameters["Vignetting_PosOffset"].SetValue(posOffset);
+          //      vignettingShader.Parameters["VignetteScreenRatio"].SetValue((float)fieldSize_pixel.X / fieldSize_pixel.Y);
+                vignettingShader.Parameters["VignetteStrength"].SetValue(1.0f);
+            }
+            else
+            {
+                vignettingShader.Parameters["Vignetting_PosScale"].SetValue(Vector2.One);
+                vignettingShader.Parameters["Vignetting_PosOffset"].SetValue(Vector2.Zero);
+           //     vignettingShader.Parameters["VignetteScreenRatio"].SetValue((float)Settings.Instance.ResolutionX / Settings.Instance.ResolutionY);
+                vignettingShader.Parameters["VignetteStrength"].SetValue(0.0f);
+            }
         }
 
         public void Resize(Vector2 fieldSize_pixel, Vector2 fieldOffset_pixel)
@@ -84,7 +99,7 @@ namespace VirusX
             groundBlurRaiseTo = 0.0f;
         }
 
-        public void UpdateTransitions(GameTime gameTime)
+        public void Update(GameTime gameTime, Level level)
         {
             if (groundBlurFactor != groundBlurRaiseTo)
             {
@@ -102,6 +117,30 @@ namespace VirusX
                 }
                 vignettingShader.Parameters["GroundBlur"].SetValue(groundBlurFactor);
             }
+
+            // effect for all spawn points
+    /*        int numDisplacements = 0;
+            Vector2[] radialDisplacementPositions_TexcoordSpace = new Vector2[4];
+            Vector2[] radialDisplacementSizeFade = new Vector2[4];
+            foreach (SpawnPoint spawn in level.SpawnPoints)
+            {
+                if (spawn.ExplosionProgress != 0.0f)
+                {
+                    radialDisplacementPositions_TexcoordSpace[numDisplacements] = spawn.Position / Level.RELATIVE_MAX;
+                    radialDisplacementSizeFade[numDisplacements].X = spawn.ExplosionMaxSize * spawn.ExplosionProgress * SPAWN_POINT_DISPLACEMENT_SIZE;
+                    radialDisplacementSizeFade[numDisplacements].X *= radialDisplacementSizeFade[numDisplacements].X;
+                    radialDisplacementSizeFade[numDisplacements].Y = (float)System.Math.Sin(spawn.ExplosionProgress * System.Math.PI) * SPAWN_POINT_DISPLACEMENT_STRENGTH;
+                    ++numDisplacements;
+                    if(numDisplacements == radialDisplacementPositions_TexcoordSpace.Length)
+                        break;
+                }
+            }
+            vignettingShader.Parameters["NumRadialDisplacements"].SetValue(numDisplacements);
+            if(numDisplacements > 0)
+            {
+                vignettingShader.Parameters["RadialDisplacementPositions_TexcoordSpace"].SetValue(radialDisplacementPositions_TexcoordSpace);
+                vignettingShader.Parameters["RadialDisplacementSizeFade"].SetValue(radialDisplacementSizeFade);
+            } */
         }
 
         /// <summary>
@@ -109,8 +148,6 @@ namespace VirusX
         /// </summary>
         public void Begin(GraphicsDevice device)
         {
-            if (!vignettingOn)
-                return;
             vignettingShader.Parameters["ScreenTexture"].SetValue((Texture2D)null);
             device.SetRenderTarget(screenTarget);
             device.Clear(Color.Black);
@@ -122,9 +159,6 @@ namespace VirusX
         /// </summary>
         public void EndAndApply(GraphicsDevice device)
         {
-            if (!vignettingOn)
-                return;
-
             device.SetRenderTarget(null);
             vignettingShader.Parameters["ScreenTexture"].SetValue(screenTarget);
             device.BlendState = BlendState.Opaque;

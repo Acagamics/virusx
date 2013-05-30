@@ -11,6 +11,7 @@ namespace VirusX
         public float SpawnSize { get; private set; }
         public float SpawnTimeAccum { get; set; }
 
+
         #region explosion
         /// <summary>
         /// max explosion size
@@ -20,12 +21,14 @@ namespace VirusX
         /// <summary>
         ///  current explosionsize
         /// </summary>
-        private float currentExplosionSize;
+        public float currentExplosionSize;
         private float currentExplosionAlpha;
         private float explosionRotation;
-        private const int explosionDamage = 8;//10;
-        private const float duration = 1.0f;
-        
+        private const int EXPLOSION_DAMAGE = 8;//10;
+        private const float EXPLOSION_DURATION = 1.0f;
+
+        public float ExplosionProgress { get { return (float)explosionTimer.Elapsed.TotalSeconds / EXPLOSION_DURATION; } }
+
         private Stopwatch explosionTimer = new Stopwatch();
 
         #endregion
@@ -35,12 +38,6 @@ namespace VirusX
         /// </summary>
         public readonly Color capturingDamage = new Color(10, 10, 10, 10);
         private const float capturingDamageSize = 0.03f;
-
-
-        /// <summary>
-        /// timer for glow appearing
-        /// </summary>
-        public Stopwatch glowtimer = new Stopwatch();
 
         // textures
         private Texture2D glowTexture;
@@ -65,7 +62,6 @@ namespace VirusX
 
             if (startposession != -1)
             {
-                glowtimer.Start();
                 if (Settings.Instance.GameMode == InGame.GameMode.INSERT_MODE_NAME)
                 {
                     captureable = false;
@@ -83,7 +79,6 @@ namespace VirusX
                 this.SpawnSize *= 2f;
                 ExplosionMaxSize += .55f;
             }
-
         }
 
         protected override void OnPossessingChanged()
@@ -91,7 +86,6 @@ namespace VirusX
             if(PossessingPlayer != -1)
             {
                 AudioManager.Instance.PlaySoundeffect("capture");
-                glowtimer.Start();
                 explosionTimer.Start();
                 explosionRotation = (float)(Random.NextDouble() * MathHelper.TwoPi);
             }
@@ -105,15 +99,16 @@ namespace VirusX
             if (explosionTimer.IsRunning)
             {
                 float effectseconds = (float) explosionTimer.Elapsed.TotalSeconds;
-                if (effectseconds > duration)
+                if (effectseconds > EXPLOSION_DURATION)
                 {
                     explosionTimer.Reset();
+                    currentExplosionSize = 0.0f;
                 }
                 else
                 {
                     float scaling = MathHelper.Clamp((float) Math.Log(effectseconds*16 + 1.0f)/3, 0.0f, 1.0f);
                     currentExplosionSize = ExplosionMaxSize*scaling;
-                    currentExplosionAlpha = 1.0f - effectseconds/duration;
+                    currentExplosionAlpha = 1.0f - effectseconds/EXPLOSION_DURATION;
                 }
             }
         }
@@ -136,7 +131,7 @@ namespace VirusX
             // explosion
             if (explosionTimer.IsRunning && PossessingPlayer != -1)
             {
-                Color explosionColor = Settings.Instance.GetPlayerColor(PossessingPlayer) * currentExplosionAlpha;   // using premultiplied values, the whole colore has to be multiplied for alphablending
+                Color explosionColor = Settings.Instance.GetPlayerColor(PossessingPlayer) * currentExplosionAlpha;   // using premultiplied values, the whole color has to be multiplied for alphablending
                 spriteBatch.Draw(explosionTexture, level.ComputePixelPosition(Position), null, explosionColor, explosionRotation,
                                         new Vector2(explosionTexture.Width / 2, explosionTexture.Height / 2), 
                                         level.ComputeTextureScale(currentExplosionSize, explosionTexture.Width), SpriteEffects.None, 0.1f);
@@ -148,7 +143,7 @@ namespace VirusX
             if (explosionTimer.IsRunning && PossessingPlayer != -1)
             {
                 
-                Color damage = VirusSwarm.GetDamageMapDrawColor(PossessingPlayer) * explosionDamage * currentExplosionAlpha;
+                Color damage = VirusSwarm.GetDamageMapDrawColor(PossessingPlayer) * EXPLOSION_DAMAGE * currentExplosionAlpha;
                 spriteBatch.Draw(explosionTexture, DamageMap.ComputePixelRect(Position, currentExplosionSize), null, damage, explosionRotation,
                                      new Vector2(explosionTexture.Width / 2, explosionTexture.Height / 2), SpriteEffects.None, 1.0f);
             }
