@@ -605,6 +605,12 @@ namespace VirusX
             device.SetRenderTarget(null);
         }
 
+        public void SetupScissorRect(GraphicsDevice device)
+        {
+            device.ScissorRectangle = fieldPixelRectangle;
+            device.RasterizerState = ScissorTestRasterizerState;
+        }
+
         public void Draw(GameTime gameTime, GraphicsDevice device, Player[] players)
         {
             // background colors
@@ -619,10 +625,7 @@ namespace VirusX
 
             // activate scissor test - is this a performance issue?
             if (currentMapType != MapGenerator.MapType.BACKGROUND)
-            {
-                device.ScissorRectangle = fieldPixelRectangle;
-                device.RasterizerState = ScissorTestRasterizerState;
-            }
+                SetupScissorRect(device);
 
             // background
             background.Draw(device, (float)gameTime.TotalGameTime.TotalSeconds);

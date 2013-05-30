@@ -525,6 +525,7 @@ namespace VirusX
 
             // crosshairs
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, Level.ScissorTestRasterizerState);
+            level.SetupScissorRect(graphicsDevice);
             foreach (Player player in players)
                 player.DrawCrosshairAlphaBlended(spriteBatch, level, gameTime);
             spriteBatch.End();
