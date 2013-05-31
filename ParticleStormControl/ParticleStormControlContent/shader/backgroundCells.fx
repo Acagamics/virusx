@@ -42,9 +42,9 @@ struct VertexShaderOutput
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
     VertexShaderOutput output;
-	output.Position.xy = input.Position * PosScale + PosOffset;
+	output.Position.xy = input.Position * PosScale + PosOffset + HalfPixelCorrection;
 	output.Position.zw = float2(0,1);
-	output.Texcoord = input.Position * RelativeMax + HalfPixelCorrection;
+	output.Texcoord = input.Position * RelativeMax;
     return output;
 }
 

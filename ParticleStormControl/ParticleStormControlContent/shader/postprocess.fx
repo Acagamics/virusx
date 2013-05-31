@@ -59,11 +59,10 @@ struct VertexShaderOutput
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
     VertexShaderOutput output;
-	output.Position.xy = input.Position;
+	output.Position.xy = input.Position + HalfPixelCorrection;
 	output.Position.zw = float2(0,1);
 	output.Texcoord.xy = input.Position * 0.5f + 0.5f;
 	output.Texcoord.y = 1.0f - output.Texcoord.y;
-	output.Texcoord += HalfPixelCorrection;
     return output;
 }
 

@@ -50,7 +50,7 @@ namespace VirusX
                 if (screenTarget != null)
                     screenTarget.Dispose();
                 screenTarget = new RenderTarget2D(device, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, false, SurfaceFormat.Color, DepthFormat.None);
-                vignettingShader.Parameters["HalfPixelCorrection"].SetValue(new Vector2(0.5f / screenTarget.Width, 0.5f / screenTarget.Height));
+                vignettingShader.Parameters["HalfPixelCorrection"].SetValue(new Vector2(-0.5f / screenTarget.Width, 0.5f / screenTarget.Height));
                 vignettingShader.Parameters["InversePixelSize"].SetValue(new Vector2(1.0f / screenTarget.Width, 1.0f / screenTarget.Height));
             }
         }
