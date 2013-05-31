@@ -44,7 +44,7 @@ namespace VirusX
             INSERT_MODE_NAME,
 
             // 1 player arcarde mode
-            ARCADE,
+  //          ARCADE,
 
             NUM_MODES
         };
@@ -56,7 +56,7 @@ namespace VirusX
             "Left vs. Right",
             "Fun",
             "Domination",
-            "Arcade"
+     //       "Arcade"
         };
 
         static public readonly String[] GAMEMODE_DESCRIPTION = new String[]
@@ -426,9 +426,9 @@ namespace VirusX
                     break;
 
                 // player died
-                case GameMode.ARCADE:
-                    winPlayerIndex = players[0].Alive ? -1 : 0;
-                    break;
+         //       case GameMode.ARCADE:
+          //          winPlayerIndex = players[0].Alive ? -1 : 0;
+           //         break;
 
                 case GameMode.INSERT_MODE_NAME:
                     for (int index = 0; index < winTimer.Length; ++index)
