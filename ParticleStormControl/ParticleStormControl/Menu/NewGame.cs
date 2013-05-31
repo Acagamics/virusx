@@ -650,7 +650,7 @@ namespace VirusX.Menu
                 switch (i)
                 {
                     case 3:
-                        return new Vector2(Settings.Instance.ResolutionX / 4 - BOX_WIDTH / 2, Settings.Instance.ResolutionY / 4 - BOX_HEIGHT / 2 - InterfaceButton.PADDING*3);
+                        return new Vector2(Settings.Instance.ResolutionX / 4 - BOX_WIDTH / 2, Settings.Instance.ResolutionY / 4 - BOX_HEIGHT / 2 - InterfaceButton.PADDING * 3);
                     case 2:
                         return new Vector2(Settings.Instance.ResolutionX / 4 * 3 - BOX_WIDTH / 2, Settings.Instance.ResolutionY / 4 * 3 - BOX_HEIGHT / 2 - InterfaceButton.PADDING * 3);
                     case 1:

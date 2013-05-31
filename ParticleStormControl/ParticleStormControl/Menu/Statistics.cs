@@ -16,7 +16,7 @@ namespace VirusX.Menu
     class StatisticsScreen : MenuPage
     {
         public Statistics Statistics { get; set; }
-        private List<string> captions = new List<string> { "Captured", "Lost", "Max #", "Average #", "Average HP", "Items" };
+        private List<string> captions = new List<string> { "Captured", "Lost", "Max #", "Average #", "Average HP", "Items", "Result" };
         private List<string>[] values = new List<string>[0];
 
         private Texture2D[] itemTextures = new Texture2D[(int)Statistics.StatItems.NUM_STAT_ITEMS]; 
@@ -37,8 +37,8 @@ namespace VirusX.Menu
         public int[] PlayerColorIndices { get; set; }
 
         const float DURATION_CONTINUE_UNAVAILABLE = 1.5f;
-        const int SIDE_PADDING = 30; // padding from left
-        const int COLUMN_WIDTH = 125; // width of the columns WITH PADDING!
+        const int SIDE_PADDING = 10; // padding from left
+        const int COLUMN_WIDTH = 115; // width of the columns WITH PADDING!
         const int COLUMN_PADDING = 20;
         const int ROW_HEIGHT = 50;
 
@@ -224,6 +224,7 @@ namespace VirusX.Menu
                     values[counter].Add(Statistics.getAverageParticles(i).ToString());
                     values[counter].Add(Statistics.getAverageHealth(i).ToString());
                     values[counter].Add(Statistics.getCollectedItems(i).ToString());
+                    values[counter].Add(IsPlayerWinner(i) ? "Winner" : "Looser");
                     playerStatLabels[i].BackgroundColor = Settings.Instance.GetPlayerColor(i);
                     counter++;
                 }
@@ -458,6 +459,25 @@ namespace VirusX.Menu
             int minutes = (int)(time / 60.0f);
             int seconds = (int)(time - minutes * 60 + 0.5f);
             return String.Format("{0:00}:{1:00}", minutes, seconds);
+        }
+
+        private bool IsPlayerWinner(int index)
+        {
+            switch (WinningTeam)
+            {
+                case Player.Teams.NONE:
+                    return index == WinPlayerIndex;
+                case Player.Teams.LEFT:
+                    return index == 0 || index == 3;
+                case Player.Teams.RIGHT:
+                    return index == 1 || index == 2;
+                case Player.Teams.ATTACKER:
+                    return index >= 1;
+                case Player.Teams.DEFENDER:
+                    return index == 0;
+                default:
+                    throw new NotImplementedException("Unknown team type - can't evaluate winner!");
+            }
         }
     }
 }
