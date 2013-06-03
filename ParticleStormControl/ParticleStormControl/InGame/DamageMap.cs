@@ -119,7 +119,7 @@ namespace VirusX
             device.SetRenderTarget(null);
         }
 
-        public void UpdateGPU_Map(GraphicsDevice device, Level level)
+        public void UpdateGPU_Objects(GraphicsDevice device, Level level, Player[] players)
         {
             device.SetRenderTarget(damageTexture);
             device.Clear(ClearOptions.Target, clearColor, 0, 0);
@@ -128,6 +128,8 @@ namespace VirusX
             spriteBatch.Begin(SpriteSortMode.Deferred, damageAdditive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone);
 
             level.DrawToDamageMap(spriteBatch);
+            foreach (Player player in players)
+                player.DrawCrosshairDamageMap(spriteBatch);
 
             spriteBatch.End();
         }

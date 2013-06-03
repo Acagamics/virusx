@@ -1,11 +1,11 @@
 ﻿//#define NO_ITEMS
 
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace VirusX
 {
@@ -37,7 +37,7 @@ namespace VirusX
         private SpriteBatch spriteBatch;
         private ContentManager contentManager;
 
-        private RasterizerState scissorTestRasterizerState = new RasterizerState
+        public readonly RasterizerState ScissorTestRasterizerState = new RasterizerState
                                                                 {
                                                                     CullMode = CullMode.None,
                                                                     ScissorTestEnable = true,
@@ -198,10 +198,6 @@ namespace VirusX
                                     fieldSize_pixel, fieldOffset_pixel));
             spawnPoints.AddRange(mapObjects.OfType<SpawnPoint>());
 
-            // crosshairs for players
-            for (int i = 0; i < players.Length; ++i)
-                mapObjects.Add(new Crosshair(i, contentManager));
-
             // clear player rendering
             BeginDrawInternParticleTarget(device);
             EndDrawInternParticleTarget(device);
@@ -317,15 +313,8 @@ namespace VirusX
             {
                 mapObject.Update(gameTime);
 
-                Crosshair crosshair = mapObject as Crosshair;
-                if (crosshair != null)
-                {
-                    crosshair.Position = players[crosshair.PlayerIndex].CursorPosition;
-                    crosshair.ParticleAttractionPosition = players[crosshair.PlayerIndex].ParticleAttractionPosition;
-                    crosshair.PlayerAlive = players[crosshair.PlayerIndex].Alive;
-                }
                 // statistics
-                else if (mapObject is SpawnPoint)
+                if (mapObject is SpawnPoint)
                 {
                     SpawnPoint sp = mapObject as SpawnPoint;
                     if (sp.PossessingPlayer != -1)
@@ -616,6 +605,12 @@ namespace VirusX
             device.SetRenderTarget(null);
         }
 
+        public void SetupScissorRect(GraphicsDevice device)
+        {
+            device.ScissorRectangle = fieldPixelRectangle;
+            device.RasterizerState = ScissorTestRasterizerState;
+        }
+
         public void Draw(GameTime gameTime, GraphicsDevice device, Player[] players)
         {
             // background colors
@@ -630,10 +625,7 @@ namespace VirusX
 
             // activate scissor test - is this a performance issue?
             if (currentMapType != MapGenerator.MapType.BACKGROUND)
-            {
-                device.ScissorRectangle = fieldPixelRectangle;
-                device.RasterizerState = scissorTestRasterizerState;
-            }
+                SetupScissorRect(device);
 
             // background
             background.Draw(device, (float)gameTime.TotalGameTime.TotalSeconds);
@@ -641,16 +633,21 @@ namespace VirusX
             // the particles!
             DrawParticles(device);
 
-            // alphablended spritebatch stuff
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, scissorTestRasterizerState);
+            // additive spritebatch stuff
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, ScissorTestRasterizerState);
+            foreach (MapObject mapObject in mapObjects.Where(x => x.Alive))
+                mapObject.Draw_Additive(spriteBatch, this, gameTime);
+            spriteBatch.End();
 
-            // all alpha blended objects
+            // alphablended spritebatch stuff
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, ScissorTestRasterizerState);
             foreach (MapObject mapObject in mapObjects.Where(x=>x.Alive))
                 mapObject.Draw_AlphaBlended(spriteBatch, this, gameTime);
+            spriteBatch.End();
 
             // countdown
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, ScissorTestRasterizerState);
             DrawCountdown(device, (float)gameTime.TotalGameTime.TotalSeconds);
-
             spriteBatch.End();
         }
 

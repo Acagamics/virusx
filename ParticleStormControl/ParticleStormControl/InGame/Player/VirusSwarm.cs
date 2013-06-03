@@ -265,7 +265,7 @@ namespace VirusX
             renderTargetBindings = new RenderTargetBinding[][] { new RenderTargetBinding[] { positionTargets[0], movementTexture[0], infoTargets[0] }, 
                                                                 new RenderTargetBinding[] { positionTargets[1], movementTexture[1], infoTargets[1] } };
             particleProcessing = content.Load<Effect>("shader/particleProcessing");
-            particleProcessing.Parameters["HalfPixelCorrection"].SetValue(new Vector2(0.5f / MAX_PARTICLES_SQRT, 0.5f / MAX_PARTICLES_SQRT));
+            particleProcessing.Parameters["HalfPixelCorrection"].SetValue(new Vector2(-0.5f / MAX_PARTICLES_SQRT, 0.5f / MAX_PARTICLES_SQRT));
             particleProcessing.Parameters["RelativeCorMax"].SetValue(Level.RELATIVE_MAX);
 
             // clear targets

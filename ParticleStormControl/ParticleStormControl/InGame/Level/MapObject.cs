@@ -29,5 +29,7 @@ namespace VirusX
         {}
 
         public abstract void Draw_AlphaBlended(SpriteBatch spriteBatch, Level level, GameTime gameTime);
+
+        public virtual void Draw_Additive(SpriteBatch spriteBatch, Level level, GameTime gameTime) { }
     }
 }

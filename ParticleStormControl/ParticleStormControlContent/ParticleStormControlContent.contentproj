@@ -258,13 +258,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="shader\vignetting.fx">
-      <Name>vignetting</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Mutate_big.png">
       <Name>Mutate_big</Name>
       <Importer>TextureImporter</Importer>
@@ -366,9 +359,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <None Include="icon.ico">
-      <Name>icon</Name>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="logoNew.png">
@@ -477,6 +467,13 @@
       <Name>chripei__whoosh-1</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="shader\postprocess.fx">
+      <Name>postprocess</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

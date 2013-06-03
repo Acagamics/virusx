@@ -7,13 +7,26 @@ sampler2D sampScreen = sampler_state
     Mipfilter = POINT;
 };
 
-float2 Vignetting_PosOffset;
-float2 Vignetting_PosScale;
 float2 HalfPixelCorrection;
 float2 InversePixelSize;
 
-float GroundBlur;
+/*
+// radial displacements
+#define MAX_NUM_RADIAL_DISPLACEMENTS 4
+float2 RadialDisplacementPositions_TexcoordSpace[MAX_NUM_RADIAL_DISPLACEMENTS];
+float2 RadialDisplacementSizeFade[MAX_NUM_RADIAL_DISPLACEMENTS];	// x: size, y: fade
+int NumRadialDisplacements;
+const float DisplacementRippleWidth = 0.005f;
+*/
 
+// vignetting
+float VignetteStrength;
+//float VignetteScreenRatio;
+float2 Vignetting_PosOffset;
+float2 Vignetting_PosScale;
+
+// blurr
+float GroundBlur;
 #define NUM_POISSON_SAMPLES 12
 static const float VignettBlurFactor = 9.0f;
 static const float2 PoissonDisk[NUM_POISSON_SAMPLES] =
@@ -46,28 +59,47 @@ struct VertexShaderOutput
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
     VertexShaderOutput output;
-	output.Position.xy = input.Position;
+	output.Position.xy = input.Position + HalfPixelCorrection;
 	output.Position.zw = float2(0,1);
 	output.Texcoord.xy = input.Position * 0.5f + 0.5f;
 	output.Texcoord.y = 1.0f - output.Texcoord.y;
-	output.Texcoord += HalfPixelCorrection;
     return output;
 }
 
+float cubicPulse(float c, float w, float x)
+{
+    x = abs(x - c);
+    if( x>w ) return 0.0f;
+    x /= w;
+    return 1.0f - x*x*(3.0f-2.0f*x);
+}
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
+	// scale texcoord for vignett area
 	float2 vignettCord = input.Texcoord * Vignetting_PosScale + Vignetting_PosOffset;
 	[flatten] if(all(vignettCord != saturate(vignettCord)))
 		discard;
 
-	// compute vignett
+	float blur = GroundBlur;
+
+	// radial displacement
+/*	for(int i=0; i<NumRadialDisplacements; ++i)
+	{
+		float2 toDisplacement = RadialDisplacementPositions_TexcoordSpace[i] - vignettCord;
+		toDisplacement.y *= VignetteScreenRatio;
+		float dispDistSq = dot(toDisplacement,toDisplacement);
+		float impulseStrength = cubicPulse(RadialDisplacementSizeFade[i].x, DisplacementRippleWidth, dispDistSq) * RadialDisplacementSizeFade[i].y;
+		blur += impulseStrength;
+	}*/
+
+	// compute vignette
 	float2 v = vignettCord * 2 - 1;
 	v = pow(v, 10);
-	float vignettFactor = sqrt(max(0, dot(v,v)*0.5));
+	float vignettFactor = sqrt(max(0, dot(v,v)*0.5)) * VignetteStrength;
 
 	// blur
-	float blur = vignettFactor * VignettBlurFactor + GroundBlur;
+	blur += vignettFactor * VignettBlurFactor;
 	float3 color = float3(0.0f,0.0f,0.0f);
 	[branch] if(blur > 0.001)
 	{

@@ -44,7 +44,7 @@ namespace VirusX
             INSERT_MODE_NAME,
 
             // 1 player arcarde mode
-            ARCADE,
+  //          ARCADE,
 
             NUM_MODES
         };
@@ -56,7 +56,7 @@ namespace VirusX
             "Left vs. Right",
             "Fun",
             "Domination",
-            "Arcade"
+     //       "Arcade"
         };
 
         static public readonly String[] GAMEMODE_DESCRIPTION = new String[]
@@ -234,10 +234,12 @@ namespace VirusX
             if (State == GameState.Demo && !forceRestart)
                 return;
 
-//            players = new Player[0];
+            // workaround for certain map object properties
+            GameMode oldGameMode = Settings.Instance.GameMode;
+            Settings.Instance.GameMode = GameMode.CLASSIC;
+            // -----
 
-            Settings.Instance.ResetPlayerSettings();
-        //    Settings.Instance.GameMode = GameMode.CLASSIC;
+            Settings.Instance.ResetPlayerSettings(); 
             for (int i = 0; i < 2; ++i)
             {
                 Settings.Instance.AddPlayer(new Settings.PlayerSettings()
@@ -263,6 +265,10 @@ namespace VirusX
             postPro.UpdateVignettingSettings(false, level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
             
             State = InGame.GameState.Demo;
+
+            // workaround for certain map object properties
+            Settings.Instance.GameMode = oldGameMode;
+            // -----
         }
 
         private void SetupBackground()
@@ -364,17 +370,6 @@ namespace VirusX
                 // level update
                 level.Update(gameTime, players);
 
-                if(Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME && State == GameState.Playing)
-                {
-                    for(int index = 0;index < winTimer.Length;++index)
-                    {
-                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count - players.Length) / players.Length)
-                            winTimer[index].Start();
-                        else
-                            winTimer[index].Stop();
-                    }
-                }
-
                 // winning
                 if (State == GameState.Playing)
                     CheckWinning(gameTime);
@@ -385,7 +380,7 @@ namespace VirusX
                 }
             }
 
-            postPro.UpdateTransitions(gameTime);
+            postPro.Update(gameTime, level);
         }
 
         private void CheckWinning(GameTime gameTime)
@@ -431,11 +426,19 @@ namespace VirusX
                     break;
 
                 // player died
-                case GameMode.ARCADE:
-                    winPlayerIndex = players[0].Alive ? -1 : 0;
-                    break;
+         //       case GameMode.ARCADE:
+          //          winPlayerIndex = players[0].Alive ? -1 : 0;
+           //         break;
 
                 case GameMode.INSERT_MODE_NAME:
+                    for (int index = 0; index < winTimer.Length; ++index)
+                    {
+                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count - players.Length) / players.Length)
+                            winTimer[index].Start();
+                        else
+                            winTimer[index].Stop();
+                    }
+
                     for(int index=0;index<winTimer.Length;++index)
                         if (winTimer[index].Elapsed.TotalSeconds > ModeWinTime)
                         {
@@ -458,6 +461,7 @@ namespace VirusX
                 // statistics
                 GameStatistics.addWonMatches(winPlayerIndex);
 
+                // fill stat screen
                 Menu.StatisticsScreen statScreen = ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS));
                 statScreen.WinningTeam          = winningTeam;
                 statScreen.WinPlayerIndex       = winPlayerIndex;
@@ -487,11 +491,10 @@ namespace VirusX
             {
                 // update damagemap (GPU)
                 if (levelDamageFrame)
-                    damageMap.UpdateGPU_Map(graphicsDevice, level);
+                    damageMap.UpdateGPU_Objects(graphicsDevice, level, players);
                 else
                     damageMap.UpdateGPU_Particles(graphicsDevice, particleRenderer, players);
                 levelDamageFrame = !levelDamageFrame;
-             //   graphicsDevice.SetRenderTarget(null);
                 
                 // update player gpu
                 for (int i = 0; i < players.Length; ++i)
@@ -519,6 +522,13 @@ namespace VirusX
 
             // postpro end
             postPro.EndAndApply(graphicsDevice);
+
+            // crosshairs
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, Level.ScissorTestRasterizerState);
+            level.SetupScissorRect(graphicsDevice);
+            foreach (Player player in players)
+                player.DrawCrosshairAlphaBlended(spriteBatch, level, gameTime);
+            spriteBatch.End();
 
             // interface
             if (State == GameState.Playing || State == GameState.Paused)
