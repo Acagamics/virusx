@@ -293,8 +293,7 @@ namespace VirusX
         /// </summary>
         /// <param name="gameTime"></param>
         /// <param name="spawnPoints"></param>
-        /// <param name="cantDie">set to true if this player should be invincible in this update step</param>
-        public void UpdateCPUPart(GameTime gameTime, IEnumerable<SpawnPoint> spawnPoints, bool cantDie)
+        public void UpdateCPUPart(GameTime gameTime, IEnumerable<SpawnPoint> spawnPoints)
         {
             crosshair.Update(gameTime, this);
 
@@ -306,8 +305,8 @@ namespace VirusX
             virusSwarm.UpdateCPUPart((float)gameTime.ElapsedGameTime.TotalSeconds, posessedSpawns);
 
             // dead due to particle loss
-            if (virusSwarm.CurrentSpawnNumber == 0 && numOwnedSpawnPoints == 0)
-                alive = NumParticlesAlive > 0 || cantDie;
+            if (numOwnedSpawnPoints == 0 && NumParticlesAlive == 0)
+                alive = false;
 
             PossessingSpawnPoints = (uint)posessedSpawns.Count();
             PossessingSpawnPointsOverallSize = posessedSpawns.Sum(x => x.Size);

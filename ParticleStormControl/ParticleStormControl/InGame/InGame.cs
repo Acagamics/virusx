@@ -111,13 +111,6 @@ namespace VirusX
         /// </summary>
         public GameState State { get; private set; }
 
-        
-        /// <summary>
-        /// without this timer, the player would instantly die because of 0 particles
-        /// </summary>
-        private const float instantDeathProtectingDuration = 1.0f;
-        private float instantDeathProtectingTime = 0.0f;
-
         // damaging is only every second frame - switch every frame to be xbox friendly
         bool levelDamageFrame = false;
 
@@ -194,8 +187,6 @@ namespace VirusX
         private void StartNewGame()
         {
             State = GameState.Playing;
-            instantDeathProtectingTime = 0.0f;
-
             PlayerSetupFromSettingsSingleton();
 
             // new map
@@ -325,10 +316,6 @@ namespace VirusX
                 // switching - wrong placed this leads player errors
                 level.UpdateSwitching(passedFrameTime, players);
 
-                // instant death protecting timer
-                instantDeathProtectingTime += passedFrameTime;
-                bool playerCantDie = instantDeathProtectingTime < instantDeathProtectingDuration;
-
                 // spawning & move - parallel!
                 bool[] playerRecentlyDied = new bool[players.Length];
                 Array.Clear(playerRecentlyDied, 0, playerRecentlyDied.Length);
@@ -338,7 +325,7 @@ namespace VirusX
                     try
                     {
                         bool alive = players[(int)index].Alive;
-                        players[(int)index].UpdateCPUPart(gameTime, level.SpawnPoints, playerCantDie);
+                        players[(int)index].UpdateCPUPart(gameTime, level.SpawnPoints);
                         if (alive && !players[(int)index].Alive)
                             playerRecentlyDied[(int)index] = true;
                     }

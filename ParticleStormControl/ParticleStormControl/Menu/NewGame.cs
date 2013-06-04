@@ -332,7 +332,7 @@ namespace VirusX.Menu
             menu.ChangePage(Menu.Page.INGAME, gameTime);
 #endif
             if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, Settings.Instance.StartingControls) ||
-                InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, InputManager.ControlType.KEYBOARD0)) // escape brings always back
+                InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, InputManager.ControlType.KEYBOARD0)) // escape brings always back   
             {
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
                 return;
