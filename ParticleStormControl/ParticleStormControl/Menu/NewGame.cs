@@ -331,7 +331,8 @@ namespace VirusX.Menu
             Settings.Instance.GameMode = Game.GameMode.CAPTURE_THE_CELL;
             menu.ChangePage(Menu.Page.INGAME, gameTime);
 #endif
-            if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, Settings.Instance.StartingControls))
+            if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, Settings.Instance.StartingControls) ||
+                InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, InputManager.ControlType.KEYBOARD0)) // escape brings always back
             {
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
                 return;
