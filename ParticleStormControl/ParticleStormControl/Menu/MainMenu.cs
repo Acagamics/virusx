@@ -110,8 +110,8 @@ namespace VirusX.Menu
                             InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, control))
                         {
                             // if alrady on exit, quit the game
-                            if (selectedButton == Button.END)
-                                menu.Exit();
+                        //    if (selectedButton == Button.END)
+                         //       menu.Exit();
                             AudioManager.Instance.PlaySoundeffect("click");
                             selectedButton = Button.END;
                             break;
