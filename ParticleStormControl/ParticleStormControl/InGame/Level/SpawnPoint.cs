@@ -47,8 +47,8 @@ namespace VirusX
 
         private readonly float randomAngle;
 
-        public SpawnPoint(Vector2 PositionIn, float spawnSize, int startposession, ContentManager content)
-            : base(PositionIn, startposession, 1.0f / spawnSize, -1.0f, 6)
+        public SpawnPoint(Vector2 PositionIn, float spawnSize, int startposession, ContentManager content, float lifeTime = -1)
+            : base(PositionIn, startposession, 1.0f / spawnSize, lifeTime, 6)
         {
             this.glowTexture = content.Load<Texture2D>("glow");
             this.nucleusTexture_inner = content.Load<Texture2D>("nucleus_inner");
@@ -118,6 +118,7 @@ namespace VirusX
             {
                 Vector2 pixelPosition = level.ComputePixelPosition(Position);
                 Color glowColor = Settings.Instance.GetPlayerColor(PossessingPlayer) * 0.4f * MathHelper.Clamp(PossessingPercentage * 7.0f, 0.0f, 1.0f);
+                glowColor.A = ComputeColor().A;
                 spriteBatch.Draw(glowTexture, pixelPosition, null, glowColor, 0.0f, new Vector2(glowTexture.Width * 0.5f, glowTexture.Height * 0.5f),
                                 level.ComputeTextureScale(Size * 4.0f, glowTexture.Width), SpriteEffects.None, 1.0f);
             }
@@ -164,7 +165,6 @@ namespace VirusX
         {
             if (explosionTimer.IsRunning && PossessingPlayer != -1)
             {
-                
                 Color damage = VirusSwarm.GetDamageMapDrawColor(PossessingPlayer) * EXPLOSION_DAMAGE * currentExplosionAlpha;
                 spriteBatch.Draw(explosionTexture, DamageMap.ComputePixelRect(Position, currentExplosionSize), null, damage, explosionRotation,
                                      new Vector2(explosionTexture.Width / 2, explosionTexture.Height / 2), SpriteEffects.None, 1.0f);

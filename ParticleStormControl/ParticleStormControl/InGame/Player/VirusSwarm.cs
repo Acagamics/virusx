@@ -240,6 +240,8 @@ namespace VirusX
         public float TotalHealth { get { return totalHealth; } }
         private float totalHealth = 0.0f;
 
+        private const float ARCADE_GLOBAL_DAMAGE = 1f;
+
         #endregion
 
         public VirusSwarm(VirusSwarm.VirusType virusIndex, int playerIndex, IEnumerable<int> friendlyPlayerIndices, GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
@@ -361,6 +363,10 @@ namespace VirusX
 
             particleProcessing.Parameters["MaxHealth"].SetValue(HealthStart);
 
+            if(Settings.Instance.GameMode == InGame.GameMode.ARCADE)
+                particleProcessing.Parameters["GlobalDamage"].SetValue(ARCADE_GLOBAL_DAMAGE * timeInterval);
+            else
+                particleProcessing.Parameters["GlobalDamage"].SetValue(0);
 
             device.BlendState = BlendState.Opaque;
             particleProcessing.CurrentTechnique = particleProcessing.Techniques[0];

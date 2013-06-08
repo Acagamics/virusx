@@ -15,34 +15,33 @@ namespace VirusX
         /// </summary>
         //private float currentSpeed;
 
-        /// <summary>
-        /// time in seconds until the spawn will fade
-        /// </summary>
-        private float remainingLifeTime;
 
         /// <summary>
         /// link between spawnsize and lifetime: startlifetime = spawnsize * thisconst
         /// </summary>
-        const float SPAWNSIZE_TO_LIFETIME = 0.01f;
+        const float SPAWNSIZE_TO_LIFETIME = 0.02f;
 
         public MovingSpawnPoint(Vector2 direction, Vector2 startPosition, 
-                            float spawnSize, int startPosession, ContentManager content) : 
-            base(startPosition, spawnSize, startPosession, content)
+                            float spawnSize, int startPosession, ContentManager content) :
+            base(startPosition, spawnSize, startPosession, content, spawnSize * SPAWNSIZE_TO_LIFETIME)
         {
             this.direction = direction;
-            remainingLifeTime = spawnSize * SPAWNSIZE_TO_LIFETIME;
         }
 
         public override void Update(GameTime gameTime)
         {
-            float speed = 100 / SpawnSize;
+            float speed = 5 / SpawnSize;
             this.Position += direction * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            UpdateDamageMapZoneFromPosition();
 
             base.Update(gameTime);
+        }
 
-            remainingLifeTime -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (remainingLifeTime < 0)
-                Alive = false;
+        public override Color ComputeColor()
+        {
+            Color color = Settings.Instance.GetPlayerColor(PossessingPlayer);
+            color.A = (byte)(255 * opacity);
+            return color;
         }
     }
 }

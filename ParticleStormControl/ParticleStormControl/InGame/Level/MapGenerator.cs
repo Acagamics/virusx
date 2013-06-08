@@ -71,7 +71,7 @@ namespace VirusX
 
             // starting point
             List<MapObject> cells = new List<MapObject>(1);
-            cells.Add(new MovingSpawnPoint(Random.NextDirection(), Level.RELATIVE_MAX * 0.5f, 2000.0f, 0, content));
+            cells.Add(new MovingSpawnPoint(Random.NextDirection(), Level.RELATIVE_MAX * 0.5f, 800.0f, 0, content));
 
             return cells;
         }

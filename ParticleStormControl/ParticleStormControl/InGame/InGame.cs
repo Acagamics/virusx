@@ -426,7 +426,7 @@ namespace VirusX
                 case GameMode.DOMINATION:
                     for (int index = 0; index < winTimer.Length; ++index)
                     {
-                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count - players.Length) / players.Length)
+                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count() - players.Length) / players.Length)
                             winTimer[index].Start();
                         else
                             winTimer[index].Stop();
@@ -529,7 +529,7 @@ namespace VirusX
                 // ingame interface
                 if (Settings.Instance.GameMode == GameMode.DOMINATION)
                     inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime, winTimer);
-                else
+                else if (Settings.Instance.GameMode != GameMode.ARCADE)
                     inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime);
 
                 // debug draw damagemap

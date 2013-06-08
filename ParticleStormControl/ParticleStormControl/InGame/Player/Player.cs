@@ -312,7 +312,7 @@ namespace VirusX
             PossessingSpawnPointsOverallSize = posessedSpawns.Sum(x => x.Size);
 
             // alive due to number of spawnpoints?
-            if (numOwnedSpawnPoints == 0)
+            if (numOwnedSpawnPoints == 0 && Settings.Instance.GameMode != InGame.GameMode.ARCADE)
             {
                 timeWithoutSpawnPoint += (float)gameTime.ElapsedGameTime.TotalSeconds;
 

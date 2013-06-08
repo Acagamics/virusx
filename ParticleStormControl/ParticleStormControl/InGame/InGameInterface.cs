@@ -38,20 +38,12 @@ namespace VirusX
         /// <param name="spriteBatch">spritebatch that is NOT already started</param>
         public void DrawInterface(Player[] players, SpriteBatch spriteBatch, Point levelPixelSize, Point levelPixelOffset, GameTime gameTime)
         {
+            Point[] corners;
+            Rectangle[] itemDisplayRectangles;
+            SpriteEffects[] flips;
+            ComputeRectangles(out corners, out itemDisplayRectangles, out flips, levelPixelSize, levelPixelOffset);
+
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
-
-            Point[] corners = { new Point(levelPixelOffset.X, levelPixelOffset.Y + levelPixelSize.Y),
-                                new Point(levelPixelOffset.X + levelPixelSize.X, levelPixelOffset.Y),
-                                new Point(levelPixelOffset.X + levelPixelSize.X, levelPixelOffset.Y + levelPixelSize.Y),
-                                new Point(levelPixelOffset.X, levelPixelOffset.Y)
-                              };
-            Rectangle[] itemDisplayRectangles = { new Rectangle(corners[0].X, corners[0].Y - itemBox.Height, itemBox.Width, itemBox.Height),
-                                                  new Rectangle(corners[1].X - itemBox.Width, corners[1].Y, itemBox.Width, itemBox.Height),
-                                                  new Rectangle(corners[2].X - itemBox.Width, corners[2].Y - itemBox.Height, itemBox.Width, itemBox.Height),
-                                                  new Rectangle(corners[3].X, corners[3].Y, itemBox.Width, itemBox.Height) };
- 
-            SpriteEffects[] flips = { SpriteEffects.None, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, SpriteEffects.FlipHorizontally, SpriteEffects.FlipVertically };
-
             for (int playerIndex = 0; playerIndex < players.Length; ++playerIndex)
             {
                 if (players[playerIndex].Alive)
@@ -85,6 +77,21 @@ namespace VirusX
             percentageBar.Draw(players, spriteBatch, levelPixelSize, levelPixelOffset);
         }
 
+        private void ComputeRectangles(out Point[] corners, out Rectangle[] itemDisplayRectangles, out SpriteEffects[] flips, Point levelPixelSize, Point levelPixelOffset)
+        {
+            corners = new Point[]{ new Point(levelPixelOffset.X, levelPixelOffset.Y + levelPixelSize.Y),
+                                new Point(levelPixelOffset.X + levelPixelSize.X, levelPixelOffset.Y),
+                                new Point(levelPixelOffset.X + levelPixelSize.X, levelPixelOffset.Y + levelPixelSize.Y),
+                                new Point(levelPixelOffset.X, levelPixelOffset.Y)
+                              };
+            itemDisplayRectangles = new Rectangle[]{ new Rectangle(corners[0].X, corners[0].Y - itemBox.Height, itemBox.Width, itemBox.Height),
+                                                  new Rectangle(corners[1].X - itemBox.Width, corners[1].Y, itemBox.Width, itemBox.Height),
+                                                  new Rectangle(corners[2].X - itemBox.Width, corners[2].Y - itemBox.Height, itemBox.Width, itemBox.Height),
+                                                  new Rectangle(corners[3].X, corners[3].Y, itemBox.Width, itemBox.Height) };
+
+            flips = new SpriteEffects[]{ SpriteEffects.None, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, SpriteEffects.FlipHorizontally, SpriteEffects.FlipVertically };
+        }
+
         /// <summary>
         /// draws all interface elements
         /// </summary>
@@ -92,20 +99,12 @@ namespace VirusX
         /// <param name="spriteBatch">spritebatch that is NOT already started</param>
         public void DrawInterface(Player[] players, SpriteBatch spriteBatch, Point levelPixelSize, Point levelPixelOffset, GameTime gameTime, System.Diagnostics.Stopwatch[] winTimer )
         {
+            Point[] corners;
+            Rectangle[] itemDisplayRectangles;
+            SpriteEffects[] flips;
+            ComputeRectangles(out corners, out itemDisplayRectangles, out flips, levelPixelSize, levelPixelOffset);
+
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
-
-            Point[] corners = { new Point(levelPixelOffset.X, levelPixelOffset.Y + levelPixelSize.Y),
-                                new Point(levelPixelOffset.X + levelPixelSize.X, levelPixelOffset.Y),
-                                new Point(levelPixelOffset.X + levelPixelSize.X, levelPixelOffset.Y + levelPixelSize.Y),
-                                new Point(levelPixelOffset.X, levelPixelOffset.Y)
-                              };
-            Rectangle[] itemDisplayRectangles = { new Rectangle(corners[0].X, corners[0].Y - itemBox.Height, itemBox.Width, itemBox.Height),
-                                                  new Rectangle(corners[1].X - itemBox.Width, corners[1].Y, itemBox.Width, itemBox.Height),
-                                                  new Rectangle(corners[2].X - itemBox.Width, corners[2].Y - itemBox.Height, itemBox.Width, itemBox.Height),
-                                                  new Rectangle(corners[3].X, corners[3].Y, itemBox.Width, itemBox.Height) };
-
-            SpriteEffects[] flips = { SpriteEffects.None, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, SpriteEffects.FlipHorizontally, SpriteEffects.FlipVertically };
-
             for (int playerIndex = 0; playerIndex < players.Length; ++playerIndex)
             {
                 if (players[playerIndex].Alive)
