@@ -41,10 +41,10 @@ namespace VirusX
             FUN,
 
             // no teams, up to 4 plyers
-            INSERT_MODE_NAME,
+            DOMINATION,
 
             // 1 player arcarde mode
-  //          ARCADE,
+            ARCADE,
 
             NUM_MODES
         };
@@ -56,7 +56,7 @@ namespace VirusX
             "Left vs. Right",
             "Fun",
             "Domination",
-     //       "Arcade"
+            "Arcade"
         };
 
         static public readonly String[] GAMEMODE_DESCRIPTION = new String[]
@@ -198,6 +198,9 @@ namespace VirusX
                     break;
                 case GameMode.FUN:
                     mapType = MapGenerator.MapType.FUN;
+                    break;
+                case GameMode.ARCADE:
+                    mapType = MapGenerator.MapType.ARCADE;
                     break;
                 default:
                     mapType = MapGenerator.MapType.NORMAL;
@@ -413,11 +416,11 @@ namespace VirusX
                     break;
 
                 // player died
-         //       case GameMode.ARCADE:
-          //          winPlayerIndex = players[0].Alive ? -1 : 0;
-           //         break;
+                case GameMode.ARCADE:
+                     winPlayerIndex = players[0].Alive ? -1 : 0;
+                     break;
 
-                case GameMode.INSERT_MODE_NAME:
+                case GameMode.DOMINATION:
                     for (int index = 0; index < winTimer.Length; ++index)
                     {
                         if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count - players.Length) / players.Length)
@@ -521,7 +524,7 @@ namespace VirusX
             if (State == GameState.Playing || State == GameState.Paused)
             {
                 // ingame interface
-                if (Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME)
+                if (Settings.Instance.GameMode == GameMode.DOMINATION)
                     inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime, winTimer);
                 else
                     inGameInterface.DrawInterface(players, spriteBatch, level.FieldPixelSize, level.FieldPixelOffset, gameTime);

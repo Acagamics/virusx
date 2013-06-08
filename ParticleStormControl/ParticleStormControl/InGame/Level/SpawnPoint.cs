@@ -62,7 +62,7 @@ namespace VirusX
 
             if (startposession != -1)
             {
-                if (Settings.Instance.GameMode == InGame.GameMode.INSERT_MODE_NAME)
+                if (Settings.Instance.GameMode == InGame.GameMode.DOMINATION)
                 {
                     captureable = false;
                     this.nucleusTexture_outer = content.Load<Texture2D>("nucleus_outer_uncaptureable");

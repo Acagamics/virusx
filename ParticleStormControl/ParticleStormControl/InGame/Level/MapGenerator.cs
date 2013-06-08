@@ -28,6 +28,8 @@ namespace VirusX
             CAPTURE_THE_CELL,
             FUN,
 
+            ARCADE,
+
             BACKGROUND,
 
             NONE
@@ -41,11 +43,37 @@ namespace VirusX
                     return GenerateCaptureTheCellLevel(device, content, numPlayers, outBackground);
                 case MapType.FUN:
                     return GenerateFunLevel(device, content, numPlayers, outBackground);
+
+                case MapType.ARCADE:
+                    return GenerateArcade(device, content, outBackground);
+                
                 case MapType.BACKGROUND:
                     return GenerateBackground(device, content, numPlayers, outBackground, levelFieldPixelSize, levelFieldPixelOffset);
+
                 default:
                     return GenerateNormalLevel(device, content, numPlayers, outBackground);
             }
+        }
+
+        private static IEnumerable<MapObject> GenerateArcade(GraphicsDevice device, ContentManager content, Background outBackground)
+        {
+            // generate in a grid of equilateral triangles
+            List<Vector2> spawnPositions = GenerateCellPositionGrid(SPAWNS_GRID_NORMAL_X, SPAWNS_GRID_NORMAL_Y, 0.12f, new Vector2(LEVEL_BORDER), Level.RELATIVE_MAX);
+
+            // spawn generation
+            List<SpawnPoint> cellPositions = new List<SpawnPoint>();
+            foreach (Vector2 pos in spawnPositions)
+                cellPositions.Add(new SpawnPoint(pos, GetStandardSpawnSizeDependingFromArea(spawnPositions, pos), -1, content));
+
+            // background
+            if (outBackground != null)
+                outBackground.Generate(device, cellPositions.Select(x => x.Position), Level.RELATIVE_MAX);
+
+            // starting point
+            List<MapObject> cells = new List<MapObject>(1);
+            cells.Add(new MovingSpawnPoint(Random.NextDirection(), Level.RELATIVE_MAX * 0.5f, 2000.0f, 0, content));
+
+            return cells;
         }
 
         static public List<Vector2> GenerateCellPositionGrid(int numX, int numY, float positionJitter, Vector2 border, Vector2 valueRange)
