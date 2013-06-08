@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParticleStormControlContent", "ParticleStormControl\ParticleStormControlContent\ParticleStormControlContent.contentproj", "{39E0D17D-1F56-415B-A2C3-4BAF4AB7557C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParticleStormControl", "ParticleStormControl\ParticleStormControl\ParticleStormControl.csproj", "{49067EF1-08DC-4E32-B81F-A06401D94E03}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{D6C36A63-F475-4650-9D27-B9E8320791C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirusXStatistics", "VirusXStatistics\VirusXStatistics.csproj", "{94B74295-6CFE-437B-A75D-13FBEBBE859D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,18 @@ Global
 		{D6C36A63-F475-4650-9D27-B9E8320791C3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D6C36A63-F475-4650-9D27-B9E8320791C3}.Release|x86.ActiveCfg = Release|Any CPU
 		{D6C36A63-F475-4650-9D27-B9E8320791C3}.Release|Xbox 360.ActiveCfg = Release|Any CPU
+		{94B74295-6CFE-437B-A75D-13FBEBBE859D}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{94B74295-6CFE-437B-A75D-13FBEBBE859D}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{94B74295-6CFE-437B-A75D-13FBEBBE859D}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{94B74295-6CFE-437B-A75D-13FBEBBE859D}.Debug|x86.ActiveCfg = Debug|x86
+		{94B74295-6CFE-437B-A75D-13FBEBBE859D}.Debug|x86.Build.0 = Debug|x86
+		{94B74295-6CFE-437B-A75D-13FBEBBE859D}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{94B74295-6CFE-437B-A75D-13FBEBBE859D}.Release|Any CPU.ActiveCfg = Release|x86
+		{94B74295-6CFE-437B-A75D-13FBEBBE859D}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{94B74295-6CFE-437B-A75D-13FBEBBE859D}.Release|Mixed Platforms.Build.0 = Release|x86
+		{94B74295-6CFE-437B-A75D-13FBEBBE859D}.Release|x86.ActiveCfg = Release|x86
+		{94B74295-6CFE-437B-A75D-13FBEBBE859D}.Release|x86.Build.0 = Release|x86
+		{94B74295-6CFE-437B-A75D-13FBEBBE859D}.Release|Xbox 360.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
