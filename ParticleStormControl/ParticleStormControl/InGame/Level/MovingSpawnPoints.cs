@@ -23,7 +23,7 @@ namespace VirusX
         /// <summary>
         /// link between spawnsize and lifetime: startlifetime = spawnsize * thisconst
         /// </summary>
-        const float SPAWNSIZE_TO_LIFETIME = 0.1f;
+        const float SPAWNSIZE_TO_LIFETIME = 0.01f;
 
         public MovingSpawnPoint(Vector2 direction, Vector2 startPosition, 
                             float spawnSize, int startPosession, ContentManager content) : 
@@ -35,7 +35,7 @@ namespace VirusX
 
         public override void Update(GameTime gameTime)
         {
-            float speed = 0.2f;
+            float speed = 100 / SpawnSize;
             this.Position += direction * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             base.Update(gameTime);

@@ -186,6 +186,9 @@ namespace VirusX
         /// </summary>
         private void StartNewGame()
         {
+            if (Settings.Instance.GameMode == GameMode.ARCADE)  // force no items
+                Settings.Instance.UseItems = false;
+
             State = GameState.Playing;
             PlayerSetupFromSettingsSingleton();
 

@@ -66,8 +66,10 @@ namespace VirusX.Menu
             // submenu newgame
             Interface.Add(new InterfaceButton("Game mode", new Vector2(320, 370), () => { return selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.MODE; }, () => submenuVisible == SubMenu.NEWGAME));
             Interface.Add(new InterfaceButton(() => { return "◄ " + Game.GAMEMODE_NAME[(int)Settings.Instance.GameMode] + " ►"; }, new Vector2(480, 370), () => { return false; }, () => submenuVisible == SubMenu.NEWGAME));
-            Interface.Add(new InterfaceButton("Items", new Vector2(320, 420), () => { return selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.ITEMS; }, () => submenuVisible == SubMenu.NEWGAME));
-            useItemsButton = new InterfaceButton(() => { return Settings.Instance.UseItems ? "◄ ON ►" : "◄ OFF ►"; }, new Vector2(480, 420), () => { return false; }, () => submenuVisible == SubMenu.NEWGAME, Color.White, Settings.Instance.UseItems ? Color.Green : Color.Red);
+            Interface.Add(new InterfaceButton("Items", new Vector2(320, 420), () => { return selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.ITEMS; },
+                                          () => submenuVisible == SubMenu.NEWGAME && Settings.Instance.GameMode != Game.GameMode.ARCADE));
+            useItemsButton = new InterfaceButton(() => { return Settings.Instance.UseItems ? "◄ ON ►" : "◄ OFF ►"; },
+                                new Vector2(480, 420), () => { return false; }, () => submenuVisible == SubMenu.NEWGAME && Settings.Instance.GameMode != Game.GameMode.ARCADE, Color.White, Settings.Instance.UseItems ? Color.Green : Color.Red);
             Interface.Add(useItemsButton);
             Interface.Add(new InterfaceButton("► Start", new Vector2(320, 470), () => { return selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.CONTINUE; }, () => submenuVisible == SubMenu.NEWGAME));
 
@@ -101,7 +103,7 @@ namespace VirusX.Menu
             {
                 case SubMenu.NONE:
                     selectedButton = (Button)(Menu.Loop((int)selectedButton, (int)Button.NUM_BUTTONS));
-                    
+
                     // as manual loop for identifying the used controls
                     foreach (InputManager.ControlType control in Enum.GetValues(typeof(InputManager.ControlType)))
                     {
@@ -147,6 +149,9 @@ namespace VirusX.Menu
 
                 case SubMenu.NEWGAME:
                     selectedButton_NewGameSubmenu = (ButtonNewGameSubmenu)(Menu.Loop((int)selectedButton_NewGameSubmenu, (int)ButtonNewGameSubmenu.NUM_BUTTONS, Settings.Instance.StartingControls));
+                    if(selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.ITEMS && Settings.Instance.GameMode == Game.GameMode.ARCADE)
+                        selectedButton_NewGameSubmenu = (ButtonNewGameSubmenu)(Menu.Loop((int)selectedButton_NewGameSubmenu, (int)ButtonNewGameSubmenu.NUM_BUTTONS, Settings.Instance.StartingControls));
+
                     switch (selectedButton_NewGameSubmenu)
                     {
                         case ButtonNewGameSubmenu.MODE:
