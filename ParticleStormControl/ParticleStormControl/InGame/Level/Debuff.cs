@@ -56,7 +56,10 @@ namespace VirusX
             currentExplosionSize = explosionMaxSize * scaling;
             currentExplosionAlpha = 1.0f - effectSeconds / duration;
 
-            if (explosionTimer.Elapsed.TotalSeconds >= 1.0f)
+            if (RemainingLifeTime <= duration && !explosionTimer.IsRunning)
+                OnPossessingChanged();
+
+            if (explosionTimer.Elapsed.TotalSeconds >= duration)
                 Alive = false;
         }
 

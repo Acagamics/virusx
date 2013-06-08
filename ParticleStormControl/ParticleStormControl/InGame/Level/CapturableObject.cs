@@ -9,6 +9,8 @@ namespace VirusX
         private readonly Stopwatch lifeTimer = new Stopwatch();
         protected readonly float lifeTime;  // -1 means infinite
 
+        public float RemainingLifeTime { get { return lifeTime - (float)lifeTimer.Elapsed.TotalSeconds; } }
+
         public bool Timeouted { get { return lifeTime > 0 && lifeTimer.Elapsed.TotalSeconds > lifeTime; } }
 
         public int PossessingPlayer { get; protected set; }
