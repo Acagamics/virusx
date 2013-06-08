@@ -331,7 +331,8 @@ namespace VirusX.Menu
             Settings.Instance.GameMode = Game.GameMode.CAPTURE_THE_CELL;
             menu.ChangePage(Menu.Page.INGAME, gameTime);
 #endif
-            if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, Settings.Instance.StartingControls))
+            if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, Settings.Instance.StartingControls) ||
+                InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.EXIT, InputManager.ControlType.KEYBOARD0)) // escape brings always back   
             {
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
                 return;
@@ -650,7 +651,7 @@ namespace VirusX.Menu
                 switch (i)
                 {
                     case 3:
-                        return new Vector2(Settings.Instance.ResolutionX / 4 - BOX_WIDTH / 2, Settings.Instance.ResolutionY / 4 - BOX_HEIGHT / 2 - InterfaceButton.PADDING*3);
+                        return new Vector2(Settings.Instance.ResolutionX / 4 - BOX_WIDTH / 2, Settings.Instance.ResolutionY / 4 - BOX_HEIGHT / 2 - InterfaceButton.PADDING * 3);
                     case 2:
                         return new Vector2(Settings.Instance.ResolutionX / 4 * 3 - BOX_WIDTH / 2, Settings.Instance.ResolutionY / 4 * 3 - BOX_HEIGHT / 2 - InterfaceButton.PADDING * 3);
                     case 1:
