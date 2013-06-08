@@ -9,16 +9,19 @@ namespace VirusX
         private readonly Stopwatch lifeTimer = new Stopwatch();
         protected readonly float lifeTime;  // -1 means infinite
 
+        public float RemainingLifeTime { get { return lifeTime - (float)lifeTimer.Elapsed.TotalSeconds; } }
+
         public bool Timeouted { get { return lifeTime > 0 && lifeTimer.Elapsed.TotalSeconds > lifeTime; } }
 
         public int PossessingPlayer { get; protected set; }
         public float PossessingPercentage { get; protected set; }
         public int CapturingPlayer { get; protected set; }
 
-        protected readonly int damageMap_MinX;
-        protected readonly int damageMap_MinY;
-        protected readonly int damageMap_MaxX;
-        protected readonly int damageMap_MaxY;
+        private int damageMapPixelHalfRange;
+        protected int damageMap_MinX;
+        protected int damageMap_MinY;
+        protected int damageMap_MaxX;
+        protected int damageMap_MaxY;
 
         /// <summary>
         /// determines how efficient one can reestablish the owningpercentage of his own object
@@ -38,6 +41,7 @@ namespace VirusX
         public CapturableObject(Vector2 Position, int possessingPlayer, float damageFactor, float lifeTime/* = -1.0f*/, int damageMapPixelHalfRange /*= 4*/, float size = 0.06f) :
             base(Position, size)
         {
+            this.damageMapPixelHalfRange = damageMapPixelHalfRange;
             this.lifeTime = lifeTime;
             PossessingPlayer = possessingPlayer;
             if (possessingPlayer > -1)
@@ -47,27 +51,38 @@ namespace VirusX
             CapturingPlayer = -1;
             this.damageFactor = damageFactor;
 
+            lifeTimer.Start();
+
+            UpdateDamageMapZoneFromPosition();
+        }
+
+        protected void UpdateDamageMapZoneFromPosition()
+        {
             int xOnDamageMap = (int)(Position.X / Level.RELATIVE_MAX.X * DamageMap.attackingMapSizeX);
             int yOnDamageMap = (int)(Position.Y / Level.RELATIVE_MAX.Y * DamageMap.attackingMapSizeY);
             damageMap_MinX = Math.Max(0, xOnDamageMap - damageMapPixelHalfRange);
             damageMap_MinY = Math.Max(0, yOnDamageMap - damageMapPixelHalfRange);
             damageMap_MaxX = Math.Min(DamageMap.attackingMapSizeX - 1, xOnDamageMap + damageMapPixelHalfRange);
             damageMap_MaxY = Math.Min(DamageMap.attackingMapSizeY - 1, yOnDamageMap + damageMapPixelHalfRange);
-
-            lifeTimer.Start();
         }
 
         protected abstract void OnPossessingChanged();
 
         public override void Update(GameTime gameTime)
         {
+            // fade out
             if (lifeTime > 0)
             {
-                if(lifeTimer.Elapsed.TotalSeconds > lifeTime * 0.75f)
+                if (lifeTimer.Elapsed.TotalSeconds > lifeTime * 0.75f)
+                {
                     opacity = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10.0f) * 0.4f + 0.5f;
-                else opacity = 1f;            
+                    opacity *= Math.Min(1.0f, (lifeTime - (float)lifeTimer.Elapsed.TotalSeconds) * 5.0f);
+                }
+                else
+                    opacity = 1f;            
             }
-            else opacity = 1f;
+            else
+                opacity = MathHelper.Clamp((float)lifeTimer.Elapsed.TotalSeconds * 2, 0, 1); // fade in
             
             if (lifeTime > 0 && lifeTimer.Elapsed.TotalSeconds > lifeTime)
                 Alive = false;

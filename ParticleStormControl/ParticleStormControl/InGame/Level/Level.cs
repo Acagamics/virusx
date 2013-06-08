@@ -19,8 +19,7 @@ namespace VirusX
         private List<MapObject> mapObjects = new List<MapObject>();
         public List<MapObject> MapObjects { get { return mapObjects; } }
         public IEnumerable<MapObject> Items { get { return mapObjects.Where(x => x is Item); } }
-        private List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
-        public List<SpawnPoint> SpawnPoints { get { return spawnPoints; } }
+        public IEnumerable<SpawnPoint> SpawnPoints { get { return mapObjects.OfType<SpawnPoint>(); } }
 
         /// <summary>
         /// active map type
@@ -192,18 +191,16 @@ namespace VirusX
             Resize(device, false);
 
             // create level
-            spawnPoints.Clear();
             mapObjects.Clear();
             mapObjects.AddRange(MapGenerator.GenerateLevel(mapType, device, contentManager, players.Length, background,
                                     fieldSize_pixel, fieldOffset_pixel));
-            spawnPoints.AddRange(mapObjects.OfType<SpawnPoint>());
 
             // clear player rendering
             BeginDrawInternParticleTarget(device);
             EndDrawInternParticleTarget(device);
 
             // init statistics
-            GameStatistics = new Statistics(Settings.Instance.NumPlayers, 2400, (uint)SpawnPoints.Count);
+            GameStatistics = new Statistics(Settings.Instance.NumPlayers, 2400, (uint)SpawnPoints.Count());
             // collect the virus types for statistic
             foreach (Player player in players)
                 GameStatistics.SetVirusType(player.playerIndex, player.Virus);
@@ -396,6 +393,10 @@ namespace VirusX
                     clearAllItems = false;
                 }
             }
+            
+            // arcade mode stuff
+            if (currentMapType == MapGenerator.MapType.ARCADE)
+                PlaceArcadeModeElements(players[0]);
 
             // statistics
             if (GameStatistics.UpdateTimer((float)gameTime.ElapsedGameTime.TotalSeconds))
@@ -410,6 +411,35 @@ namespace VirusX
                 }
                 else
                     skipFirstStatisticStep = false;
+            }
+        }
+
+        /// <summary>
+        /// places cells and antibodies for arcade mode
+        /// </summary>
+        public void PlaceArcadeModeElements(Player player)
+        {
+            const float ARCADE_MODE_SPAWN_INTERVAL = 0.2f;
+
+            if(pickuptimer.Elapsed.TotalSeconds > ARCADE_MODE_SPAWN_INTERVAL)
+            {
+                pickuptimer.Restart();
+
+                const float PROBABILITY_SPAWN = 0.2f;
+                const float PROBABILITY_ANTIBODY = 0.7f;
+
+                float rnd = (float)Random.NextDouble();
+                if (rnd < PROBABILITY_SPAWN)
+                {
+                    Vector2 position = Random.NextDirection() * (RELATIVE_MAX - new Vector2(MapGenerator.LEVEL_BORDER) * 2) + new Vector2(MapGenerator.LEVEL_BORDER);
+                    float spawnSize = (float)Random.NextDouble(100, 600);
+                    mapObjects.Add(new MovingSpawnPoint(Random.NextDirection(), position, spawnSize, -1, contentManager));
+                }
+                else if (rnd < PROBABILITY_ANTIBODY)
+                {
+                    Vector2 position = Random.NextDirection() * (RELATIVE_MAX - new Vector2(MapGenerator.LEVEL_BORDER) * 2) + new Vector2(MapGenerator.LEVEL_BORDER);
+                    mapObjects.Add(new Debuff(position, contentManager));
+                }
             }
         }
 
@@ -458,7 +488,7 @@ namespace VirusX
                         }
                 }
 
-                var spwp = spawnPoints.Where(x => x.PossessingPlayer == weakestPlayer);
+                var spwp = SpawnPoints.Where(x => x.PossessingPlayer == weakestPlayer);
                 Vector2 weakestPlayerCenter = players[weakestPlayer].CursorPosition;
                 if (spwp.Count() > 1)
                 {
@@ -614,13 +644,13 @@ namespace VirusX
         public void Draw(GameTime gameTime, GraphicsDevice device, Player[] players)
         {
             // background colors
-            var colors = spawnPoints.Select(x =>
+            var colors = SpawnPoints.Where(x => x.GetType() == typeof(SpawnPoint)).Select(x =>
             {
                 Color color = x.ComputeColor();
                 float saturation = Vector3.Dot(color.ToVector3(), new Vector3(0.3f, 0.59f, 0.11f));
                 return Color.Lerp(color, new Color(saturation, saturation, saturation), 0.8f) * 1.5f;
-            })
-            .Concat(Enumerable.Repeat(Color.DimGray, background.NumBackgroundCells - spawnPoints.Count));
+            });
+            colors = colors.Concat(Enumerable.Repeat(Color.DimGray, background.NumBackgroundCells - colors.Count()));
             background.UpdateColors(colors.ToArray());
 
             // activate scissor test - is this a performance issue?

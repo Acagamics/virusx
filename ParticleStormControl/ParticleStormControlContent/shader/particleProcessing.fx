@@ -58,6 +58,8 @@ float NoiseToMovementFactor;
 
 float MaxHealth;	// this prevents an advantage @ mutate
 
+float GlobalDamage;
+
 // maximum of the relative cordinates
 float2 RelativeCorMax;
 
@@ -94,6 +96,7 @@ PixelShaderOutput Process(VertexShaderOutput input)
 	output.position = tex2D(sampPositions, input.Texcoord);
 	output.movement = tex2D(sampMovements, input.Texcoord);
 	output.health = min(MaxHealth, tex2D(sampHealth, input.Texcoord));
+	output.health.x -= GlobalDamage;
 
 	// movement
 	float2 aimed = normalize(particleAttractionPosition - output.position.xy);

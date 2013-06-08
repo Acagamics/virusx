@@ -54,9 +54,9 @@ namespace VirusXStatistics
                     gameTypes[(int)InGame.GameMode.FUN]++;
                     statisticsFun.Add(stat);
                 }
-                else if (f.FullName.Contains(InGame.GameMode.INSERT_MODE_NAME.ToString()))
+                else if (f.FullName.Contains(InGame.GameMode.DOMINATION.ToString()) || f.FullName.Contains("INSERT_MODE_NAME"))
                 {
-                    gameTypes[(int)InGame.GameMode.INSERT_MODE_NAME]++;
+                    gameTypes[(int)InGame.GameMode.DOMINATION]++;
                     statisticsDomination.Add(stat);
                 }
                 else if (f.FullName.Contains(InGame.GameMode.LEFT_VS_RIGHT.ToString()))

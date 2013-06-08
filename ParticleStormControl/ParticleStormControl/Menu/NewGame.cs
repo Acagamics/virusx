@@ -31,6 +31,8 @@ namespace VirusX.Menu
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
 
+        private float numSlots = 4;
+
         //private InterfaceImage[] virusImages = new InterfaceImage[4];
         private Effect virusRenderEffect;
 
@@ -69,7 +71,6 @@ namespace VirusX.Menu
             // reset all slots if not play again
             if (oldPage != Menu.Page.CONTROLS && oldPage != Menu.Page.STATS)
             {
-
                 Settings.Instance.ResetPlayerSettings();
                 countdown = TimeSpan.Zero;
                 for (int i = 0; i < 4; ++i)
@@ -85,12 +86,18 @@ namespace VirusX.Menu
                 // create ui @ onActia
                 Interface.Clear();
 
-                // four boxes
+                // num slots
+                if (Settings.Instance.GameMode == Game.GameMode.ARCADE)
+                    numSlots = 1;
+                else
+                    numSlots = 4;
+
+                // boxes
                 int TEXTBOX_HEIGHT = menu.GetFontHeight() + 2 * InterfaceButton.PADDING;
                 int SIDE_PADDING = TEXTBOX_HEIGHT + 30;
                 int ARROW_SIZE = menu.GetFontHeight();
 
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < numSlots; i++)
                 {
                     int index = i;
                     Vector2 origin = GetOrigin(index);
@@ -585,7 +592,7 @@ namespace VirusX.Menu
         // if all slots are full -1 is returned
         private int GetFreeSlotIndex()
         {
-            if (Settings.Instance.NumPlayers >= 4)
+            if (Settings.Instance.NumPlayers >= numSlots)
                 return -1;
             int i = 0;
             while (i < 4 && playerSlotOccupied[i])
@@ -603,6 +610,9 @@ namespace VirusX.Menu
             int playersNeeded = 2;
             if (Settings.Instance.GameMode == Game.GameMode.CAPTURE_THE_CELL)
                 playersNeeded = 4;
+            else if(Settings.Instance.GameMode == Game.GameMode.ARCADE)
+                playersNeeded = 1;
+
             bool allReady = playerSlotOccupied.Count(x => x) >= playersNeeded;
 
             for (int i = 0; i < 4; i++)
@@ -634,20 +644,15 @@ namespace VirusX.Menu
 
         private Vector2 GetOrigin(int i)
         {
-            //if (Settings.Instance.GameMode == Game.GameMode.TUTORIAL)
-            //{
-            //    switch (i)
-            //    {
-            //        case 1:
-            //            return new Vector2(Settings.Instance.ResolutionX / 4 * 3 - BOX_WIDTH / 2, (Settings.Instance.ResolutionY - BOX_HEIGHT) / 2);
-            //        case 0:
-            //            return new Vector2(Settings.Instance.ResolutionX / 4 - BOX_WIDTH / 2, (Settings.Instance.ResolutionY - BOX_HEIGHT) / 2);
-            //        default:
-            //            return Vector2.Zero;
-            //    }
-            //}
-            //else
-            //{
+            if (numSlots == 1)  // arcade
+            {
+               if(i == 0)
+                    return new Vector2((Settings.Instance.ResolutionX - BOX_WIDTH) / 2, (Settings.Instance.ResolutionY - BOX_HEIGHT) / 2);
+               else
+                    return Vector2.Zero;
+            }
+            else
+            {
                 switch (i)
                 {
                     case 3:
@@ -661,7 +666,7 @@ namespace VirusX.Menu
                     default:
                         return Vector2.Zero;
                 }
-            //}
+            }
         }
 
         private string GetJoinText(int index)
