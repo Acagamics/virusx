@@ -6,9 +6,10 @@ of the font in your game, and to change the characters which are available to dr
 with.
 -->
 <XnaContent xmlns:Graphics="Microsoft.Xna.Framework.Content.Pipeline.Graphics">
-  <Asset Type="Graphics:FontDescription">
+  <!--<Asset Type="Graphics:FontDescription">-->
+  <Asset Type="VirusXLocalizationPipline.LocalizedFontDescription">
 
-    <!--
+   <!--
     Modify this string to change the font that will be imported.
     -->
     <FontName>Arial</FontName>
@@ -41,7 +42,7 @@ with.
     If you uncomment this line, the default character will be substituted if you draw
     or measure text that contains characters which were not included in the font.
     -->
-    <!-- <DefaultCharacter>*</DefaultCharacter> -->
+    <DefaultCharacter>*</DefaultCharacter>
 
     <!--
     CharacterRegions control what letters are available in the font. Every
@@ -56,5 +57,15 @@ with.
         <End>&#126;</End>
       </CharacterRegion>
     </CharacterRegions>
+
+    <!--
+    The Resource files which contains the localized strings.
+    It is available through the customized content processor
+    -->
+    <ResourceFiles>
+      <Resx>..\VirusXStrings.resx</Resx>
+      <Resx>..\VirusXStrings.de.resx</Resx>
+    </ResourceFiles>
+    
   </Asset>
 </XnaContent>

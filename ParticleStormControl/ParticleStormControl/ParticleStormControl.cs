@@ -5,6 +5,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Globalization;
 
 namespace CustomExtensions
 {
@@ -38,7 +39,7 @@ namespace VirusX
     /// </summary>
     class ParticleStormControl : Microsoft.Xna.Framework.Game
     {
-        public const string VERSION = "version 0.9 - Campus Days + Lange Nacht Edition (2013)";
+        public const string VERSION = VirusXStrings.VERSION;
 
         private bool showStatistics = false;
      
@@ -99,6 +100,8 @@ namespace VirusX
             Window.Title = "Virus X";
 
             AudioManager.Instance.Initialize(Content);
+
+            VirusXStrings.Culture = CultureInfo.CurrentCulture;
         }
 
         void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
