@@ -112,12 +112,6 @@
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
-    <Reference Include="Nuclex.Fonts">
-      <HintPath>..\..\libs\Nuclex.Fonts.dll</HintPath>
-    </Reference>
-    <Reference Include="Nuclex.Graphics">
-      <HintPath>..\..\libs\Nuclex.Graphics.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
