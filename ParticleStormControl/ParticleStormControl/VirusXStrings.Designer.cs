@@ -61,6 +61,123 @@ namespace VirusX {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exit Game.
+        /// </summary>
+        internal static string MainMenuExitGame {
+            get {
+                return ResourceManager.GetString("MainMenuExitGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        internal static string MainMenuHelp {
+            get {
+                return ResourceManager.GetString("MainMenuHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controls.
+        /// </summary>
+        internal static string MainMenuHelpControls {
+            get {
+                return ResourceManager.GetString("MainMenuHelpControls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Credits.
+        /// </summary>
+        internal static string MainMenuHelpCredits {
+            get {
+                return ResourceManager.GetString("MainMenuHelpCredits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gameplay.
+        /// </summary>
+        internal static string MainMenuHelpGameplay {
+            get {
+                return ResourceManager.GetString("MainMenuHelpGameplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Viruses.
+        /// </summary>
+        internal static string MainMenuHelpViruses {
+            get {
+                return ResourceManager.GetString("MainMenuHelpViruses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Game.
+        /// </summary>
+        internal static string MainMenuNewGame {
+            get {
+                return ResourceManager.GetString("MainMenuNewGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Items.
+        /// </summary>
+        internal static string MainMenuNewGameItems {
+            get {
+                return ResourceManager.GetString("MainMenuNewGameItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game mode.
+        /// </summary>
+        internal static string MainMenuNewGameMode {
+            get {
+                return ResourceManager.GetString("MainMenuNewGameMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start.
+        /// </summary>
+        internal static string MainMenuNewGameStart {
+            get {
+                return ResourceManager.GetString("MainMenuNewGameStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Options.
+        /// </summary>
+        internal static string MainMenuOptions {
+            get {
+                return ResourceManager.GetString("MainMenuOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OFF.
+        /// </summary>
+        internal static string OFF {
+            get {
+                return ResourceManager.GetString("OFF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ON.
+        /// </summary>
+        internal static string ON {
+            get {
+                return ResourceManager.GetString("ON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to version 0.9 - Campus Days + Lange Nacht Edition (2013).
         /// </summary>
         internal static string VERSION {

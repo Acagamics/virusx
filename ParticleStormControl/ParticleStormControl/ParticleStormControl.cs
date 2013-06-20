@@ -1,5 +1,7 @@
 //#define NVIDIAPERFHUD_POSSIBLE
 //#define DAMAGEMAP_DEBUGGING
+//#define DEBUG_LOCALIZATION_CULTURE_EN
+//#define DEBUG_LOCALIZATION_CULTURE_DE
 
 using System;
 using Microsoft.Xna.Framework;
@@ -39,8 +41,6 @@ namespace VirusX
     /// </summary>
     class ParticleStormControl : Microsoft.Xna.Framework.Game
     {
-        public const string VERSION = VirusXStrings.VERSION;
-
         private bool showStatistics = false;
      
         private GraphicsDeviceManager graphics;
@@ -102,6 +102,12 @@ namespace VirusX
             AudioManager.Instance.Initialize(Content);
 
             VirusXStrings.Culture = CultureInfo.CurrentCulture;
+#if DEBUG_LOCALIZATION_CULTURE_EN
+            VirusXStrings.Culture = CultureInfo.CreateSpecificCulture("en");
+#endif
+#if DEBUG_LOCALIZATION_CULTURE_DE
+            VirusXStrings.Culture = CultureInfo.CreateSpecificCulture("de");
+#endif
         }
 
         void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
