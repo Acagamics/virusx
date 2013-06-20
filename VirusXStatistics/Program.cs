@@ -1,4 +1,4 @@
-﻿//#define HARD_CODED_PATH
+﻿#define HARD_CODED_PATH
 
 using System;
 using System.Collections.Generic;
