@@ -61,6 +61,118 @@ namespace VirusX {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Arcade.
+        /// </summary>
+        internal static string GameModeArcade {
+            get {
+                return ResourceManager.GetString("GameModeArcade", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Classic.
+        /// </summary>
+        internal static string GameModeClassic {
+            get {
+                return ResourceManager.GetString("GameModeClassic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Capture the Cell.
+        /// </summary>
+        internal static string GameModeCTC {
+            get {
+                return ResourceManager.GetString("GameModeCTC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to survive as long as you can (1 player).
+        /// </summary>
+        internal static string GameModeDescriptionArcade {
+            get {
+                return ResourceManager.GetString("GameModeDescriptionArcade", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to standard deathmatch (2-4 players).
+        /// </summary>
+        internal static string GameModeDescriptionClassic {
+            get {
+                return ResourceManager.GetString("GameModeDescriptionClassic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to one player with a big cell against
+        ///a team of three players (4 players).
+        /// </summary>
+        internal static string GameModeDescriptionCTC {
+            get {
+                return ResourceManager.GetString("GameModeDescriptionCTC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to control a number of cells
+        ///for a certain time (2-4 players).
+        /// </summary>
+        internal static string GameModeDescriptionDomination {
+            get {
+                return ResourceManager.GetString("GameModeDescriptionDomination", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to like classic mode but with
+        ///some extra twists (2-4 players).
+        /// </summary>
+        internal static string GameModeDescriptionFun {
+            get {
+                return ResourceManager.GetString("GameModeDescriptionFun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to two teams with one or two
+        ///players each (2-4 players).
+        /// </summary>
+        internal static string GameModeDescriptionLvsR {
+            get {
+                return ResourceManager.GetString("GameModeDescriptionLvsR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Domination.
+        /// </summary>
+        internal static string GameModeDomination {
+            get {
+                return ResourceManager.GetString("GameModeDomination", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fun.
+        /// </summary>
+        internal static string GameModeFun {
+            get {
+                return ResourceManager.GetString("GameModeFun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left vs. Right.
+        /// </summary>
+        internal static string GameModeLvsR {
+            get {
+                return ResourceManager.GetString("GameModeLvsR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit Game.
         /// </summary>
         internal static string MainMenuExitGame {

@@ -117,6 +117,64 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="GameModeArcade" xml:space="preserve">
+    <value>Arcade</value>
+    <comment>The displayed name of the "Arcade Single Player" game mode</comment>
+  </data>
+  <data name="GameModeClassic" xml:space="preserve">
+    <value>Classic</value>
+    <comment>The displayed name of the "Classic" game mode</comment>
+  </data>
+  <data name="GameModeCTC" xml:space="preserve">
+    <value>Capture the Cell</value>
+    <comment>The displayed name of the "Capture the Cell" game mode</comment>
+  </data>
+  <data name="GameModeDescriptionArcade" xml:space="preserve">
+    <value>Überlebe solange wie möglich
+(1 Spieler)</value>
+    <comment>The help text for the "Arcade Single Player" game mode</comment>
+  </data>
+  <data name="GameModeDescriptionClassic" xml:space="preserve">
+    <value>Standard Deathmatch
+(2-4 Spieler)</value>
+    <comment>The help text for the "Classic" game mode</comment>
+  </data>
+  <data name="GameModeDescriptionCTC" xml:space="preserve">
+    <value>Ein spieler mit einer  riesigen Zelle
+gegen ein Team aus drei Spielern
+(4 Spieler)</value>
+    <comment>The help text for the "Capture the Cell" game mode</comment>
+  </data>
+  <data name="GameModeDescriptionDomination" xml:space="preserve">
+    <value>Kontrolliere eine Anzahl an
+Zellen für eine gewisse Zeit
+(2-4 Spieler)</value>
+    <comment>The help text for the "Domination" game mode</comment>
+  </data>
+  <data name="GameModeDescriptionFun" xml:space="preserve">
+    <value>Wie der Classic Modus
+aber mit  extra Änderungen
+(2-4 Spieler)</value>
+    <comment>The help text for the "Fun" game mode</comment>
+  </data>
+  <data name="GameModeDescriptionLvsR" xml:space="preserve">
+    <value>Zwei Teams mit jeweils
+ein oder zwei Spielern
+(2-4 Spieler)</value>
+    <comment>The help text for the "LvsR" game mode</comment>
+  </data>
+  <data name="GameModeDomination" xml:space="preserve">
+    <value>Domination</value>
+    <comment>The displayed name of the "Domination" game mode</comment>
+  </data>
+  <data name="GameModeFun" xml:space="preserve">
+    <value>Fun</value>
+    <comment>The displayed name of the "Fun" game mode</comment>
+  </data>
+  <data name="GameModeLvsR" xml:space="preserve">
+    <value>Left vs. Right</value>
+    <comment>The displayed name of the "Left versus Right" game mode</comment>
+  </data>
   <data name="MainMenuExitGame" xml:space="preserve">
     <value>Spiel Beenden</value>
     <comment>Text on the "Exit" button in the "Main Menu"</comment>

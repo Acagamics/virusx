@@ -43,7 +43,7 @@ namespace VirusX
             // no teams, up to 4 plyers
             DOMINATION,
 
-            // 1 player arcarde mode
+            // 1 player arcade mode
             ARCADE,
 
             NUM_MODES
@@ -51,22 +51,22 @@ namespace VirusX
 
         static public readonly String[] GAMEMODE_NAME = new String[]
         {
-            "Classic",
-            "Capture the Cell",
-            "Left vs. Right",
-            "Fun",
-            "Domination",
-            "Arcade"
+            VirusXStrings.GameModeClassic,
+            VirusXStrings.GameModeCTC,
+            VirusXStrings.GameModeLvsR,
+            VirusXStrings.GameModeFun,
+            VirusXStrings.GameModeDomination,
+            VirusXStrings.GameModeArcade
         };
 
         static public readonly String[] GAMEMODE_DESCRIPTION = new String[]
         {
-            "standard deathmatch (2-4 players)",
-            "one player with a big cell against\na team of three players (4 players)",
-            "two teams with one or two\nplayers each (2-4 players)",
-            "like classic mode but with\nsome extra twists (2-4 players)",
-            "control a number of bases\nfor a certain time (2-4 players)",
-            "survive as long as you can (1 player)"
+            VirusXStrings.GameModeDescriptionClassic,
+            VirusXStrings.GameModeDescriptionCTC,
+            VirusXStrings.GameModeDescriptionLvsR,
+            VirusXStrings.GameModeDescriptionFun,
+            VirusXStrings.GameModeDescriptionDomination,
+            VirusXStrings.GameModeDescriptionArcade
         };
 
         #endregion

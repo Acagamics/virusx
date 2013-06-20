@@ -52,9 +52,10 @@ with.
     See the documentation for more information.
     -->
     <CharacterRegions>
+      <!-- extended to support the full german characters-->
       <CharacterRegion>
         <Start>&#32;</Start>
-        <End>&#126;</End>
+        <End>&#255;</End>
       </CharacterRegion>
     </CharacterRegions>
 
