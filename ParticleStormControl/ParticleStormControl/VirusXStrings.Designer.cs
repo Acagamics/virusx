@@ -299,6 +299,25 @@ namespace VirusX {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to It is a highly contagious virus which is a potential pandemic threat..
+        /// </summary>
+        internal static string VirusAdditionalInfoH5N1 {
+            get {
+                return ResourceManager.GetString("VirusAdditionalInfoH5N1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Infection with HIV occurs by the transfer of blood, semen,
+        ///vaginal fluid, pre-ejaculate, or breast milk..
+        /// </summary>
+        internal static string VirusAdditionalInfoHIV {
+            get {
+                return ResourceManager.GetString("VirusAdditionalInfoHIV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ebola.
         /// </summary>
         internal static string VirusNameEbola {
