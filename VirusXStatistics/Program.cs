@@ -139,19 +139,40 @@ namespace VirusXStatistics
 
         static private void AnalyzeStatistics(IEnumerable<Statistics> statistics)
         {
+            // how often has a virus won
             int[] winByVirus = new int[(int)VirusSwarm.VirusType.NUM_VIRUSES];
+            // how often was a virus selected
             int[] usedViruses = new int[(int)VirusSwarm.VirusType.NUM_VIRUSES];
+            // how often has a specific player won
             int[] winByPlayers = new int[statistics.First().PlayerCount];
+            // how often has a specific virus won against another virus
+            int[,] wonOverViruses = new int[(int)VirusSwarm.VirusType.NUM_VIRUSES,(int)VirusSwarm.VirusType.NUM_VIRUSES];
+            // how often has a specific virus played against another virus
+            int[,] playedAgainsViruses = new int[(int)VirusSwarm.VirusType.NUM_VIRUSES, (int)VirusSwarm.VirusType.NUM_VIRUSES];
+            // used to compute the average time
             int steps = 0;
+
+            // collect the statistics
             foreach (Statistics stat in statistics)
             {
                 for (int index = 0; index < stat.PlayerCount; ++index)
                 {
-                    usedViruses[(int)stat.getVirusType(index)]++;
-                    if (stat.getDeathStepOfPlayer(index) == -1)
+                    usedViruses[(int)stat.getVirusType(index)]++; // used
+                    if (stat.getDeathStepOfPlayer(index) == -1) // player not death
                     {
-                        winByVirus[(int)stat.getVirusType(index)]++;
-                        winByPlayers[index]++;
+                        winByVirus[(int)stat.getVirusType(index)]++; // means the used virus has won
+                        winByPlayers[index]++; // and also the player 
+
+                        for (int deathIndex = 0; deathIndex < stat.PlayerCount; ++deathIndex) // search for defeated viruses
+                        {
+                            if(stat.getDeathStepOfPlayer(deathIndex) != -1) // virus died during the game
+                                wonOverViruses[(int)stat.getVirusType(index), (int)stat.getVirusType(deathIndex)]++; // the winning virus has defeated this virus
+                        }
+                    }
+                    for(int againstIndex = 0; againstIndex < stat.PlayerCount; ++againstIndex)
+                    {
+                        if(againstIndex != index)
+                            playedAgainsViruses[(int)stat.getVirusType(index), (int)stat.getVirusType(againstIndex)]++;
                     }
                 }
 
@@ -172,6 +193,12 @@ namespace VirusXStatistics
 
             int sumViruses = usedViruses.Sum();
             int sumWin = winByVirus.Sum();
+
+            float totalWinPercentages = 0f;
+            for (int i = 0; i < usedViruses.Length; ++i)
+            {
+                totalWinPercentages += ((float)winByVirus[i] / usedViruses[i] * 100f);
+            }
 
             Console.Out.WriteLine("{0,-14}|{1,14} |{2,14} |{3,14} |{4,14} |{5,14}",
                 "Virus Type","times choosen","overall %","times won","win %","overall win %");
@@ -203,6 +230,30 @@ namespace VirusXStatistics
                 Console.Out.WriteLine("Player " + i.ToString() + ": " + winByPlayers[i] + "/" + statistics.Count() + " --> " + ((float)winByPlayers[i] / statistics.Count() * 100f).ToString() + "%");
             }
             Console.Out.WriteLine("\nAverage time per game: " + time.ToString());
+
+            Console.Out.WriteLine("\n VirusMatrix \n=============\n\n");
+            object[] args = {"Virus Type",
+                ((VirusSwarm.VirusType)0).ToString(),
+                ((VirusSwarm.VirusType)1).ToString(),
+                ((VirusSwarm.VirusType)2).ToString(),
+                ((VirusSwarm.VirusType)3).ToString(),
+                ((VirusSwarm.VirusType)4).ToString(),
+                ((VirusSwarm.VirusType)5).ToString()};
+            // TODO di this in a loop
+            output = String.Format("{0,-14}| {1,-14}| {2,-14}| {3,-14}| {4,-14}| {5,-14}| {6,-14}", args);
+            Console.Out.WriteLine(output);
+            Console.Out.WriteLine("---------------------------------------------------------------------------------------------------------------------");
+
+            for (int wonVirusIndex = 0; wonVirusIndex < wonOverViruses.GetLength(0); ++wonVirusIndex)
+            {
+                output = String.Format("{0,-14}", ((VirusSwarm.VirusType)wonVirusIndex).ToString());
+                for (int lostVirusIndex = 0; lostVirusIndex < wonOverViruses.GetLength(1); ++lostVirusIndex)
+                {
+                    output += String.Format("| {0,13} ", (wonOverViruses[wonVirusIndex, lostVirusIndex] / (float)playedAgainsViruses[wonVirusIndex, lostVirusIndex] * 100f));
+                }
+                Console.Out.WriteLine(output);
+            }
+
         }
 
         private static string GetSpaceString(int p)
