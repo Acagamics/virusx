@@ -101,6 +101,7 @@ namespace VirusX
 
             AudioManager.Instance.Initialize(Content);
 
+            // TODO move into setting so that we can add it later to the options menu to chnage the language in game
             VirusXStrings.Culture = CultureInfo.CurrentCulture;
 #if DEBUG_LOCALIZATION_CULTURE_EN
             VirusXStrings.Culture = CultureInfo.CreateSpecificCulture("en");

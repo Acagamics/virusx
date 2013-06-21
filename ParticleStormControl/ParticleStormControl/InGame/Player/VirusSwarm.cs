@@ -29,9 +29,9 @@ namespace VirusX
         public readonly static VirusType[] Viruses = { VirusType.H5N1, VirusType.HEPATITISB, VirusType.HIV, VirusType.EPSTEINBARR, VirusType.EBOLA, VirusType.MARV };
         //public readonly static string[] VirusNames = { "Influenza", "Hepatitis B", "Human immunodeficiency", "Epstein-Barr", "Ebola", "Marburg" };
         public readonly static string[] VirusNames = { VirusXStrings.VirusNameH5N1, VirusXStrings.VirusNameHepatitisB, VirusXStrings.VirusNameHIV, VirusXStrings.VirusNameEpsteinBarr, VirusXStrings.VirusNameEbola, VirusXStrings.VirusNameMarv };
-        public readonly static string[] VirusAdditionalInfo = { "It is a highly contagious virus which is a potential pandemic threat.",
+        public readonly static string[] VirusAdditionalInfo = { VirusXStrings.VirusAdditionalInfoH5N1,
                                                                 "Can also lead to cirrhosis and hepatocellular carcinoma.",
-                                                                "Infection with HIV occurs by the transfer of blood, semen,\nvaginal fluid, pre-ejaculate, or breast milk.",
+                                                                VirusXStrings.VirusAdditionalInfoHIV,
                                                                 "It is one of the most common viruses in humans.",
                                                                 "EBOV is a select agent, World Health Organization Risk Group 4 Pathogen\n(requiring Biosafety Level 4-equivalent containment).",
                                                                 "Marburg virus disease often called Marburg hemorrhagic fever (MHF)" };

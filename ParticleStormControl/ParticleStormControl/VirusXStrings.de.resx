@@ -255,6 +255,15 @@ ein oder zwei Spielern
     <value>Marburg</value>
     <comment>The displayed name of Marburg Virus</comment>
   </data>
+  <data name="VirusAdditionalInfoH5N1" xml:space="preserve">
+    <value>It is a highly contagious virus which is a potential pandemic threat.</value>
+    <comment>The info string of "Influenza"</comment>
+  </data>
+  <data name="VirusAdditionalInfoHIV" xml:space="preserve">
+    <value>Infection with HIV occurs by the transfer of blood, semen,
+vaginal fluid, pre-ejaculate, or breast milk.</value>
+    <comment>The info string of "HIV"</comment>
+  </data>
   <data name="MainMenuHighscore" xml:space="preserve">
     <value>Arcade Highscore</value>
     <comment>Text on the "Highscore " button in the "Main Menu"</comment>
