@@ -255,4 +255,12 @@ ein oder zwei Spielern
     <value>Marburg</value>
     <comment>The displayed name of Marburg Virus</comment>
   </data>
+  <data name="MainMenuHighscore" xml:space="preserve">
+    <value>Arcade Highscore</value>
+    <comment>Text on the "Highscore " button in the "Main Menu"</comment>
+  </data>
+  <data name="BackToMainMenu" xml:space="preserve">
+    <value>► Zurück zum Hauptmenu</value>
+    <comment>Return to MainMenu Button</comment>
+  </data>
 </root>

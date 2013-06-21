@@ -49,6 +49,13 @@ namespace VirusX
             NUM_MODES
         };
 
+        /// <summary>
+        /// (arcade mode only) until this time (seconds) the player cannot die due to a health value < ARCADE_MIN_HEALTH
+        /// </summary>
+        private const float ARCADE_SAFE_TIME = 10.0f;
+        private const float ARCADE_MIN_HEALTH = 1.0f;
+
+
         static public readonly String[] GAMEMODE_NAME = new String[]
         {
             VirusXStrings.GameModeClassic,
@@ -420,8 +427,12 @@ namespace VirusX
 
                 // player died
                 case GameMode.ARCADE:
-                     winPlayerIndex = players[0].Alive ? -1 : 0;
-                     break;
+                    if (!players[0].Alive ||
+                        (GameStatistics.LastStep * GameStatistics.StepTime > ARCADE_SAFE_TIME && Players[0].TotalVirusHealth<ARCADE_MIN_HEALTH))
+                    {
+                        winPlayerIndex = 0;
+                    }
+                    break;
 
                 case GameMode.DOMINATION:
                     for (int index = 0; index < winTimer.Length; ++index)
@@ -454,16 +465,20 @@ namespace VirusX
                 // statistics
                 GameStatistics.addWonMatches(winPlayerIndex);
 
-                // fill stat screen
-                Menu.StatisticsScreen statScreen = ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS));
-                statScreen.WinningTeam          = winningTeam;
-                statScreen.WinPlayerIndex       = winPlayerIndex;
-                statScreen.PlayerTypes          = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
-                statScreen.PlayerColorIndices   = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
-                statScreen.Statistics           = GameStatistics;
-                statScreen.GameMode             = Settings.Instance.GameMode;
+                if(Settings.Instance.GameMode == GameMode.ARCADE)
+                    menu.ChangePage(Menu.Menu.Page.ARCADEHIGHSCORE, gameTime);// skip to highscore screen
+                else
+                {
+                    // fill stat screen
+                    Menu.StatisticsScreen statScreen = ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS));
+                    statScreen.WinningTeam          = winningTeam;
+                    statScreen.WinPlayerIndex       = winPlayerIndex;
+                    statScreen.PlayerTypes          = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
+                    statScreen.PlayerColorIndices   = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
+                    statScreen.Statistics           = GameStatistics;
 
-                menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
+                    menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
+                }
             }
 
 #if STATS_TEST

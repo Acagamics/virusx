@@ -11,6 +11,7 @@ namespace VirusX.Menu
         enum Button
         {
             NEWGAME,
+            HIGHSCORE,
             HELP,
             OPTIONS,
             END,
@@ -55,10 +56,10 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceImage("logoNew", new Vector2(50, 50)));
 
             Interface.Add(new InterfaceButton(VirusXStrings.MainMenuNewGame, new Vector2(100, 370), () => { return selectedButton == Button.NEWGAME; }, true));
-            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuHelp, new Vector2(100, 440), () => { return selectedButton == Button.HELP; }));
-            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuOptions, new Vector2(100, 500), () => { return selectedButton == Button.OPTIONS; }));
-            //    Interface.Add(new InterfaceButton("Credits", new Vector2(100, 560), () => { return selectedButton == Button.CREDITS; }));
-            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuExitGame, new Vector2(100, 560), () => { return selectedButton == Button.END; }));
+            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuHighscore, new Vector2(100, 440), () => { return selectedButton == Button.HIGHSCORE; }));
+            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuHelp, new Vector2(100, 500), () => { return selectedButton == Button.HELP; }));
+            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuOptions, new Vector2(100, 560), () => { return selectedButton == Button.OPTIONS; }));
+            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuExitGame, new Vector2(100, 620), () => { return selectedButton == Button.END; }));
 
             //    Interface.Add(new InterfaceButton("How to Play", new Vector2(620, 100), Alignment.TOP_RIGHT));
             //    Interface.Add(new InterfaceImage("instructions", new Vector2(620, 100 + menu.GetFontHeight() + 2 * InterfaceElement.PADDING), Alignment.TOP_RIGHT));
@@ -127,6 +128,10 @@ namespace VirusX.Menu
                                     Settings.Instance.StartingControls = control;
                                     submenuVisible = SubMenu.NEWGAME;
                                     AudioManager.Instance.PlaySoundeffect("click");
+                                    break;
+
+                                case Button.HIGHSCORE:
+                                    menu.ChangePage(Menu.Page.ARCADEHIGHSCORE, gameTime);
                                     break;
 
                                 case Button.HELP:

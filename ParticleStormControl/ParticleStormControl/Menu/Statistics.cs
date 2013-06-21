@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+
 #if SAVE_STATISTICS || LOAD_STATISTICS
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -34,9 +35,6 @@ namespace VirusX.Menu
 
         public Player.Type[] PlayerTypes { get; set; }
         public int[] PlayerColorIndices { get; set; }
-
-        public global::VirusX.InGame.GameMode GameMode { get; set; }
-
 
         const float DURATION_CONTINUE_UNAVAILABLE = 1.5f;
         const int SIDE_PADDING = 10; // padding from left
@@ -149,7 +147,7 @@ namespace VirusX.Menu
                 Alignment.BOTTOM_CENTER));
 
             // main menu button
-            text = "► Back to Main Menu";
+            text = VirusXStrings.BackToMainMenu;
             width = (int)menu.Font.MeasureString(text).X;
             Interface.Add(new InterfaceButton(text,
                 new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() + InterfaceImageButton.PADDING * 4),
@@ -275,32 +273,14 @@ namespace VirusX.Menu
                 }
 
                 if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.StartingControls))
-                {
-                    NextDiagramType();
-                    if (GameMode == VirusX.InGame.GameMode.ARCADE && currentDiagramType == DiagramType.DOMINATION)
-                        NextDiagramType();
-                }
+                    currentDiagramType = (DiagramType)(((int)currentDiagramType + 1) % (int)DiagramType.NUM_VALUES);
 
                 if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.StartingControls))
-                {
-                    PrevDiagramType();
-                    if (GameMode == VirusX.InGame.GameMode.ARCADE && currentDiagramType == DiagramType.DOMINATION)
-                        PrevDiagramType();
-                }
-
+                    currentDiagramType = (DiagramType)((((int)currentDiagramType - 1) < 0 ? (int)DiagramType.NUM_VALUES : (int)(currentDiagramType)) - 1);
             }
             timeUntilContinueIsAvailable -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             base.Update(gameTime);
-        }
-
-        private void NextDiagramType()
-        {
-            currentDiagramType = (DiagramType)(((int)currentDiagramType + 1) % (int)DiagramType.NUM_VALUES);
-        }
-        private void PrevDiagramType()
-        {
-            currentDiagramType = (DiagramType)((((int)currentDiagramType - 1) < 0 ? (int)DiagramType.NUM_VALUES : (int)(currentDiagramType)) - 1);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)

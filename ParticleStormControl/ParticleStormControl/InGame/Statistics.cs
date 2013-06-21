@@ -183,7 +183,7 @@ namespace VirusX
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public ulong getGeneratedParticles(int playerIndex) { return (playerIndex < playerCount && playerIndex >= 0) ? generatedParticles[playerIndex] : 0; }
+       // public ulong getGeneratedParticles(int playerIndex) { return (playerIndex < playerCount && playerIndex >= 0) ? generatedParticles[playerIndex] : 0; }
         /// <summary>
         /// The total amount of captuered SpawnPoints/spawnPoints.
         /// </summary>
@@ -375,25 +375,18 @@ namespace VirusX
             }
         }
 
-        public void addGeneratedParticles(int playerIndex, int particles = 1)
+        public void addCaptueredSpawnPoints(int playerIndex)
         {
             if (playerIndex < 0 || playerIndex >= playerCount) return;
-            if(particles>0) generatedParticles[playerIndex] += (ulong)particles;
-            else generatedParticles[playerIndex] -= (ulong)particles;
+            capturedSpawnPoints[playerIndex] += 1;
+
+            OverallNumberOfSpawnPoints = System.Math.Max(OverallNumberOfSpawnPoints, capturedSpawnPoints[playerIndex]);
         }
 
-        public void addCaptueredSpawnPoints(int playerIndex, int SpawnPoints = 1)
+        public void addLostSpawnPoints(int playerIndex)
         {
             if (playerIndex < 0 || playerIndex >= playerCount) return;
-            if (SpawnPoints > 0) capturedSpawnPoints[playerIndex] += (uint)SpawnPoints;
-            else capturedSpawnPoints[playerIndex] -= (uint)SpawnPoints;
-        }
-
-        public void addLostSpawnPoints(int playerIndex, int SpawnPoints = 1)
-        {
-            if (playerIndex < 0 || playerIndex >= playerCount) return;
-            if (SpawnPoints > 0) lostSpawnPoints[playerIndex] += (uint)SpawnPoints;
-            else lostSpawnPoints[playerIndex] -= (uint)SpawnPoints;
+            lostSpawnPoints[playerIndex] += 1;
         }
 
         public void addWonMatches(int playerIndex, int matches = 1)

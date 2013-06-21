@@ -18,6 +18,7 @@ namespace VirusX.Menu
 
             INGAME,
             STATS,
+            ARCADEHIGHSCORE,
 
             NUM_PAGES,
             NONE
@@ -76,6 +77,7 @@ namespace VirusX.Menu
             pages[(int)Page.CREDITS] = new Credits(this);
             pages[(int)Page.CONTROLS] = new Controls(this);
             pages[(int)Page.VIRUSES] = new Viruses(this);
+            pages[(int)Page.ARCADEHIGHSCORE] = new ArcadeHighscore(this);
         }
 
         public void LoadContent(ContentManager content)

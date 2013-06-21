@@ -249,4 +249,12 @@ players each (2-4 players)</value>
     <value>Marburg</value>
     <comment>The displayed name of Marburg Virus</comment>
   </data>
+  <data name="MainMenuHighscore" xml:space="preserve">
+    <value>Arcade Highscore</value>
+    <comment>Text on the "Highscore " button in the "Main Menu"</comment>
+  </data>
+  <data name="BackToMainMenu" xml:space="preserve">
+    <value>► Back to Main Menu</value>
+    <comment>Return to MainMenu Button</comment>
+  </data>
 </root>

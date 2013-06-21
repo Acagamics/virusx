@@ -148,6 +148,7 @@
     <Compile Include="InGame\Level\CapturableObject.cs" />
     <Compile Include="AudioManager.cs" />
     <Compile Include="Menu\Controls.cs" />
+    <Compile Include="Menu\ArcadeHighscore.cs" />
     <Compile Include="Menu\Credits.cs" />
     <Compile Include="Menu\InGame.cs" />
     <Compile Include="Menu\Interface\InterfaceElement.cs" />
