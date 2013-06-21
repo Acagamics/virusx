@@ -461,6 +461,7 @@ namespace VirusX
                 statScreen.PlayerTypes          = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
                 statScreen.PlayerColorIndices   = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
                 statScreen.Statistics           = GameStatistics;
+                statScreen.GameMode             = Settings.Instance.GameMode;
 
                 menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
             }

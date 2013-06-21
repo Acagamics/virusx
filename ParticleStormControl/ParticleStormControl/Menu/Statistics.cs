@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-
 #if SAVE_STATISTICS || LOAD_STATISTICS
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -35,6 +34,9 @@ namespace VirusX.Menu
 
         public Player.Type[] PlayerTypes { get; set; }
         public int[] PlayerColorIndices { get; set; }
+
+        public global::VirusX.InGame.GameMode GameMode { get; set; }
+
 
         const float DURATION_CONTINUE_UNAVAILABLE = 1.5f;
         const int SIDE_PADDING = 10; // padding from left
@@ -273,14 +275,32 @@ namespace VirusX.Menu
                 }
 
                 if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.StartingControls))
-                    currentDiagramType = (DiagramType)(((int)currentDiagramType + 1) % (int)DiagramType.NUM_VALUES);
+                {
+                    NextDiagramType();
+                    if (GameMode == VirusX.InGame.GameMode.ARCADE && currentDiagramType == DiagramType.DOMINATION)
+                        NextDiagramType();
+                }
 
                 if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.StartingControls))
-                    currentDiagramType = (DiagramType)((((int)currentDiagramType - 1) < 0 ? (int)DiagramType.NUM_VALUES : (int)(currentDiagramType)) - 1);
+                {
+                    PrevDiagramType();
+                    if (GameMode == VirusX.InGame.GameMode.ARCADE && currentDiagramType == DiagramType.DOMINATION)
+                        PrevDiagramType();
+                }
+
             }
             timeUntilContinueIsAvailable -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             base.Update(gameTime);
+        }
+
+        private void NextDiagramType()
+        {
+            currentDiagramType = (DiagramType)(((int)currentDiagramType + 1) % (int)DiagramType.NUM_VALUES);
+        }
+        private void PrevDiagramType()
+        {
+            currentDiagramType = (DiagramType)((((int)currentDiagramType - 1) < 0 ? (int)DiagramType.NUM_VALUES : (int)(currentDiagramType)) - 1);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
