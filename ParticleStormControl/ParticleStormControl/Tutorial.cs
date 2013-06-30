@@ -9,13 +9,13 @@ namespace VirusX
     class Tutorial
     {
         internal List<InterfaceElement> Interface = new List<InterfaceElement>();
-        ParticleStormControl game;
+        VirusX game;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="menu"></param>
-        public Tutorial(ParticleStormControl game)
+        public Tutorial(VirusX game)
         {
             this.game = game;
         }
@@ -68,11 +68,11 @@ namespace VirusX
             Interface.Clear();
             switch (newPage)
             {
-                case VirusX.Menu.Menu.Page.MAINMENU:
+                case Menu.Menu.Page.MAINMENU:
                     break;
-                case VirusX.Menu.Menu.Page.NEWGAME:
+                case Menu.Menu.Page.NEWGAME:
                     break;
-                case VirusX.Menu.Menu.Page.INGAME:
+                case Menu.Menu.Page.INGAME:
                     //if (Settings.Instance.GameMode == InGame.GameMode.TUTORIAL)
                     //{
                     //    Interface.Add(new InterfaceTooltip(() => { return "Your base"; }, () => { return "this is your start base. you better not lose it..."; }, game.InGame.Level.ComputePixelPosition(game.InGame.Level.SpawnPoints[0].Position) + new Vector2(50, 0), () => true, 500, InterfaceTooltip.ArrowPosition.LEFT));

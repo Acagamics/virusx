@@ -70,6 +70,15 @@ namespace VirusX {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to English.
+        /// </summary>
+        internal static string CurrentLanguageName {
+            get {
+                return ResourceManager.GetString("CurrentLanguageName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Arcade.
         /// </summary>
         internal static string GameModeArcade {
@@ -290,7 +299,7 @@ namespace VirusX {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to OFF.
+        ///   Looks up a localized string similar to ◄ OFF ►.
         /// </summary>
         internal static string OFF {
             get {
@@ -299,11 +308,83 @@ namespace VirusX {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ON.
+        ///   Looks up a localized string similar to ◄ ON ►.
         /// </summary>
         internal static string ON {
             get {
                 return ResourceManager.GetString("ON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ► Cancel.
+        /// </summary>
+        internal static string OptionsCancel {
+            get {
+                return ResourceManager.GetString("OptionsCancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fullscreen.
+        /// </summary>
+        internal static string OptionsFullscreen {
+            get {
+                return ResourceManager.GetString("OptionsFullscreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        internal static string OptionsLanguage {
+            get {
+                return ResourceManager.GetString("OptionsLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Music.
+        /// </summary>
+        internal static string OptionsMusic {
+            get {
+                return ResourceManager.GetString("OptionsMusic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Screen Resolution.
+        /// </summary>
+        internal static string OptionsResolution {
+            get {
+                return ResourceManager.GetString("OptionsResolution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rumble.
+        /// </summary>
+        internal static string OptionsRumble {
+            get {
+                return ResourceManager.GetString("OptionsRumble", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ► Save and Exit.
+        /// </summary>
+        internal static string OptionsSafeAndExit {
+            get {
+                return ResourceManager.GetString("OptionsSafeAndExit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sound.
+        /// </summary>
+        internal static string OptionsSound {
+            get {
+                return ResourceManager.GetString("OptionsSound", resourceCulture);
             }
         }
         

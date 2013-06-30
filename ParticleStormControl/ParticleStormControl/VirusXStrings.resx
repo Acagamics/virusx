@@ -214,11 +214,11 @@ players each (2-4 players)</value>
     <comment>Text on the  "Options" button in the "Main Menu"</comment>
   </data>
   <data name="OFF" xml:space="preserve">
-    <value>OFF</value>
+    <value>◄ OFF ►</value>
     <comment>Displayed whenever there is something turned off</comment>
   </data>
   <data name="ON" xml:space="preserve">
-    <value>ON</value>
+    <value>◄ ON ►</value>
     <comment>Displayed whenever there is something turned on</comment>
   </data>
   <data name="VERSION" xml:space="preserve">
@@ -265,5 +265,32 @@ vaginal fluid, pre-ejaculate, or breast milk.</value>
   <data name="BackToMainMenu" xml:space="preserve">
     <value>► Back to Main Menu</value>
     <comment>Return to MainMenu Button</comment>
+  </data>
+  <data name="CurrentLanguageName" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="OptionsCancel" xml:space="preserve">
+    <value>► Cancel</value>
+  </data>
+  <data name="OptionsFullscreen" xml:space="preserve">
+    <value>Fullscreen</value>
+  </data>
+  <data name="OptionsLanguage" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="OptionsMusic" xml:space="preserve">
+    <value>Music</value>
+  </data>
+  <data name="OptionsResolution" xml:space="preserve">
+    <value>Screen Resolution</value>
+  </data>
+  <data name="OptionsRumble" xml:space="preserve">
+    <value>Rumble</value>
+  </data>
+  <data name="OptionsSafeAndExit" xml:space="preserve">
+    <value>► Save and Exit</value>
+  </data>
+  <data name="OptionsSound" xml:space="preserve">
+    <value>Sound</value>
   </data>
 </root>

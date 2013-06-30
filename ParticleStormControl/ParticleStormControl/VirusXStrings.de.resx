@@ -176,7 +176,7 @@ ein oder zwei Spielern
     <comment>The displayed name of the "Left versus Right" game mode</comment>
   </data>
   <data name="MainMenuExitGame" xml:space="preserve">
-    <value>Spiel Beenden</value>
+    <value>Spiel beenden</value>
     <comment>Text on the "Exit" button in the "Main Menu"</comment>
   </data>
   <data name="MainMenuHelp" xml:space="preserve">
@@ -220,11 +220,11 @@ ein oder zwei Spielern
     <comment>Text on the  "Options" button in the "Main Menu"</comment>
   </data>
   <data name="OFF" xml:space="preserve">
-    <value>AUS</value>
+    <value>◄ AUS ►</value>
     <comment>Displayed whenever there is something turned off</comment>
   </data>
   <data name="ON" xml:space="preserve">
-    <value>AN</value>
+    <value>◄ EIN ►</value>
     <comment>Displayed whenever there is something turned on</comment>
   </data>
   <data name="VERSION" xml:space="preserve">
@@ -271,5 +271,32 @@ vaginal fluid, pre-ejaculate, or breast milk.</value>
   <data name="BackToMainMenu" xml:space="preserve">
     <value>► Zurück zum Hauptmenu</value>
     <comment>Return to MainMenu Button</comment>
+  </data>
+  <data name="CurrentLanguageName" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+  <data name="OptionsCancel" xml:space="preserve">
+    <value>► Abbrechen</value>
+  </data>
+  <data name="OptionsFullscreen" xml:space="preserve">
+    <value>Vollbild</value>
+  </data>
+  <data name="OptionsLanguage" xml:space="preserve">
+    <value>Sprache</value>
+  </data>
+  <data name="OptionsMusic" xml:space="preserve">
+    <value>Musik</value>
+  </data>
+  <data name="OptionsResolution" xml:space="preserve">
+    <value>Auflösung</value>
+  </data>
+  <data name="OptionsRumble" xml:space="preserve">
+    <value>Vibration</value>
+  </data>
+  <data name="OptionsSafeAndExit" xml:space="preserve">
+    <value>► Speichern und Zurück</value>
+  </data>
+  <data name="OptionsSound" xml:space="preserve">
+    <value>Sound</value>
   </data>
 </root>
