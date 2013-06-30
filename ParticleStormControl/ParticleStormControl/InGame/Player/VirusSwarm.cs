@@ -100,9 +100,9 @@ namespace VirusX
 
         // attributs
         private static readonly float[] MASS_byVirus = new float[] {        5.0f,   6.3f,   0.75f,  10.0f,  0.15f,  5.0f };    // always smaller than SPAWN_CONSTANT!
-        private static readonly float[] SPEED_byVirus = new float[] {       0.2152f,0.148f, 0.204f, 0.26f,  0.233f, 0.204f };
-        private static readonly float[] HEALTH_byVirus = new float[] {      26.25f, 25.125f,30.0f,  25.35f, 30.0f,  25.0f };
-        private static readonly float[] DISCIPLIN_byVirus = new float[] {   0.56f,  0.75f,  0.35f,  0.45f,  0.77f,  0.23f };
+        private static readonly float[] SPEED_byVirus = new float[] {       0.2152f,0.158f, 0.204f, 0.246f,  0.233f, 0.204f };
+        private static readonly float[] HEALTH_byVirus = new float[] {      26.25f, 25.125f,30.0f,  24.35f, 31.0f,  25.0f };
+        private static readonly float[] DISCIPLIN_byVirus = new float[] {   0.56f,  0.75f,  0.35f,  0.45f,  0.73f,  0.23f };
 
         public float Speed
         { get { return SPEED_byVirus[VirusIndex]; } }
