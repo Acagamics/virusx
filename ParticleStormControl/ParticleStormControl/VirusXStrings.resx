@@ -293,4 +293,82 @@ vaginal fluid, pre-ejaculate, or breast milk.</value>
   <data name="OptionsSound" xml:space="preserve">
     <value>Sound</value>
   </data>
+  <data name="VirusAdditionalInfoEbola" xml:space="preserve">
+    <value>EBOV is a select agent, World Health Organization Risk Group 4 Pathogen
+(requiring Biosafety Level 4-equivalent containment).</value>
+    <comment>The info string of "Ebola"</comment>
+  </data>
+  <data name="VirusAdditionalInfoEpsteinBarr" xml:space="preserve">
+    <value>It is one of the most common viruses in humans.</value>
+    <comment>The info string of "Epstein Barr"</comment>
+  </data>
+  <data name="VirusAdditionalInfoHepatitisB" xml:space="preserve">
+    <value>Can also lead to cirrhosis and hepatocellular carcinoma.</value>
+    <comment>The info string of "Hepatites B"</comment>
+  </data>
+  <data name="VirusAdditionalInfoMarv" xml:space="preserve">
+    <value>MARV is another World Health Organization Risk Group 4 Pathogen.</value>
+    <comment>The info string of "Marv"</comment>
+  </data>
+  <data name="VirusCausedDiseaseEbola" xml:space="preserve">
+    <value>viral hemorrhagic fever (EBOLA fever)</value>
+  </data>
+  <data name="VirusCausedDiseaseEpsteinBarr" xml:space="preserve">
+    <value>Implicated in several diseases that include infectious mononucleosis,
+multiple sclerosis and Hodgkin lymphoma.</value>
+  </data>
+  <data name="VirusCausedDiseaseH5N1" xml:space="preserve">
+    <value>avian influenza (bird flu)</value>
+  </data>
+  <data name="VirusCausedDiseaseHepatitisB" xml:space="preserve">
+    <value>hepatitis B</value>
+  </data>
+  <data name="VirusCausedDiseaseHIV" xml:space="preserve">
+    <value>acquired immunodeficiency syndrome (AIDS)</value>
+  </data>
+  <data name="VirusCausedDiseaseMarv" xml:space="preserve">
+    <value>Marburg virus disease often called Marburg hemorrhagic fever (MHF)</value>
+  </data>
+  <data name="VirusClassificationEbola" xml:space="preserve">
+    <value>Group V; Genus Ebolavirus; Family of Filoviridae</value>
+  </data>
+  <data name="VirusClassificationEpsteinBarr" xml:space="preserve">
+    <value>Group I; Genus of Lymphocryptovirus; Family of Herpesviridae</value>
+  </data>
+  <data name="VirusClassificationH5N1" xml:space="preserve">
+    <value>Group V; Genus A; Family of Orthomyxoviridae</value>
+  </data>
+  <data name="VirusClassificationHepatitisB" xml:space="preserve">
+    <value>Group VII; Genus Orthohepadnavirus; Family of Hepadnaviridae</value>
+  </data>
+  <data name="VirusClassificationHIV" xml:space="preserve">
+    <value>Group VI; Genus Lentivirus; Family of Retroviridae</value>
+  </data>
+  <data name="VirusClassificationMarv" xml:space="preserve">
+    <value>Group V; Genus Marburgvirus; Family of Filoviridae</value>
+  </data>
+  <data name="VirusShortNameEbola" xml:space="preserve">
+    <value>EBOV</value>
+    <comment>The short name of Ebola Virus</comment>
+  </data>
+  <data name="VirusShortNameEpsteinBarr" xml:space="preserve">
+    <value>EBV</value>
+    <comment>The short name of Epstein-Barr Virus</comment>
+  </data>
+  <data name="VirusShortNameH5N1" xml:space="preserve">
+    <value>H5N1</value>
+    <comment>The short name of Influenza Virus</comment>
+  </data>
+  <data name="VirusShortNameHepatitisB" xml:space="preserve">
+    <value>HBV</value>
+    <comment>The short name of Hepatitis B Virus</comment>
+  </data>
+  <data name="VirusShortNameHIV" xml:space="preserve">
+    <value>HIV</value>
+    <comment>The short name of HI Virus</comment>
+  </data>
+  <data name="VirusShortNameMarv" xml:space="preserve">
+    <value>MARV</value>
+    <comment>The short name of Marburg Virus</comment>
+  </data>
 </root>

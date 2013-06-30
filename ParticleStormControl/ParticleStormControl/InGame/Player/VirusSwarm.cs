@@ -30,7 +30,12 @@ namespace VirusX
         {
             get
             {
-                return new string[] { VirusXStrings.VirusNameH5N1, VirusXStrings.VirusNameHepatitisB, VirusXStrings.VirusNameHIV, VirusXStrings.VirusNameEpsteinBarr, VirusXStrings.VirusNameEbola, VirusXStrings.VirusNameMarv };
+                return new string[] {   VirusXStrings.VirusNameH5N1,
+                                        VirusXStrings.VirusNameHepatitisB,
+                                        VirusXStrings.VirusNameHIV,
+                                        VirusXStrings.VirusNameEpsteinBarr,
+                                        VirusXStrings.VirusNameEbola,
+                                        VirusXStrings.VirusNameMarv };
             }
         }
      
@@ -39,11 +44,11 @@ namespace VirusX
             get
             {
                 return new string[]   { VirusXStrings.VirusAdditionalInfoH5N1,
-                                        "Can also lead to cirrhosis and hepatocellular carcinoma.",
+                                        VirusXStrings.VirusAdditionalInfoHepatitisB,
                                         VirusXStrings.VirusAdditionalInfoHIV,
-                                        "It is one of the most common viruses in humans.",
-                                        "EBOV is a select agent, World Health Organization Risk Group 4 Pathogen\n(requiring Biosafety Level 4-equivalent containment).",
-                                        "Marburg virus disease often called Marburg hemorrhagic fever (MHF)" };
+                                        VirusXStrings.VirusAdditionalInfoEpsteinBarr,
+                                        VirusXStrings.VirusAdditionalInfoEbola,
+                                        VirusXStrings.VirusAdditionalInfoMarv };
             }
         }
 
@@ -51,12 +56,12 @@ namespace VirusX
         {
             get
             {
-                return new string[] {   "Group V; Genus A; Family of Orthomyxoviridae",
-                                        "Group VII; Genus Orthohepadnavirus; Family of Hepadnaviridae",
-                                        "Group VI; Genus Lentivirus; Family of Retroviridae",
-                                        "Group I; Genus of Lymphocryptovirus; Family of Herpesviridae",
-                                        "Group V; Genus Ebolavirus; Family of Filoviridae",
-                                        "Group V; Genus Marburgvirus; Family of Filoviridae" };
+                return new string[] {   VirusXStrings.VirusClassificationH5N1,
+                                        VirusXStrings.VirusClassificationHepatitisB,
+                                        VirusXStrings.VirusClassificationHIV,
+                                        VirusXStrings.VirusClassificationEpsteinBarr,
+                                        VirusXStrings.VirusClassificationEbola,
+                                        VirusXStrings.VirusClassificationMarv };
             }
         }
         
@@ -64,24 +69,24 @@ namespace VirusX
         {
             get
             {
-                return new string[] { "H5N1",
-                                        "HBV",
-                                        "HIV",
-                                        "EBV",
-                                        "EBOV",
-                                        "MARV" };
+                return new string[] {   VirusXStrings.VirusShortNameH5N1,
+                                        VirusXStrings.VirusShortNameHepatitisB,
+                                        VirusXStrings.VirusShortNameHIV,
+                                        VirusXStrings.VirusShortNameEpsteinBarr,
+                                        VirusXStrings.VirusShortNameEbola,
+                                        VirusXStrings.VirusShortNameMarv };
             }
         }
         public static string[] VirusCausedDisease
         {
             get
             {
-                return new string[] { "avian influenza (bird flu)",
-                                        "hepatitis B",
-                                        "acquired immunodeficiency syndrome (AIDS)",
-                                        "Implicated in several diseases that include infectious mononucleosis,\nmultiple sclerosis and Hodgkin lymphoma.",
-                                        "viral hemorrhagic fever (EBOLA fever)",
-                                        "Marburg virus disease often called Marburg hemorrhagic fever (MHF)" };
+                return new string[] {   VirusXStrings.VirusCausedDiseaseH5N1,
+                                        VirusXStrings.VirusCausedDiseaseHepatitisB,
+                                        VirusXStrings.VirusCausedDiseaseHIV,
+                                        VirusXStrings.VirusCausedDiseaseEpsteinBarr,
+                                        VirusXStrings.VirusCausedDiseaseEbola,
+                                        VirusXStrings.VirusCausedDiseaseMarv };
             }
         }
 
