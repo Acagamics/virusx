@@ -33,7 +33,7 @@ namespace VirusX.Menu
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
 
-        private float numSlots = 4;
+        private int numSlots = 4;
 
         //private InterfaceImage[] virusImages = new InterfaceImage[4];
         private Effect virusRenderEffect;
@@ -83,13 +83,21 @@ namespace VirusX.Menu
                 }
 
                 // distribute ControlTypes all over the place
-                preSlotMapper[0] = 0;
-                preSlotMapper[1] = 1;
-                preSlotMapper[2] = 2;
-                preSlotMapper[3] = 0;
-                preSlotMapper[4] = 1;
-                preSlotMapper[5] = 2;
-                preSlotMapper[6] = 3;
+                if (Settings.Instance.GameMode != Game.GameMode.ARCADE)
+                {
+                    preSlotMapper[0] = 0;
+                    preSlotMapper[1] = 1;
+                    preSlotMapper[2] = 2;
+                    preSlotMapper[3] = 0;
+                    preSlotMapper[4] = 1;
+                    preSlotMapper[5] = 2;
+                    preSlotMapper[6] = 3;
+                }
+                else
+                {
+                    for (int i = 0; i < preSlotMapper.Length; ++i)
+                        preSlotMapper[i] = 0;
+                }
 
                 //if (Settings.Instance.StartingControls != InputManager.ControlType.NONE)
                 //    AddPlayer(false, Settings.Instance.StartingControls);
@@ -232,6 +240,8 @@ namespace VirusX.Menu
                     Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Health[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                                     origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
                 }
+                for (int i = numSlots; i < playerSlotOccupied.Length; i++)
+                    playerReadyBySlot[i] = playerSlotOccupied[i] = true;
 
                 // help text pad
                 int textBoxHeight = menu.GetFontHeight() + 2 * InterfaceElement.PADDING;
@@ -397,22 +407,15 @@ namespace VirusX.Menu
                     }
                     if (!inputUsed)
                     {
-                        // TODO nicer
-                        if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, controlType, false))
+                        InputManager.ControlActions[] switchActions = new InputManager.ControlActions[] { InputManager.ControlActions.LEFT , InputManager.ControlActions.RIGHT,
+                                                                                                          InputManager.ControlActions.UP, InputManager.ControlActions.DOWN };
+                        foreach (var action in switchActions)
                         {
-                            preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], InputManager.ControlActions.LEFT);
-                        }
-                        else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, controlType, false))
-                        {
-                            preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], InputManager.ControlActions.RIGHT);
-                        }
-                        else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.UP, controlType, false))
-                        {
-                            preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], InputManager.ControlActions.UP);
-                        }
-                        else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.DOWN, controlType, false))
-                        {
-                            preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], InputManager.ControlActions.DOWN);
+                            if (InputManager.Instance.SpecificActionButtonPressed(action, controlType, false))
+                            {
+                                preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], action);
+                                break;
+                            }
                         }
                     }
                 }
@@ -512,6 +515,9 @@ namespace VirusX.Menu
         /// <returns></returns>
         int AddPlayer(bool ai, InputManager.ControlType controlType)
         {
+            if (ai && Settings.Instance.GameMode == Game.GameMode.ARCADE)
+                return -1;
+
             int slotIndex = -1;
             if(controlType == InputManager.ControlType.NONE)
                 slotIndex = GetFreeSlotIndex(-1);
@@ -600,7 +606,7 @@ namespace VirusX.Menu
             virusRenderEffect.Parameters["ScreenSize"].SetValue(new Vector2(menu.ScreenWidth, menu.ScreenHeight));
 
             // virus image for each player
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < numSlots; i++)
             {
                 if (playerSlotOccupied[i])
                 {
