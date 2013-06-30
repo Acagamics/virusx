@@ -147,7 +147,7 @@ namespace VirusX
                              null, color, (float)gameTime.TotalGameTime.TotalSeconds + randomAngle,
                              new Vector2(nucleusTexture_inner.Width * 0.5f, nucleusTexture_inner.Height * 0.5f),
                              level.ComputeTextureScale(innerSize, nucleusTexture_inner.Width), SpriteEffects.None, 0.7f);
-            spriteBatch.Draw(nucleusTexture_outer, level.ComputePixelPosition(Position), null, color, 0,
+            spriteBatch.Draw(nucleusTexture_outer, level.ComputePixelPosition(Position), null, color, -(float)gameTime.TotalGameTime.TotalSeconds + randomAngle,//0,
                 new Vector2(nucleusTexture_outer.Width * 0.5f, nucleusTexture_outer.Height * 0.5f),
                             level.ComputeTextureScale(Size, nucleusTexture_inner.Width), SpriteEffects.None, 0.6f);
 

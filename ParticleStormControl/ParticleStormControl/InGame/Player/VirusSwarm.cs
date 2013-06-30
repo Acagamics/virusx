@@ -30,7 +30,12 @@ namespace VirusX
         {
             get
             {
-                return new string[] { VirusXStrings.VirusNameH5N1, VirusXStrings.VirusNameHepatitisB, VirusXStrings.VirusNameHIV, VirusXStrings.VirusNameEpsteinBarr, VirusXStrings.VirusNameEbola, VirusXStrings.VirusNameMarv };
+                return new string[] {   VirusXStrings.VirusNameH5N1,
+                                        VirusXStrings.VirusNameHepatitisB,
+                                        VirusXStrings.VirusNameHIV,
+                                        VirusXStrings.VirusNameEpsteinBarr,
+                                        VirusXStrings.VirusNameEbola,
+                                        VirusXStrings.VirusNameMarv };
             }
         }
      
@@ -39,11 +44,11 @@ namespace VirusX
             get
             {
                 return new string[]   { VirusXStrings.VirusAdditionalInfoH5N1,
-                                        "Can also lead to cirrhosis and hepatocellular carcinoma.",
+                                        VirusXStrings.VirusAdditionalInfoHepatitisB,
                                         VirusXStrings.VirusAdditionalInfoHIV,
-                                        "It is one of the most common viruses in humans.",
-                                        "EBOV is a select agent, World Health Organization Risk Group 4 Pathogen\n(requiring Biosafety Level 4-equivalent containment).",
-                                        "Marburg virus disease often called Marburg hemorrhagic fever (MHF)" };
+                                        VirusXStrings.VirusAdditionalInfoEpsteinBarr,
+                                        VirusXStrings.VirusAdditionalInfoEbola,
+                                        VirusXStrings.VirusAdditionalInfoMarv };
             }
         }
 
@@ -51,12 +56,12 @@ namespace VirusX
         {
             get
             {
-                return new string[] {   "Group V; Genus A; Family of Orthomyxoviridae",
-                                        "Group VII; Genus Orthohepadnavirus; Family of Hepadnaviridae",
-                                        "Group VI; Genus Lentivirus; Family of Retroviridae",
-                                        "Group I; Genus of Lymphocryptovirus; Family of Herpesviridae",
-                                        "Group V; Genus Ebolavirus; Family of Filoviridae",
-                                        "Group V; Genus Marburgvirus; Family of Filoviridae" };
+                return new string[] {   VirusXStrings.VirusClassificationH5N1,
+                                        VirusXStrings.VirusClassificationHepatitisB,
+                                        VirusXStrings.VirusClassificationHIV,
+                                        VirusXStrings.VirusClassificationEpsteinBarr,
+                                        VirusXStrings.VirusClassificationEbola,
+                                        VirusXStrings.VirusClassificationMarv };
             }
         }
         
@@ -64,24 +69,24 @@ namespace VirusX
         {
             get
             {
-                return new string[] { "H5N1",
-                                        "HBV",
-                                        "HIV",
-                                        "EBV",
-                                        "EBOV",
-                                        "MARV" };
+                return new string[] {   VirusXStrings.VirusShortNameH5N1,
+                                        VirusXStrings.VirusShortNameHepatitisB,
+                                        VirusXStrings.VirusShortNameHIV,
+                                        VirusXStrings.VirusShortNameEpsteinBarr,
+                                        VirusXStrings.VirusShortNameEbola,
+                                        VirusXStrings.VirusShortNameMarv };
             }
         }
         public static string[] VirusCausedDisease
         {
             get
             {
-                return new string[] { "avian influenza (bird flu)",
-                                        "hepatitis B",
-                                        "acquired immunodeficiency syndrome (AIDS)",
-                                        "Implicated in several diseases that include infectious mononucleosis,\nmultiple sclerosis and Hodgkin lymphoma.",
-                                        "viral hemorrhagic fever (EBOLA fever)",
-                                        "Marburg virus disease often called Marburg hemorrhagic fever (MHF)" };
+                return new string[] {   VirusXStrings.VirusCausedDiseaseH5N1,
+                                        VirusXStrings.VirusCausedDiseaseHepatitisB,
+                                        VirusXStrings.VirusCausedDiseaseHIV,
+                                        VirusXStrings.VirusCausedDiseaseEpsteinBarr,
+                                        VirusXStrings.VirusCausedDiseaseEbola,
+                                        VirusXStrings.VirusCausedDiseaseMarv };
             }
         }
 
@@ -100,9 +105,9 @@ namespace VirusX
 
         // attributs
         private static readonly float[] MASS_byVirus = new float[] {        5.0f,   6.3f,   0.75f,  10.0f,  0.15f,  5.0f };    // always smaller than SPAWN_CONSTANT!
-        private static readonly float[] SPEED_byVirus = new float[] {       0.2152f,0.148f, 0.204f, 0.26f,  0.233f, 0.204f };
-        private static readonly float[] HEALTH_byVirus = new float[] {      26.25f, 25.125f,30.0f,  25.35f, 30.0f,  25.0f };
-        private static readonly float[] DISCIPLIN_byVirus = new float[] {   0.56f,  0.75f,  0.35f,  0.45f,  0.77f,  0.23f };
+        private static readonly float[] SPEED_byVirus = new float[] {       0.2152f,0.158f, 0.204f, 0.246f,  0.233f, 0.204f };
+        private static readonly float[] HEALTH_byVirus = new float[] {      26.25f, 25.125f,30.0f,  24.35f, 31.0f,  25.0f };
+        private static readonly float[] DISCIPLIN_byVirus = new float[] {   0.56f,  0.75f,  0.35f,  0.45f,  0.73f,  0.23f };
 
         public float Speed
         { get { return SPEED_byVirus[VirusIndex]; } }

@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Globalization;
 
 namespace VirusX.Menu
 {
@@ -23,6 +24,7 @@ namespace VirusX.Menu
 
         enum Button
         {
+            LANGUAGE,
             RESOLUTION,
             FULLSCREEN,
             SOUND,
@@ -60,29 +62,32 @@ namespace VirusX.Menu
                 }
             }
 
-            Interface.Add(new InterfaceButton("Options", new Vector2(100, 100), true));
+            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuOptions, new Vector2(100, 100), true));
 
-            Interface.Add(new InterfaceButton("Screen Resolution", new Vector2(100, 220), () => { return selectedButton == Button.RESOLUTION; }));
-            Interface.Add(new InterfaceButton(() => { return "◄ " + availableResolutions[activeResolution].width + " x " + availableResolutions[activeResolution].height + " ►"; }, new Vector2(450, 220)));
+            Interface.Add(new InterfaceButton(VirusXStrings.OptionsLanguage, new Vector2(100, 220), () => { return selectedButton == Button.LANGUAGE; }));
+            Interface.Add(new InterfaceButton("◄ " + VirusXStrings.CurrentLanguageName + " ►", new Vector2(450, 220)));
 
-            Interface.Add(new InterfaceButton("Fullscreen", new Vector2(100, 280), () => { return selectedButton == Button.FULLSCREEN; }));
-            fullscreenButton = new InterfaceButton(() => { return fullscreen ? "◄ ON ►" : "◄ OFF ►"; }, new Vector2(450, 280), () => { return false; }, Color.White, fullscreen ? Color.Green : Color.Red);
+            Interface.Add(new InterfaceButton(VirusXStrings.OptionsResolution, new Vector2(100, 280), () => { return selectedButton == Button.RESOLUTION; }));
+            Interface.Add(new InterfaceButton(() => { return "◄ " + availableResolutions[activeResolution].width + " x " + availableResolutions[activeResolution].height + " ►"; }, new Vector2(450, 280)));
+
+            Interface.Add(new InterfaceButton(VirusXStrings.OptionsFullscreen, new Vector2(100, 340), () => { return selectedButton == Button.FULLSCREEN; }));
+            fullscreenButton = new InterfaceButton(() => { return fullscreen ? VirusXStrings.ON : VirusXStrings.OFF; }, new Vector2(450, 340), () => { return false; }, Color.White, fullscreen ? Color.Green : Color.Red);
             Interface.Add(fullscreenButton);
 
-            Interface.Add(new InterfaceButton("Sounds", new Vector2(100, 340), () => { return selectedButton == Button.SOUND; }));
-            soundButton = new InterfaceButton(() => { return sound ? "◄ ON ►" : "◄ OFF ►"; }, new Vector2(450, 340), () => { return false; }, Color.White, sound ? Color.Green : Color.Red);
+            Interface.Add(new InterfaceButton(VirusXStrings.OptionsSound, new Vector2(100, 400), () => { return selectedButton == Button.SOUND; }));
+            soundButton = new InterfaceButton(() => { return sound ? VirusXStrings.ON : VirusXStrings.OFF; }, new Vector2(450, 400), () => { return false; }, Color.White, sound ? Color.Green : Color.Red);
             Interface.Add(soundButton);
 
-            Interface.Add(new InterfaceButton("Music", new Vector2(100, 400), () => { return selectedButton == Button.MUSIC; }));
-            musicButton = new InterfaceButton(() => { return music ? "◄ ON ►" : "◄ OFF ►"; }, new Vector2(450, 400), () => { return false; }, Color.White, music ? Color.Green : Color.Red);
+            Interface.Add(new InterfaceButton(VirusXStrings.OptionsMusic, new Vector2(100, 460), () => { return selectedButton == Button.MUSIC; }));
+            musicButton = new InterfaceButton(() => { return music ? VirusXStrings.ON : VirusXStrings.OFF; }, new Vector2(450, 460), () => { return false; }, Color.White, music ? Color.Green : Color.Red);
             Interface.Add(musicButton);
 
-            Interface.Add(new InterfaceButton("Rumble", new Vector2(100, 460), () => { return selectedButton == Button.FORCEFEEDBACK; }));
-            forceFeedbackButton = new InterfaceButton(() => { return forceFeedback ? "◄ ON ►" : "◄ OFF ►"; }, new Vector2(450, 460), () => { return false; }, Color.White, forceFeedback ? Color.Green : Color.Red);
+            Interface.Add(new InterfaceButton(VirusXStrings.OptionsRumble, new Vector2(100, 520), () => { return selectedButton == Button.FORCEFEEDBACK; }));
+            forceFeedbackButton = new InterfaceButton(() => { return forceFeedback ? VirusXStrings.ON : VirusXStrings.OFF; }, new Vector2(450, 520), () => { return false; }, Color.White, forceFeedback ? Color.Green : Color.Red);
             Interface.Add(forceFeedbackButton);
 
-            Interface.Add(new InterfaceButton("► Save and Exit", new Vector2(100, 580), () => { return selectedButton == Button.BACK; }));
-            Interface.Add(new InterfaceButton("► Cancel", new Vector2(100, 640), () => { return selectedButton == Button.EXIT; }));
+            Interface.Add(new InterfaceButton(VirusXStrings.OptionsSafeAndExit, new Vector2(100, 620), () => { return selectedButton == Button.BACK; }));
+            Interface.Add(new InterfaceButton(VirusXStrings.OptionsCancel, new Vector2(100, 680), () => { return selectedButton == Button.EXIT; }));
         }
 
         // if changed to main menu without saving
@@ -130,6 +135,22 @@ namespace VirusX.Menu
 
             switch (selectedButton)
 	        {
+                case Button.LANGUAGE:
+                    if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT) ||
+                        InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT) ||
+                        InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION))
+                    {
+                        var cultureEn = CultureInfo.CreateSpecificCulture("en");
+                        var cultureDe = CultureInfo.CreateSpecificCulture("de");
+                        if (cultureEn.Equals(VirusXStrings.Culture))
+                            VirusXStrings.Culture = cultureDe;
+                        else
+                            VirusXStrings.Culture = cultureEn;
+
+                        menu.ReloadMenus();
+                        menu.LoadContent(menu.Game.Content);
+                    }
+                    break;
 		        case Button.RESOLUTION:
                     activeResolution = Menu.Loop(activeResolution, availableResolutions.Count, InputManager.ControlType.NONE, true);
                     break;

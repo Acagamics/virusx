@@ -70,6 +70,15 @@ namespace VirusX {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to English.
+        /// </summary>
+        internal static string CurrentLanguageName {
+            get {
+                return ResourceManager.GetString("CurrentLanguageName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Arcade.
         /// </summary>
         internal static string GameModeArcade {
@@ -290,7 +299,7 @@ namespace VirusX {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to OFF.
+        ///   Looks up a localized string similar to ◄ OFF ►.
         /// </summary>
         internal static string OFF {
             get {
@@ -299,11 +308,83 @@ namespace VirusX {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ON.
+        ///   Looks up a localized string similar to ◄ ON ►.
         /// </summary>
         internal static string ON {
             get {
                 return ResourceManager.GetString("ON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ► Cancel.
+        /// </summary>
+        internal static string OptionsCancel {
+            get {
+                return ResourceManager.GetString("OptionsCancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fullscreen.
+        /// </summary>
+        internal static string OptionsFullscreen {
+            get {
+                return ResourceManager.GetString("OptionsFullscreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        internal static string OptionsLanguage {
+            get {
+                return ResourceManager.GetString("OptionsLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Music.
+        /// </summary>
+        internal static string OptionsMusic {
+            get {
+                return ResourceManager.GetString("OptionsMusic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Screen Resolution.
+        /// </summary>
+        internal static string OptionsResolution {
+            get {
+                return ResourceManager.GetString("OptionsResolution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rumble.
+        /// </summary>
+        internal static string OptionsRumble {
+            get {
+                return ResourceManager.GetString("OptionsRumble", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ► Save and Exit.
+        /// </summary>
+        internal static string OptionsSafeAndExit {
+            get {
+                return ResourceManager.GetString("OptionsSafeAndExit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sound.
+        /// </summary>
+        internal static string OptionsSound {
+            get {
+                return ResourceManager.GetString("OptionsSound", resourceCulture);
             }
         }
         
@@ -317,11 +398,39 @@ namespace VirusX {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to EBOV is a select agent, World Health Organization Risk Group 4 Pathogen
+        ///(requiring Biosafety Level 4-equivalent containment)..
+        /// </summary>
+        internal static string VirusAdditionalInfoEbola {
+            get {
+                return ResourceManager.GetString("VirusAdditionalInfoEbola", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to It is one of the most common viruses in humans..
+        /// </summary>
+        internal static string VirusAdditionalInfoEpsteinBarr {
+            get {
+                return ResourceManager.GetString("VirusAdditionalInfoEpsteinBarr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to It is a highly contagious virus which is a potential pandemic threat..
         /// </summary>
         internal static string VirusAdditionalInfoH5N1 {
             get {
                 return ResourceManager.GetString("VirusAdditionalInfoH5N1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can also lead to cirrhosis and hepatocellular carcinoma..
+        /// </summary>
+        internal static string VirusAdditionalInfoHepatitisB {
+            get {
+                return ResourceManager.GetString("VirusAdditionalInfoHepatitisB", resourceCulture);
             }
         }
         
@@ -332,6 +441,124 @@ namespace VirusX {
         internal static string VirusAdditionalInfoHIV {
             get {
                 return ResourceManager.GetString("VirusAdditionalInfoHIV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MARV is another World Health Organization Risk Group 4 Pathogen..
+        /// </summary>
+        internal static string VirusAdditionalInfoMarv {
+            get {
+                return ResourceManager.GetString("VirusAdditionalInfoMarv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to viral hemorrhagic fever (EBOLA fever).
+        /// </summary>
+        internal static string VirusCausedDiseaseEbola {
+            get {
+                return ResourceManager.GetString("VirusCausedDiseaseEbola", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Implicated in several diseases that include infectious mononucleosis,
+        ///multiple sclerosis and Hodgkin lymphoma..
+        /// </summary>
+        internal static string VirusCausedDiseaseEpsteinBarr {
+            get {
+                return ResourceManager.GetString("VirusCausedDiseaseEpsteinBarr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to avian influenza (bird flu).
+        /// </summary>
+        internal static string VirusCausedDiseaseH5N1 {
+            get {
+                return ResourceManager.GetString("VirusCausedDiseaseH5N1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to hepatitis B.
+        /// </summary>
+        internal static string VirusCausedDiseaseHepatitisB {
+            get {
+                return ResourceManager.GetString("VirusCausedDiseaseHepatitisB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to acquired immunodeficiency syndrome (AIDS).
+        /// </summary>
+        internal static string VirusCausedDiseaseHIV {
+            get {
+                return ResourceManager.GetString("VirusCausedDiseaseHIV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Marburg virus disease often called Marburg hemorrhagic fever (MHF).
+        /// </summary>
+        internal static string VirusCausedDiseaseMarv {
+            get {
+                return ResourceManager.GetString("VirusCausedDiseaseMarv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Group V; Genus Ebolavirus; Family of Filoviridae.
+        /// </summary>
+        internal static string VirusClassificationEbola {
+            get {
+                return ResourceManager.GetString("VirusClassificationEbola", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Group I; Genus of Lymphocryptovirus; Family of Herpesviridae.
+        /// </summary>
+        internal static string VirusClassificationEpsteinBarr {
+            get {
+                return ResourceManager.GetString("VirusClassificationEpsteinBarr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Group V; Genus A; Family of Orthomyxoviridae.
+        /// </summary>
+        internal static string VirusClassificationH5N1 {
+            get {
+                return ResourceManager.GetString("VirusClassificationH5N1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Group VII; Genus Orthohepadnavirus; Family of Hepadnaviridae.
+        /// </summary>
+        internal static string VirusClassificationHepatitisB {
+            get {
+                return ResourceManager.GetString("VirusClassificationHepatitisB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Group VI; Genus Lentivirus; Family of Retroviridae.
+        /// </summary>
+        internal static string VirusClassificationHIV {
+            get {
+                return ResourceManager.GetString("VirusClassificationHIV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Group V; Genus Marburgvirus; Family of Filoviridae.
+        /// </summary>
+        internal static string VirusClassificationMarv {
+            get {
+                return ResourceManager.GetString("VirusClassificationMarv", resourceCulture);
             }
         }
         
@@ -386,6 +613,60 @@ namespace VirusX {
         internal static string VirusNameMarv {
             get {
                 return ResourceManager.GetString("VirusNameMarv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EBOV.
+        /// </summary>
+        internal static string VirusShortNameEbola {
+            get {
+                return ResourceManager.GetString("VirusShortNameEbola", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EBV.
+        /// </summary>
+        internal static string VirusShortNameEpsteinBarr {
+            get {
+                return ResourceManager.GetString("VirusShortNameEpsteinBarr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to H5N1.
+        /// </summary>
+        internal static string VirusShortNameH5N1 {
+            get {
+                return ResourceManager.GetString("VirusShortNameH5N1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HBV.
+        /// </summary>
+        internal static string VirusShortNameHepatitisB {
+            get {
+                return ResourceManager.GetString("VirusShortNameHepatitisB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HIV.
+        /// </summary>
+        internal static string VirusShortNameHIV {
+            get {
+                return ResourceManager.GetString("VirusShortNameHIV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MARV.
+        /// </summary>
+        internal static string VirusShortNameMarv {
+            get {
+                return ResourceManager.GetString("VirusShortNameMarv", resourceCulture);
             }
         }
     }

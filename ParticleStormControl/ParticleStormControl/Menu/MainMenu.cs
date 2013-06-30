@@ -69,12 +69,12 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceButton(() => { return "◄ " + Game.GAMEMODE_NAME[(int)Settings.Instance.GameMode] + " ►"; }, new Vector2(480, 370), () => { return false; }, () => submenuVisible == SubMenu.NEWGAME));
             Interface.Add(new InterfaceButton(VirusXStrings.MainMenuNewGameItems, new Vector2(320, 420), () => { return selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.ITEMS; },
                                           () => submenuVisible == SubMenu.NEWGAME && Settings.Instance.GameMode != Game.GameMode.ARCADE));
-            useItemsButton = new InterfaceButton(() => { return Settings.Instance.UseItems ? "◄ " + VirusXStrings.ON + " ►" : "◄ " + VirusXStrings.OFF + " ►"; },
+            useItemsButton = new InterfaceButton(() => { return Settings.Instance.UseItems ? VirusXStrings.ON : VirusXStrings.OFF; },
                                 new Vector2(480, 420), () => { return false; }, () => submenuVisible == SubMenu.NEWGAME && Settings.Instance.GameMode != Game.GameMode.ARCADE, Color.White, Settings.Instance.UseItems ? Color.Green : Color.Red);
             Interface.Add(useItemsButton);
             Interface.Add(new InterfaceButton("► " + VirusXStrings.MainMenuNewGameStart, new Vector2(320, 470), () => { return selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.CONTINUE; }, () => submenuVisible == SubMenu.NEWGAME));
 
-            Interface.Add(new InterfaceTooltip(() => { return VirusX.InGame.GAMEMODE_NAME[(int)Settings.Instance.GameMode]; }, () => { return VirusX.InGame.GAMEMODE_DESCRIPTION[(int)Settings.Instance.GameMode]; }, new Vector2(550, 350), () => submenuVisible == SubMenu.NEWGAME && selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.MODE, 350, InterfaceTooltip.ArrowPosition.BOTTOM));
+            Interface.Add(new InterfaceTooltip(() => { return global::VirusX.InGame.GAMEMODE_NAME[(int)Settings.Instance.GameMode]; }, () => { return global::VirusX.InGame.GAMEMODE_DESCRIPTION[(int)Settings.Instance.GameMode]; }, new Vector2(550, 350), () => submenuVisible == SubMenu.NEWGAME && selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.MODE, 350, InterfaceTooltip.ArrowPosition.BOTTOM));
 
             // submenu 
             Interface.Add(new InterfaceButton("► " + VirusXStrings.MainMenuHelpGameplay, new Vector2(320, 370), () => { return selectedButton_HelpSubmenu == ButtonHelpSubmenu.GAMEPLAY; }, () => submenuVisible == SubMenu.HELP));

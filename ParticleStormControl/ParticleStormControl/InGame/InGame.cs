@@ -145,7 +145,7 @@ namespace VirusX
         /// </summary>
         public void OnMenuPageChanged(Menu.Menu.Page newPage, Menu.Menu.Page oldPage)
         {
-            if (newPage == VirusX.Menu.Menu.Page.INGAME && State == InGame.GameState.Inactive)
+            if (newPage == Menu.Menu.Page.INGAME && State == InGame.GameState.Inactive)
                 StartNewGame();
             else if (newPage == Menu.Menu.Page.PAUSED || (newPage == Menu.Menu.Page.CONTROLS && oldPage == Menu.Menu.Page.INGAME))
             {
