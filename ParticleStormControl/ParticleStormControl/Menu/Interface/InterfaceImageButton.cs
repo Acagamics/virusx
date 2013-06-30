@@ -19,27 +19,38 @@ namespace VirusX.Menu
         string textureName;
         Texture2D texture;
         Texture2D backgroundTexture;
+        Color backgroundColor;
 
         #endregion
 
         #region constructors
 
         public InterfaceImageButton(string textureName, Vector2 position, Func<bool> selected, Alignment alignment = Alignment.TOP_LEFT)
-            : this(textureName, position, -1, -1, null, null, selected, () => { return true; }, alignment)
+            : this(textureName, position, -1, -1, null, null, selected, () => { return true; }, Color.FromNonPremultiplied(0, 0, 0, 0), alignment)
         {
         }
 
         public InterfaceImageButton(string textureName, Rectangle destination, Rectangle? source, Rectangle? sourceSelected, Func<bool> selected, Alignment alignment = Alignment.TOP_LEFT)
-            : this(textureName, new Vector2(destination.X, destination.Y), destination.Width, destination.Height, source, sourceSelected, selected, () => { return true; }, alignment)
+            : this(textureName, new Vector2(destination.X, destination.Y), destination.Width, destination.Height, source, sourceSelected, selected, () => { return true; }, Color.FromNonPremultiplied(0, 0, 0, 0), alignment)
+        {
+        }
+
+        public InterfaceImageButton(string textureName, Rectangle destination, Rectangle? source, Rectangle? sourceSelected, Func<bool> selected, Color backgroundColor, Alignment alignment = Alignment.TOP_LEFT)
+            : this(textureName, new Vector2(destination.X, destination.Y), destination.Width, destination.Height, source, sourceSelected, selected, () => { return true; }, backgroundColor, alignment)
         {
         }
 
         public InterfaceImageButton(string textureName, Rectangle destination, Rectangle? source, Rectangle? sourceSelected, Func<bool> selected, Func<bool> visible, Alignment alignment = Alignment.TOP_LEFT)
-            : this(textureName, new Vector2(destination.X, destination.Y), destination.Width, destination.Height, source, sourceSelected, selected, visible, alignment)
+            : this(textureName, new Vector2(destination.X, destination.Y), destination.Width, destination.Height, source, sourceSelected, selected, visible, Color.FromNonPremultiplied(0, 0, 0, 0), alignment)
         {
         }
 
-        public InterfaceImageButton(string textureName, Vector2 position, int width, int height, Rectangle? source, Rectangle? sourceSelected, Func<bool> selected, Func<bool> visible, Alignment alignment = Alignment.TOP_LEFT)
+        public InterfaceImageButton(string textureName, Rectangle destination, Rectangle? source, Rectangle? sourceSelected, Func<bool> selected, Func<bool> visible, Color backgroundColor, Alignment alignment = Alignment.TOP_LEFT)
+            : this(textureName, new Vector2(destination.X, destination.Y), destination.Width, destination.Height, source, sourceSelected, selected, visible, backgroundColor, alignment)
+        {
+        }
+
+        public InterfaceImageButton(string textureName, Vector2 position, int width, int height, Rectangle? source, Rectangle? sourceSelected, Func<bool> selected, Func<bool> visible, Color backgroundColor, Alignment alignment = Alignment.TOP_LEFT)
         {
             this.textureName = textureName;
             this.width = width;
@@ -50,6 +61,7 @@ namespace VirusX.Menu
             this.alignment = alignment;
             this.position = position;
             this.visible = visible;
+            this.backgroundColor = backgroundColor;
         }
 
         #endregion
@@ -89,6 +101,8 @@ namespace VirusX.Menu
             int _height = height < 0 ? _sourceHeight : height;
             _height += 2 * PADDING;
             Color _backgroundColor = selectedNow ? COLOR_NORMAL : COLOR_HIGHLIGHT;
+            if (backgroundColor != Color.FromNonPremultiplied(0, 0, 0, 0))
+                _backgroundColor = backgroundColor;
 
             // the image itself gets drawn centered
             spriteBatch.Draw(backgroundTexture, new Rectangle(_position.X, _position.Y, _width, _height), _backgroundColor);

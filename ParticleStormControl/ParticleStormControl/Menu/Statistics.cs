@@ -163,7 +163,8 @@ namespace VirusX.Menu
                 new Rectangle(0, 0, 16, 16),
                 new Rectangle(32, 0, 16, 16),
                 () => { return InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.StartingControls, true); },
-                () => { return timeUntilContinueIsAvailable < 0.0f; }
+                () => { return timeUntilContinueIsAvailable < 0.0f; },
+                Color.FromNonPremultiplied(0, 0, 0, 0)
             );
             Interface.Add(leftButton);
             rightButton = new InterfaceImageButton(
@@ -173,7 +174,8 @@ namespace VirusX.Menu
                 new Rectangle(16, 0, 16, 16),
                 new Rectangle(48, 0, 16, 16),
                 () => { return InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.StartingControls, true); },
-                () => { return timeUntilContinueIsAvailable < 0.0f; }
+                () => { return timeUntilContinueIsAvailable < 0.0f; },
+                Color.FromNonPremultiplied(0, 0, 0, 0)
             );
             Interface.Add(rightButton);
 

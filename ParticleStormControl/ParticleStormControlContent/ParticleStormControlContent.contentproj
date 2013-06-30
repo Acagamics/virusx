@@ -54,17 +54,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ButtonImages\xboxControllerButtonA.tga">
+    <Compile Include="buttonImages\xboxControllerButtonA.tga">
       <Name>xboxControllerButtonA</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="ButtonImages\xboxControllerButtonB.tga">
+    <Compile Include="buttonImages\xboxControllerButtonB.tga">
       <Name>xboxControllerButtonB</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="ButtonImages\xboxControllerLeftThumbstick.tga">
+    <Compile Include="buttonImages\xboxControllerLeftThumbstick.tga">
       <Name>xboxControllerLeftThumbstick</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -342,17 +342,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ButtonImages\xboxControllerLeftShoulder.tga">
+    <Compile Include="buttonImages\xboxControllerLeftShoulder.tga">
       <Name>xboxControllerLeftShoulder</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="ButtonImages\xboxControllerRightShoulder.tga">
+    <Compile Include="buttonImages\xboxControllerRightShoulder.tga">
       <Name>xboxControllerRightShoulder</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="ButtonImages\xboxControllerButtonY.tga">
+    <Compile Include="buttonImages\xboxControllerButtonY.tga">
       <Name>xboxControllerButtonY</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -380,29 +380,29 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Symbols\Discipline.png">
-      <Name>Discipline</Name>
+    <Compile Include="symbols\discipline.png">
+      <Name>discipline</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
       <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
     </Compile>
-    <Compile Include="Symbols\Health.png">
-      <Name>Health</Name>
+    <Compile Include="symbols\health.png">
+      <Name>health</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
       <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
     </Compile>
-    <Compile Include="Symbols\Mass.png">
-      <Name>Mass</Name>
+    <Compile Include="symbols\mass.png">
+      <Name>mass</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
       <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
     </Compile>
-    <Compile Include="Symbols\Speed.png">
-      <Name>Speed</Name>
+    <Compile Include="symbols\speed.png">
+      <Name>speed</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
@@ -479,6 +479,13 @@
       <Project>{fedd1be5-6345-47a1-8da5-368b9ff967bd}</Project>
       <Name>VirusXLocalizationPipline</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="controltypes.png">
+      <Name>controltypes</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 

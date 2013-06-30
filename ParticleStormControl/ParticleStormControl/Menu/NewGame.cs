@@ -3,6 +3,7 @@
 //#define QUICK_CTC_DEBUG
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -27,6 +28,7 @@ namespace VirusX.Menu
         private bool[] playerSlotOccupied = new bool[4];
         private bool[] playerReadyBySlot = new bool[4];
         private int[] slotIndexToPlayerIndexMapper = new int[4];
+        private int[] preSlotMapper = new int[7];
 
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
@@ -80,8 +82,17 @@ namespace VirusX.Menu
                     slotIndexToPlayerIndexMapper[i] = i;
                 }
 
-                if (Settings.Instance.StartingControls != InputManager.ControlType.NONE)
-                    AddPlayer(false, Settings.Instance.StartingControls);
+                // distribute ControlTypes all over the place
+                preSlotMapper[0] = 0;
+                preSlotMapper[1] = 1;
+                preSlotMapper[2] = 2;
+                preSlotMapper[3] = 0;
+                preSlotMapper[4] = 1;
+                preSlotMapper[5] = 2;
+                preSlotMapper[6] = 3;
+
+                //if (Settings.Instance.StartingControls != InputManager.ControlType.NONE)
+                //    AddPlayer(false, Settings.Instance.StartingControls);
 
                 // create ui @ onActia
                 Interface.Clear();
@@ -201,22 +212,22 @@ namespace VirusX.Menu
                     int descpY = BOX_HEIGHT - TEXTBOX_HEIGHT * 2;
 
 
-                    Interface.Add(new InterfaceImage("symbols//Speed", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
+                    Interface.Add(new InterfaceImage("symbols/speed", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
                                                         Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, false));
                     Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Speed[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                                 origin + new Vector2(descpX0 + TEXTBOX_HEIGHT, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
-                    Interface.Add(new InterfaceImage("symbols//Mass", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
+                    Interface.Add(new InterfaceImage("symbols/mass", new Rectangle((int)origin.X + descpX0, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
                                                         Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, false));
                     Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Mass[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                                   origin + new Vector2(descpX0 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
-                    Interface.Add(new InterfaceImage("symbols//Discipline", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
+                    Interface.Add(new InterfaceImage("symbols/discipline", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
                                                         Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, false));
                     Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Discipline[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                                     origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
 
-                    Interface.Add(new InterfaceImage("symbols//Health", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
+                    Interface.Add(new InterfaceImage("symbols/health", new Rectangle((int)origin.X + descpX1, (int)origin.Y + descpY + TEXTBOX_HEIGHT, TEXTBOX_HEIGHT, TEXTBOX_HEIGHT),
                                                         Color.Black, () => { return playerSlotOccupied[index]; }, Alignment.TOP_LEFT, false));
                     Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Health[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                                     origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
@@ -248,6 +259,19 @@ namespace VirusX.Menu
                 InterfaceButton countdownButton = new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true);
                 countdownButton.Silent = true;
                 Interface.Add(countdownButton);
+
+                // preSlotImages
+                for (int i = 0; i < 4; i++)
+                {
+                    foreach (InputManager.ControlType value in Enum.GetValues(typeof(InputManager.ControlType)))
+                    {
+                        if (value != InputManager.ControlType.NONE)
+                        {
+                            int x = i;
+                            Interface.Add(new InterfaceImageButton("controltypes", new Rectangle((int)GetPreSlotPosition(value, i).X, (int)GetPreSlotPosition(value, i).Y, 96, 96), new Rectangle((int)value * 96, 0, 96, 96), new Rectangle(7 * 96, 0, 96, 96), () => { return preSlotMapper[(int)value] != x; }, () => { return !playerSlotOccupied[x]; }, Color.FromNonPremultiplied(255, 255, 255, 1)));
+                        }
+                    }
+                }
 
                 base.LoadContent(content);
             }
@@ -360,7 +384,42 @@ namespace VirusX.Menu
                 return;
             }
 
-            // test various buttons
+            // test various buttons for controls without players
+            foreach (InputManager.ControlType controlType in Enum.GetValues(typeof(InputManager.ControlType)))
+            {
+                if (controlType != InputManager.ControlType.NONE)
+                {
+                    bool inputUsed = false;
+                    for (int i = 0; i < Settings.Instance.NumPlayers; i++)
+                    {
+                        if (Settings.Instance.GetPlayer(i).ControlType == controlType)
+                            inputUsed = true;
+                    }
+                    if (!inputUsed)
+                    {
+                        // TODO nicer
+                        if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, controlType, false))
+                        {
+                            preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], InputManager.ControlActions.LEFT);
+                        }
+                        else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, controlType, false))
+                        {
+                            preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], InputManager.ControlActions.RIGHT);
+                        }
+                        else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.UP, controlType, false))
+                        {
+                            preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], InputManager.ControlActions.UP);
+                        }
+                        else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.DOWN, controlType, false))
+                        {
+                            preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], InputManager.ControlActions.DOWN);
+                        }
+                    }
+                }
+            }
+
+
+            // test various buttons if player has a slot
             for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; playerIndex++)
             {
                 int slot = Settings.Instance.GetPlayer(playerIndex).SlotIndex;
@@ -397,12 +456,12 @@ namespace VirusX.Menu
                             ToggleReady(slot);
                         else
                         {
-                            if (Settings.Instance.GetPlayer(playerIndex).ControlType == Settings.Instance.StartingControls)
-                            {
-                                menu.ChangePage(Menu.Page.MAINMENU, gameTime);
-                                return;
-                            }
-                            else
+                            //if (Settings.Instance.GetPlayer(playerIndex).ControlType == Settings.Instance.StartingControls)
+                            //{
+                            //    menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+                            //    return;
+                            //}
+                            //else
                                 RemovePlayer(slot);
                             break; // this blocks other inputs, but @30fps min thats not that bad
                         }
@@ -453,7 +512,11 @@ namespace VirusX.Menu
         /// <returns></returns>
         int AddPlayer(bool ai, InputManager.ControlType controlType)
         {
-            int slotIndex = GetFreeSlotIndex();
+            int slotIndex = -1;
+            if(controlType == InputManager.ControlType.NONE)
+                slotIndex = GetFreeSlotIndex(-1);
+            else
+                slotIndex = preSlotMapper[(int)controlType];
             int playerIndex = Settings.Instance.NumPlayers;
             if (slotIndex != -1)
             {
@@ -491,6 +554,8 @@ namespace VirusX.Menu
                 //if(virusImages[slotIndex] != null)
                 //    virusImages[slotIndex].Texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[slotIndex]).Virus));
 
+                CheckPreSlots();
+
                 AudioManager.Instance.PlaySoundeffect("click");
                 countdown = TimeSpan.FromSeconds(-1);
             }
@@ -514,6 +579,8 @@ namespace VirusX.Menu
                 slotIndexToPlayerIndexMapper[i] = -1;
             for(int i = 0; i < Settings.Instance.NumPlayers; ++i)
                 slotIndexToPlayerIndexMapper[Settings.Instance.GetPlayer(i).SlotIndex] = i;
+
+            CheckPreSlots();
 
             CheckStartCountdown();
         }
@@ -590,14 +657,38 @@ namespace VirusX.Menu
         }
 
         // if all slots are full -1 is returned
-        private int GetFreeSlotIndex()
+        private int GetFreeSlotIndex(int oldSlot)
         {
-            if (Settings.Instance.NumPlayers >= numSlots)
-                return -1;
-            int i = 0;
-            while (i < 4 && playerSlotOccupied[i])
-                i++;
-            return i == 4 ? -1 : i;
+            switch (oldSlot)
+	        {
+		        case 0:
+                    if(!playerSlotOccupied[2]) return 2;
+                    if(!playerSlotOccupied[3]) return 3;
+                    if(!playerSlotOccupied[1]) return 1;
+                    break;
+		        case 1:
+                    if(!playerSlotOccupied[3]) return 3;
+                    if(!playerSlotOccupied[2]) return 2;
+                    if(!playerSlotOccupied[0]) return 0;
+                    break;
+		        case 2:
+                    if(!playerSlotOccupied[0]) return 0;
+                    if(!playerSlotOccupied[1]) return 1;
+                    if(!playerSlotOccupied[3]) return 3;
+                    break;
+		        case 3:
+                    if(!playerSlotOccupied[1]) return 1;
+                    if(!playerSlotOccupied[0]) return 0;
+                    if(!playerSlotOccupied[2]) return 2;
+                    break;
+                default:
+                    if(!playerSlotOccupied[0]) return 0;
+                    if(!playerSlotOccupied[1]) return 1;
+                    if(!playerSlotOccupied[2]) return 2;
+                    if(!playerSlotOccupied[3]) return 3;
+                    break;
+	        }
+            return -1;
         }
 
         private bool isActive(InputManager.ControlActions action, int index)
@@ -613,14 +704,24 @@ namespace VirusX.Menu
             else if(Settings.Instance.GameMode == Game.GameMode.ARCADE)
                 playersNeeded = 1;
 
+            // make sure everyone is ready
             bool allReady = playerSlotOccupied.Count(x => x) >= playersNeeded;
-
             for (int i = 0; i < 4; i++)
             {
                 if (playerSlotOccupied[i] != playerReadyBySlot[i])
                     allReady = false;
             }
-            if (allReady && Settings.Instance.NumPlayers > 0)
+
+            // make sure we have at least one human player
+            bool hasHuman = false;
+            for (int i = 0; i < Settings.Instance.NumPlayers; i++)
+            {
+                if (Settings.Instance.GetPlayer(i).ControlType != InputManager.ControlType.NONE)
+                    hasHuman = true;
+            }
+
+            // if everything is fine -> start!
+            if (hasHuman && allReady && Settings.Instance.NumPlayers > 0)
                 countdown = TimeSpan.FromSeconds(maxCountdown - 0.001);
             else
                 countdown = TimeSpan.FromSeconds(-1);
@@ -678,6 +779,105 @@ namespace VirusX.Menu
                 return "< press action button to join game >\n\n(you need four players for this mode)";
             else
                 return "< press action button to join game >";
+        }
+
+        // drawing position of the PreSlotImages
+        private Vector2 GetPreSlotPosition(InputManager.ControlType control, int slotIndex)
+        {
+            switch (control)
+            {
+                case InputManager.ControlType.KEYBOARD0:
+                    return GetOrigin(slotIndex) + new Vector2(60, 20);
+                case InputManager.ControlType.KEYBOARD1:
+                    return GetOrigin(slotIndex) + new Vector2(180, 20);
+                case InputManager.ControlType.KEYBOARD2:
+                    return GetOrigin(slotIndex) + new Vector2(300, 20);
+                case InputManager.ControlType.GAMEPAD0:
+                    return GetOrigin(slotIndex) + new Vector2(0, 210);
+                case InputManager.ControlType.GAMEPAD1:
+                    return GetOrigin(slotIndex) + new Vector2(120, 210);
+                case InputManager.ControlType.GAMEPAD2:
+                    return GetOrigin(slotIndex) + new Vector2(240, 210);
+                case InputManager.ControlType.GAMEPAD3:
+                    return GetOrigin(slotIndex) + new Vector2(360, 210);
+                default:
+                    return GetOrigin(slotIndex);
+            }
+        }
+
+        // rearranges PreSlotImages if necessary 
+        private void CheckPreSlots()
+        {
+            for (int i = 0; i < preSlotMapper.Length; i++)
+            {
+                // if currently no slot attached -> search new one
+                if (preSlotMapper[i] < 0)
+                    preSlotMapper[i] = GetFreeSlotIndex(-1);
+                // if slot is occupied and control is not the player in this slot -> search new one
+                if(preSlotMapper[i] >= 0 && playerSlotOccupied[preSlotMapper[i]] && (int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[preSlotMapper[i]]).ControlType != i)
+                    preSlotMapper[i] = GetFreeSlotIndex(preSlotMapper[i]);
+            }
+        }
+
+        // abuses the controlactions for convenience
+        private int SwitchPreSlots(int oldSlot, InputManager.ControlActions actions)
+        {
+            switch (oldSlot)
+	        {
+                case 0:
+                    switch (actions)
+	                {
+		                case InputManager.ControlActions.UP:
+                            if (!playerSlotOccupied[3]) return 3;
+                            if (!playerSlotOccupied[1]) return 1;
+                            break;
+                        case InputManager.ControlActions.RIGHT:
+                            if (!playerSlotOccupied[2]) return 2;
+                            if (!playerSlotOccupied[1]) return 1;
+                            break;
+	                }
+                    break;
+                case 1:
+                    switch (actions)
+                    {
+                        case InputManager.ControlActions.DOWN:
+                            if (!playerSlotOccupied[2]) return 2;
+                            if (!playerSlotOccupied[0]) return 0;
+                            break;
+                        case InputManager.ControlActions.LEFT:
+                            if (!playerSlotOccupied[3]) return 3;
+                            if (!playerSlotOccupied[0]) return 0;
+                            break;
+                    }
+                    break;
+                case 2:
+                    switch (actions)
+                    {
+                        case InputManager.ControlActions.UP:
+                            if (!playerSlotOccupied[1]) return 1;
+                            if (!playerSlotOccupied[3]) return 3;
+                            break;
+                        case InputManager.ControlActions.LEFT:
+                            if (!playerSlotOccupied[0]) return 0;
+                            if (!playerSlotOccupied[3]) return 3;
+                            break;
+                    }
+                    break;
+                case 3:
+                    switch (actions)
+                    {
+                        case InputManager.ControlActions.DOWN:
+                            if (!playerSlotOccupied[0]) return 0;
+                            if (!playerSlotOccupied[2]) return 2;
+                            break;
+                        case InputManager.ControlActions.RIGHT:
+                            if (!playerSlotOccupied[1]) return 1;
+                            if (!playerSlotOccupied[2]) return 2;
+                            break;
+                    }
+                    break;
+	        }
+            return oldSlot;
         }
 
         #endregion
