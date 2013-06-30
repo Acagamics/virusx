@@ -56,25 +56,37 @@ namespace VirusX
         private const float ARCADE_MIN_HEALTH = 1.0f;
 
 
-        static public readonly String[] GAMEMODE_NAME = new String[]
+        static public String[] GAMEMODE_NAME
         {
-            VirusXStrings.GameModeClassic,
-            VirusXStrings.GameModeCTC,
-            VirusXStrings.GameModeLvsR,
-            VirusXStrings.GameModeFun,
-            VirusXStrings.GameModeDomination,
-            VirusXStrings.GameModeArcade
-        };
+            get
+            {
+                return new String[]
+                {
+                    VirusXStrings.GameModeClassic,
+                    VirusXStrings.GameModeCTC,
+                    VirusXStrings.GameModeLvsR,
+                    VirusXStrings.GameModeFun,
+                    VirusXStrings.GameModeDomination,
+                    VirusXStrings.GameModeArcade
+                };
+            }
+        }
 
-        static public readonly String[] GAMEMODE_DESCRIPTION = new String[]
+        static public String[] GAMEMODE_DESCRIPTION
         {
-            VirusXStrings.GameModeDescriptionClassic,
-            VirusXStrings.GameModeDescriptionCTC,
-            VirusXStrings.GameModeDescriptionLvsR,
-            VirusXStrings.GameModeDescriptionFun,
-            VirusXStrings.GameModeDescriptionDomination,
-            VirusXStrings.GameModeDescriptionArcade
-        };
+            get
+            {
+                return new String[]
+                {
+                    VirusXStrings.GameModeDescriptionClassic,
+                    VirusXStrings.GameModeDescriptionCTC,
+                    VirusXStrings.GameModeDescriptionLvsR,
+                    VirusXStrings.GameModeDescriptionFun,
+                    VirusXStrings.GameModeDescriptionDomination,
+                    VirusXStrings.GameModeDescriptionArcade
+                };
+            }
+        }
 
         #endregion
 
