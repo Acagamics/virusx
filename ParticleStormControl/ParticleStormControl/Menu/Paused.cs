@@ -107,6 +107,7 @@ namespace VirusX.Menu
                 {
                     InputManager.Instance.ResetWaitingForReconnect();
                     menu.ChangePage(Menu.Page.INGAME, gameTime);
+                    return;
                 }
 
                 // back to menu
@@ -125,9 +126,15 @@ namespace VirusX.Menu
                 {
                     InputManager.Instance.ResetWaitingForReconnect();
                     if (currentButton == Buttons.CONTINUE)
+                    {
                         menu.ChangePage(Menu.Page.INGAME, gameTime);
+                        return;
+                    }
                     else if (currentButton == Buttons.QUIT_TO_MAINMENU)
+                    {
                         menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+                        return;
+                    }
                 }
 
                 // changed option
