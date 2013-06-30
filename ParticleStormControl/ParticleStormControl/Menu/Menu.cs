@@ -55,11 +55,11 @@ namespace VirusX.Menu
             get { return pages; }
         }
 
-        private ParticleStormControl game;
-        public ParticleStormControl Game // Haaaack (how else do I get the statistics outside the inGame?)
+        private VirusX game;
+        public VirusX Game // Haaaack (how else do I get the statistics outside the inGame?)
         { get { return game; } }
 
-        public Menu(ParticleStormControl game)
+        public Menu(VirusX game)
         {
             this.game = game;
 
@@ -68,7 +68,12 @@ namespace VirusX.Menu
             fontHeading = game.Content.Load<SpriteFont>("fonts/fontHeading");
             fontCountdown = game.Content.Load<SpriteFont>("fonts/fontCountdown");
 
-            pages[(int)Page.MAINMENU] =  new MainMenu(this);
+            ReloadMenus();
+        }
+
+        public void ReloadMenus()
+        {
+            pages[(int)Page.MAINMENU] = new MainMenu(this);
             pages[(int)Page.OPTIONS] = new Options(this);
             pages[(int)Page.PAUSED] = new Paused(this);
             pages[(int)Page.NEWGAME] = new NewGame(this);

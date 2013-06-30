@@ -13,7 +13,7 @@ namespace VirusX
         /// </summary>
         static void Main(string[] args)
         {
-            using (ParticleStormControl game = new ParticleStormControl())
+            using (VirusX game = new VirusX())
             {
                 game.Run();
             }

@@ -39,7 +39,7 @@ namespace VirusX
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    class ParticleStormControl : Microsoft.Xna.Framework.Game
+    class VirusX : Microsoft.Xna.Framework.Game
     {
         private bool showStatistics = false;
      
@@ -71,7 +71,7 @@ namespace VirusX
             get { return menu; }
         }
 
-        public ParticleStormControl()
+        public VirusX()
         {
             graphics = new GraphicsDeviceManager(this);
 #if NVIDIAPERFHUD_POSSIBLE
@@ -100,15 +100,6 @@ namespace VirusX
             Window.Title = "Virus X";
 
             AudioManager.Instance.Initialize(Content);
-
-            // TODO move into setting so that we can add it later to the options menu to chnage the language in game
-            VirusXStrings.Culture = CultureInfo.CurrentCulture;
-#if DEBUG_LOCALIZATION_CULTURE_EN
-            VirusXStrings.Culture = CultureInfo.CreateSpecificCulture("en");
-#endif
-#if DEBUG_LOCALIZATION_CULTURE_DE
-            VirusXStrings.Culture = CultureInfo.CreateSpecificCulture("de");
-#endif
         }
 
         void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
@@ -202,7 +193,7 @@ namespace VirusX
 
             if (firstUpdate)
             {
-                menu.ChangePage(VirusX.Menu.Menu.Page.MAINMENU, gameTime);
+                menu.ChangePage(global::VirusX.Menu.Menu.Page.MAINMENU, gameTime);
                 firstUpdate = false;
             }
 

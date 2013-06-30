@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Globalization;
 
 namespace VirusX
 {
@@ -124,6 +125,9 @@ namespace VirusX
             Sound = true;
             Music = true;
             Fullscreen = true;
+
+            VirusXStrings.Culture = CultureInfo.CurrentCulture;
+
             ChooseStandardResolution();
         }
 
@@ -170,9 +174,10 @@ namespace VirusX
         {
             bool dirty = false;
             Reset();
+            System.Xml.XmlTextReader xmlConfigReader = null;
             try
             {
-                System.Xml.XmlTextReader xmlConfigReader = new System.Xml.XmlTextReader("settings.xml");
+                xmlConfigReader = new System.Xml.XmlTextReader("settings.xml");
                 while (xmlConfigReader.Read())
                 {
                     if (xmlConfigReader.NodeType == System.Xml.XmlNodeType.Element)
@@ -183,7 +188,7 @@ namespace VirusX
                                 fullscreen = Convert.ToBoolean(xmlConfigReader.GetAttribute("fullscreen"));
                                 resolutionX = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionX"));
                                 resolutionY = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionY"));
-                                
+
                                 // validate resolution
                                 if (!GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Any(x => x.Format == SurfaceFormat.Color &&
                                                                                                 x.Height == resolutionY && x.Width == resolutionX))
@@ -204,11 +209,11 @@ namespace VirusX
 
                             case "misc":
                                 FirstStart = Convert.ToBoolean(xmlConfigReader.GetAttribute("firststart"));
+                                VirusXStrings.Culture = CultureInfo.CreateSpecificCulture(xmlConfigReader.GetAttribute("language"));
                                 break;
                         }
                     }
                 }
-                xmlConfigReader.Close();
             }
             catch
             {
@@ -222,8 +227,20 @@ namespace VirusX
                 {
                 }
             }
+            finally
+            {
+                if(xmlConfigReader != null)
+                    xmlConfigReader.Close();
+            }
 
-            if(dirty)
+#if DEBUG_LOCALIZATION_CULTURE_EN
+            VirusXStrings.Culture = CultureInfo.CreateSpecificCulture("en");
+#endif
+#if DEBUG_LOCALIZATION_CULTURE_DE
+            VirusXStrings.Culture = CultureInfo.CreateSpecificCulture("de");
+#endif
+
+            if (dirty)
                 Save();
         }
 
@@ -257,6 +274,9 @@ namespace VirusX
             settingsXML.WriteStartElement("misc");
             settingsXML.WriteStartAttribute("firststart");
             settingsXML.WriteValue(FirstStart);
+
+            settingsXML.WriteStartAttribute("language");
+            settingsXML.WriteValue(VirusXStrings.Culture.ToString());
             settingsXML.WriteEndElement();
 
             settingsXML.WriteEndElement();
