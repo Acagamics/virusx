@@ -370,14 +370,14 @@ namespace VirusX.Menu
                     if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, Settings.Instance.GetPlayer(playerIndex).ControlType, false) && !playerReadyBySlot[slot])
                     {
                         if (--Settings.Instance.GetPlayer(playerIndex).Virus < 0)
-                            Settings.Instance.GetPlayer(playerIndex).Virus = (VirusSwarm.VirusType)((int)VirusSwarm.Viruses.Length - 1);
+                            Settings.Instance.GetPlayer(playerIndex).Virus = (VirusSwarm.VirusType)((int)VirusSwarm.VirusType.NUM_VIRUSES - 1);
 
                         //virusImages[slot].Texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(playerIndex).Virus));
                     }
                     else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, Settings.Instance.GetPlayer(playerIndex).ControlType, false) && !playerReadyBySlot[slot])
                     {
                         Settings.Instance.GetPlayer(playerIndex).Virus = (VirusSwarm.VirusType)((int)Settings.Instance.GetPlayer(playerIndex).Virus + 1);
-                        if ((int)Settings.Instance.GetPlayer(playerIndex).Virus >= VirusSwarm.Viruses.Length)
+                        if ((int)Settings.Instance.GetPlayer(playerIndex).Virus >= (int)VirusSwarm.VirusType.NUM_VIRUSES)
                             Settings.Instance.GetPlayer(playerIndex).Virus = 0;
 
                         //virusImages[slot].Texture = content.Load<Texture2D>(ParticleRenderer.GetVirusTextureName(Settings.Instance.GetPlayer(playerIndex).Virus));

@@ -26,33 +26,64 @@ namespace VirusX
             NUM_VIRUSES
         }
 
-        public readonly static VirusType[] Viruses = { VirusType.H5N1, VirusType.HEPATITISB, VirusType.HIV, VirusType.EPSTEINBARR, VirusType.EBOLA, VirusType.MARV };
-        //public readonly static string[] VirusNames = { "Influenza", "Hepatitis B", "Human immunodeficiency", "Epstein-Barr", "Ebola", "Marburg" };
-        public readonly static string[] VirusNames = { VirusXStrings.VirusNameH5N1, VirusXStrings.VirusNameHepatitisB, VirusXStrings.VirusNameHIV, VirusXStrings.VirusNameEpsteinBarr, VirusXStrings.VirusNameEbola, VirusXStrings.VirusNameMarv };
-        public readonly static string[] VirusAdditionalInfo = { VirusXStrings.VirusAdditionalInfoH5N1,
-                                                                "Can also lead to cirrhosis and hepatocellular carcinoma.",
-                                                                VirusXStrings.VirusAdditionalInfoHIV,
-                                                                "It is one of the most common viruses in humans.",
-                                                                "EBOV is a select agent, World Health Organization Risk Group 4 Pathogen\n(requiring Biosafety Level 4-equivalent containment).",
-                                                                "Marburg virus disease often called Marburg hemorrhagic fever (MHF)" };
-        public readonly static string[] VirusClassification = { "Group V; Genus A; Family of Orthomyxoviridae",
-                                                                "Group VII; Genus Orthohepadnavirus; Family of Hepadnaviridae",
-                                                                "Group VI; Genus Lentivirus; Family of Retroviridae",
-                                                                "Group I; Genus of Lymphocryptovirus; Family of Herpesviridae",
-                                                                "Group V; Genus Ebolavirus; Family of Filoviridae",
-                                                                "Group V; Genus Marburgvirus; Family of Filoviridae" };
-        public readonly static string[] VirusShortName = { "H5N1",
-                                                           "HBV",
-                                                           "HIV",
-                                                           "EBV",
-                                                           "EBOV",
-                                                           "MARV" };
-        public readonly static string[] VirusCausedDisease = { "avian influenza (bird flu)",
-                                                               "hepatitis B",
-                                                               "acquired immunodeficiency syndrome (AIDS)",
-                                                               "Implicated in several diseases that include infectious mononucleosis,\nmultiple sclerosis and Hodgkin lymphoma.",
-                                                               "viral hemorrhagic fever (EBOLA fever)",
-                                                               "Marburg virus disease often called Marburg hemorrhagic fever (MHF)" };
+        public static string[] VirusNames
+        {
+            get
+            {
+                return new string[] { VirusXStrings.VirusNameH5N1, VirusXStrings.VirusNameHepatitisB, VirusXStrings.VirusNameHIV, VirusXStrings.VirusNameEpsteinBarr, VirusXStrings.VirusNameEbola, VirusXStrings.VirusNameMarv };
+            }
+        }
+     
+        public static string[] VirusAdditionalInfo
+        {
+            get
+            {
+                return new string[]   { VirusXStrings.VirusAdditionalInfoH5N1,
+                                        "Can also lead to cirrhosis and hepatocellular carcinoma.",
+                                        VirusXStrings.VirusAdditionalInfoHIV,
+                                        "It is one of the most common viruses in humans.",
+                                        "EBOV is a select agent, World Health Organization Risk Group 4 Pathogen\n(requiring Biosafety Level 4-equivalent containment).",
+                                        "Marburg virus disease often called Marburg hemorrhagic fever (MHF)" };
+            }
+        }
+
+        public static string[] VirusClassification
+        {
+            get
+            {
+                return new string[] {   "Group V; Genus A; Family of Orthomyxoviridae",
+                                        "Group VII; Genus Orthohepadnavirus; Family of Hepadnaviridae",
+                                        "Group VI; Genus Lentivirus; Family of Retroviridae",
+                                        "Group I; Genus of Lymphocryptovirus; Family of Herpesviridae",
+                                        "Group V; Genus Ebolavirus; Family of Filoviridae",
+                                        "Group V; Genus Marburgvirus; Family of Filoviridae" };
+            }
+        }
+        
+        public static string[] VirusShortName
+        {
+            get
+            {
+                return new string[] { "H5N1",
+                                        "HBV",
+                                        "HIV",
+                                        "EBV",
+                                        "EBOV",
+                                        "MARV" };
+            }
+        }
+        public static string[] VirusCausedDisease
+        {
+            get
+            {
+                return new string[] { "avian influenza (bird flu)",
+                                        "hepatitis B",
+                                        "acquired immunodeficiency syndrome (AIDS)",
+                                        "Implicated in several diseases that include infectious mononucleosis,\nmultiple sclerosis and Hodgkin lymphoma.",
+                                        "viral hemorrhagic fever (EBOLA fever)",
+                                        "Marburg virus disease often called Marburg hemorrhagic fever (MHF)" };
+            }
+        }
 
 
         // IMPORTANT: The number '+' for each virus should add to the same sum. This is to imply that all virusses are equally strong. ;)
