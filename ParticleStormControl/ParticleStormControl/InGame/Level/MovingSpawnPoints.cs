@@ -26,6 +26,7 @@ namespace VirusX
             base(startPosition, spawnSize, startPosession, content, spawnSize * SPAWNSIZE_TO_LIFETIME)
         {
             this.direction = direction;
+            this.damageFactor *= 3f;
         }
 
         public override void Update(GameTime gameTime)

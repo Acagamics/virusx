@@ -101,6 +101,24 @@ namespace VirusX
 
         #endregion
 
+        #region arcade mode
+
+        // Speed for other game modes
+        public const float ANTIBODY_SPEED_FUN = 0.048f;
+        public const float ANTIBODY_SPEED_CLASSIC = 0.024f;
+
+
+        public const float MAX_ANTIBODY_SPEED = 0.5f;
+        public const float MIN_ANTIBODY_SPEED = 0.02f;
+        public const float ANTIBODY_SPEED_INCREASE = 0.001f;
+        // Time until the anti bodies speed will be increased in seconds
+        public const float MAX_TIME_UNTIL_ANTIBODY_SPEED_INCREASE = 2f;
+        private float currentAntiBodySpeed = 0.020f;
+        private float timeUntilAntiBodySpeedIncreas = MAX_TIME_UNTIL_ANTIBODY_SPEED_INCREASE;
+
+
+        #endregion
+
         #region item possibilities
 
         /// <summary>
@@ -204,6 +222,21 @@ namespace VirusX
             // collect the virus types for statistic
             foreach (Player player in players)
                 GameStatistics.SetVirusType(player.playerIndex, player.Virus);
+
+            // arcarde mode
+            switch (gameMode)
+            {
+                case InGame.GameMode.FUN:
+                    currentAntiBodySpeed = ANTIBODY_SPEED_FUN;
+                    break;
+                case InGame.GameMode.ARCADE:
+                    currentAntiBodySpeed = MIN_ANTIBODY_SPEED;
+                    break;
+                default:
+                    currentAntiBodySpeed = ANTIBODY_SPEED_CLASSIC;
+                    break;
+            }
+            timeUntilAntiBodySpeedIncreas = MAX_TIME_UNTIL_ANTIBODY_SPEED_INCREASE;
         }
 
         /// <summary>
@@ -329,10 +362,7 @@ namespace VirusX
                     if (distanceToPlayerAttractionPos > 0.02f)
                     {
                         move /= distanceToPlayerAttractionPos;
-                        if(gameMode == InGame.GameMode.FUN)
-                            move *= (float)gameTime.ElapsedGameTime.TotalSeconds * (Player.CURSOR_SPEED * 0.045f);
-                        else
-                            move *= (float)gameTime.ElapsedGameTime.TotalSeconds * (Player.CURSOR_SPEED * 0.015f);
+                        move *= (float)gameTime.ElapsedGameTime.TotalSeconds * (Player.CURSOR_SPEED * currentAntiBodySpeed);
                         mapObject.Position += move;
                     }
                 }
@@ -396,7 +426,10 @@ namespace VirusX
             
             // arcade mode stuff
             if (currentMapType == MapGenerator.MapType.ARCADE)
+            {
                 PlaceArcadeModeElements(players[0]);
+                DoArcadeComputations(gameTime);
+            }
 
             // statistics
             if (GameStatistics.UpdateTimer((float)gameTime.ElapsedGameTime.TotalSeconds))
@@ -414,6 +447,18 @@ namespace VirusX
             }
         }
 
+        private void DoArcadeComputations(GameTime gameTime)
+        {
+            timeUntilAntiBodySpeedIncreas -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (timeUntilAntiBodySpeedIncreas < 0f)
+            {
+                timeUntilAntiBodySpeedIncreas = MAX_TIME_UNTIL_ANTIBODY_SPEED_INCREASE;
+                currentAntiBodySpeed += ANTIBODY_SPEED_INCREASE;
+                if (currentAntiBodySpeed > MAX_ANTIBODY_SPEED)
+                    currentAntiBodySpeed = MAX_ANTIBODY_SPEED;
+            }
+        }
+
         /// <summary>
         /// places cells and antibodies for arcade mode
         /// </summary>
@@ -425,17 +470,23 @@ namespace VirusX
             {
                 pickuptimer.Restart();
 
-                const float PROBABILITY_SPAWN = 0.2f;
-                const float PROBABILITY_ANTIBODY = 0.7f;
+                float time = GameStatistics.LastStep * GameStatistics.StepTime;
+
+                float PROBABILITY_SPAWN = MathHelper.Clamp(380f - (time / 380f), 0.2f, 0.7f);//0.2f;
+                float PROBABILITY_ANTIBODY = MathHelper.Clamp(time / 380f, 0.2f, 0.7f); //0.7f;
+
+                float sum = PROBABILITY_SPAWN + PROBABILITY_ANTIBODY + 0.1f;
+                PROBABILITY_SPAWN /= sum;
+                //PROBABILITY_ANTIBODY /= sum;
 
                 float rnd = (float)Random.NextDouble();
-                if (rnd < PROBABILITY_SPAWN)
+                if (rnd + 0.1f < PROBABILITY_SPAWN)
                 {
                     Vector2 position = Random.NextDirection() * (RELATIVE_MAX - new Vector2(MapGenerator.LEVEL_BORDER) * 2) + new Vector2(MapGenerator.LEVEL_BORDER);
                     float spawnSize = (float)Random.NextDouble(100, 600);
                     mapObjects.Add(new MovingSpawnPoint(Random.NextDirection(), position, spawnSize, -1, contentManager));
                 }
-                else if (rnd < PROBABILITY_ANTIBODY)
+                else //if (rnd < PROBABILITY_ANTIBODY)
                 {
                     Vector2 position = Random.NextDirection() * (RELATIVE_MAX - new Vector2(MapGenerator.LEVEL_BORDER) * 2) + new Vector2(MapGenerator.LEVEL_BORDER);
                     mapObjects.Add(new Debuff(position, contentManager));
