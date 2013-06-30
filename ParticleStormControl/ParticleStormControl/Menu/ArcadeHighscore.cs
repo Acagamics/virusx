@@ -2,9 +2,11 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace VirusX.Menu
@@ -24,7 +26,15 @@ namespace VirusX.Menu
         const int MAX_NUM_DISPLAYED_SCORED = 10;
         const string highscoreFileLocation = "Content/arcadescores";
 
-      //  const string encryptionKey = "don't even think of it!F9LG@pxd2_7BCc4gff+]@-FG5ugZir#479-/{U>W§D)Fp-_-§_";
+
+        // encryption stuff
+        const int keySize = 256;
+        const string encryptionKey = "1234567890123456"; //"don't even think of it!F9LG@pxd2_7BCc4gff+]@-FG5ugZir#479-/{U>W§D)Fp-_-§_";
+        static readonly byte[] key = ASCIIEncoding.UTF8.GetBytes(encryptionKey);
+        static readonly PasswordDeriveBytes password = new PasswordDeriveBytes(encryptionKey, null);
+        static readonly byte[] keyBytes = password.GetBytes(keySize / 8);
+        static readonly byte[] initVectorBytes = Encoding.UTF8.GetBytes(encryptionKey);
+
 
         public ArcadeHighscore(Menu menu)
             : base(menu)
@@ -42,29 +52,49 @@ namespace VirusX.Menu
 
             for (int i = 0; i < MAX_NUM_DISPLAYED_SCORED; ++i)
             {
-                Interface.Add(new InterfaceButton("asdök", new Vector2(-300, height + i*40), true, Alignment.CENTER_CENTER));
-                Interface.Add(new InterfaceButton("00:00", new Vector2(250, height + i * 40), true, Alignment.CENTER_CENTER));
+                Interface.Add(new InterfaceButton(highScoreEntries[i].PlayerName, new Vector2(-300, height + i * 40), true, Alignment.CENTER_CENTER));
+                Interface.Add(new InterfaceButton(Utils.GenerateTimeString(highScoreEntries[i].Time), new Vector2(250, height + i * 40), true, Alignment.CENTER_CENTER));
             }
 
             // back button
             text = VirusXStrings.BackToMainMenu;
             width = (int)menu.Font.MeasureString(text).X;
             Interface.Add(new InterfaceButton(text,
-                new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() + InterfaceImageButton.PADDING * 4),
+                new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() + InterfaceImageButton.PADDING * 4), () => true,
                 Alignment.BOTTOM_CENTER));
         }
 
         public void ReadHighScore()
         {
-        /*    try
+            try
             {
-                // todo: decrypt
-                XmlSerializer serializer = new XmlSerializer(typeof(HighScoreEntry[]));
-                TextReader textWriter = new StreamReader(highscoreFileLocation);
-                highScoreEntries = (HighScoreEntry[])serializer.Deserialize(textWriter);
-                textWriter.Close();
+                byte[] encryptedBytes = File.ReadAllBytes(highscoreFileLocation);
+
+                var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC };
+                ICryptoTransform decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
+                byte[] plainTextBytes;
+                using (var memoryStream = new MemoryStream(encryptedBytes))
+                using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+                {
+                    plainTextBytes = new byte[encryptedBytes.Length];
+                    cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+                }
+                string xml = Encoding.UTF8.GetString(plainTextBytes);
+
+
+                // read xml
+                XmlReader xmlReader = XmlReader.Create(new StringReader(xml));
+                while (xmlReader.Read())
+                {
+                    if (xmlReader.NodeType == System.Xml.XmlNodeType.Element)
+                    {
+                        HighScoreEntry entry;
+                        entry.PlayerName = xmlReader.GetAttribute("name");
+                        entry.Time = float.Parse(xmlReader.GetAttribute("time"));
+                    }
+                }
             }
-            catch*/
+            catch
             {
                 highScoreEntries = new HighScoreEntry[10];
                 for (int i = 0; i < 10; ++i)
@@ -75,11 +105,34 @@ namespace VirusX.Menu
 
         public void SafeHighScore()
         {
-            // todo encrypt
-         /*   XmlSerializer serializer = new XmlSerializer(typeof(HighScoreEntry[]));
-            TextWriter textWriter = new StreamWriter(highscoreFileLocation);
-            serializer.Serialize(textWriter, highScoreEntries);
-            textWriter.Close(); */
+            // write to string
+            using (var stringWriter = new StringWriter())
+            {
+                using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter))
+                {
+                    xmlWriter.WriteStartDocument();
+                    for(int i=0; i<highScoreEntries.Length; ++i)
+                    {
+                        xmlWriter.WriteStartElement("elem" + i.ToString());
+                        xmlWriter.WriteStartAttribute("name");
+                        xmlWriter.WriteValue(highScoreEntries[i].PlayerName);
+                        xmlWriter.WriteStartAttribute("time");
+                        xmlWriter.WriteValue(highScoreEntries[i].Time);
+                    }
+                    xmlWriter.WriteEndDocument();
+                }
+
+                // encrypt
+                byte[] plainTextBytes = Encoding.UTF8.GetBytes(stringWriter.ToString());
+                var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC };
+                ICryptoTransform encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes);
+                MemoryStream filestream = new MemoryStream();//using(FileStream filestream = new FileStream(highscoreFileLocation, FileMode.Create, FileAccess.Write))
+                using (CryptoStream cryptoStream = new CryptoStream(filestream, encryptor, CryptoStreamMode.Write))
+                {
+                    cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
+                    cryptoStream.FlushFinalBlock();
+                }
+            }
         }
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)

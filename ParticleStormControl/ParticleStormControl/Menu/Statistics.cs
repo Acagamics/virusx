@@ -436,7 +436,7 @@ namespace VirusX.Menu
             {
                 float progress = (float)i / (timeDisplays.Length-1);
                 float time = Statistics.LastStep * progress * Statistics.StepTime;
-                string endTimeString = GenerateTimeString(time);
+                string endTimeString = Utils.GenerateTimeString(time);
                 float textLen = menu.Font.MeasureString(endTimeString).X;
                 
                 float textOffset;
@@ -454,13 +454,6 @@ namespace VirusX.Menu
             int arrowY = area.Y + (area.Height - ARROW_SIZE) / 2;//boxHeight / 2 - ARROW_SIZE;
             leftButton.Position = new Vector2(area.Left - ARROW_SIZE - InterfaceImageButton.PADDING, arrowY);
             rightButton.Position = new Vector2(area.Right + InterfaceImageButton.PADDING, arrowY);
-        }
-
-        private string GenerateTimeString(float time)
-        {
-            int minutes = (int)(time / 60.0f);
-            int seconds = (int)(time - minutes * 60 + 0.5f);
-            return String.Format("{0:00}:{1:00}", minutes, seconds);
         }
 
         private bool IsPlayerWinner(int index)

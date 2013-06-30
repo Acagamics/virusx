@@ -182,6 +182,7 @@
     <Compile Include="ParticleStormControl.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Tutorial.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="VirusXStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
