@@ -371,4 +371,16 @@ multiple sclerosis and Hodgkin lymphoma.</value>
     <value>MARV</value>
     <comment>The short name of Marburg Virus</comment>
   </data>
+  <data name="ScoreEnterYourName" xml:space="preserve">
+    <value>Enter name...</value>
+  </data>
+  <data name="ScoreNewHighScore" xml:space="preserve">
+    <value>New Highscore!</value>
+  </data>
+  <data name="ScoreSubmitScore" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="PlayAgain" xml:space="preserve">
+    <value>► Play Again</value>
+  </data>
 </root>

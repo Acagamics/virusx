@@ -52,29 +52,41 @@ namespace VirusX
         /// <summary>
         /// (arcade mode only) until this time (seconds) the player cannot die due to a health value < ARCADE_MIN_HEALTH
         /// </summary>
-        private const float ARCADE_SAFE_TIME = 10.0f;
-        private const float ARCADE_MIN_HEALTH = 1.0f;
+        private const float ARCADE_SAFE_TIME = 5.0f;
+        private const float ARCADE_MIN_HEALTH = 10.0f;
 
 
-        static public readonly String[] GAMEMODE_NAME = new String[]
+        static public String[] GAMEMODE_NAME
         {
-            VirusXStrings.GameModeClassic,
-            VirusXStrings.GameModeCTC,
-            VirusXStrings.GameModeLvsR,
-            VirusXStrings.GameModeFun,
-            VirusXStrings.GameModeDomination,
-            VirusXStrings.GameModeArcade
-        };
+            get
+            {
+                return new String[]
+                {
+                    VirusXStrings.GameModeClassic,
+                    VirusXStrings.GameModeCTC,
+                    VirusXStrings.GameModeLvsR,
+                    VirusXStrings.GameModeFun,
+                    VirusXStrings.GameModeDomination,
+                    VirusXStrings.GameModeArcade
+                };
+            }
+        }
 
-        static public readonly String[] GAMEMODE_DESCRIPTION = new String[]
+        static public String[] GAMEMODE_DESCRIPTION
         {
-            VirusXStrings.GameModeDescriptionClassic,
-            VirusXStrings.GameModeDescriptionCTC,
-            VirusXStrings.GameModeDescriptionLvsR,
-            VirusXStrings.GameModeDescriptionFun,
-            VirusXStrings.GameModeDescriptionDomination,
-            VirusXStrings.GameModeDescriptionArcade
-        };
+            get
+            {
+                return new String[]
+                {
+                    VirusXStrings.GameModeDescriptionClassic,
+                    VirusXStrings.GameModeDescriptionCTC,
+                    VirusXStrings.GameModeDescriptionLvsR,
+                    VirusXStrings.GameModeDescriptionFun,
+                    VirusXStrings.GameModeDescriptionDomination,
+                    VirusXStrings.GameModeDescriptionArcade
+                };
+            }
+        }
 
         #endregion
 
@@ -465,17 +477,22 @@ namespace VirusX
                 // statistics
                 GameStatistics.addWonMatches(winPlayerIndex);
 
-                if(Settings.Instance.GameMode == GameMode.ARCADE)
+                if (Settings.Instance.GameMode == GameMode.ARCADE)
+                {
+                    Menu.ArcadeHighscore statScreen = ((Menu.ArcadeHighscore)menu.GetPage(Menu.Menu.Page.ARCADEHIGHSCORE));
+                    statScreen.NewHighScoreTime = GameStatistics.LastStep * GameStatistics.StepTime;
+
                     menu.ChangePage(Menu.Menu.Page.ARCADEHIGHSCORE, gameTime);// skip to highscore screen
+                }
                 else
                 {
                     // fill stat screen
                     Menu.StatisticsScreen statScreen = ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS));
-                    statScreen.WinningTeam          = winningTeam;
-                    statScreen.WinPlayerIndex       = winPlayerIndex;
-                    statScreen.PlayerTypes          = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
-                    statScreen.PlayerColorIndices   = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
-                    statScreen.Statistics           = GameStatistics;
+                    statScreen.WinningTeam = winningTeam;
+                    statScreen.WinPlayerIndex = winPlayerIndex;
+                    statScreen.PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
+                    statScreen.PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
+                    statScreen.Statistics = GameStatistics;
 
                     menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
                 }

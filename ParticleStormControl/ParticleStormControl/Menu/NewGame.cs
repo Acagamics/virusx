@@ -33,7 +33,7 @@ namespace VirusX.Menu
         private readonly Color fontColor = Color.Black;
         private TimeSpan countdown = new TimeSpan();
 
-        private float numSlots = 4;
+        private int numSlots = 4;
 
         //private InterfaceImage[] virusImages = new InterfaceImage[4];
         private Effect virusRenderEffect;
@@ -83,13 +83,21 @@ namespace VirusX.Menu
                 }
 
                 // distribute ControlTypes all over the place
-                preSlotMapper[0] = 0;
-                preSlotMapper[1] = 1;
-                preSlotMapper[2] = 2;
-                preSlotMapper[3] = 0;
-                preSlotMapper[4] = 1;
-                preSlotMapper[5] = 2;
-                preSlotMapper[6] = 3;
+                if (Settings.Instance.GameMode != Game.GameMode.ARCADE)
+                {
+                    preSlotMapper[0] = 0;
+                    preSlotMapper[1] = 1;
+                    preSlotMapper[2] = 2;
+                    preSlotMapper[3] = 0;
+                    preSlotMapper[4] = 1;
+                    preSlotMapper[5] = 2;
+                    preSlotMapper[6] = 3;
+                }
+                else
+                {
+                    for (int i = 0; i < preSlotMapper.Length; ++i)
+                        preSlotMapper[i] = 0;
+                }
 
                 //if (Settings.Instance.StartingControls != InputManager.ControlType.NONE)
                 //    AddPlayer(false, Settings.Instance.StartingControls);
@@ -232,6 +240,8 @@ namespace VirusX.Menu
                     Interface.Add(new InterfaceButton(() => { return VirusSwarm.DESCRIPTOR_Health[(int)Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Virus]; },
                                     origin + new Vector2(descpX1 + TEXTBOX_HEIGHT, descpY + TEXTBOX_HEIGHT), () => { return false; }, () => { return playerSlotOccupied[index]; }, symbolLen));
                 }
+                for (int i = numSlots; i < playerSlotOccupied.Length; i++)
+                    playerReadyBySlot[i] = playerSlotOccupied[i] = true;
 
                 // help text pad
                 int textBoxHeight = menu.GetFontHeight() + 2 * InterfaceElement.PADDING;
@@ -250,16 +260,6 @@ namespace VirusX.Menu
                 Interface.Add(new InterfaceButton(" F1", new Vector2(115, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
                 Interface.Add(new InterfaceButton("show controls", new Vector2(165, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
 
-                // countdown
-                String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
-                Vector2 size = menu.FontHeading.MeasureString(text);
-                Interface.Add(new InterfaceFiller(Vector2.Zero, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, Color.FromNonPremultiplied(0, 0, 0, 128), () => { return countdown.TotalSeconds > 0; }));
-                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.White, () => { return countdown.TotalSeconds > 0; }));
-                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.Black, () => { return countdown.TotalSeconds > safeCountdown; }));
-                InterfaceButton countdownButton = new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true);
-                countdownButton.Silent = true;
-                Interface.Add(countdownButton);
-
                 // preSlotImages
                 for (int i = 0; i < 4; i++)
                 {
@@ -272,6 +272,16 @@ namespace VirusX.Menu
                         }
                     }
                 }
+
+                // countdown
+                String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
+                Vector2 size = menu.FontHeading.MeasureString(text);
+                Interface.Add(new InterfaceFiller(Vector2.Zero, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, Color.FromNonPremultiplied(0, 0, 0, 128), () => { return countdown.TotalSeconds > 0; }));
+                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.White, () => { return countdown.TotalSeconds > 0; }));
+                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.Black, () => { return countdown.TotalSeconds > safeCountdown; }));
+                InterfaceButton countdownButton = new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true);
+                countdownButton.Silent = true;
+                Interface.Add(countdownButton);
 
                 base.LoadContent(content);
             }
@@ -306,20 +316,45 @@ namespace VirusX.Menu
             playerReady[0] = playerReady[1] = playerConnected[0] = playerConnected[1] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = true;
             menu.ChangePage(Menu.Page.INGAME,gameTime);
 #elif QUICK_FOUR_PLAYER_DEBUG
-            Settings.Instance.PlayerControls[0] = InputManager.ControlType.KEYBOARD0;
-            Settings.Instance.PlayerColorIndices[0] = 1;
-            Settings.Instance.PlayerVirusIndices[0] = 0;
-            Settings.Instance.PlayerControls[1] = InputManager.ControlType.KEYBOARD1;
-            Settings.Instance.PlayerColorIndices[1] = 3;
-            Settings.Instance.PlayerVirusIndices[1] = 1;
-            Settings.Instance.PlayerControls[2] = InputManager.ControlType.GAMEPAD0;
-            Settings.Instance.PlayerColorIndices[2] = 4;
-            Settings.Instance.PlayerVirusIndices[2] = 2;
-            Settings.Instance.PlayerControls[3] = InputManager.ControlType.GAMEPAD1;
-            Settings.Instance.PlayerColorIndices[3] = 5;
-            Settings.Instance.PlayerVirusIndices[3] = 3;
-            Settings.Instance.NumPlayers = 4;
-            playerReady[0] = playerReady[1] = playerReady[2] = playerReady[3] = playerConnected[0] = playerConnected[1] = playerConnected[2] = playerConnected[3] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = Settings.Instance.PlayerConnected[2] = Settings.Instance.PlayerConnected[3] = true;
+            Settings.Instance.ResetPlayerSettings();
+            Settings.Instance.UseItems = false;
+            Settings.Instance.AddPlayer(new Settings.PlayerSettings()
+            {
+                ColorIndex = 0,
+                ControlType = InputManager.ControlType.NONE,
+                SlotIndex = 0,
+                Team = Player.Teams.NONE,
+                Type = Player.Type.AI,
+                Virus = VirusSwarm.VirusType.EBOLA
+            });
+            Settings.Instance.AddPlayer(new Settings.PlayerSettings()
+            {
+                ColorIndex = 1,
+                ControlType = InputManager.ControlType.NONE,
+                SlotIndex = 1,
+                Team = Player.Teams.NONE,
+                Type = Player.Type.AI,
+                Virus = VirusSwarm.VirusType.EPSTEINBARR
+            });
+            Settings.Instance.AddPlayer(new Settings.PlayerSettings()
+            {
+                ColorIndex = 2,
+                ControlType = InputManager.ControlType.NONE,
+                SlotIndex = 2,
+                Team = Player.Teams.NONE,
+                Type = Player.Type.AI,
+                Virus = VirusSwarm.VirusType.H5N1
+            });
+            Settings.Instance.AddPlayer(new Settings.PlayerSettings()
+            {
+                ColorIndex = 3,
+                ControlType = InputManager.ControlType.NONE,
+                SlotIndex = 3,
+                Team = Player.Teams.NONE,
+                Type = Player.Type.AI,
+                Virus = VirusSwarm.VirusType.HEPATITISB
+            });
+            //playerReady[0] = playerReady[1] = playerReady[2] = playerReady[3] = playerConnected[0] = playerConnected[1] = playerConnected[2] = playerConnected[3] = Settings.Instance.PlayerConnected[0] = Settings.Instance.PlayerConnected[1] = Settings.Instance.PlayerConnected[2] = Settings.Instance.PlayerConnected[3] = true;
             menu.ChangePage(Menu.Page.INGAME,gameTime);
 #elif QUICK_CTC_DEBUG
             Settings.Instance.ResetPlayerSettings();
@@ -397,22 +432,15 @@ namespace VirusX.Menu
                     }
                     if (!inputUsed)
                     {
-                        // TODO nicer
-                        if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.LEFT, controlType, false))
+                        InputManager.ControlActions[] switchActions = new InputManager.ControlActions[] { InputManager.ControlActions.LEFT , InputManager.ControlActions.RIGHT,
+                                                                                                          InputManager.ControlActions.UP, InputManager.ControlActions.DOWN };
+                        foreach (var action in switchActions)
                         {
-                            preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], InputManager.ControlActions.LEFT);
-                        }
-                        else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.RIGHT, controlType, false))
-                        {
-                            preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], InputManager.ControlActions.RIGHT);
-                        }
-                        else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.UP, controlType, false))
-                        {
-                            preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], InputManager.ControlActions.UP);
-                        }
-                        else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.DOWN, controlType, false))
-                        {
-                            preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], InputManager.ControlActions.DOWN);
+                            if (InputManager.Instance.SpecificActionButtonPressed(action, controlType, false))
+                            {
+                                preSlotMapper[(int)controlType] = SwitchPreSlots(preSlotMapper[(int)controlType], action);
+                                break;
+                            }
                         }
                     }
                 }
@@ -512,6 +540,9 @@ namespace VirusX.Menu
         /// <returns></returns>
         int AddPlayer(bool ai, InputManager.ControlType controlType)
         {
+            if (ai && Settings.Instance.GameMode == Game.GameMode.ARCADE)
+                return -1;
+
             int slotIndex = -1;
             if(controlType == InputManager.ControlType.NONE)
                 slotIndex = GetFreeSlotIndex(-1);
@@ -600,7 +631,7 @@ namespace VirusX.Menu
             virusRenderEffect.Parameters["ScreenSize"].SetValue(new Vector2(menu.ScreenWidth, menu.ScreenHeight));
 
             // virus image for each player
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < numSlots; i++)
             {
                 if (playerSlotOccupied[i])
                 {

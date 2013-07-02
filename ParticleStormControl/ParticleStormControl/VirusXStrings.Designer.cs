@@ -389,6 +389,42 @@ namespace VirusX {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ► Play Again.
+        /// </summary>
+        internal static string PlayAgain {
+            get {
+                return ResourceManager.GetString("PlayAgain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter name....
+        /// </summary>
+        internal static string ScoreEnterYourName {
+            get {
+                return ResourceManager.GetString("ScoreEnterYourName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Highscore!.
+        /// </summary>
+        internal static string ScoreNewHighScore {
+            get {
+                return ResourceManager.GetString("ScoreNewHighScore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Submit.
+        /// </summary>
+        internal static string ScoreSubmitScore {
+            get {
+                return ResourceManager.GetString("ScoreSubmitScore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to version 0.9 - Campus Days + Lange Nacht Edition (2013).
         /// </summary>
         internal static string VERSION {
