@@ -297,10 +297,18 @@ namespace VirusX
 
             // create player cells
             List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
-            spawnPoints.Add(new SpawnPoint(playerHQs[0], MONSTER_CELL_STRENGTH, 0, content));
-            for(int i=1; i<numPlayers; ++i)
-                spawnPoints.Add(new SpawnPoint(playerHQs[i], CTC_NORMAL_PLAYER_CELL_STRENGTH, i, content));
-            
+            //spawnPoints.Add(new SpawnPoint(playerHQs[0], MONSTER_CELL_STRENGTH, 0, content));
+            //for(int i=1; i<numPlayers; ++i)
+              //  spawnPoints.Add(new SpawnPoint(playerHQs[i], CTC_NORMAL_PLAYER_CELL_STRENGTH, i, content));
+
+            for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; ++playerIndex)
+            {
+                if (Settings.Instance.GetPlayer(playerIndex).Type != Player.Type.NONE)
+                {
+                    int slot = Settings.Instance.GetPlayer(playerIndex).SlotIndex;
+                    spawnPoints.Add(new SpawnPoint(playerHQs[slot], slot != 0 ? NORMAL_PLAYER_CELL_STRENGTH * 1.3f : MONSTER_CELL_STRENGTH, playerIndex, content));
+                }
+            }
             // other cells
             Vector2[] otherCells = new Vector2[]
             {
