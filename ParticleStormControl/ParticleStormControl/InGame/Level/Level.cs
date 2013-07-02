@@ -107,13 +107,15 @@ namespace VirusX
         public const float ANTIBODY_SPEED_FUN = 0.048f;
         public const float ANTIBODY_SPEED_CLASSIC = 0.024f;
 
-
-        public const float MAX_ANTIBODY_SPEED = 0.5f;
-        public const float MIN_ANTIBODY_SPEED = 0.02f;
+        // the time over which the distribution of cells and antibodies will changes.
+        // if this time is over, the distribution reaches its min for cells and max for antibodies.
+        public const float ARCADE_CHANGE_TIME = 60 * 5f;
+        public const float MAX_ANTIBODY_SPEED = 0.03f;
+        public const float MIN_ANTIBODY_SPEED = 0.0f;
         public const float ANTIBODY_SPEED_INCREASE = 0.001f;
         // Time until the anti bodies speed will be increased in seconds
-        public const float MAX_TIME_UNTIL_ANTIBODY_SPEED_INCREASE = 2f;
-        private float currentAntiBodySpeed = 0.020f;
+        public const float MAX_TIME_UNTIL_ANTIBODY_SPEED_INCREASE = 5f;
+        private float currentAntiBodySpeed = MIN_ANTIBODY_SPEED;
         private float timeUntilAntiBodySpeedIncreas = MAX_TIME_UNTIL_ANTIBODY_SPEED_INCREASE;
 
 
@@ -353,8 +355,8 @@ namespace VirusX
                         possesingSpawnPointsOverallSize[sp.PossessingPlayer] += sp.Size;
                     }
                 }
-                // move antibodies to the nearest player
-                else if (mapObject is Debuff && players.Length > 0)
+                // move antibodies to the nearest player if not in arcarde mode
+                else if (mapObject is Debuff && players.Length > 0)// && gameMode != InGame.GameMode.ARCADE)
                 {
                     var nearestPlayer = players.OrderBy(x => Vector2.DistanceSquared(x.ParticleAttractionPosition, mapObject.Position)).First();
                     Vector2 move = nearestPlayer.ParticleAttractionPosition - mapObject.Position;
@@ -472,23 +474,26 @@ namespace VirusX
 
                 float time = GameStatistics.LastStep * GameStatistics.StepTime;
 
-                float PROBABILITY_SPAWN = MathHelper.Clamp(380f - (time / 380f), 0.2f, 0.7f);//0.2f;
-                float PROBABILITY_ANTIBODY = MathHelper.Clamp(time / 380f, 0.2f, 0.7f); //0.7f;
-
-                float sum = PROBABILITY_SPAWN + PROBABILITY_ANTIBODY + 0.1f;
+                float PROBABILITY_SPAWN = MathHelper.Clamp(ARCADE_CHANGE_TIME - (time / ARCADE_CHANGE_TIME), 0.2f, 0.7f);//0.2f;
+                float PROBABILITY_ANTIBODY = MathHelper.Clamp(time / ARCADE_CHANGE_TIME, 0.2f, 0.7f); //0.7f;
+                float h = 0.5f;
+                float sum = PROBABILITY_SPAWN + PROBABILITY_ANTIBODY + h;
                 PROBABILITY_SPAWN /= sum;
-                //PROBABILITY_ANTIBODY /= sum;
+                PROBABILITY_ANTIBODY /= sum;
 
                 float rnd = (float)Random.NextDouble();
-                if (rnd + 0.1f < PROBABILITY_SPAWN)
+                if (rnd + (h/sum) < PROBABILITY_SPAWN)
                 {
-                    Vector2 position = Random.NextDirection() * (RELATIVE_MAX - new Vector2(MapGenerator.LEVEL_BORDER) * 2) + new Vector2(MapGenerator.LEVEL_BORDER);
-                    float spawnSize = (float)Random.NextDouble(100, 600);
+                    Vector2 position = new Vector2((float)(Random.NextDouble()) * (RELATIVE_MAX.X - MapGenerator.LEVEL_BORDER) + MapGenerator.LEVEL_BORDER / 2,
+                        (float)(Random.NextDouble()) * (RELATIVE_MAX.Y - MapGenerator.LEVEL_BORDER) + MapGenerator.LEVEL_BORDER / 2);
+                    // Random.NextDirection() * (RELATIVE_MAX - new Vector2(MapGenerator.LEVEL_BORDER) * 2)*0.5f + new Vector2(MapGenerator.LEVEL_BORDER);
+                    float spawnSize = (float)Random.NextDouble(100, 700);
                     mapObjects.Add(new MovingSpawnPoint(Random.NextDirection(), position, spawnSize, -1, contentManager));
                 }
-                else //if (rnd < PROBABILITY_ANTIBODY)
+                else if (rnd + (h/sum) < PROBABILITY_ANTIBODY + PROBABILITY_SPAWN)
                 {
-                    Vector2 position = Random.NextDirection() * (RELATIVE_MAX - new Vector2(MapGenerator.LEVEL_BORDER) * 2) + new Vector2(MapGenerator.LEVEL_BORDER);
+                    Vector2 position = new Vector2((float)(Random.NextDouble()) * (RELATIVE_MAX.X - MapGenerator.LEVEL_BORDER) + MapGenerator.LEVEL_BORDER / 2,
+                        (float)(Random.NextDouble()) * (RELATIVE_MAX.Y - MapGenerator.LEVEL_BORDER) + MapGenerator.LEVEL_BORDER / 2);
                     mapObjects.Add(new Debuff(position, contentManager));
                 }
             }
@@ -551,7 +556,8 @@ namespace VirusX
                 position.Y = MathHelper.Clamp(position.Y, 0.1f, Level.RELATIVE_MAX.Y);
             }
             else
-                position = new Vector2((float)(Random.NextDouble()) * (RELATIVE_MAX.X - 0.2f) + 0.1f, (float)(Random.NextDouble()) * (RELATIVE_MAX.Y - 0.2f) + 0.1f);
+                position = new Vector2((float)(Random.NextDouble()) * (RELATIVE_MAX.X - MapGenerator.LEVEL_BORDER) + MapGenerator.LEVEL_BORDER / 2,
+                        (float)(Random.NextDouble()) * (RELATIVE_MAX.Y - MapGenerator.LEVEL_BORDER) + MapGenerator.LEVEL_BORDER / 2);
             
             AddItem(item, position);
         }
