@@ -53,7 +53,7 @@ namespace VirusX
         /// (arcade mode only) until this time (seconds) the player cannot die due to a health value < ARCADE_MIN_HEALTH
         /// </summary>
         private const float ARCADE_SAFE_TIME = 10.0f;
-        private const float ARCADE_MIN_HEALTH = 1.0f;
+        private const float ARCADE_MIN_HEALTH = 2.0f;
 
 
         static public String[] GAMEMODE_NAME
@@ -477,17 +477,22 @@ namespace VirusX
                 // statistics
                 GameStatistics.addWonMatches(winPlayerIndex);
 
-                if(Settings.Instance.GameMode == GameMode.ARCADE)
+                if (Settings.Instance.GameMode == GameMode.ARCADE)
+                {
+                    Menu.ArcadeHighscore statScreen = ((Menu.ArcadeHighscore)menu.GetPage(Menu.Menu.Page.ARCADEHIGHSCORE));
+                    statScreen.NewHighScoreTime = GameStatistics.LastStep * GameStatistics.StepTime;
+
                     menu.ChangePage(Menu.Menu.Page.ARCADEHIGHSCORE, gameTime);// skip to highscore screen
+                }
                 else
                 {
                     // fill stat screen
                     Menu.StatisticsScreen statScreen = ((Menu.StatisticsScreen)menu.GetPage(Menu.Menu.Page.STATS));
-                    statScreen.WinningTeam          = winningTeam;
-                    statScreen.WinPlayerIndex       = winPlayerIndex;
-                    statScreen.PlayerTypes          = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
-                    statScreen.PlayerColorIndices   = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
-                    statScreen.Statistics           = GameStatistics;
+                    statScreen.WinningTeam = winningTeam;
+                    statScreen.WinPlayerIndex = winPlayerIndex;
+                    statScreen.PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
+                    statScreen.PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
+                    statScreen.Statistics = GameStatistics;
 
                     menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
                 }

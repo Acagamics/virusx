@@ -3,11 +3,13 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Linq;
 
 namespace VirusX.Menu
 {
@@ -21,11 +23,23 @@ namespace VirusX.Menu
             public float Time;
         };
 
-        HighScoreEntry[] highScoreEntries;
+        List<HighScoreEntry> highScoreEntries = new List<HighScoreEntry>();
 
         const int MAX_NUM_DISPLAYED_SCORED = 10;
         const string highscoreFileLocation = "Content/arcadescores";
 
+        bool enterNewHighScore = false;
+
+        private const int MAX_HIGHSCORE_NAME_LENGTH = 26;
+        private string newHighScoreName;
+
+        public float NewHighScoreTime
+        {
+            get { return newHighScoreTime; }
+            set { newHighScoreTime = value; enterNewHighScore = true; }
+        }
+        private float newHighScoreTime;
+        private bool firstOnNewHighscore = false;
 
         // encryption stuff
         const int keySize = 256;
@@ -48,12 +62,13 @@ namespace VirusX.Menu
             int height = -300;
             Interface.Add(new InterfaceButton(text, new Vector2(-width / 2, height), true, Alignment.CENTER_CENTER));
 
-            height += 50;
+            height += 90;
 
             for (int i = 0; i < MAX_NUM_DISPLAYED_SCORED; ++i)
             {
-                Interface.Add(new InterfaceButton(highScoreEntries[i].PlayerName, new Vector2(-300, height + i * 40), true, Alignment.CENTER_CENTER));
-                Interface.Add(new InterfaceButton(Utils.GenerateTimeString(highScoreEntries[i].Time), new Vector2(250, height + i * 40), true, Alignment.CENTER_CENTER));
+                int index = i;
+                Interface.Add(new InterfaceButton(() => highScoreEntries[index].PlayerName, new Vector2(-300, height + i * 40), false, Alignment.CENTER_CENTER));
+                Interface.Add(new InterfaceButton(() => Utils.GenerateTimeString(highScoreEntries[index].Time), new Vector2(250, height + i * 40), false, Alignment.CENTER_CENTER));
             }
 
             // back button
@@ -62,7 +77,26 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceButton(text,
                 new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() + InterfaceImageButton.PADDING * 4), () => true,
                 Alignment.BOTTOM_CENTER));
+
+            // enter highscore stuff
+            Interface.Add(new InterfaceFiller(Vector2.Zero, Color.Black * 0.8f, () => enterNewHighScore));
+
+            Vector2 stringSize = menu.FontHeading.MeasureString(VirusXStrings.ScoreNewHighScore);
+            Interface.Add(new InterfaceButton(() => VirusXStrings.ScoreNewHighScore, new Vector2(-stringSize.X / 2, -stringSize.Y * 4.5f), () => false, () => enterNewHighScore, true, Alignment.CENTER_CENTER));
+
+            Interface.Add(new InterfaceButton(() => Utils.GenerateTimeString(NewHighScoreTime), new Vector2(-30, -stringSize.Y * 3.0f), () => false, () => enterNewHighScore, 60, Alignment.CENTER_CENTER));
+
+            const int enterNameWidth = 400;
+            stringSize = menu.Font.MeasureString(VirusXStrings.ScoreEnterYourName);
+            Interface.Add(new InterfaceButton(() => newHighScoreName, new Vector2(-enterNameWidth / 2, -stringSize.Y / 2), () => false, () => enterNewHighScore, enterNameWidth, Alignment.CENTER_CENTER));
+
+            stringSize = menu.Font.MeasureString(VirusXStrings.ScoreSubmitScore);
+            Interface.Add(new InterfaceButton(VirusXStrings.ScoreSubmitScore, new Vector2(-stringSize.X / 2, stringSize.Y * 3), () => true, () => enterNewHighScore, Alignment.CENTER_CENTER));
+
+
+            newHighScoreName = VirusXStrings.ScoreEnterYourName;
         }
+
 
         public void ReadHighScore()
         {
@@ -91,16 +125,23 @@ namespace VirusX.Menu
                         HighScoreEntry entry;
                         entry.PlayerName = xmlReader.GetAttribute("name");
                         entry.Time = float.Parse(xmlReader.GetAttribute("time"));
+                        highScoreEntries.Add(entry);
                     }
                 }
             }
             catch
             {
-                highScoreEntries = new HighScoreEntry[10];
-                for (int i = 0; i < 10; ++i)
-                    highScoreEntries[i] = new HighScoreEntry() { PlayerName = "asdasdfasdf", Time = 9001.0f };
-                SafeHighScore();
             }
+
+            bool dirty = false;
+            while (highScoreEntries.Count < 10)
+            {
+                highScoreEntries.Add(new HighScoreEntry() { PlayerName = " ", Time = 0.0f });
+                dirty = true;
+            }
+            highScoreEntries.OrderByDescending(x => x.Time);
+            if(dirty)
+                SafeHighScore();
         }
 
         public void SafeHighScore()
@@ -111,7 +152,7 @@ namespace VirusX.Menu
                 using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter))
                 {
                     xmlWriter.WriteStartDocument();
-                    for(int i=0; i<highScoreEntries.Length; ++i)
+                    for(int i=0; i<highScoreEntries.Count; ++i)
                     {
                         xmlWriter.WriteStartElement("elem" + i.ToString());
                         xmlWriter.WriteStartAttribute("name");
@@ -126,7 +167,7 @@ namespace VirusX.Menu
                 byte[] plainTextBytes = Encoding.UTF8.GetBytes(stringWriter.ToString());
                 var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC };
                 ICryptoTransform encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes);
-                MemoryStream filestream = new MemoryStream();//using(FileStream filestream = new FileStream(highscoreFileLocation, FileMode.Create, FileAccess.Write))
+                using(FileStream filestream = new FileStream(highscoreFileLocation, FileMode.Create, FileAccess.Write))
                 using (CryptoStream cryptoStream = new CryptoStream(filestream, encryptor, CryptoStreamMode.Write))
                 {
                     cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
@@ -137,6 +178,7 @@ namespace VirusX.Menu
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
+            firstOnNewHighscore = true;
             base.Update(gameTime);  // reduces flicker
         }
 
@@ -147,12 +189,61 @@ namespace VirusX.Menu
 
         public override void Update(GameTime gameTime)
         {
+            // enter name
+            if (enterNewHighScore)
+            {
+                bool upperCase = Keyboard.GetState().GetPressedKeys().Contains(Keys.LeftShift) ||
+                                 Keyboard.GetState().GetPressedKeys().Contains(Keys.RightShift) ||
+                                 Keyboard.GetState().GetPressedKeys().Contains(Keys.CapsLock);
+                foreach (Keys key in Keyboard.GetState().GetPressedKeys())
+                {
+                    if (InputManager.Instance.IsButtonPressed(key))
+                    {
+                        char character = InputManager.ConvertKeyboardInput(key, upperCase);
+                        bool validKey = character != '\0' || key == Keys.Back || key == Keys.Space;
+
+                        if (firstOnNewHighscore && validKey)
+                        {
+                            newHighScoreName = "";
+                            firstOnNewHighscore = false;
+                        }
+
+                        if (key == Keys.Back && newHighScoreName.Length > 0)
+                            newHighScoreName = newHighScoreName.Remove(newHighScoreName.Length - 1, 1);
+                        else if (key == Keys.Space)
+                            newHighScoreName = newHighScoreName.Insert(newHighScoreName.Length, " ");
+                        else if (newHighScoreName.Length < MAX_HIGHSCORE_NAME_LENGTH)
+                        {
+                            if (character != '\0')
+                                newHighScoreName += character;
+                        }
+                    }
+                }
+            }
+
             if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.PAUSE)
                 || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT)
-                || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION)
-                || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.HOLD)
+                || (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.HOLD) && !enterNewHighScore)
                 || InputManager.Instance.AnyPressedButton(Buttons.Y))
+            {
+                enterNewHighScore = false;
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+            }
+            else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION))
+            {
+                if (enterNewHighScore)
+                {
+                    if (newHighScoreName != "")
+                    {
+                        highScoreEntries.Add(new HighScoreEntry() { Time = NewHighScoreTime, PlayerName = newHighScoreName });
+                        highScoreEntries = highScoreEntries.OrderByDescending(x => x.Time).ToList();
+                        enterNewHighScore = false;
+                        SafeHighScore();
+                    }
+                }
+                else
+                    menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+            }
 
             base.Update(gameTime);
         }
