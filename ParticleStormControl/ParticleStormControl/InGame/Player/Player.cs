@@ -234,7 +234,7 @@ namespace VirusX
             this.ItemSlot = global::VirusX.Item.ItemType.NONE;
 
             // place cursor
-            if (gameMode == InGame.GameMode.CAPTURE_THE_CELL)
+            if (gameMode == InGame.GameMode.CAPTURE_THE_CELL || gameMode == InGame.GameMode.ARCADE)
                 cursorPosition = cursorStartPositionsCTC[Settings.Instance.GetPlayer(playerIndex).SlotIndex];
             else
                 cursorPosition = cursorStartPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex];
