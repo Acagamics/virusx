@@ -277,7 +277,7 @@ namespace VirusX
         public float TotalHealth { get { return totalHealth; } }
         private float totalHealth = 0.0f;
 
-        private const float ARCADE_GLOBAL_DAMAGE = 1f;
+        private const float ARCADE_GLOBAL_DAMAGE = 2f;
 
         #endregion
 

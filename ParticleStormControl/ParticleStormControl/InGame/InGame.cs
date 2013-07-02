@@ -53,7 +53,7 @@ namespace VirusX
         /// (arcade mode only) until this time (seconds) the player cannot die due to a health value < ARCADE_MIN_HEALTH
         /// </summary>
         private const float ARCADE_SAFE_TIME = 5.0f;
-        private const float ARCADE_MIN_HEALTH = 4.0f;
+        private const float ARCADE_MIN_HEALTH = 10.0f;
 
 
         static public String[] GAMEMODE_NAME

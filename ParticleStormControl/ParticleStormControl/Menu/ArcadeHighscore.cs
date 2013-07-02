@@ -180,7 +180,7 @@ namespace VirusX.Menu
                         xmlWriter.WriteStartAttribute("name");
                         xmlWriter.WriteValue(highScoreEntries[i].PlayerName);
                         xmlWriter.WriteStartAttribute("time");
-                        xmlWriter.WriteValue(highScoreEntries[i].Time);
+                        xmlWriter.WriteValue(highScoreEntries[i].Time.ToString());
                     }
                     xmlWriter.WriteEndDocument();
                 }
