@@ -43,7 +43,7 @@ namespace VirusX
         private Texture2D glowTexture;
         private Texture2D explosionTexture;
         private Texture2D nucleusTexture_inner;
-        private Texture2D nucleusTexture_outer;
+        protected Texture2D nucleusTexture_outer;
 
         private readonly float randomAngle;
 
