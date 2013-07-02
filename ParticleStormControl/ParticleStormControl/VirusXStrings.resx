@@ -380,4 +380,7 @@ multiple sclerosis and Hodgkin lymphoma.</value>
   <data name="ScoreSubmitScore" xml:space="preserve">
     <value>Submit</value>
   </data>
+  <data name="PlayAgain" xml:space="preserve">
+    <value>► Play Again</value>
+  </data>
 </root>

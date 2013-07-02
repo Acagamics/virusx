@@ -138,7 +138,7 @@ namespace VirusX.Menu
             Interface.Add(diagramDescription);
 
             // play again button
-            string text = "► Play Again";
+            string text = VirusXStrings.PlayAgain;
             int width = (int)menu.Font.MeasureString(text).X;
             Interface.Add(new InterfaceButton(text,
                 new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() * 2 + InterfaceImageButton.PADDING * 7),

@@ -260,16 +260,6 @@ namespace VirusX.Menu
                 Interface.Add(new InterfaceButton(" F1", new Vector2(115, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
                 Interface.Add(new InterfaceButton("show controls", new Vector2(165, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
 
-                // countdown
-                String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
-                Vector2 size = menu.FontHeading.MeasureString(text);
-                Interface.Add(new InterfaceFiller(Vector2.Zero, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, Color.FromNonPremultiplied(0, 0, 0, 128), () => { return countdown.TotalSeconds > 0; }));
-                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.White, () => { return countdown.TotalSeconds > 0; }));
-                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.Black, () => { return countdown.TotalSeconds > safeCountdown; }));
-                InterfaceButton countdownButton = new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true);
-                countdownButton.Silent = true;
-                Interface.Add(countdownButton);
-
                 // preSlotImages
                 for (int i = 0; i < 4; i++)
                 {
@@ -282,6 +272,16 @@ namespace VirusX.Menu
                         }
                     }
                 }
+
+                // countdown
+                String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
+                Vector2 size = menu.FontHeading.MeasureString(text);
+                Interface.Add(new InterfaceFiller(Vector2.Zero, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, Color.FromNonPremultiplied(0, 0, 0, 128), () => { return countdown.TotalSeconds > 0; }));
+                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.White, () => { return countdown.TotalSeconds > 0; }));
+                Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.Black, () => { return countdown.TotalSeconds > safeCountdown; }));
+                InterfaceButton countdownButton = new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true);
+                countdownButton.Silent = true;
+                Interface.Add(countdownButton);
 
                 base.LoadContent(content);
             }

@@ -41,6 +41,8 @@ namespace VirusX.Menu
         private float newHighScoreTime;
         private bool firstOnNewHighscore = false;
 
+        private bool cameFromGame = false;
+
         // encryption stuff
         const int keySize = 256;
         const string encryptionKey = "1234567890123456"; //"don't even think of it!F9LG@pxd2_7BCc4gff+]@-FG5ugZir#479-/{U>W§D)Fp-_-§_";
@@ -49,6 +51,15 @@ namespace VirusX.Menu
         static readonly byte[] keyBytes = password.GetBytes(keySize / 8);
         static readonly byte[] initVectorBytes = Encoding.UTF8.GetBytes(encryptionKey);
 
+        // buttons
+        enum Button
+        {
+            AGAIN,
+            MAINMENU,
+
+            NUM_BUTTONS
+        };
+        Button selectedButton = Button.MAINMENU;
 
         public ArcadeHighscore(Menu menu)
             : base(menu)
@@ -71,11 +82,22 @@ namespace VirusX.Menu
                 Interface.Add(new InterfaceButton(() => Utils.GenerateTimeString(highScoreEntries[index].Time), new Vector2(250, height + i * 40), false, Alignment.CENTER_CENTER));
             }
 
-            // back button
+            // play again button
+            text = VirusXStrings.PlayAgain;
+            width = (int)menu.Font.MeasureString(text).X;
+            Interface.Add(new InterfaceButton(text,
+                new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() * 2 + InterfaceImageButton.PADDING * 7),
+                () => { return selectedButton == Button.AGAIN; },
+                () => cameFromGame,
+                Alignment.BOTTOM_CENTER));
+
+            // main menu button
             text = VirusXStrings.BackToMainMenu;
             width = (int)menu.Font.MeasureString(text).X;
             Interface.Add(new InterfaceButton(text,
-                new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() + InterfaceImageButton.PADDING * 4), () => true,
+                new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() + InterfaceImageButton.PADDING * 4),
+                () => { return selectedButton == Button.MAINMENU; },
+                () => true,
                 Alignment.BOTTOM_CENTER));
 
             // enter highscore stuff
@@ -178,6 +200,7 @@ namespace VirusX.Menu
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
+            cameFromGame = oldPage == Menu.Page.INGAME;
             firstOnNewHighscore = true;
             base.Update(gameTime);  // reduces flicker
         }
@@ -221,6 +244,13 @@ namespace VirusX.Menu
                 }
             }
 
+            // button control
+            if (cameFromGame)
+                selectedButton = (Button)(Menu.Loop((int)selectedButton, (int)Button.NUM_BUTTONS, Settings.Instance.StartingControls));
+            else
+                selectedButton = Button.MAINMENU;
+
+            // cancel - highscore will be lost
             if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.PAUSE)
                 || InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT)
                 || (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.HOLD) && !enterNewHighScore)
@@ -229,8 +259,11 @@ namespace VirusX.Menu
                 enterNewHighScore = false;
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
             }
+
+            // action button
             else if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION))
             {
+                // currently entering highscore
                 if (enterNewHighScore)
                 {
                     if (newHighScoreName != "")
@@ -241,8 +274,22 @@ namespace VirusX.Menu
                         SafeHighScore();
                     }
                 }
+                // otherwise
                 else
-                    menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+                {
+                    if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION))
+                    {
+                        switch (selectedButton)
+                        {
+                            case Button.AGAIN:
+                                menu.ChangePage(Menu.Page.NEWGAME, gameTime);
+                                break;
+                            case Button.MAINMENU:
+                                menu.ChangePage(Menu.Page.MAINMENU, gameTime);
+                                break;
+                        }
+                    }
+                }
             }
 
             base.Update(gameTime);
