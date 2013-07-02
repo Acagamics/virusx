@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace VirusX
 {
@@ -27,6 +28,8 @@ namespace VirusX
         {
             this.direction = direction;
             this.damageFactor *= 3f;
+
+            this.nucleusTexture_outer = content.Load<Texture2D>("nucleus_outer_moving");
         }
 
         public override void Update(GameTime gameTime)
