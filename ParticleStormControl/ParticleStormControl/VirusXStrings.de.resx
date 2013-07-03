@@ -256,12 +256,11 @@ ein oder zwei Spielern
     <comment>The displayed name of Marburg Virus</comment>
   </data>
   <data name="VirusAdditionalInfoH5N1" xml:space="preserve">
-    <value>It is a highly contagious virus which is a potential pandemic threat.</value>
+    <value>Hochansteckendes Virus mit potenzieller pandemischer Bedrohung.</value>
     <comment>The info string of "Influenza"</comment>
   </data>
   <data name="VirusAdditionalInfoHIV" xml:space="preserve">
-    <value>Infection with HIV occurs by the transfer of blood, semen,
-vaginal fluid, pre-ejaculate, or breast milk.</value>
+    <value>Infektion mit HIV kommt bei Transfer von Blut, Samenflüssigkeit, Vaginalsekret oder Muttermilch vor.</value>
     <comment>The info string of "HIV"</comment>
   </data>
   <data name="MainMenuHighscore" xml:space="preserve">
@@ -300,58 +299,55 @@ vaginal fluid, pre-ejaculate, or breast milk.</value>
     <value>Sound</value>
   </data>
   <data name="VirusAdditionalInfoEbola" xml:space="preserve">
-    <value>EBOV is a select agent, World Health Organization Risk Group 4 Pathogen
-(requiring Biosafety Level 4-equivalent containment).</value>
+    <value>Welt Gesundheitsorgainisation, Pathogen Risikogruppe 4
+(Biologische Sicherheitsstufe 4)</value>
     <comment>The info string of "Ebola"</comment>
   </data>
-  <data name="VirusAdditionalInfoEpsteinBarr" xml:space="preserve">
-    <value>It is one of the most common viruses in humans.</value>
-    <comment>The info string of "Epstein Barr"</comment>
-  </data>
   <data name="VirusAdditionalInfoHepatitisB" xml:space="preserve">
-    <value>Can also lead to cirrhosis and hepatocellular carcinoma.</value>
+    <value>Kann außerdem zu Leberzirrhose und Leberzellkarzinom führen.</value>
     <comment>The info string of "Hepatites B"</comment>
   </data>
   <data name="VirusAdditionalInfoMarv" xml:space="preserve">
-    <value>MARV is another World Health Organization Risk Group 4 Pathogen.</value>
+    <value>Welt Gesundheitsorgainisation, Pathogen Risikogruppe 4
+(Biologische Sicherheitsstufe 4)</value>
     <comment>The info string of "Marv"</comment>
   </data>
   <data name="VirusCausedDiseaseEbola" xml:space="preserve">
-    <value>viral hemorrhagic fever (EBOLA fever)</value>
+    <value>Hämorrhagisches Fieber</value>
   </data>
   <data name="VirusCausedDiseaseEpsteinBarr" xml:space="preserve">
     <value>Implicated in several diseases that include infectious mononucleosis,
 multiple sclerosis and Hodgkin lymphoma.</value>
   </data>
   <data name="VirusCausedDiseaseH5N1" xml:space="preserve">
-    <value>avian influenza (bird flu)</value>
+    <value>Vogelgrippe</value>
   </data>
   <data name="VirusCausedDiseaseHepatitisB" xml:space="preserve">
-    <value>hepatitis B</value>
+    <value>Hepatitis B</value>
   </data>
   <data name="VirusCausedDiseaseHIV" xml:space="preserve">
-    <value>acquired immunodeficiency syndrome (AIDS)</value>
+    <value>Acquired Immunodeficiency Syndrome (AIDS)</value>
   </data>
   <data name="VirusCausedDiseaseMarv" xml:space="preserve">
-    <value>Marburg virus disease often called Marburg hemorrhagic fever (MHF)</value>
+    <value>Marburgfieber</value>
   </data>
   <data name="VirusClassificationEbola" xml:space="preserve">
-    <value>Group V; Genus Ebolavirus; Family of Filoviridae</value>
+    <value>Gruppe V; Genus Ebolavirus; Familie der Filoviridae</value>
   </data>
   <data name="VirusClassificationEpsteinBarr" xml:space="preserve">
-    <value>Group I; Genus of Lymphocryptovirus; Family of Herpesviridae</value>
+    <value>Gruppe I; Genus Lymphocryptovirus; Familie der Herpesviridae</value>
   </data>
   <data name="VirusClassificationH5N1" xml:space="preserve">
-    <value>Group V; Genus A; Family of Orthomyxoviridae</value>
+    <value>Gruppe V; Genus A; Familie der Orthomyxoviridae</value>
   </data>
   <data name="VirusClassificationHepatitisB" xml:space="preserve">
-    <value>Group VII; Genus Orthohepadnavirus; Family of Hepadnaviridae</value>
+    <value>Gruppe VII; Genus Orthohepadnavirus; Familie der Hepadnaviridae</value>
   </data>
   <data name="VirusClassificationHIV" xml:space="preserve">
-    <value>Group VI; Genus Lentivirus; Family of Retroviridae</value>
+    <value>Gruppe VI; Genus Lentivirus; Familie der Retroviridae</value>
   </data>
   <data name="VirusClassificationMarv" xml:space="preserve">
-    <value>Group V; Genus Marburgvirus; Family of Filoviridae</value>
+    <value>Gruppe V; Genus Marburgvirus; Familie der Filoviridae</value>
   </data>
   <data name="VirusShortNameEbola" xml:space="preserve">
     <value>EBOV</value>
@@ -385,5 +381,9 @@ multiple sclerosis and Hodgkin lymphoma.</value>
   </data>
   <data name="ScoreSubmitScore" xml:space="preserve">
     <value>Bestätigen</value>
+  </data>
+  <data name="VirusAdditionalInfoEpsteinBarr" xml:space="preserve">
+    <value>Ist einer der häufigesten vorkommenden Viren beim Menschen.</value>
+    <comment>The info string of "Epstein Barr"</comment>
   </data>
 </root>
