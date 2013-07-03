@@ -44,6 +44,8 @@ namespace VirusX
         public override Color ComputeColor()
         {
             Color color = Settings.Instance.GetPlayerColor(PossessingPlayer);
+            if (PossessingPlayer == -1 && CapturingPlayer != -1)
+                color = Color.Lerp(color, Settings.Instance.GetPlayerColor(CapturingPlayer), PossessingPercentage);
             color.A = (byte)(255 * opacity);
             return color;
         }
