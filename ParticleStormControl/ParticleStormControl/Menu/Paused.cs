@@ -28,7 +28,7 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceFiller(Vector2.Zero, -1, -1, Color.Black * 0.5f, () => { return true; }));
 
             // paused string
-            string label = "game paused";
+            string label = VirusXStrings.PauseScreenCaption;
             Vector2 stringSizePaused = menu.FontHeading.MeasureString(label);
             Vector2 positionPaused = (new Vector2(0, 0 - 300) - stringSizePaused) / 2;
             Interface.Add(new InterfaceButton(label, positionPaused, true, Alignment.CENTER_CENTER));
@@ -36,14 +36,14 @@ namespace VirusX.Menu
             // continue & mainmenu
             const int BUTTON_WIDTH = 150;
             float y = positionPaused.Y + 180;
-            Interface.Add(new InterfaceButton("► Continue", new Vector2(-20 - BUTTON_WIDTH, y), () => { return currentButton == Buttons.CONTINUE; }, BUTTON_WIDTH, Alignment.CENTER_CENTER));
-            Interface.Add(new InterfaceButton("► Quit to Menu", new Vector2(20, y), () => { return currentButton == Buttons.QUIT_TO_MAINMENU; }, BUTTON_WIDTH, Alignment.CENTER_CENTER));
+            Interface.Add(new InterfaceButton(VirusXStrings.PauseScreenContinue, new Vector2(-20 - BUTTON_WIDTH, y), () => { return currentButton == Buttons.CONTINUE; }, BUTTON_WIDTH, Alignment.CENTER_CENTER));
+            Interface.Add(new InterfaceButton(VirusXStrings.PauseScreenQuitToMenu, new Vector2(20, y), () => { return currentButton == Buttons.QUIT_TO_MAINMENU; }, BUTTON_WIDTH, Alignment.CENTER_CENTER));
             y += 100;
 
             // disconnected message
             for(int i=0; i<4; ++i)
             {
-                string message = "Player " + (i + 1) + " is disconnected!";
+                string message = VirusXStrings.PauseScreenPlayerDisconnected_player + (i + 1) + VirusXStrings.PauseScreenPlayerDisconnected_disconnected;
                 Vector2 position = (new Vector2(0, y) - menu.Font.MeasureString(message) / 2);
                 waitingDisplays[i] = new InterfaceButton(message, position, ()=>false, Color.White, Color.Black, Alignment.CENTER_CENTER);
                 Interface.Add(waitingDisplays[i]);

@@ -87,7 +87,7 @@ namespace VirusX.Menu
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
         {
-            if (oldPage == Menu.Page.STATS || oldPage == Menu.Page.NONE)
+           // if (oldPage == Menu.Page.PAUSED || oldPage == Menu.Page.STATS || oldPage == Menu.Page.NONE)
                 submenuVisible = SubMenu.NONE;
         }
 

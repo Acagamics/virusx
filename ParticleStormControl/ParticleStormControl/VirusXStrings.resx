@@ -222,7 +222,7 @@ players each (2-4 players)</value>
     <comment>Displayed whenever there is something turned on</comment>
   </data>
   <data name="VERSION" xml:space="preserve">
-    <value>version 0.9 - Campus Days + Lange Nacht Edition (2013)</value>
+    <value>1.0</value>
     <comment>The version string which will be displayed in the main menu.</comment>
   </data>
   <data name="VirusNameEbola" xml:space="preserve">
@@ -382,5 +382,131 @@ multiple sclerosis and Hodgkin lymphoma.</value>
   </data>
   <data name="PlayAgain" xml:space="preserve">
     <value>► Play Again</value>
+  </data>
+  <data name="ControlActionUse" xml:space="preserve">
+    <value>Action / Use Item</value>
+  </data>
+  <data name="ControlArrowDown" xml:space="preserve">
+    <value>Arrow Down</value>
+  </data>
+  <data name="ControlArrowLeft" xml:space="preserve">
+    <value>Arrow Left</value>
+  </data>
+  <data name="ControlArrowRight" xml:space="preserve">
+    <value>Arrow Right</value>
+  </data>
+  <data name="ControlArrowUp" xml:space="preserve">
+    <value>Arrow Up</value>
+  </data>
+  <data name="ControlBackHold" xml:space="preserve">
+    <value>Back / Hold Cursor</value>
+  </data>
+  <data name="ControlGamepad" xml:space="preserve">
+    <value>Gamepad</value>
+  </data>
+  <data name="ControlKeyboard1" xml:space="preserve">
+    <value>Keyboard 1</value>
+  </data>
+  <data name="ControlKeyboard2" xml:space="preserve">
+    <value>Keyboard 2</value>
+  </data>
+  <data name="ControlKeyboard3" xml:space="preserve">
+    <value>Keyboard 3</value>
+  </data>
+  <data name="ControlMoveDown" xml:space="preserve">
+    <value>Down</value>
+  </data>
+  <data name="ControlMoveLeft" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="ControlMoveRight" xml:space="preserve">
+    <value>Right</value>
+  </data>
+  <data name="ControlMoveUp" xml:space="preserve">
+    <value>Up</value>
+  </data>
+  <data name="ControlNumpad" xml:space="preserve">
+    <value>Numpad</value>
+  </data>
+  <data name="InputControlNameArrows" xml:space="preserve">
+    <value>Arrows + ENTER</value>
+  </data>
+  <data name="InputControlNameComputer" xml:space="preserve">
+    <value>Computer</value>
+  </data>
+  <data name="InputControlNameGamepad1" xml:space="preserve">
+    <value>Gampad 1</value>
+  </data>
+  <data name="InputControlNameGamepad2" xml:space="preserve">
+    <value>Gampad 2</value>
+  </data>
+  <data name="InputControlNameGamepad3" xml:space="preserve">
+    <value>Gampad 3</value>
+  </data>
+  <data name="InputControlNameGamepad4" xml:space="preserve">
+    <value>Gampad 4</value>
+  </data>
+  <data name="InputControlNameNumpad" xml:space="preserve">
+    <value>Numpad + 0</value>
+  </data>
+  <data name="InputControlNameWASD" xml:space="preserve">
+    <value>WASD + TAB</value>
+  </data>
+  <data name="MenuBack" xml:space="preserve">
+    <value>► Back</value>
+  </data>
+  <data name="NewGameAddComputer" xml:space="preserve">
+    <value>add computer</value>
+  </data>
+  <data name="NewGameCTCHelpText" xml:space="preserve">
+    <value>(you need four players for this mode)</value>
+  </data>
+  <data name="NewGameJoinHelpText" xml:space="preserve">
+    <value>&lt; press action button to join game &gt;</value>
+  </data>
+  <data name="NewGameNotReady" xml:space="preserve">
+    <value>not ready</value>
+  </data>
+  <data name="NewGameReady" xml:space="preserve">
+    <value>ready!</value>
+  </data>
+  <data name="NewGameRemoveComputer" xml:space="preserve">
+    <value>remove computer</value>
+  </data>
+  <data name="NewGameShowControls" xml:space="preserve">
+    <value>show controls</value>
+  </data>
+  <data name="NewGameStartsIn" xml:space="preserve">
+    <value>game starts in </value>
+  </data>
+  <data name="PauseScreenCaption" xml:space="preserve">
+    <value>game paused</value>
+  </data>
+  <data name="PauseScreenContinue" xml:space="preserve">
+    <value>► Continue</value>
+  </data>
+  <data name="PauseScreenPlayerDisconnected_disconnected" xml:space="preserve">
+    <value>is disconnected!</value>
+  </data>
+  <data name="PauseScreenPlayerDisconnected_player" xml:space="preserve">
+    <value>Player </value>
+  </data>
+  <data name="PauseScreenQuitToMenu" xml:space="preserve">
+    <value>► Quit to Menu</value>
+  </data>
+  <data name="TeamNameAttacker" xml:space="preserve">
+    <value>Attacker</value>
+  </data>
+  <data name="TeamNameDefender" xml:space="preserve">
+    <value>Defender</value>
+  </data>
+  <data name="TeamNameLeft" xml:space="preserve">
+    <value>Team Left</value>
+  </data>
+  <data name="TeamNameNone" xml:space="preserve">
+    <value>No Team</value>
+  </data>
+  <data name="TeamNameRight" xml:space="preserve">
+    <value>Team Right</value>
   </data>
 </root>
