@@ -70,6 +70,141 @@ namespace VirusX {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Action / Use Item.
+        /// </summary>
+        internal static string ControlActionUse {
+            get {
+                return ResourceManager.GetString("ControlActionUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Arrow Down.
+        /// </summary>
+        internal static string ControlArrowDown {
+            get {
+                return ResourceManager.GetString("ControlArrowDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Arrow Left.
+        /// </summary>
+        internal static string ControlArrowLeft {
+            get {
+                return ResourceManager.GetString("ControlArrowLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Arrow Right.
+        /// </summary>
+        internal static string ControlArrowRight {
+            get {
+                return ResourceManager.GetString("ControlArrowRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Arrow Up.
+        /// </summary>
+        internal static string ControlArrowUp {
+            get {
+                return ResourceManager.GetString("ControlArrowUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back / Hold Cursor.
+        /// </summary>
+        internal static string ControlBackHold {
+            get {
+                return ResourceManager.GetString("ControlBackHold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gamepad.
+        /// </summary>
+        internal static string ControlGamepad {
+            get {
+                return ResourceManager.GetString("ControlGamepad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keyboard 1.
+        /// </summary>
+        internal static string ControlKeyboard1 {
+            get {
+                return ResourceManager.GetString("ControlKeyboard1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keyboard 2.
+        /// </summary>
+        internal static string ControlKeyboard2 {
+            get {
+                return ResourceManager.GetString("ControlKeyboard2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keyboard 3.
+        /// </summary>
+        internal static string ControlKeyboard3 {
+            get {
+                return ResourceManager.GetString("ControlKeyboard3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Down.
+        /// </summary>
+        internal static string ControlMoveDown {
+            get {
+                return ResourceManager.GetString("ControlMoveDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left.
+        /// </summary>
+        internal static string ControlMoveLeft {
+            get {
+                return ResourceManager.GetString("ControlMoveLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right.
+        /// </summary>
+        internal static string ControlMoveRight {
+            get {
+                return ResourceManager.GetString("ControlMoveRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up.
+        /// </summary>
+        internal static string ControlMoveUp {
+            get {
+                return ResourceManager.GetString("ControlMoveUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Numpad.
+        /// </summary>
+        internal static string ControlNumpad {
+            get {
+                return ResourceManager.GetString("ControlNumpad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to English.
         /// </summary>
         internal static string CurrentLanguageName {
@@ -191,6 +326,78 @@ namespace VirusX {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Arrows + ENTER.
+        /// </summary>
+        internal static string InputControlNameArrows {
+            get {
+                return ResourceManager.GetString("InputControlNameArrows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Computer.
+        /// </summary>
+        internal static string InputControlNameComputer {
+            get {
+                return ResourceManager.GetString("InputControlNameComputer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gampad 1.
+        /// </summary>
+        internal static string InputControlNameGamepad1 {
+            get {
+                return ResourceManager.GetString("InputControlNameGamepad1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gampad 2.
+        /// </summary>
+        internal static string InputControlNameGamepad2 {
+            get {
+                return ResourceManager.GetString("InputControlNameGamepad2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gampad 3.
+        /// </summary>
+        internal static string InputControlNameGamepad3 {
+            get {
+                return ResourceManager.GetString("InputControlNameGamepad3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gampad 4.
+        /// </summary>
+        internal static string InputControlNameGamepad4 {
+            get {
+                return ResourceManager.GetString("InputControlNameGamepad4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Numpad + 0.
+        /// </summary>
+        internal static string InputControlNameNumpad {
+            get {
+                return ResourceManager.GetString("InputControlNameNumpad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WASD + TAB.
+        /// </summary>
+        internal static string InputControlNameWASD {
+            get {
+                return ResourceManager.GetString("InputControlNameWASD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit Game.
         /// </summary>
         internal static string MainMenuExitGame {
@@ -299,6 +506,87 @@ namespace VirusX {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ► Back.
+        /// </summary>
+        internal static string MenuBack {
+            get {
+                return ResourceManager.GetString("MenuBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to add computer.
+        /// </summary>
+        internal static string NewGameAddComputer {
+            get {
+                return ResourceManager.GetString("NewGameAddComputer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (you need four players for this mode).
+        /// </summary>
+        internal static string NewGameCTCHelpText {
+            get {
+                return ResourceManager.GetString("NewGameCTCHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt; press action button to join game &gt;.
+        /// </summary>
+        internal static string NewGameJoinHelpText {
+            get {
+                return ResourceManager.GetString("NewGameJoinHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to not ready.
+        /// </summary>
+        internal static string NewGameNotReady {
+            get {
+                return ResourceManager.GetString("NewGameNotReady", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ready!.
+        /// </summary>
+        internal static string NewGameReady {
+            get {
+                return ResourceManager.GetString("NewGameReady", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to remove computer.
+        /// </summary>
+        internal static string NewGameRemoveComputer {
+            get {
+                return ResourceManager.GetString("NewGameRemoveComputer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to show controls.
+        /// </summary>
+        internal static string NewGameShowControls {
+            get {
+                return ResourceManager.GetString("NewGameShowControls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to game starts in .
+        /// </summary>
+        internal static string NewGameStartsIn {
+            get {
+                return ResourceManager.GetString("NewGameStartsIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ◄ OFF ►.
         /// </summary>
         internal static string OFF {
@@ -389,6 +677,51 @@ namespace VirusX {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to game paused.
+        /// </summary>
+        internal static string PauseScreenCaption {
+            get {
+                return ResourceManager.GetString("PauseScreenCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ► Continue.
+        /// </summary>
+        internal static string PauseScreenContinue {
+            get {
+                return ResourceManager.GetString("PauseScreenContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to is disconnected!.
+        /// </summary>
+        internal static string PauseScreenPlayerDisconnected_disconnected {
+            get {
+                return ResourceManager.GetString("PauseScreenPlayerDisconnected_disconnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Player .
+        /// </summary>
+        internal static string PauseScreenPlayerDisconnected_player {
+            get {
+                return ResourceManager.GetString("PauseScreenPlayerDisconnected_player", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ► Quit to Menu.
+        /// </summary>
+        internal static string PauseScreenQuitToMenu {
+            get {
+                return ResourceManager.GetString("PauseScreenQuitToMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ► Play Again.
         /// </summary>
         internal static string PlayAgain {
@@ -425,7 +758,52 @@ namespace VirusX {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to version 0.9 - Campus Days + Lange Nacht Edition (2013).
+        ///   Looks up a localized string similar to Attacker.
+        /// </summary>
+        internal static string TeamNameAttacker {
+            get {
+                return ResourceManager.GetString("TeamNameAttacker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Defender.
+        /// </summary>
+        internal static string TeamNameDefender {
+            get {
+                return ResourceManager.GetString("TeamNameDefender", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Team Left.
+        /// </summary>
+        internal static string TeamNameLeft {
+            get {
+                return ResourceManager.GetString("TeamNameLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Team.
+        /// </summary>
+        internal static string TeamNameNone {
+            get {
+                return ResourceManager.GetString("TeamNameNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Team Right.
+        /// </summary>
+        internal static string TeamNameRight {
+            get {
+                return ResourceManager.GetString("TeamNameRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1.0.
         /// </summary>
         internal static string VERSION {
             get {

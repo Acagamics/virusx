@@ -162,7 +162,7 @@ namespace VirusX.Menu
                     // ready
                     int top = TEXTBOX_HEIGHT * 4 + InterfaceElement.PADDING;
                     Interface.Add(new InterfaceButton(
-                        () => { return playerReadyBySlot[index] ? "ready!" : "not ready"; },
+                        () => { return playerReadyBySlot[index] ? VirusXStrings.NewGameReady : VirusXStrings.NewGameNotReady; },
                         origin + new Vector2(SIDE_PADDING + TEXTBOX_HEIGHT, top),
                         () => { return playerReadyBySlot[index]; },
                         () => { return playerSlotOccupied[index]; }
@@ -251,22 +251,35 @@ namespace VirusX.Menu
                 for (int i = numSlots; i < playerSlotOccupied.Length; i++)
                     playerReadyBySlot[i] = playerSlotOccupied[i] = true;
 
-                // help text pad
                 int textBoxHeight = menu.GetFontHeight() + 2 * InterfaceElement.PADDING;
-                Interface.Add(new InterfaceImage("ButtonImages/xboxControllerRightShoulder", new Rectangle(-395, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
-                Interface.Add(new InterfaceButton("remove computer", new Vector2(-295, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
-                Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(-115, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
-                Interface.Add(new InterfaceButton("add computer", new Vector2(-15, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
-                Interface.Add(new InterfaceImage("ButtonImages/xboxControllerButtonY", new Rectangle(165, textBoxHeight, 50, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
-                Interface.Add(new InterfaceButton("show controls", new Vector2(215, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+                if (numSlots > 1)
+                {
+                    // help text pad
+                    Interface.Add(new InterfaceImage("ButtonImages/xboxControllerRightShoulder", new Rectangle(-395, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
+                    Interface.Add(new InterfaceButton(VirusXStrings.NewGameRemoveComputer, new Vector2(-295, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+                    Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(-115, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
+                    Interface.Add(new InterfaceButton(VirusXStrings.NewGameAddComputer, new Vector2(-15, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+                    Interface.Add(new InterfaceImage("ButtonImages/xboxControllerButtonY", new Rectangle(165, textBoxHeight, 50, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
+                    Interface.Add(new InterfaceButton(VirusXStrings.NewGameShowControls, new Vector2(215, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
 
-                // help text keyboard
-                Interface.Add(new InterfaceButton("  -", new Vector2(-345, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
-                Interface.Add(new InterfaceButton("remove computer", new Vector2(-295, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
-                Interface.Add(new InterfaceButton("  +", new Vector2(-115, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
-                Interface.Add(new InterfaceButton("add computer", new Vector2(-65, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
-                Interface.Add(new InterfaceButton(" F1", new Vector2(115, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
-                Interface.Add(new InterfaceButton("show controls", new Vector2(165, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+                    // help text keyboard
+                    Interface.Add(new InterfaceButton("  -", new Vector2(-345, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
+                    Interface.Add(new InterfaceButton(VirusXStrings.NewGameRemoveComputer, new Vector2(-295, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+                    Interface.Add(new InterfaceButton("  +", new Vector2(-115, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
+                    Interface.Add(new InterfaceButton(VirusXStrings.NewGameAddComputer, new Vector2(-65, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+                    Interface.Add(new InterfaceButton(" F1", new Vector2(115, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
+                    Interface.Add(new InterfaceButton(VirusXStrings.NewGameShowControls, new Vector2(165, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+                }
+                else
+                {
+                    // help text pad
+                    Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(-115, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
+                    Interface.Add(new InterfaceButton(VirusXStrings.NewGameShowControls, new Vector2(-15, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+                
+                    // help text keyboard
+                    Interface.Add(new InterfaceButton("F1", new Vector2(-115, textBoxHeight), () => true, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 50, Alignment.BOTTOM_CENTER));
+                    Interface.Add(new InterfaceButton(VirusXStrings.NewGameShowControls, new Vector2(-65, textBoxHeight), () => false, () => InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
+                }
 
                 // preSlotImages
                 for (int i = 0; i < 4; i++)
@@ -282,12 +295,12 @@ namespace VirusX.Menu
                 }
 
                 // countdown
-                String text = "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "...";
+                String text = VirusXStrings.NewGameStartsIn + ((int)countdown.TotalSeconds + 1).ToString() + "...";
                 Vector2 size = menu.FontHeading.MeasureString(text);
                 Interface.Add(new InterfaceFiller(Vector2.Zero, Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, Color.FromNonPremultiplied(0, 0, 0, 128), () => { return countdown.TotalSeconds > 0; }));
                 Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.White, () => { return countdown.TotalSeconds > 0; }));
                 Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - (int)(size.Y)), Settings.Instance.ResolutionX, (int)(size.Y * 2.75f), Color.Black, () => { return countdown.TotalSeconds > safeCountdown; }));
-                InterfaceButton countdownButton = new InterfaceButton(() => { return "game starts in " + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true);
+                InterfaceButton countdownButton = new InterfaceButton(() => { return VirusXStrings.NewGameStartsIn + ((int)countdown.TotalSeconds + 1).ToString() + "..."; }, new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2) - (size / 2), () => { return !(countdown.TotalSeconds > safeCountdown); }, () => { return countdown.TotalSeconds > 0; }, true);
                 countdownButton.Silent = true;
                 Interface.Add(countdownButton);
 
@@ -815,9 +828,9 @@ namespace VirusX.Menu
             //    return "< add a computer player >";
             //else
             if (Settings.Instance.GameMode == Game.GameMode.CAPTURE_THE_CELL)
-                return "< press action button to join game >\n\n(you need four players for this mode)";
+                return VirusXStrings.NewGameJoinHelpText + "\n\n" + VirusXStrings.NewGameCTCHelpText;
             else
-                return "< press action button to join game >";
+                return VirusXStrings.NewGameJoinHelpText;
         }
 
         // drawing position of the PreSlotImages
