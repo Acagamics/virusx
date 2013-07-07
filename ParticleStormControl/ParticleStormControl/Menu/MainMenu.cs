@@ -131,6 +131,7 @@ namespace VirusX.Menu
                                     break;
 
                                 case Button.HIGHSCORE:
+                                    Settings.Instance.StartingControls = control;
                                     menu.ChangePage(Menu.Page.ARCADEHIGHSCORE, gameTime);
                                     break;
 

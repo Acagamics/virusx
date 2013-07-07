@@ -273,7 +273,7 @@ namespace VirusX.Menu
                 else
                 {
                     // help text pad
-                    Interface.Add(new InterfaceImage("ButtonImages/xboxControllerLeftShoulder", new Rectangle(-115, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
+                    Interface.Add(new InterfaceImage("ButtonImages/xboxControllerButtonY", new Rectangle(-115, textBoxHeight, 100, textBoxHeight), Color.Black, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), Alignment.BOTTOM_CENTER));
                     Interface.Add(new InterfaceButton(VirusXStrings.NewGameShowControls, new Vector2(-15, textBoxHeight), () => false, () => !InputManager.IsKeyboardControlType(Settings.Instance.StartingControls), 180, Alignment.BOTTOM_CENTER));
                 
                     // help text keyboard
