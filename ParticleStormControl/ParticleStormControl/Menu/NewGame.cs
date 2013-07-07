@@ -126,7 +126,7 @@ namespace VirusX.Menu
                     int offset = 30;
                     Interface.Add(new InterfaceFiller(new Vector2(Settings.Instance.ResolutionX / 2, 0), thickness, Settings.Instance.ResolutionY, InterfaceElement.COLOR_HIGHLIGHT, () => { return Settings.Instance.GameMode == Game.GameMode.LEFT_VS_RIGHT; }));
                     Interface.Add(new InterfaceFiller(new Vector2(0, Settings.Instance.ResolutionY / 2 - offset), Settings.Instance.ResolutionX / 2, thickness, InterfaceElement.COLOR_HIGHLIGHT, () => { return Settings.Instance.GameMode == Game.GameMode.CAPTURE_THE_CELL; }));
-                    Interface.Add(new InterfaceFiller(new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2 - offset), thickness, Settings.Instance.ResolutionY / 2 - offset, InterfaceElement.COLOR_HIGHLIGHT, () => { return Settings.Instance.GameMode == Game.GameMode.CAPTURE_THE_CELL; }));
+                    Interface.Add(new InterfaceFiller(new Vector2(Settings.Instance.ResolutionX / 2, Settings.Instance.ResolutionY / 2 - offset), thickness, Settings.Instance.ResolutionY / 2 + offset, InterfaceElement.COLOR_HIGHLIGHT, () => { return Settings.Instance.GameMode == Game.GameMode.CAPTURE_THE_CELL; }));
 
 
                     // join text
