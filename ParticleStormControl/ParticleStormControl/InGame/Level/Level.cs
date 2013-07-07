@@ -345,14 +345,29 @@ namespace VirusX
             {
                 mapObject.Update(gameTime);
 
-                // statistics
                 if (mapObject is SpawnPoint)
                 {
                     SpawnPoint sp = mapObject as SpawnPoint;
+                    // statistics
                     if (sp.PossessingPlayer != -1)
                     {
                         possesingSpawnPoints[sp.PossessingPlayer]++;
                         possesingSpawnPointsOverallSize[sp.PossessingPlayer] += sp.Size;
+                    }
+
+                    // remove AntiBodies which are in the explosion range
+                    if (gameMode == InGame.GameMode.ARCADE)
+                    {
+                        if (sp.PossessingPlayer != -1 && sp.ExplosionProgress < 1.0f)
+                        {
+                            var removeAntiBody = mapObjects.Where(x => x is Debuff);
+                            if (removeAntiBody.Count() > 0)
+                                removeAntiBody = removeAntiBody.Where(x => System.Math.Abs(Vector2.Distance(x.Position, sp.Position)) < sp.currentExplosionSize / 2);
+                            foreach (Debuff antiBody in removeAntiBody)
+                            {
+                                antiBody.Alive = false;
+                            }
+                        }
                     }
                 }
                 // move antibodies to the nearest player if not in arcarde mode
