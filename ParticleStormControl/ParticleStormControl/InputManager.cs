@@ -15,17 +15,23 @@ namespace VirusX
 
         #region enumerations
 
-        static public readonly String[] CONTROL_NAMES = new String[]
+        static public String[] CONTROL_NAMES
         {
-            "WASD + TAB",
-            "Arrows + ENTER",
-            "Numpad + 0",
-            "Gamepad 1",
-            "Gamepad 2",
-            "Gamepad 3",
-            "Gamepad 4",
-            "Computer"
-        };
+            get
+            {
+                return new String[]
+                    {
+                        VirusXStrings.InputControlNameWASD,
+                        VirusXStrings.InputControlNameArrows,
+                        VirusXStrings.InputControlNameNumpad,
+                        VirusXStrings.InputControlNameGamepad1,
+                        VirusXStrings.InputControlNameGamepad2,
+                        VirusXStrings.InputControlNameGamepad3,
+                        VirusXStrings.InputControlNameGamepad4,
+                        VirusXStrings.InputControlNameComputer
+                    };
+            }
+        }
 
         static public readonly String[] ACTION_BUTTON_NAME = new String[]
         {
@@ -261,9 +267,9 @@ namespace VirusX
                 case Keys.NumPad9: return '9';
 
                 //Special keys
-                case Keys.OemTilde: if (shift) { return '~'; } else { return '`'; }
-                case Keys.OemSemicolon: if (shift) { return ':'; } else { return ';'; }
-                case Keys.OemQuotes: if (shift) { return '"'; } else { return '\''; }
+                case Keys.OemQuotes: if (shift) { return 'Ä'; } else { return 'ä'; }
+                case Keys.OemTilde: if (shift) { return 'Ö'; } else { return 'ö'; }
+                case Keys.OemSemicolon: if (shift) { return 'Ü'; } else { return 'ü'; }
                 case Keys.OemQuestion: if (shift) { return '?'; } else { return '/'; }
                 case Keys.OemPlus: if (shift) { return '+'; } else { return '='; }
                 case Keys.OemPipe: if (shift) { return '|'; } else { return '\\'; }

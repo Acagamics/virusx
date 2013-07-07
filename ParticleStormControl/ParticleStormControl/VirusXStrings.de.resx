@@ -227,10 +227,6 @@ ein oder zwei Spielern
     <value>◄ EIN ►</value>
     <comment>Displayed whenever there is something turned on</comment>
   </data>
-  <data name="VERSION" xml:space="preserve">
-    <value>Version 0.9 - Campus Days + Lange Nacht Edition (2013)</value>
-    <comment>The version string which will be displayed in the main menu.</comment>
-  </data>
   <data name="VirusNameEbola1" xml:space="preserve">
     <value>Ebola</value>
     <comment>The diesplayed name of Ebola Virus</comment>
@@ -316,8 +312,8 @@ ein oder zwei Spielern
     <value>Hämorrhagisches Fieber</value>
   </data>
   <data name="VirusCausedDiseaseEpsteinBarr" xml:space="preserve">
-    <value>Implicated in several diseases that include infectious mononucleosis,
-multiple sclerosis and Hodgkin lymphoma.</value>
+    <value>Beteiligt an mehreren Krankheiten, die infektiöse Mononukleose gehören,
+Multiple Sklerose und Hodgkin-Lymphom.</value>
   </data>
   <data name="VirusCausedDiseaseH5N1" xml:space="preserve">
     <value>Vogelgrippe</value>
@@ -385,5 +381,134 @@ multiple sclerosis and Hodgkin lymphoma.</value>
   <data name="VirusAdditionalInfoEpsteinBarr" xml:space="preserve">
     <value>Ist einer der häufigesten vorkommenden Viren beim Menschen.</value>
     <comment>The info string of "Epstein Barr"</comment>
+  </data>
+  <data name="ControlActionUse" xml:space="preserve">
+    <value>Aktion / Item nutzen</value>
+  </data>
+  <data name="ControlArrowDown" xml:space="preserve">
+    <value>Pfeiltasten Runter</value>
+  </data>
+  <data name="ControlArrowLeft" xml:space="preserve">
+    <value>Pfeiltasten Links</value>
+  </data>
+  <data name="ControlArrowRight" xml:space="preserve">
+    <value>Pfeiltasten Rechts</value>
+  </data>
+  <data name="ControlArrowUp" xml:space="preserve">
+    <value>Pfeiltasten Hoch</value>
+  </data>
+  <data name="ControlBackHold" xml:space="preserve">
+    <value>Zurück / Halten</value>
+  </data>
+  <data name="ControlGamepad" xml:space="preserve">
+    <value>Gamepad</value>
+  </data>
+  <data name="ControlKeyboard1" xml:space="preserve">
+    <value>Tastatur 1</value>
+  </data>
+  <data name="ControlKeyboard2" xml:space="preserve">
+    <value>Tastatur 2</value>
+  </data>
+  <data name="ControlKeyboard3" xml:space="preserve">
+    <value>Tastatur 3</value>
+  </data>
+  <data name="ControlMoveDown" xml:space="preserve">
+    <value>Runter</value>
+  </data>
+  <data name="ControlMoveLeft" xml:space="preserve">
+    <value>Links</value>
+  </data>
+  <data name="ControlMoveRight" xml:space="preserve">
+    <value>Rechts</value>
+  </data>
+  <data name="ControlMoveUp" xml:space="preserve">
+    <value>Hoch</value>
+  </data>
+  <data name="ControlNumpad" xml:space="preserve">
+    <value>Ziffernblock</value>
+  </data>
+  <data name="InputControlNameArrows" xml:space="preserve">
+    <value>Pfeiltasten + ENTER</value>
+  </data>
+  <data name="InputControlNameComputer" xml:space="preserve">
+    <value>Computer</value>
+  </data>
+  <data name="InputControlNameGamepad1" xml:space="preserve">
+    <value>Gampad 1</value>
+  </data>
+  <data name="InputControlNameGamepad2" xml:space="preserve">
+    <value>Gampad 2</value>
+  </data>
+  <data name="InputControlNameGamepad3" xml:space="preserve">
+    <value>Gampad 3</value>
+  </data>
+  <data name="InputControlNameGamepad4" xml:space="preserve">
+    <value>Gampad 4</value>
+  </data>
+  <data name="InputControlNameNumpad" xml:space="preserve">
+    <value>Ziffernblock + 0</value>
+  </data>
+  <data name="InputControlNameWASD" xml:space="preserve">
+    <value>WASD + TAB</value>
+  </data>
+  <data name="MenuBack" xml:space="preserve">
+    <value>► Zurück</value>
+  </data>
+  <data name="NewGameAddComputer" xml:space="preserve">
+    <value>KI hinzufügen</value>
+  </data>
+  <data name="NewGameCTCHelpText" xml:space="preserve">
+    <value>     (vier Spieler für diesen Modus benötigt)</value>
+  </data>
+  <data name="NewGameJoinHelpText" xml:space="preserve">
+    <value>&lt; Aktionstaste drücken um Spiel beizutreten &gt;</value>
+  </data>
+  <data name="NewGameNotReady" xml:space="preserve">
+    <value>nicht bereit</value>
+  </data>
+  <data name="NewGameReady" xml:space="preserve">
+    <value>bereit!</value>
+  </data>
+  <data name="NewGameRemoveComputer" xml:space="preserve">
+    <value>KI entfernen</value>
+  </data>
+  <data name="NewGameShowControls" xml:space="preserve">
+    <value>Steuerung anzeigen</value>
+  </data>
+  <data name="NewGameStartsIn" xml:space="preserve">
+    <value>Spiel startet in </value>
+  </data>
+  <data name="PauseScreenCaption" xml:space="preserve">
+    <value>Spiel pausiert</value>
+  </data>
+  <data name="PauseScreenContinue" xml:space="preserve">
+    <value>► Weiter</value>
+  </data>
+  <data name="PauseScreenPlayerDisconnected_disconnected" xml:space="preserve">
+    <value>ist getrennt!</value>
+  </data>
+  <data name="PauseScreenPlayerDisconnected_player" xml:space="preserve">
+    <value>Spieler</value>
+  </data>
+  <data name="PauseScreenQuitToMenu" xml:space="preserve">
+    <value>► Beenden</value>
+  </data>
+  <data name="PlayAgain" xml:space="preserve">
+    <value>► Nochmal spielen</value>
+  </data>
+  <data name="TeamNameAttacker" xml:space="preserve">
+    <value>Angreifer</value>
+  </data>
+  <data name="TeamNameDefender" xml:space="preserve">
+    <value>Verteidiger</value>
+  </data>
+  <data name="TeamNameLeft" xml:space="preserve">
+    <value>Team Links</value>
+  </data>
+  <data name="TeamNameNone" xml:space="preserve">
+    <value>Kein Team</value>
+  </data>
+  <data name="TeamNameRight" xml:space="preserve">
+    <value>Team Rechts</value>
   </data>
 </root>

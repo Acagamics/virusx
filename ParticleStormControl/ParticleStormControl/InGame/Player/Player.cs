@@ -32,14 +32,20 @@ namespace VirusX
             NUM_TEAMS
         };
 
-        static public readonly String[] TEAM_NAMES = new String[]
+        static public String[] TEAM_NAMES
         {
-            "Defender",
-            "Attacker",
-            "Team Left",
-            "Team Right",
-            "No team"
-        };
+            get
+            {
+                return new String[]
+                {
+                    VirusXStrings.TeamNameDefender,
+                    VirusXStrings.TeamNameAttacker,
+                    VirusXStrings.TeamNameLeft,
+                    VirusXStrings.TeamNameRight,
+                    VirusXStrings.TeamNameNone
+                };
+            }
+        }
 
         protected VirusSwarm virusSwarm;
 

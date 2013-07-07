@@ -16,13 +16,13 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceFiller(Vector2.Zero, Color.Black * 0.5f, () => { return origin == Menu.Page.INGAME || origin == Menu.Page.NEWGAME; }));
 
             string[,] data = {
-                                 { null,                 "Keyboard 1",   "Keyboard 2",  "Keyboard 3",   "Gamepad" },
-                                 { "Up",                 "W",            "Arrow Up",    "Numpad 8",     null },
-                                 { "Left",               "A",            "Arrow Left",  "Numpad 4",     null },
-                                 { "Down",               "S",            "Arrow Down",   "Numpad 5/2",    null },
-                                 { "Right",              "D",            "Arrow Right",  "Numpad 6",    null },
-                                 { "Action / Use Item",  "Tab",        "Enter",        "Numpad 0",    null },
-                                 { "Back / Hold Cursor", "L-Shift",       "R-Shift",        "Numpad 7/9",    null },
+                                 { null,                 VirusXStrings.ControlKeyboard1,   VirusXStrings.ControlKeyboard2,  VirusXStrings.ControlKeyboard3,   VirusXStrings.ControlGamepad },
+                                 { VirusXStrings.ControlMoveUp,                 "W",           VirusXStrings.ControlArrowUp,    VirusXStrings.ControlNumpad + " 8",     null },
+                                 { VirusXStrings.ControlMoveLeft,               "A",           VirusXStrings.ControlArrowLeft,  VirusXStrings.ControlNumpad + " 4",     null },
+                                 { VirusXStrings.ControlMoveDown,               "S",           VirusXStrings.ControlArrowDown,   VirusXStrings.ControlNumpad + " 5/2",    null },
+                                 { VirusXStrings.ControlMoveRight,              "D",           VirusXStrings.ControlArrowRight,  VirusXStrings.ControlNumpad + " 6",    null },
+                                 { VirusXStrings.ControlActionUse,  "Tab",        "Enter",        VirusXStrings.ControlNumpad + " 0",    null },
+                                 { VirusXStrings.ControlBackHold, "L-Shift",       "R-Shift",        VirusXStrings.ControlNumpad + " 7/9",    null },
                              };
 
             // big table
@@ -64,7 +64,7 @@ namespace VirusX.Menu
                 Alignment.TOP_CENTER));
 
             // back button
-            string label = "► Back";
+            string label = VirusXStrings.MenuBack;
             Interface.Add(new InterfaceButton(label, new Vector2(-(int)(menu.Font.MeasureString(label).X / 2), 100), () => { return true; }, Alignment.BOTTOM_CENTER));
         }
 

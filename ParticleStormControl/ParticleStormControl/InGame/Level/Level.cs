@@ -776,7 +776,7 @@ namespace VirusX
 
                 spriteBatch.DrawString(fontCountdownLarge, text,
                                        new Vector2(mutateBigRect.X - fontCountdownLarge.MeasureString(text).X / 2,
-                                                     mutateBigRect.Y - fontCountdownLarge.MeasureString(text).Y / 2),
+                                                     mutateBigRect.Y - fontCountdownLarge.MeasureString(text).Y / 2 + 5),
                                     Color.LightGray, 0.0f, Vector2.Zero, 1, SpriteEffects.None, 0.0f);
             }
         }
