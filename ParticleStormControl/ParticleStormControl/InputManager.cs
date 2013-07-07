@@ -261,9 +261,9 @@ namespace VirusX
                 case Keys.NumPad9: return '9';
 
                 //Special keys
-                case Keys.OemTilde: if (shift) { return '~'; } else { return '`'; }
-                case Keys.OemSemicolon: if (shift) { return ':'; } else { return ';'; }
-                case Keys.OemQuotes: if (shift) { return '"'; } else { return '\''; }
+                case Keys.OemQuotes: if (shift) { return 'Ä'; } else { return 'ä'; }
+                case Keys.OemTilde: if (shift) { return 'Ö'; } else { return 'ö'; }
+                case Keys.OemSemicolon: if (shift) { return 'Ü'; } else { return 'ü'; }
                 case Keys.OemQuestion: if (shift) { return '?'; } else { return '/'; }
                 case Keys.OemPlus: if (shift) { return '+'; } else { return '='; }
                 case Keys.OemPipe: if (shift) { return '|'; } else { return '\\'; }
