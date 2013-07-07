@@ -153,9 +153,16 @@ namespace VirusX
         #region life and lifetime
 
         public bool Alive
-        { get { return alive; } }
+        {
+            get { return alive; }
+            set {
+                alive = value;
+                if (!value)
+                    AudioManager.Instance.PlaySoundeffect("death");
+            }
+        }
         private bool alive = true;
-        
+
         public float TotalVirusHealth
         { get { return alive ? virusSwarm.TotalHealth : 0; } }
 
@@ -312,7 +319,7 @@ namespace VirusX
 
             // dead due to particle loss
             if (numOwnedSpawnPoints == 0 && NumParticlesAlive == 0)
-                alive = false;
+                Alive = false;
 
             PossessingSpawnPoints = (uint)posessedSpawns.Count();
             PossessingSpawnPointsOverallSize = posessedSpawns.Sum(x => x.Size);
@@ -323,7 +330,7 @@ namespace VirusX
                 timeWithoutSpawnPoint += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 if (timeWithoutSpawnPoint > MAX_TIME_WITHOUT_SPAWNPOINT)
-                    alive = false;
+                    Alive = false;
             }
             else
                 timeWithoutSpawnPoint = 0.0f;
