@@ -177,23 +177,26 @@ namespace VirusX.Menu
                     ));
 
                     // arrows up & down
-                    Rectangle virusImageRect = new Rectangle((int)origin.X + BOX_WIDTH - VIRUS_SIZE - SIDE_PADDING, (int)origin.Y + TEXTBOX_HEIGHT + 40, VIRUS_SIZE, VIRUS_SIZE);
-                    Interface.Add(new InterfaceImageButton(
-                        "icons",
-                        new Rectangle(virusImageRect.Center.X - (ARROW_VERTICAL_SIZE + ARROW_WIDDEN) / 2 - InterfaceElement.PADDING, virusImageRect.Top - InterfaceElement.PADDING - 2 * ARROW_VERTICAL_SIZE, ARROW_VERTICAL_SIZE + ARROW_WIDDEN, ARROW_VERTICAL_SIZE),
-                        new Rectangle(0, 16, 16, 16),
-                        new Rectangle(32, 16, 16, 16),
-                        () => { return isActive(InputManager.ControlActions.UP, index); },
-                        () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN; }
-                    ));
-                    Interface.Add(new InterfaceImageButton(
-                        "icons",
-                        new Rectangle(virusImageRect.Center.X - (ARROW_VERTICAL_SIZE + ARROW_WIDDEN) / 2 - InterfaceElement.PADDING, virusImageRect.Bottom - InterfaceElement.PADDING + ARROW_VERTICAL_SIZE, ARROW_VERTICAL_SIZE + ARROW_WIDDEN, ARROW_VERTICAL_SIZE),
-                        new Rectangle(16, 16, 16, 16),
-                        new Rectangle(48, 16, 16, 16),
-                        () => { return isActive(InputManager.ControlActions.DOWN, index); },
-                        () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN; }
-                    ));
+                    if (Settings.Instance.GameMode != Game.GameMode.LEFT_VS_RIGHT)
+                    {
+                        Rectangle virusImageRect = new Rectangle((int)origin.X + BOX_WIDTH - VIRUS_SIZE - SIDE_PADDING, (int)origin.Y + TEXTBOX_HEIGHT + 40, VIRUS_SIZE, VIRUS_SIZE);
+                        Interface.Add(new InterfaceImageButton(
+                            "icons",
+                            new Rectangle(virusImageRect.Center.X - (ARROW_VERTICAL_SIZE + ARROW_WIDDEN) / 2 - InterfaceElement.PADDING, virusImageRect.Top - InterfaceElement.PADDING - 2 * ARROW_VERTICAL_SIZE, ARROW_VERTICAL_SIZE + ARROW_WIDDEN, ARROW_VERTICAL_SIZE),
+                            new Rectangle(0, 16, 16, 16),
+                            new Rectangle(32, 16, 16, 16),
+                            () => { return isActive(InputManager.ControlActions.UP, index); },
+                            () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN; }
+                        ));
+                        Interface.Add(new InterfaceImageButton(
+                            "icons",
+                            new Rectangle(virusImageRect.Center.X - (ARROW_VERTICAL_SIZE + ARROW_WIDDEN) / 2 - InterfaceElement.PADDING, virusImageRect.Bottom - InterfaceElement.PADDING + ARROW_VERTICAL_SIZE, ARROW_VERTICAL_SIZE + ARROW_WIDDEN, ARROW_VERTICAL_SIZE),
+                            new Rectangle(16, 16, 16, 16),
+                            new Rectangle(48, 16, 16, 16),
+                            () => { return isActive(InputManager.ControlActions.DOWN, index); },
+                            () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN; }
+                        ));
+                    }
 
                     // arrows left & right
                     int arrowY = TEXTBOX_HEIGHT * 4 - ARROW_SIZE;
@@ -492,10 +495,13 @@ namespace VirusX.Menu
                     }
 
                     // color
-                    if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.UP, Settings.Instance.GetPlayer(playerIndex).ControlType, false) && !playerReadyBySlot[slot])
-                        Settings.Instance.GetPlayer(playerIndex).ColorIndex = GetPreviousFreeColorIndex(Settings.Instance.GetPlayer(playerIndex).ColorIndex);
-                    else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.DOWN, Settings.Instance.GetPlayer(playerIndex).ControlType, false) && !playerReadyBySlot[slot])
-                        Settings.Instance.GetPlayer(playerIndex).ColorIndex = GetNextFreeColorIndex(Settings.Instance.GetPlayer(playerIndex).ColorIndex);
+                    if (Settings.Instance.GameMode != Game.GameMode.LEFT_VS_RIGHT)
+                    {
+                        if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.UP, Settings.Instance.GetPlayer(playerIndex).ControlType, false) && !playerReadyBySlot[slot])
+                            Settings.Instance.GetPlayer(playerIndex).ColorIndex = GetPreviousFreeColorIndex(Settings.Instance.GetPlayer(playerIndex).ColorIndex);
+                        else if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.DOWN, Settings.Instance.GetPlayer(playerIndex).ControlType, false) && !playerReadyBySlot[slot])
+                            Settings.Instance.GetPlayer(playerIndex).ColorIndex = GetNextFreeColorIndex(Settings.Instance.GetPlayer(playerIndex).ColorIndex);
+                    }
 
                     // remove
                     if (InputManager.Instance.SpecificActionButtonPressed(InputManager.ControlActions.HOLD, Settings.Instance.GetPlayer(playerIndex).ControlType, false) ||
@@ -572,7 +578,29 @@ namespace VirusX.Menu
             int playerIndex = Settings.Instance.NumPlayers;
             if (slotIndex != -1)
             {
-                int colorIndex = GetNextFreeColorIndex(0);
+                int colorIndex;
+                if (Settings.Instance.GameMode != Game.GameMode.LEFT_VS_RIGHT)
+                    colorIndex = GetNextFreeColorIndex(0);
+                else
+                {
+                    switch (slotIndex)  // see Player.Colors
+                    {
+                        case 0:
+                            colorIndex = 0; // red
+                            break;
+                        case 1:
+                            colorIndex = 2; // turquoise
+                            break;
+                        case 2:
+                            colorIndex = 1; // blue
+                            break;
+                        default:
+                            colorIndex = 4; // pink
+                            break;
+                    }
+                }
+
+
                 playerSlotOccupied[slotIndex] = true;
                 playerReadyBySlot[slotIndex] = false;
                 slotIndexToPlayerIndexMapper[slotIndex] = playerIndex;

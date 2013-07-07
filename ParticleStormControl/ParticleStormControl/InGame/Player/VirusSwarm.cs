@@ -224,7 +224,12 @@ namespace VirusX
 
         #region Particle Color
 
-        public readonly static Color[] ParticleColors = { new Color(240, 80, 70), new Color(60, 70, 240), new Color(42, 216, 221), new Color(80, 200, 80), /*Color.DarkSlateGray,*/ Color.DeepPink, new Color(250, 120 + 60, 20 + 30) };
+        public readonly static Color[] ParticleColors = { new Color(240, 80, 70), 
+                                                            new Color(60, 70, 240),
+                                                            new Color(42, 216, 221), 
+                                                            new Color(80, 200, 80), /*Color.DarkSlateGray,*/ 
+                                                            Color.DeepPink, 
+                                                            new Color(250, 120 + 60, 20 + 30) };
 
 
         // attention when porting: XBOX and other platforms might save BGR!
