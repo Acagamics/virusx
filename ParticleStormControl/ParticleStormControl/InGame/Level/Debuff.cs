@@ -34,6 +34,8 @@ namespace VirusX
 
         private readonly Vector2 textureCenter;
 
+        public bool IsExploding { get { return explosionTimer.IsRunning && Alive; } }
+
         public Debuff(Vector2 Position, ContentManager content)
             : base(Position, -1, 0.01f, 20.0f, 3)
         {
