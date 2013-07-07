@@ -362,10 +362,11 @@ namespace VirusX
                         {
                             var removeAntiBody = mapObjects.Where(x => x is Debuff);
                             if (removeAntiBody.Count() > 0)
-                                removeAntiBody = removeAntiBody.Where(x => System.Math.Abs(Vector2.Distance(x.Position, sp.Position)) < sp.currentExplosionSize / 3);
+                                removeAntiBody = removeAntiBody.Where(x => System.Math.Abs(Vector2.Distance(x.Position, sp.Position)) < sp.currentExplosionSize / 4);
                             foreach (Debuff antiBody in removeAntiBody)
                             {
-                                antiBody.IsDeactivated = true;//.Alive = false;
+                                if(!antiBody.IsExploding)
+                                antiBody/*.IsDeactivated = true;//*/.Alive = false;
                             }
                         }
                     }
