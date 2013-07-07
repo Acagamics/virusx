@@ -476,12 +476,13 @@ namespace VirusX
             }
         }
 
+        bool arcardeSpawnSpawnPointOrAntibody = true;
         /// <summary>
         /// places cells and antibodies for arcade mode
         /// </summary>
         public void PlaceArcadeModeElements(Player player)
         {
-            const float ARCADE_MODE_SPAWN_INTERVAL = 0.2f;
+            const float ARCADE_MODE_SPAWN_INTERVAL = 0.15f;
 
             if(pickuptimer.Elapsed.TotalSeconds > ARCADE_MODE_SPAWN_INTERVAL)
             {
@@ -491,13 +492,14 @@ namespace VirusX
 
                 float PROBABILITY_SPAWN = MathHelper.Clamp(ARCADE_CHANGE_TIME - (time / ARCADE_CHANGE_TIME), 0.2f, 0.7f);//0.2f;
                 float PROBABILITY_ANTIBODY = MathHelper.Clamp(time / ARCADE_CHANGE_TIME, 0.2f, 0.7f); //0.7f;
-                float h = 0.5f;
-                float sum = PROBABILITY_SPAWN + PROBABILITY_ANTIBODY + h;
-                PROBABILITY_SPAWN /= sum;
-                PROBABILITY_ANTIBODY /= sum;
+                //float h = 0.5f;
+                //float sum = PROBABILITY_SPAWN + PROBABILITY_ANTIBODY + h;
+                //PROBABILITY_SPAWN /= sum;
+                //PROBABILITY_ANTIBODY /= sum;
 
                 float rnd = (float)Random.NextDouble();
-                if (rnd + (h/sum) < PROBABILITY_SPAWN)
+
+                if (rnd /*+ (h/sum)*/ < PROBABILITY_SPAWN && arcardeSpawnSpawnPointOrAntibody)
                 {
                     Vector2 position = new Vector2((float)(Random.NextDouble()) * (RELATIVE_MAX.X - MapGenerator.LEVEL_BORDER) + MapGenerator.LEVEL_BORDER / 2,
                         (float)(Random.NextDouble()) * (RELATIVE_MAX.Y - MapGenerator.LEVEL_BORDER) + MapGenerator.LEVEL_BORDER / 2);
@@ -505,12 +507,13 @@ namespace VirusX
                     float spawnSize = (float)Random.NextDouble(100, 700);
                     mapObjects.Add(new MovingSpawnPoint(Random.NextDirection(), position, spawnSize, -1, contentManager));
                 }
-                else if (rnd + (h/sum) < PROBABILITY_ANTIBODY + PROBABILITY_SPAWN)
+                /*else*/ if (rnd /*+ (h/sum)*/ < /*PROBABILITY_ANTIBODY + */PROBABILITY_SPAWN && !arcardeSpawnSpawnPointOrAntibody)
                 {
                     Vector2 position = new Vector2((float)(Random.NextDouble()) * (RELATIVE_MAX.X - MapGenerator.LEVEL_BORDER) + MapGenerator.LEVEL_BORDER / 2,
                         (float)(Random.NextDouble()) * (RELATIVE_MAX.Y - MapGenerator.LEVEL_BORDER) + MapGenerator.LEVEL_BORDER / 2);
                     mapObjects.Add(new Debuff(position, contentManager));
                 }
+                arcardeSpawnSpawnPointOrAntibody = !arcardeSpawnSpawnPointOrAntibody;
             }
         }
 
