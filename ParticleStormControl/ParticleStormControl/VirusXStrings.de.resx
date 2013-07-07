@@ -493,6 +493,9 @@ Multiple Sklerose und Hodgkin-Lymphom.</value>
   <data name="PauseScreenQuitToMenu" xml:space="preserve">
     <value>► Beenden</value>
   </data>
+  <data name="PlayAgain" xml:space="preserve">
+    <value>► Nochmal spielen</value>
+  </data>
   <data name="TeamNameAttacker" xml:space="preserve">
     <value>Angreifer</value>
   </data>
