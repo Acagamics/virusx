@@ -800,8 +800,22 @@ namespace VirusX.Menu
                     hasHuman = true;
             }
 
+            // one of every team
+            bool teamCondition = true;
+            if (Settings.Instance.GameMode == Game.GameMode.LEFT_VS_RIGHT)
+            {
+                bool teamRight = false;
+                bool teamLeft = false;
+                for (int i = 0; i < Settings.Instance.NumPlayers; ++i)
+                {
+                    teamRight |= Settings.Instance.GetPlayer(i).Team == Player.Teams.RIGHT;
+                    teamLeft |= Settings.Instance.GetPlayer(i).Team == Player.Teams.LEFT;
+                }
+                teamCondition = teamRight && teamLeft;
+            }
+
             // if everything is fine -> start!
-            if (hasHuman && allReady && Settings.Instance.NumPlayers > 0)
+            if (hasHuman && allReady && Settings.Instance.NumPlayers > 0 && teamCondition)
                 countdown = TimeSpan.FromSeconds(maxCountdown - 0.001);
             else
                 countdown = TimeSpan.FromSeconds(-1);
