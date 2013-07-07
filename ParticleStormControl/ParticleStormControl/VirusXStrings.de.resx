@@ -511,4 +511,28 @@ Multiple Sklerose und Hodgkin-Lymphom.</value>
   <data name="TeamNameRight" xml:space="preserve">
     <value>Team Rechts</value>
   </data>
+  <data name="CreditsAndreas" xml:space="preserve">
+    <value>Programmierung, Gameplay, Grafik</value>
+  </data>
+  <data name="CreditsEnrico" xml:space="preserve">
+    <value>Programmierung, Gameplay, Balancing</value>
+  </data>
+  <data name="CreditsGameBy" xml:space="preserve">
+    <value>Ein Spiel von</value>
+  </data>
+  <data name="CreditsMaria" xml:space="preserve">
+    <value>2D Grafiken, Interface</value>
+  </data>
+  <data name="CreditsMusic" xml:space="preserve">
+    <value>Musik / Sounds</value>
+  </data>
+  <data name="CreditsSebastian" xml:space="preserve">
+    <value>Programmierung, Interface, Musik / Sounds</value>
+  </data>
+  <data name="CreditsThanks" xml:space="preserve">
+    <value>Besonderer Dank an</value>
+  </data>
+  <data name="CreditsThanksNames" xml:space="preserve">
+    <value>Tim Benedict Jagla, Fritz und alle unsere Tester</value>
+  </data>
 </root>

@@ -21,23 +21,23 @@ namespace VirusX.Menu
         {
             Interface.Add(new InterfaceImage("logoNew", new Vector2(350, -250 / 2), Alignment.CENTER_RIGHT));
 
-            Interface.Add(new InterfaceButton("A game made by", new Vector2(100, Settings.Instance.ResolutionY), true));
+            Interface.Add(new InterfaceButton(VirusXStrings.CreditsGameBy, new Vector2(100, Settings.Instance.ResolutionY), true));
 
             List<string> names = new List<string>() {
-                "Andreas Reich", "Programming, Gameplay, Graphics",
-                "Enrico Gebert", "Programming, Gameplay, Balancing",
-                "Sebastian Lay", "Programming, Interface, Music/Sound",
-                "Maria Manneck", "2D Arts, Interface",
+                "Andreas Reich", VirusXStrings.CreditsAndreas,
+                "Enrico Gebert", VirusXStrings.CreditsEnrico,
+                "Sebastian Lay", VirusXStrings.CreditsSebastian,
+                "Maria Manneck", VirusXStrings.CreditsMaria
             };
             AddNames(names, Settings.Instance.ResolutionY + 200);
 
             names = new List<string>() {
-                "Special Thanks",
-                "Tim Benedict Jagla, Fritz and all our testers"
+                VirusXStrings.CreditsThanks,
+                VirusXStrings.CreditsThanksNames
             };
             AddNames(names, Settings.Instance.ResolutionY + 1100);
 
-            Interface.Add(new InterfaceButton("Sounds/Music", new Vector2(100, Settings.Instance.ResolutionY + 1500), true));
+            Interface.Add(new InterfaceButton(VirusXStrings.CreditsMusic, new Vector2(100, Settings.Instance.ResolutionY + 1500), true));
 
             names = new List<string>() {
                 "Beach - PaulFitzZaland", "soundcloud.com/paulfitzzaland",
