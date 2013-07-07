@@ -362,16 +362,16 @@ namespace VirusX
                         {
                             var removeAntiBody = mapObjects.Where(x => x is Debuff);
                             if (removeAntiBody.Count() > 0)
-                                removeAntiBody = removeAntiBody.Where(x => System.Math.Abs(Vector2.Distance(x.Position, sp.Position)) < sp.currentExplosionSize / 2);
+                                removeAntiBody = removeAntiBody.Where(x => System.Math.Abs(Vector2.Distance(x.Position, sp.Position)) < sp.currentExplosionSize / 3);
                             foreach (Debuff antiBody in removeAntiBody)
                             {
-                                antiBody.Alive = false;
+                                antiBody.IsDeactivated = true;//.Alive = false;
                             }
                         }
                     }
                 }
                 // move antibodies to the nearest player if not in arcarde mode
-                else if (mapObject is Debuff && players.Length > 0)// && gameMode != InGame.GameMode.ARCADE)
+                else if (mapObject is Debuff && !(mapObject as Debuff).IsDeactivated && players.Length > 0)// && gameMode != InGame.GameMode.ARCADE)
                 {
                     var nearestPlayer = players.OrderBy(x => Vector2.DistanceSquared(x.ParticleAttractionPosition, mapObject.Position)).First();
                     Vector2 move = nearestPlayer.ParticleAttractionPosition - mapObject.Position;

@@ -13,6 +13,10 @@ namespace VirusX
     class Debuff : CapturableObject
     {
         /// <summary>
+        ///  test for arcade mode
+        /// </summary>
+        public bool IsDeactivated { get; set; }
+        /// <summary>
         /// max explosion size
         /// </summary>
         public const float explosionMaxSize = 0.3f;
@@ -38,6 +42,7 @@ namespace VirusX
 
             Size = 0.05f;
             textureCenter = new Vector2(itemTexture.Width/2, itemTexture.Height/2);
+            IsDeactivated = false;
         }
 
         protected override void OnPossessingChanged()
@@ -56,7 +61,7 @@ namespace VirusX
             currentExplosionSize = explosionMaxSize * scaling;
             currentExplosionAlpha = 1.0f - effectSeconds / duration;
 
-            if (RemainingLifeTime <= duration && !explosionTimer.IsRunning)
+            if (RemainingLifeTime <= duration && !explosionTimer.IsRunning && !IsDeactivated)
                 OnPossessingChanged();
 
             if (explosionTimer.Elapsed.TotalSeconds >= duration)
@@ -65,7 +70,7 @@ namespace VirusX
 
         public override void ApplyDamage(DamageMap damageMap, float timeInterval)
         {
-            if (explosionTimer.IsRunning)
+            if (explosionTimer.IsRunning || IsDeactivated)
                 return;
 
             // does NOT use the damage function of CapturableObject since its agnostic of the capturing player
@@ -106,8 +111,11 @@ namespace VirusX
         override public Color ComputeColor()
         {
             Color resColor = Color.Lerp(Color.White, Color.Black, PossessingPercentage);
+
+            if (IsDeactivated)
+                resColor = Color.Black;//Settings.Instance.GetPlayerColor(CapturingPlayer);
             Vector4 w = resColor.ToVector4();
-            w.W = opacity;
+            w.W = opacity / (IsDeactivated ? 4 : 1);
             return new Color(w);
         }
 
