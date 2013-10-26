@@ -226,7 +226,7 @@ namespace VirusX.Menu
                     values[counter].Add(Statistics.getAverageParticles(i).ToString());
                     values[counter].Add(Statistics.getAverageHealth(i).ToString());
                     values[counter].Add(Statistics.getCollectedItems(i).ToString());
-                    values[counter].Add(IsPlayerWinner(i) ? "Winner" : "Looser");
+                    values[counter].Add(IsPlayerWinner(i) ? "Winner" : "Loser");
                     playerStatLabels[i].BackgroundColor = Settings.Instance.GetPlayerColor(i);
                     counter++;
                 }
