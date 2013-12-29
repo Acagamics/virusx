@@ -156,6 +156,7 @@
     <Compile Include="Menu\Interface\InterfaceImageButton.cs" />
     <Compile Include="Menu\Interface\InterfaceFiller.cs" />
     <Compile Include="Menu\Interface\InterfaceTooltip.cs" />
+    <Compile Include="Menu\ModeDiscription.cs" />
     <Compile Include="Menu\Options.cs" />
     <Compile Include="Menu\MainMenu.cs" />
     <Compile Include="Menu\Menu.cs" />

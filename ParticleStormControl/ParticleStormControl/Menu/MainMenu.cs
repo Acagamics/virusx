@@ -55,6 +55,8 @@ namespace VirusX.Menu
         {
             Interface.Add(new InterfaceImage("logoNew", new Vector2(50, 50)));
 
+            Interface.Add(new InterfaceImage("Kombo05_adjust", new Rectangle( Settings.Instance.ResolutionX - 306, 50, 256, 127),Alignment.TOP_LEFT,true));
+
             Interface.Add(new InterfaceButton(VirusXStrings.MainMenuNewGame, new Vector2(100, 370), () => { return selectedButton == Button.NEWGAME; }, true));
             Interface.Add(new InterfaceButton(VirusXStrings.MainMenuHighscore, new Vector2(100, 440), () => { return selectedButton == Button.HIGHSCORE; }));
             Interface.Add(new InterfaceButton(VirusXStrings.MainMenuHelp, new Vector2(100, 500), () => { return selectedButton == Button.HELP; }));
