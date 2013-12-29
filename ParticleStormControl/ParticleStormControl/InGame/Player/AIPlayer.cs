@@ -15,14 +15,18 @@ namespace VirusX
 
         class TargetSelector
         {
+            // delegates to easy switch between ai behaivors
+            delegate SpawnPoint GetPossibleTarget(Level level, Player player);
+            GetPossibleTarget targetSelector;
+
             SpawnPoint lastTarget = null;
             float lastTargetPossessingPercentage = 0f;
             float timeOnTarget;
             float maxTimeOnTarget = 5f;
 
-            SpawnPoint ignoreSpawnPoint = null;
+            List<SpawnPoint> ignoreSpawnPoint = null;
             float maxIgnoreTime = 2.5f;
-            float ignoreTime = 0f;
+            List<float> ignoreTime = null;
             
             // items
             bool ignoreItem = false;
@@ -31,96 +35,51 @@ namespace VirusX
             float ignoreItemTime = 0f;
             float maxIgnoreItemTime = 4f;
 
-            public Vector2 LastTargetPosition { get { return lastTarget != null ? lastTarget.Position : Vector2.Zero; } }
-            public Vector2 IgnorePosition { get { return ignoreSpawnPoint != null ? ignoreSpawnPoint.Position : Vector2.Zero; } }
+            float influenceCircle = 0.2f;
+            float ifPossesingPercentageIsGreaterThenThisTryToFinishTheCapture = 0.75f;
+
             public SpawnPoint TargetSpawnPoint { get { return lastTarget; } }
 
             Vector2 ownTerritoriumMid;
 
             /// <summary>
-            /// game mode influences behaviour
+            /// game mode influences behavior
             /// </summary>
             readonly InGame.GameMode gameMode;
 
-            public TargetSelector(InGame.GameMode gameMode)
+            public TargetSelector(InGame.GameMode gameMode, int usedTargetSelector)
             {
                 this.gameMode = gameMode;
+                switch (usedTargetSelector)
+                {
+                    case 0:
+                        targetSelector += SelectTarget_0;
+                        break;
+                    case 1:
+                        targetSelector += SelectTarget_1;
+                        break;
+                    default:
+                        targetSelector += SelectTarget_0;
+                        break;
+                }
+
+                ignoreTime = new List<float>();
+                ignoreSpawnPoint = new List<SpawnPoint>();
             }
 
-            public Vector2 Update(Level level, Player player, float frameTimeInterval)
+            void updateIgnoreTime(float frameTimeInterval)
             {
                 if (ignoreSpawnPoint != null)
                 {
-                    ignoreTime += frameTimeInterval;
-                    if (ignoreTime >= maxIgnoreTime)
+                    for (int i = 0; i < ignoreTime.Count(); ++i)
                     {
-                        ignoreSpawnPoint = null;
-                    }
-                }
-                Vector2 newTarget = player.ParticleAttractionPosition;
-
-                SpawnPoint possibleTarget = SelectTarget(level, player);
-                if (possibleTarget == null)
-                {
-                    lastTarget = null;
-                    return newTarget;
-                }
-
-                if (possibleTarget == lastTarget)
-                {
-                    timeOnTarget += frameTimeInterval;
-                    if (timeOnTarget >= maxTimeOnTarget)
-                    {
-                        if (ignoreSpawnPoint == null)
+                        ignoreTime[i] += frameTimeInterval;
+                        if (ignoreTime[i] >= maxIgnoreTime)
                         {
-                            ignoreSpawnPoint = possibleTarget;
-                            ignoreTime = 0f + (float)Random.NextDouble(0.5) + 0.25f;
-                        }
-                        timeOnTarget -= maxTimeOnTarget;
-
-                        possibleTarget = SelectTarget(level, player);
-
-                        if (possibleTarget == lastTarget)
-                            Console.WriteLine("The Same!!!");
-                        if (possibleTarget == null)
-                            possibleTarget = lastTarget;
-                    }
-                }
-                else timeOnTarget = 0f + (float)Random.NextDouble(0.5) + 0.25f;
-
-                Item possibleItem = SelectItem(level, player);
-
-                bool selectSpawnPoint = true;
-                float influenceCircle = 0.2f;
-                if (!ignoreItem && possibleItem != null && player.ItemSlot == Item.ItemType.NONE)
-                {
-                    if (possibleTarget.CapturingPlayer == player.Index && possibleTarget.PossessingPercentage > 0.75f)
-                    {
-                        selectSpawnPoint = true;
-                    }
-                    else
-                    {
-                        float distSq = Vector2.DistanceSquared(possibleItem.Position, player.ParticleAttractionPosition);
-                        if (influenceCircle >= distSq)
-                        {
-                            newTarget = possibleItem.Position;
-                            selectSpawnPoint = false;
-                        }
-                        timeOnItem += frameTimeInterval;
-                        if (timeOnItem >= maxTimeOnItem)
-                        {
-                            ignoreItem = true;
-                            ignoreItemTime = 0f - (float)Random.NextDouble(0.2) - 0.1f;
-                            selectSpawnPoint = true;
+                            ignoreSpawnPoint.RemoveAt(i);
+                            ignoreTime.RemoveAt(i--);
                         }
                     }
-                        
-                }
-                if (selectSpawnPoint)
-                {
-                    newTarget = possibleTarget.Position;
-                    lastTarget = possibleTarget;
-                    lastTargetPossessingPercentage = lastTarget.PossessingPercentage;
                 }
 
                 if (ignoreItem)
@@ -132,21 +91,145 @@ namespace VirusX
                         ignoreItem = false;
                     }
                 }
+            }
 
+            SpawnPoint getNextTarget(Level level, Player player)
+            {
+                SpawnPoint possibleTarget = targetSelector(level, player);
+                if (possibleTarget == null)
+                {
+                    lastTarget = null;
+                    return null;
+                }
+
+                return possibleTarget;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="target"></param>
+            /// <param name="frameTimeInterval"></param>
+            /// <returns>true, if a new target should be selected</returns>
+            bool updateTimeOnTarget(SpawnPoint target, float frameTimeInterval)
+            {
+                bool result = false;
+                if (target == lastTarget)
+                {
+                    timeOnTarget += frameTimeInterval;
+                    if (timeOnTarget >= maxTimeOnTarget)
+                    {
+                        ignoreSpawnPoint.Add(target);
+                        ignoreTime.Add(0f + (float)Random.NextDouble(0.5) + 0.25f);
+                        timeOnTarget -= maxTimeOnTarget;
+
+                        result = true;
+                    }
+                }
+                else timeOnTarget = 0f + (float)Random.NextDouble(0.5) + 0.25f;
+
+                return result;
+            }
+
+            private Vector2 selectSpawnPointOrItem(Item possibleItem, SpawnPoint possibleTarget, Player player, float frameTimeInterval)
+            {
+                Vector2 result = player.ParticleAttractionPosition;
+                bool selectSpawnPoint = true;
+
+                if (!ignoreItem && possibleItem != null && player.ItemSlot == Item.ItemType.NONE)
+                {
+                    if (possibleTarget.CapturingPlayer == player.Index && possibleTarget.PossessingPercentage > ifPossesingPercentageIsGreaterThenThisTryToFinishTheCapture)
+                    {
+                        selectSpawnPoint = true;
+                    }
+                    else
+                    {
+                        float distSq = Vector2.DistanceSquared(possibleItem.Position, player.ParticleAttractionPosition);
+                        if (influenceCircle >= distSq)
+                        {
+                            result = possibleItem.Position;
+                            selectSpawnPoint = false;
+                        }
+                        timeOnItem += frameTimeInterval;
+                        if (timeOnItem >= maxTimeOnItem)
+                        {
+                            ignoreItem = true;
+                            ignoreItemTime = 0f - (float)Random.NextDouble(0.2) - 0.1f;
+                            selectSpawnPoint = true;
+                        }
+                    }
+
+                }
+                if (selectSpawnPoint)
+                {
+                    result = possibleTarget.Position;
+                    lastTarget = possibleTarget;
+                    lastTargetPossessingPercentage = lastTarget.PossessingPercentage;
+                }
+
+                return result;
+            }
+
+            public Vector2 Update(Level level, Player player, float frameTimeInterval)
+            {
+                updateIgnoreTime(frameTimeInterval);
+                
+                Vector2 newTarget = player.ParticleAttractionPosition;
+
+                SpawnPoint possibleTarget = getNextTarget(level, player);
+                if (possibleTarget == null) return newTarget;
+
+                if (updateTimeOnTarget(possibleTarget, frameTimeInterval))
+                {
+                    possibleTarget = targetSelector(level, player);
+
+                    SpawnPoint temp = lastTarget;
+                    if (possibleTarget == null)
+                        possibleTarget = lastTarget = temp;
+                }
+
+                Item possibleItem = SelectItem(level, player);
+
+                newTarget = selectSpawnPointOrItem(possibleItem, possibleTarget, player, frameTimeInterval);
+                
                 return newTarget;
             }
 
-            private SpawnPoint SelectTarget(Level level, Player player)
+            /// <summary>
+            /// Selects the next target to be captured
+            /// </summary>
+            /// <param name="level">the current level</param>
+            /// <param name="player">the player</param>
+            /// <returns>The selected target spawn point</returns>
+            private SpawnPoint SelectTarget_0(Level level, Player player)
             {
+                var spawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer != player.Index).OrderBy(x => Vector2.DistanceSquared(x.Position, player.CursorPosition)).First<SpawnPoint>();
+
+                return spawnPoints;
+            }
+
+            /// <summary>
+            /// Selects the next target to be captured
+            /// </summary>
+            /// <param name="level">the current level</param>
+            /// <param name="player">the player</param>
+            /// <returns>The selected target spawn point</returns>
+            private SpawnPoint SelectTarget_1(Level level, Player player)
+            {
+                // get the own spawn points
                 var ownSpawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer == player.Index).OrderBy(x=> x.PossessingPercentage);
                 int numberOfOwnSPs = ownSpawnPoints.Count();
 
+                // if my main spawn point is under attack and it is not to late to safe it, go there to protect it
                 if (numberOfOwnSPs > 0 && ownSpawnPoints.First().PossessingPercentage < 0.75f && ownSpawnPoints.First().PossessingPercentage > 0.3f) return ownSpawnPoints.First();
 
+                // get spawn points with no owners
                 var noOwnerSpawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer == -1);
                 int numberOfNoOwnerSPs = noOwnerSpawnPoints.Count();
 
+                // spawn points of the enemies
                 var otherSpawnPoints = level.SpawnPoints.Where(x => x.PossessingPlayer != player.Index && x.PossessingPlayer != -1);
+                // if it is the CTC orLvsR mode we have to check for team members
                 if (gameMode == InGame.GameMode.CAPTURE_THE_CELL || gameMode == InGame.GameMode.LEFT_VS_RIGHT)
                     otherSpawnPoints = otherSpawnPoints.Where(x => Settings.Instance.GetPlayer(x.PossessingPlayer).Team != player.Team);
                 otherSpawnPoints = otherSpawnPoints.Where(x => x.Captureable == true);
@@ -154,9 +237,9 @@ namespace VirusX
 
                 if (ignoreSpawnPoint != null)
                 {
-                    noOwnerSpawnPoints = noOwnerSpawnPoints.Where(x =>  x != ignoreSpawnPoint);
+                    noOwnerSpawnPoints = noOwnerSpawnPoints.Where(x => !ignoreSpawnPoint.Contains(x));
                     numberOfNoOwnerSPs = noOwnerSpawnPoints.Count();
-                    otherSpawnPoints = otherSpawnPoints.Where(x =>  x != ignoreSpawnPoint);
+                    otherSpawnPoints = otherSpawnPoints.Where(x => !ignoreSpawnPoint.Contains(x));
                     numberOfOtherSPs = otherSpawnPoints.Count();
                 }
 
@@ -256,7 +339,7 @@ namespace VirusX
         public AIPlayer(int playerIndex, VirusSwarm.VirusType virusIndex, int colorIndex, Teams team, InGame.GameMode gameMode, GraphicsDevice device, ContentManager content, Texture2D noiseTexture) :
             base(playerIndex, virusIndex, colorIndex, team, gameMode, device, content, noiseTexture)
         {
-            targetSelector = new TargetSelector(gameMode);
+            targetSelector = new TargetSelector(gameMode,1);
             targetPosition = particleAttractionPosition = cursorPosition = cursorStartPositions[playerIndex];
         }
 
