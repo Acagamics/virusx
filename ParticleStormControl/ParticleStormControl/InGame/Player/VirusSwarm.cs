@@ -22,6 +22,7 @@ namespace VirusX
             EPSTEINBARR,
             EBOLA,
             MARV,
+            WNV,
 
             NUM_VIRUSES
         }
@@ -35,7 +36,8 @@ namespace VirusX
                                         VirusXStrings.VirusNameHIV,
                                         VirusXStrings.VirusNameEpsteinBarr,
                                         VirusXStrings.VirusNameEbola,
-                                        VirusXStrings.VirusNameMarv };
+                                        VirusXStrings.VirusNameMarv,
+                                        VirusXStrings.VirusNameWestNile};
             }
         }
      
@@ -48,7 +50,8 @@ namespace VirusX
                                         VirusXStrings.VirusAdditionalInfoHIV,
                                         VirusXStrings.VirusAdditionalInfoEpsteinBarr,
                                         VirusXStrings.VirusAdditionalInfoEbola,
-                                        VirusXStrings.VirusAdditionalInfoMarv };
+                                        VirusXStrings.VirusAdditionalInfoMarv,
+                                        VirusXStrings.VirusAdditionalInfoWestNile};
             }
         }
 
@@ -61,7 +64,8 @@ namespace VirusX
                                         VirusXStrings.VirusClassificationHIV,
                                         VirusXStrings.VirusClassificationEpsteinBarr,
                                         VirusXStrings.VirusClassificationEbola,
-                                        VirusXStrings.VirusClassificationMarv };
+                                        VirusXStrings.VirusClassificationMarv,
+                                        VirusXStrings.VirusClassificationWestNile};
             }
         }
         
@@ -74,7 +78,8 @@ namespace VirusX
                                         VirusXStrings.VirusShortNameHIV,
                                         VirusXStrings.VirusShortNameEpsteinBarr,
                                         VirusXStrings.VirusShortNameEbola,
-                                        VirusXStrings.VirusShortNameMarv };
+                                        VirusXStrings.VirusShortNameMarv,
+                                        VirusXStrings.VirusShortNameWestNile};
             }
         }
         public static string[] VirusCausedDisease
@@ -86,17 +91,18 @@ namespace VirusX
                                         VirusXStrings.VirusCausedDiseaseHIV,
                                         VirusXStrings.VirusCausedDiseaseEpsteinBarr,
                                         VirusXStrings.VirusCausedDiseaseEbola,
-                                        VirusXStrings.VirusCausedDiseaseMarv };
+                                        VirusXStrings.VirusCausedDiseaseMarv,
+                                        VirusXStrings.VirusCausedDiseaseWestNile};
             }
         }
 
 
         // IMPORTANT: The number '+' for each virus should add to the same sum. This is to imply that all virusses are equally strong. ;)
         // Currently the sum is 10
-        public static readonly string[] DESCRIPTOR_Mass = new string[] {        "++",   "++++", "+",    "++++", "+",    "++"};
-        public static readonly string[] DESCRIPTOR_Speed = new string[] {       "+++",  "+",    "++",   "++++", "++++", "++"};
-        public static readonly string[] DESCRIPTOR_Health = new string[] {      "+++",  "+++",  "++++", "+",    "++++", "++"};
-        public static readonly string[] DESCRIPTOR_Discipline = new string[] {  "++",   "++",   "+++",  "+",    "+",    "++++"};
+        public static readonly string[] DESCRIPTOR_Mass = new string[] {        "++",   "++++", "+",    "++++", "+",    "++",   "+++"};
+        public static readonly string[] DESCRIPTOR_Speed = new string[] {       "+++",  "+",    "++",   "++++", "++++", "++",   "++"};
+        public static readonly string[] DESCRIPTOR_Health = new string[] {      "+++",  "+++",  "++++", "+",    "++++", "++",   "++"};
+        public static readonly string[] DESCRIPTOR_Discipline = new string[] {  "++",   "++",   "+++",  "+",    "+",    "++++", "+++"};
 
         /// <summary>
         /// spawns = basespawn / (SPAWN_CONSTANT - mass(virus))
@@ -104,10 +110,10 @@ namespace VirusX
         private const float SPAWN_CONSTANT = 18.0f;  // higher means LESS!
 
         // attributs
-        private static readonly float[] MASS_byVirus = new float[] {        5.0f,   6.3f,   0.75f,  10.0f,  0.15f,  5.0f };    // always smaller than SPAWN_CONSTANT!
-        private static readonly float[] SPEED_byVirus = new float[] {       0.2152f,0.158f, 0.204f, 0.246f,  0.233f, 0.204f };
-        private static readonly float[] HEALTH_byVirus = new float[] {      26.25f, 25.125f,30.0f,  21.35f, 31.42f,  25.0f };
-        private static readonly float[] DISCIPLIN_byVirus = new float[] {   0.56f,  0.75f,  0.35f,  0.45f,  0.73f,  0.23f };
+        private static readonly float[] MASS_byVirus = new float[] {        5.0f,   6.3f,   0.75f,  10.0f,  0.15f,  5.0f,   5.7f };    // always smaller than SPAWN_CONSTANT!
+        private static readonly float[] SPEED_byVirus = new float[] {       0.2152f,0.158f, 0.204f, 0.246f, 0.233f, 0.204f, 0.204f };
+        private static readonly float[] HEALTH_byVirus = new float[] {      26.25f, 25.125f,30.0f,  21.35f, 31.42f,  25.0f, 25.0f };
+        private static readonly float[] DISCIPLIN_byVirus = new float[] {   0.56f,  0.75f,  0.35f,  0.45f,  0.73f,  0.23f,  0.35f };
 
         public float Speed
         { get { return SPEED_byVirus[VirusIndex]; } }
