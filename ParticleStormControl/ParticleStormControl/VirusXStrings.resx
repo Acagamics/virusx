@@ -222,7 +222,7 @@ players each (2-4 players)</value>
     <comment>Displayed whenever there is something turned on</comment>
   </data>
   <data name="VERSION" xml:space="preserve">
-    <value>1.0 Firmenkontaktmesse 19.11.2013</value>
+    <value>1.0 Lange Nacht der Wissenschaft Leipzig 27.07.2014</value>
     <comment>The version string which will be displayed in the main menu.</comment>
   </data>
   <data name="VirusNameEbola" xml:space="preserve">
