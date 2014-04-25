@@ -58,7 +58,7 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceImage("logoNew", new Vector2(50, 50)));
 
            
-            Interface.Add(new InterfaceImage("Kombo05_adjust", new Rectangle( 2 * InterfaceElement.PADDING, 150, 256, 127),Alignment.BOTTOM_LEFT,true));
+            Interface.Add(new InterfaceImage("Logo_SSG", new Rectangle( 100, 700, 162, 137),Alignment.TOP_LEFT,true));
 #if FRAUENHOFERLOGOS
             Interface.Add(new InterfaceImage("LogoFrauenhofer", new Rectangle(310 + 2 * InterfaceElement.PADDING, 85 + 2 * InterfaceElement.PADDING, 305, 83), Alignment.BOTTOM_RIGHT, true));
             Interface.Add(new InterfaceImage("Logo_WiNgS", new Rectangle(310 + 2 * InterfaceElement.PADDING, 50, 256, 258), Alignment.TOP_RIGHT, true));
