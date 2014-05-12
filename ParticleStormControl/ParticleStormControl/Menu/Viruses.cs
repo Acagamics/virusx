@@ -147,10 +147,11 @@ namespace VirusX.Menu
         /// <returns></returns>
         private List<string> GetLabels(int virusindex)
         {
+            // TODO localization
             return new List<string>() {
                 VirusSwarm.VirusNames[virusIndex] + " (" + VirusSwarm.VirusShortName[virusIndex] + ")",
                 VirusSwarm.VirusClassification[virusIndex],
-                "Caused desease:\n" + VirusSwarm.VirusCausedDisease[virusIndex],
+                "Caused diseases:\n" + VirusSwarm.VirusCausedDisease[virusIndex],
                 "Description:\n" + VirusSwarm.VirusAdditionalInfo[virusIndex],
             };
         }

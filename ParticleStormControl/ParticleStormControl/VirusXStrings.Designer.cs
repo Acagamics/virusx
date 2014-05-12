@@ -875,7 +875,7 @@ namespace VirusX {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1.0 Lange Nacht der Wissenschaft Leipzig 27.07.2014.
+        ///   Looks up a localized string similar to 1.0 Lange Nacht der Wissenschaft Leipzig 27.06.2014.
         /// </summary>
         internal static string VERSION {
             get {
