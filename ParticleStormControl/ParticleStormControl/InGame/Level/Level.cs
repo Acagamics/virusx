@@ -370,6 +370,17 @@ namespace VirusX
                             }
                         }
                     }
+
+                    var dangerZones = mapObjects.Where(x => x is DamageArea
+                                                            && (sp.Position - x.Position).LengthSquared() <= x.Size
+                                                            && (sp.PossessingPlayer == (x as DamageArea).PossessingPlayer));
+                    if(dangerZones.Count() > 0)
+                    {
+                        sp.SpawnSizeBonus = 3.0f;
+                    }else
+                    {
+                        sp.SpawnSizeBonus = 1.0f;
+                    }
                 }
                 // move antibodies to the nearest player if not in arcarde mode
                 else if (mapObject is Debuff && !(mapObject as Debuff).IsDeactivated && players.Length > 0)// && gameMode != InGame.GameMode.ARCADE)
@@ -848,6 +859,7 @@ namespace VirusX
                 case Item.ItemType.WIPEOUT:
                     mapObjects.Add(DamageArea.CreateWipeout(contentManager));
                     clearAllItems = true;
+                    switchCountdownActive = false;
                     break;
             }
             // statistic

@@ -33,6 +33,8 @@ namespace VirusX
 
         private readonly int possessingPlayer;
 
+        public int PossessingPlayer { get { return possessingPlayer; } }
+
         /// <summary>
         /// creates a new danger zone damaging area
         /// </summary>

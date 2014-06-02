@@ -8,9 +8,21 @@ namespace VirusX
 {
     class SpawnPoint : CapturableObject
     {
-        public float SpawnSize { get; private set; }
+        private float m_SpawnSize;
+        public float SpawnSize
+        {
+            get
+            {
+                return m_SpawnSize * SpawnSizeBonus;
+            }
+            private set
+            {
+                m_SpawnSize = value;
+            }
+        }
         public float SpawnTimeAccum { get; set; }
 
+        public float SpawnSizeBonus { get; set; }
 
         #region explosion
         /// <summary>
@@ -55,6 +67,7 @@ namespace VirusX
             this.nucleusTexture_outer = content.Load<Texture2D>("nucleus_outer");
             this.explosionTexture = content.Load<Texture2D>("capture_glow");
             this.SpawnSize = spawnSize;
+            this.SpawnSizeBonus = 1.0f;
 
             ExplosionMaxSize = 0.75f;
 
