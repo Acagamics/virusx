@@ -13,6 +13,7 @@ using CustomExtensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 
 namespace VirusX
@@ -493,6 +494,10 @@ namespace VirusX
                     statScreen.PlayerTypes = Settings.Instance.GetPlayerSettingSelection(x => x.Type).ToArray();
                     statScreen.PlayerColorIndices = Settings.Instance.GetPlayerSettingSelection(x => x.ColorIndex).ToArray();
                     statScreen.Statistics = GameStatistics;
+
+                    var temp = players.Where(x => x.Team == winningTeam);
+                    statScreen.WinningTeamMembers = new List<Player>();
+                    statScreen.WinningTeamMembers.AddRange(temp);
 
                     menu.ChangePage(Menu.Menu.Page.STATS, gameTime);
                 }

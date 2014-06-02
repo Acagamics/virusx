@@ -376,7 +376,7 @@ namespace VirusX
                                                             && (sp.PossessingPlayer == (x as DamageArea).PossessingPlayer));
                     if(dangerZones.Count() > 0)
                     {
-                        sp.SpawnSizeBonus = 3.0f;
+                        sp.SpawnSizeBonus = 2.7f;
                     }else
                     {
                         sp.SpawnSizeBonus = 1.0f;

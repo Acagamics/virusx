@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Linq;
 
 
 #if SAVE_STATISTICS || LOAD_STATISTICS
@@ -32,6 +33,8 @@ namespace VirusX.Menu
         /// </summary>
         public int WinPlayerIndex { get; set; }
         public Player.Teams WinningTeam { get; set; }
+
+        public List<Player> WinningTeamMembers { get; set; }
 
         public Player.Type[] PlayerTypes { get; set; }
         public int[] PlayerColorIndices { get; set; }
@@ -458,7 +461,8 @@ namespace VirusX.Menu
 
         private bool IsPlayerWinner(int index)
         {
-            switch (WinningTeam)
+            return WinningTeamMembers.Where(x => x.Index == index).Count() > 0;
+            /*switch (WinningTeam)
             {
                 case Player.Teams.NONE:
                     return index == WinPlayerIndex;
@@ -472,7 +476,7 @@ namespace VirusX.Menu
                     return index == 0;
                 default:
                     throw new NotImplementedException("Unknown team type - can't evaluate winner!");
-            }
+            }*/
         }
     }
 }
