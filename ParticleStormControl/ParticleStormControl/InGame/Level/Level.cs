@@ -379,7 +379,7 @@ namespace VirusX
                         sp.SpawnSizeBonus = 2.7f;
                     }else
                     {
-                        sp.SpawnSizeBonus = 1.0f;
+                        sp.ResetSpawnSizeBonus();
                     }
                 }
                 // move antibodies to the nearest player if not in arcarde mode

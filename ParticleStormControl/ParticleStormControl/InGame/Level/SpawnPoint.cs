@@ -22,6 +22,7 @@ namespace VirusX
         }
         public float SpawnTimeAccum { get; set; }
 
+        private float m_SpawnSizeBonus;
         public float SpawnSizeBonus { get; set; }
 
         #region explosion
@@ -59,28 +60,45 @@ namespace VirusX
 
         private readonly float randomAngle;
 
-        public SpawnPoint(Vector2 PositionIn, float spawnSize, int startposession, ContentManager content, float lifeTime = -1)
+        private Texture2D m_nucleusOutCaptureable;
+        private Texture2D m_nucleusOutUncaptureable;
+
+        //private float makeCaptureableIn = -1f;
+        private Stopwatch makeCaptureable = new Stopwatch();
+        private float makeCapturableIn = -1f;
+
+        public SpawnPoint(Vector2 PositionIn, float spawnSize, int startposession, ContentManager content, float lifeTime = -1, float spawnSizeBonus = 1f, bool _captureable = true, float _makeCaptureableIn = -1f)
             : base(PositionIn, startposession, 1.0f / spawnSize, lifeTime, 6)
         {
             this.glowTexture = content.Load<Texture2D>("glow");
             this.nucleusTexture_inner = content.Load<Texture2D>("nucleus_inner");
-            this.nucleusTexture_outer = content.Load<Texture2D>("nucleus_outer");
+            this.m_nucleusOutCaptureable = this.nucleusTexture_outer = content.Load<Texture2D>("nucleus_outer");
             this.explosionTexture = content.Load<Texture2D>("capture_glow");
             this.SpawnSize = spawnSize;
-            this.SpawnSizeBonus = 1.0f;
+            this.SpawnSizeBonus = this.m_SpawnSizeBonus = spawnSizeBonus;
 
             ExplosionMaxSize = 0.75f;
 
             randomAngle = (float)Random.NextDouble(Math.PI * 2);
 
-            if (startposession != -1)
+            if (!_captureable)
+            {
+                captureable = false;
+                this.m_nucleusOutUncaptureable = this.nucleusTexture_outer = content.Load<Texture2D>("nucleus_outer_uncaptureable");
+                if (_makeCaptureableIn > 0)
+                {
+                    makeCaptureable.Start();
+                    makeCapturableIn = _makeCaptureableIn;
+                }
+            }
+            /*if (startposession != -1)
             {
                 if (Settings.Instance.GameMode == InGame.GameMode.DOMINATION)
                 {
                     captureable = false;
                     this.nucleusTexture_outer = content.Load<Texture2D>("nucleus_outer_uncaptureable");
                 }
-            }
+            }*/
 
             Size = ((spawnSize - 100.0f)/ 900.0f) * (0.05f) + 0.03f;
 
@@ -121,6 +139,16 @@ namespace VirusX
                     float scaling = MathHelper.Clamp((float) Math.Log(effectseconds*16 + 1.0f)/3, 0.0f, 1.0f);
                     currentExplosionSize = ExplosionMaxSize*scaling;
                     currentExplosionAlpha = 1.0f - effectseconds/EXPLOSION_DURATION;
+                }
+            }
+
+            if (makeCaptureable.IsRunning)
+            {
+                if (makeCaptureable.Elapsed.Seconds >= makeCapturableIn)
+                {
+                    makeCaptureable.Stop();
+                    captureable = true;
+                    this.nucleusTexture_outer = m_nucleusOutCaptureable;
                 }
             }
         }
@@ -197,6 +225,11 @@ namespace VirusX
 
                 spriteBatch.Draw(glowTexture, DamageMap.ComputePixelRect_Centred(Position, capturingDamageSize), capturingDamage);
             }
+        }
+
+        internal void ResetSpawnSizeBonus()
+        {
+            SpawnSizeBonus = m_SpawnSizeBonus;
         }
     }
 }

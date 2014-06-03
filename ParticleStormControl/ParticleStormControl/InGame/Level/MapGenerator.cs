@@ -13,8 +13,8 @@ namespace VirusX
         public const float LEVEL_BORDER = 0.2f;
         private const float NORMAL_PLAYER_CELL_STRENGTH = 1000.0f;
 
-        private const float CTC_NORMAL_PLAYER_CELL_STRENGTH = 800.0f;
-        private const float MONSTER_CELL_STRENGTH = CTC_NORMAL_PLAYER_CELL_STRENGTH * 3;
+        private const float CTC_NORMAL_PLAYER_CELL_STRENGTH = 600.0f;
+        private const float MONSTER_CELL_STRENGTH = CTC_NORMAL_PLAYER_CELL_STRENGTH * 2.5f;
 
         private const int SPAWNS_GRID_NORMAL_X = 6;
         private const int SPAWNS_GRID_NORMAL_Y = 3;
@@ -27,6 +27,7 @@ namespace VirusX
             NORMAL,
             CAPTURE_THE_CELL,
             FUN,
+            DOMINATION,
 
             ARCADE,
 
@@ -50,9 +51,67 @@ namespace VirusX
                 case MapType.BACKGROUND:
                     return GenerateBackground(device, content, numPlayers, outBackground, levelFieldPixelSize, levelFieldPixelOffset);
 
+                case MapType.DOMINATION:
+                    return GenerateDominationLevel(device, content, numPlayers, outBackground);
                 default:
                     return GenerateNormalLevel(device, content, numPlayers, outBackground);
             }
+        }
+
+        private static IEnumerable<MapObject> GenerateDominationLevel(GraphicsDevice device, ContentManager content, int numPlayers, Background outBackground)
+        {
+            // player starts
+            List<Vector2> cellPositions = new List<Vector2>();
+
+            cellPositions.Add(new Vector2(LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER));
+            cellPositions.Add(new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, LEVEL_BORDER));
+            cellPositions.Add(new Vector2(Level.RELATIVE_MAX.X - LEVEL_BORDER, Level.RELATIVE_MAX.Y - LEVEL_BORDER));
+            cellPositions.Add(new Vector2(LEVEL_BORDER, LEVEL_BORDER));
+
+            List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
+            for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; ++playerIndex)
+            {
+                if (Settings.Instance.GetPlayer(playerIndex).Type != Player.Type.NONE)
+                {
+                    int slot = Settings.Instance.GetPlayer(playerIndex).SlotIndex;
+                    spawnPoints.Add(new SpawnPoint(cellPositions[slot], NORMAL_PLAYER_CELL_STRENGTH, playerIndex, content,-1,1f,false));
+                }
+            }
+
+            // generate in a grid of equilateral triangles
+            List<Vector2> spawnPositions = GenerateCellPositionGrid(SPAWNS_GRID_NORMAL_X, SPAWNS_GRID_NORMAL_Y, 0.12f, new Vector2(LEVEL_BORDER), Level.RELATIVE_MAX);
+
+
+            // random skipping - nonlinear randomness!
+            const int MAX_SKIPS = 5;
+            int numSkips = (int)(Math.Pow(Random.NextDouble(), 4) * MAX_SKIPS + 0.5f);
+            Vector2[] removedCells = new Vector2[numSkips];
+            for (int i = 0; i < numSkips; ++i)
+            {
+                int index = Random.Next(spawnPositions.Count);
+                removedCells[i] = spawnPositions[index];
+                spawnPositions.RemoveAt(index);
+            }
+#if EMPTY_LEVELDEBUG
+            spawnPositions.Clear();
+#endif
+            // spawn generation
+            foreach (Vector2 pos in spawnPositions)
+                spawnPoints.Add(new SpawnPoint(pos, GetStandardSpawnSizeDependingFromArea(spawnPositions, pos), -1, content));
+
+            // background
+            if (outBackground != null)
+            {
+                List<Vector2> renderCells = new List<Vector2>(spawnPoints.Select(x => x.Position));// to keep things simple, place spawnpoints at the beginning
+                renderCells.AddRange(removedCells);
+                for (int playerIndex = 0; playerIndex < Settings.Instance.NumPlayers; ++playerIndex)
+                {
+                    if (Settings.Instance.GetPlayer(playerIndex).Type == Player.Type.NONE)
+                        renderCells.Add(cellPositions[Settings.Instance.GetPlayer(playerIndex).SlotIndex]);
+                }
+                outBackground.Generate(device, renderCells, Level.RELATIVE_MAX);
+            }
+            return spawnPoints.Cast<MapObject>();
         }
 
         private static IEnumerable<MapObject> GenerateArcade(GraphicsDevice device, ContentManager content, Background outBackground)
@@ -306,9 +365,13 @@ namespace VirusX
                 if (Settings.Instance.GetPlayer(playerIndex).Type != Player.Type.NONE)
                 {
                     int slot = Settings.Instance.GetPlayer(playerIndex).SlotIndex;
-                    spawnPoints.Add(new SpawnPoint(playerHQs[slot], slot != 0 ? NORMAL_PLAYER_CELL_STRENGTH * 1.3f : MONSTER_CELL_STRENGTH, playerIndex, content));
+                    if(slot != 0)
+                        spawnPoints.Add(new SpawnPoint(playerHQs[slot], NORMAL_PLAYER_CELL_STRENGTH, playerIndex, content));
+                    else
+                        spawnPoints.Add(new SpawnPoint(playerHQs[slot], MONSTER_CELL_STRENGTH, playerIndex, content, -1, 2.8f, false, 10f));
                 }
             }
+
             // other cells
             Vector2[] otherCells = new Vector2[]
             {

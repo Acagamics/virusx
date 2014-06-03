@@ -225,6 +225,9 @@ namespace VirusX
                 case GameMode.ARCADE:
                     mapType = MapGenerator.MapType.ARCADE;
                     break;
+                case GameMode.DOMINATION:
+                    mapType = MapGenerator.MapType.DOMINATION;
+                    break;
                 default:
                     mapType = MapGenerator.MapType.NORMAL;
                     break;

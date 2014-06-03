@@ -461,22 +461,19 @@ namespace VirusX.Menu
 
         private bool IsPlayerWinner(int index)
         {
-            return WinningTeamMembers.Where(x => x.Index == index).Count() > 0;
-            /*switch (WinningTeam)
+            //return WinningTeamMembers.Where(x => x.Index == index).Count() > 0;
+            switch (WinningTeam)
             {
                 case Player.Teams.NONE:
                     return index == WinPlayerIndex;
                 case Player.Teams.LEFT:
-                    return index == 0 || index == 3;
                 case Player.Teams.RIGHT:
-                    return index == 1 || index == 2;
                 case Player.Teams.ATTACKER:
-                    return index >= 1;
                 case Player.Teams.DEFENDER:
-                    return index == 0;
+                    return WinningTeamMembers.Where(x => x.Index == index).Count() > 0;
                 default:
                     throw new NotImplementedException("Unknown team type - can't evaluate winner!");
-            }*/
+            }
         }
     }
 }
