@@ -200,7 +200,7 @@ namespace VirusX.Menu
                                 menu.ChangePage(Menu.Page.VIRUSES, gameTime);
                                 break;
                             case ButtonHelpSubmenu.GAMEPLAY:
-                                //menu.ChangePage(Menu.Page, gameTime);
+                                menu.ChangePage(Menu.Page.GAMEPLAY, gameTime);
                                 break;
                             case ButtonHelpSubmenu.CREDITS:
                                 menu.ChangePage(Menu.Page.CREDITS, gameTime);
