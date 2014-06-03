@@ -380,7 +380,7 @@ namespace VirusX
             if (playerIndex < 0 || playerIndex >= playerCount) return;
             capturedSpawnPoints[playerIndex] += 1;
 
-            OverallNumberOfSpawnPoints = System.Math.Max(OverallNumberOfSpawnPoints, capturedSpawnPoints[playerIndex]);
+            //OverallNumberOfSpawnPoints = System.Math.Max(OverallNumberOfSpawnPoints, capturedSpawnPoints[playerIndex]);
         }
 
         public void addLostSpawnPoints(int playerIndex)
