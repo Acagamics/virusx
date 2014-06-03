@@ -123,7 +123,30 @@ namespace VirusX.Menu
             for (int i = 0; i < playerStatLabels.Length; i++)
             {
                 int index = i;
-                playerStatLabels[i] = new InterfaceButton(() => { return Player.ColorNames[PlayerColorIndices[index]]; }, new Vector2(leftStart, 160 + ROW_HEIGHT * index),
+                playerStatLabels[i] = new InterfaceButton(() =>
+                                {
+                                    switch(Statistics.getVirusType(index))
+                                    {
+                                        case VirusSwarm.VirusType.EBOLA:
+                                            return VirusXStrings.VirusShortNameEbola;
+                                        case VirusSwarm.VirusType.EPSTEINBARR:
+                                            return VirusXStrings.VirusShortNameEpsteinBarr;
+                                        case VirusSwarm.VirusType.H5N1:
+                                            return VirusXStrings.VirusShortNameH5N1;
+                                        case VirusSwarm.VirusType.HEPATITISB:
+                                            return VirusXStrings.VirusShortNameHepatitisB;
+                                        case VirusSwarm.VirusType.HIV:
+                                            return VirusXStrings.VirusShortNameHIV;
+                                        case VirusSwarm.VirusType.MARV:
+                                            return VirusXStrings.VirusShortNameMarv;
+                                        case VirusSwarm.VirusType.WNV:
+                                            return VirusXStrings.VirusShortNameWestNile;
+                                        default:
+                                            throw new NotImplementedException("Unknown Virus Type - can't generate virus name!");
+                                    }
+                                    /*Player.ColorNames[PlayerColorIndices[index]];*/ 
+                                },
+                                new Vector2(leftStart, 160 + ROW_HEIGHT * index),
                                 () => { return false; }, () => { return index < Statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING, 
                                 Color.White, Color.Black, false, Alignment.TOP_CENTER);
                 Interface.Add(playerStatLabels[i]);
