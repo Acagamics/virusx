@@ -26,7 +26,9 @@ namespace VirusX
             MediaPlayer.IsRepeating = true;
 
             soundEffects.Add("click", content.Load<SoundEffect>("sound/room__snare-switchy"));
+            //soundEffects.Add("click", content.Load<SoundEffect>("sound/tick2"));
             soundEffects.Add("capture", content.Load<SoundEffect>("sound/capture"));
+            //soundEffects.Add("capture", content.Load<SoundEffect>("sound/soundFx8"));
             soundEffects.Add("switch", content.Load<SoundEffect>("sound/switch"));
             soundEffects.Add("explosion", content.Load<SoundEffect>("sound/explosion"));
             soundEffects.Add("danger", content.Load<SoundEffect>("sound/danger_zone"));
@@ -48,6 +50,23 @@ namespace VirusX
 
             if (Settings.Instance.Sound)
                 soundEffects[sound].Play();
+        }
+
+        /// <summary>
+        /// Plays a preloaded sound effect by name
+        /// </summary>
+        /// <param name="sound">click, capture, switch, explosion, danger, wipeout, collect</param>
+        public void PlaySoundeffect(string sound, float volume)
+        {
+            System.Diagnostics.Debug.Assert(soundEffects.ContainsKey(sound));
+
+            if (Settings.Instance.Sound)
+            {
+                float currentVolume = MediaPlayer.Volume;
+                MediaPlayer.Volume = volume;
+                soundEffects[sound].Play();
+                MediaPlayer.Volume = currentVolume;
+            }
         }
 
         /// <summary>

@@ -14,6 +14,7 @@ namespace VirusX.Menu
             OPTIONS,
             PAUSED,
             CONTROLS,
+            GAMEPLAY,
             VIRUSES,
 
             INGAME,
@@ -81,6 +82,7 @@ namespace VirusX.Menu
             pages[(int)Page.INGAME] = new InGame(this);
             pages[(int)Page.CREDITS] = new Credits(this);
             pages[(int)Page.CONTROLS] = new Controls(this);
+            pages[(int)Page.GAMEPLAY] = new Gameplay(this);
             pages[(int)Page.VIRUSES] = new Viruses(this);
             pages[(int)Page.ARCADEHIGHSCORE] = new ArcadeHighscore(this);
         }

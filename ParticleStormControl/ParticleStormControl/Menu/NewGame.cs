@@ -186,7 +186,10 @@ namespace VirusX.Menu
                             new Rectangle(0, 16, 16, 16),
                             new Rectangle(32, 16, 16, 16),
                             () => { return isActive(InputManager.ControlActions.UP, index); },
-                            () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN; }
+                            () => { return playerSlotOccupied[index]
+                                    && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN
+                                    && !playerReadyBySlot[index];
+                                  }
                         ));
                         Interface.Add(new InterfaceImageButton(
                             "icons",
@@ -194,7 +197,10 @@ namespace VirusX.Menu
                             new Rectangle(16, 16, 16, 16),
                             new Rectangle(48, 16, 16, 16),
                             () => { return isActive(InputManager.ControlActions.DOWN, index); },
-                            () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN; }
+                            () => { return playerSlotOccupied[index] 
+                                    && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN
+                                    && !playerReadyBySlot[index];
+                                  }
                         ));
                     }
 
@@ -206,7 +212,10 @@ namespace VirusX.Menu
                         new Rectangle(0, 0, 16, 16),
                         new Rectangle(32, 0, 16, 16),
                         () => { return isActive(InputManager.ControlActions.LEFT, index); },
-                        () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN; }
+                        () => { return playerSlotOccupied[index]
+                                && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN
+                                && !playerReadyBySlot[index];
+                              }
                     ));
                     Interface.Add(new InterfaceImageButton(
                         "icons",
@@ -214,7 +223,10 @@ namespace VirusX.Menu
                         new Rectangle(16, 0, 16, 16),
                         new Rectangle(48, 0, 16, 16),
                         () => { return isActive(InputManager.ControlActions.RIGHT, index); },
-                        () => { return playerSlotOccupied[index] && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN; }
+                        () => { return playerSlotOccupied[index]
+                                && Settings.Instance.GetPlayer(slotIndexToPlayerIndexMapper[index]).Type == Player.Type.HUMAN
+                                && !playerReadyBySlot[index];
+                              }
                     ));
 
                     // virus

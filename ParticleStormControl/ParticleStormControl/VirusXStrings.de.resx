@@ -535,4 +535,21 @@ Multiple Sklerose und Hodgkin-Lymphom.</value>
   <data name="CreditsThanksNames" xml:space="preserve">
     <value>Tim Benedict Jagla, Fritz und alle unsere Tester</value>
   </data>
+  <data name="VirusAdditionalInfoWestNile" xml:space="preserve">
+    <value>Die Inkubationszeit beträgt zwischen 2-15 Tagen. Übertragen wird WNV durch weibliche Moskitos.</value>
+  </data>
+  <data name="VirusCausedDiseaseWestNile" xml:space="preserve">
+    <value>West-Nil-Fieber, West-Nile-Meningitis und andere</value>
+  </data>
+  <data name="VirusClassificationWestNile" xml:space="preserve">
+    <value>Gruppe IV; Genus Flavivirus; Familie der Flaviviridae</value>
+  </data>
+  <data name="VirusNameWestNile" xml:space="preserve">
+    <value>West-Nil-Virus</value>
+    <comment>The displayed name of Wetst Nile Virus</comment>
+  </data>
+  <data name="VirusShortNameWestNile" xml:space="preserve">
+    <value>WNV</value>
+    <comment>The short name of West Nile Virus</comment>
+  </data>
 </root>

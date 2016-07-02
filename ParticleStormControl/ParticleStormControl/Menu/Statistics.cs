@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Linq;
 
 
 #if SAVE_STATISTICS || LOAD_STATISTICS
@@ -32,6 +33,8 @@ namespace VirusX.Menu
         /// </summary>
         public int WinPlayerIndex { get; set; }
         public Player.Teams WinningTeam { get; set; }
+
+        public List<Player> WinningTeamMembers { get; set; }
 
         public Player.Type[] PlayerTypes { get; set; }
         public int[] PlayerColorIndices { get; set; }
@@ -120,7 +123,30 @@ namespace VirusX.Menu
             for (int i = 0; i < playerStatLabels.Length; i++)
             {
                 int index = i;
-                playerStatLabels[i] = new InterfaceButton(() => { return Player.ColorNames[PlayerColorIndices[index]]; }, new Vector2(leftStart, 160 + ROW_HEIGHT * index),
+                playerStatLabels[i] = new InterfaceButton(() =>
+                                {
+                                    switch(Statistics.getVirusType(index))
+                                    {
+                                        case VirusSwarm.VirusType.EBOLA:
+                                            return VirusXStrings.VirusShortNameEbola;
+                                        case VirusSwarm.VirusType.EPSTEINBARR:
+                                            return VirusXStrings.VirusShortNameEpsteinBarr;
+                                        case VirusSwarm.VirusType.H5N1:
+                                            return VirusXStrings.VirusShortNameH5N1;
+                                        case VirusSwarm.VirusType.HEPATITISB:
+                                            return VirusXStrings.VirusShortNameHepatitisB;
+                                        case VirusSwarm.VirusType.HIV:
+                                            return VirusXStrings.VirusShortNameHIV;
+                                        case VirusSwarm.VirusType.MARV:
+                                            return VirusXStrings.VirusShortNameMarv;
+                                        case VirusSwarm.VirusType.WNV:
+                                            return VirusXStrings.VirusShortNameWestNile;
+                                        default:
+                                            throw new NotImplementedException("Unknown Virus Type - can't generate virus name!");
+                                    }
+                                    /*Player.ColorNames[PlayerColorIndices[index]];*/ 
+                                },
+                                new Vector2(leftStart, 160 + ROW_HEIGHT * index),
                                 () => { return false; }, () => { return index < Statistics.PlayerCount; }, COLUMN_WIDTH - COLUMN_PADDING, 
                                 Color.White, Color.Black, false, Alignment.TOP_CENTER);
                 Interface.Add(playerStatLabels[i]);
@@ -458,18 +484,16 @@ namespace VirusX.Menu
 
         private bool IsPlayerWinner(int index)
         {
+            //return WinningTeamMembers.Where(x => x.Index == index).Count() > 0;
             switch (WinningTeam)
             {
                 case Player.Teams.NONE:
                     return index == WinPlayerIndex;
                 case Player.Teams.LEFT:
-                    return index == 0 || index == 3;
                 case Player.Teams.RIGHT:
-                    return index == 1 || index == 2;
                 case Player.Teams.ATTACKER:
-                    return index >= 1;
                 case Player.Teams.DEFENDER:
-                    return index == 0;
+                    return WinningTeamMembers.Where(x => x.Index == index).Count() > 0;
                 default:
                     throw new NotImplementedException("Unknown team type - can't evaluate winner!");
             }

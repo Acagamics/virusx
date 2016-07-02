@@ -97,6 +97,8 @@ namespace VirusX
                     return "viruses//ebola";
                 case VirusSwarm.VirusType.MARV:
                     return "viruses//marv";
+                case VirusSwarm.VirusType.WNV:
+                    return "viruses//wnv";
                 default:
                     return "pix";
             }

@@ -150,6 +150,7 @@
     <Compile Include="Menu\Controls.cs" />
     <Compile Include="Menu\ArcadeHighscore.cs" />
     <Compile Include="Menu\Credits.cs" />
+    <Compile Include="Menu\Gameplay.cs" />
     <Compile Include="Menu\InGame.cs" />
     <Compile Include="Menu\Interface\InterfaceElement.cs" />
     <Compile Include="Menu\Interface\InterfaceImage.cs" />

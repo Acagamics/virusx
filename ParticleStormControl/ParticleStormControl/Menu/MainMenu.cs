@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define FRAUENHOFERLOGOS
+
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -55,7 +57,15 @@ namespace VirusX.Menu
         {
             Interface.Add(new InterfaceImage("logoNew", new Vector2(50, 50)));
 
-            Interface.Add(new InterfaceImage("Kombo05_adjust", new Rectangle( Settings.Instance.ResolutionX - 306, 50, 256, 127),Alignment.TOP_LEFT,true));
+#if FRAUENHOFERLOGOS           
+            Interface.Add(new InterfaceImage("Logo_SSG", new Rectangle( 100, 700, 162, 137),Alignment.TOP_LEFT,true));
+
+            Interface.Add(new InterfaceImage("LogoFrauenhofer", new Rectangle(310 + 2 * InterfaceElement.PADDING, /*85 +*/ 2 * InterfaceElement.PADDING, 305, 83), Alignment.TOP_RIGHT, true));
+            Interface.Add(new InterfaceImage("Logo_WiNgS", new Rectangle(133 + 2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING + 83, 128, 129), Alignment.TOP_RIGHT, true));
+            //1.0 Lange Nacht der Wissenschaft Leipzig 27.06.2014
+#else
+            Interface.Add(new InterfaceImage("Logo_SSG", new Rectangle(212, 118, 162, 137), Alignment.TOP_RIGHT, true));
+#endif
 
             Interface.Add(new InterfaceButton(VirusXStrings.MainMenuNewGame, new Vector2(100, 370), () => { return selectedButton == Button.NEWGAME; }, true));
             Interface.Add(new InterfaceButton(VirusXStrings.MainMenuHighscore, new Vector2(100, 440), () => { return selectedButton == Button.HIGHSCORE; }));
@@ -193,7 +203,7 @@ namespace VirusX.Menu
                                 menu.ChangePage(Menu.Page.VIRUSES, gameTime);
                                 break;
                             case ButtonHelpSubmenu.GAMEPLAY:
-                                //menu.ChangePage(Menu.Page, gameTime);
+                                menu.ChangePage(Menu.Page.GAMEPLAY, gameTime);
                                 break;
                             case ButtonHelpSubmenu.CREDITS:
                                 menu.ChangePage(Menu.Page.CREDITS, gameTime);
