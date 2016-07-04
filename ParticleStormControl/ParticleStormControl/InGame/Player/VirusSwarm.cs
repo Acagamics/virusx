@@ -3,6 +3,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using System.Collections.Generic;
+using Windows.Foundation;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace VirusX
 {
@@ -31,13 +34,13 @@ namespace VirusX
         {
             get
             {
-                return new string[] {   VirusXStrings.VirusNameH5N1,
-                                        VirusXStrings.VirusNameHepatitisB,
-                                        VirusXStrings.VirusNameHIV,
-                                        VirusXStrings.VirusNameEpsteinBarr,
-                                        VirusXStrings.VirusNameEbola,
-                                        VirusXStrings.VirusNameMarv,
-                                        VirusXStrings.VirusNameWestNile};
+                return new string[] {   VirusXStrings.Instance.VirusNameH5N1,
+                                        VirusXStrings.Instance.VirusNameHepatitisB,
+                                        VirusXStrings.Instance.VirusNameHIV,
+                                        VirusXStrings.Instance.VirusNameEpsteinBarr,
+                                        VirusXStrings.Instance.VirusNameEbola,
+                                        VirusXStrings.Instance.VirusNameMarv,
+                                        VirusXStrings.Instance.VirusNameWestNile};
             }
         }
      
@@ -45,13 +48,13 @@ namespace VirusX
         {
             get
             {
-                return new string[]   { VirusXStrings.VirusAdditionalInfoH5N1,
-                                        VirusXStrings.VirusAdditionalInfoHepatitisB,
-                                        VirusXStrings.VirusAdditionalInfoHIV,
-                                        VirusXStrings.VirusAdditionalInfoEpsteinBarr,
-                                        VirusXStrings.VirusAdditionalInfoEbola,
-                                        VirusXStrings.VirusAdditionalInfoMarv,
-                                        VirusXStrings.VirusAdditionalInfoWestNile};
+                return new string[]   { VirusXStrings.Instance.VirusAdditionalInfoH5N1,
+                                        VirusXStrings.Instance.VirusAdditionalInfoHepatitisB,
+                                        VirusXStrings.Instance.VirusAdditionalInfoHIV,
+                                        VirusXStrings.Instance.VirusAdditionalInfoEpsteinBarr,
+                                        VirusXStrings.Instance.VirusAdditionalInfoEbola,
+                                        VirusXStrings.Instance.VirusAdditionalInfoMarv,
+                                        VirusXStrings.Instance.VirusAdditionalInfoWestNile};
             }
         }
 
@@ -59,13 +62,13 @@ namespace VirusX
         {
             get
             {
-                return new string[] {   VirusXStrings.VirusClassificationH5N1,
-                                        VirusXStrings.VirusClassificationHepatitisB,
-                                        VirusXStrings.VirusClassificationHIV,
-                                        VirusXStrings.VirusClassificationEpsteinBarr,
-                                        VirusXStrings.VirusClassificationEbola,
-                                        VirusXStrings.VirusClassificationMarv,
-                                        VirusXStrings.VirusClassificationWestNile};
+                return new string[] {   VirusXStrings.Instance.VirusClassificationH5N1,
+                                        VirusXStrings.Instance.VirusClassificationHepatitisB,
+                                        VirusXStrings.Instance.VirusClassificationHIV,
+                                        VirusXStrings.Instance.VirusClassificationEpsteinBarr,
+                                        VirusXStrings.Instance.VirusClassificationEbola,
+                                        VirusXStrings.Instance.VirusClassificationMarv,
+                                        VirusXStrings.Instance.VirusClassificationWestNile};
             }
         }
         
@@ -73,26 +76,26 @@ namespace VirusX
         {
             get
             {
-                return new string[] {   VirusXStrings.VirusShortNameH5N1,
-                                        VirusXStrings.VirusShortNameHepatitisB,
-                                        VirusXStrings.VirusShortNameHIV,
-                                        VirusXStrings.VirusShortNameEpsteinBarr,
-                                        VirusXStrings.VirusShortNameEbola,
-                                        VirusXStrings.VirusShortNameMarv,
-                                        VirusXStrings.VirusShortNameWestNile};
+                return new string[] {   VirusXStrings.Instance.VirusShortNameH5N1,
+                                        VirusXStrings.Instance.VirusShortNameHepatitisB,
+                                        VirusXStrings.Instance.VirusShortNameHIV,
+                                        VirusXStrings.Instance.VirusShortNameEpsteinBarr,
+                                        VirusXStrings.Instance.VirusShortNameEbola,
+                                        VirusXStrings.Instance.VirusShortNameMarv,
+                                        VirusXStrings.Instance.VirusShortNameWestNile};
             }
         }
         public static string[] VirusCausedDisease
         {
             get
             {
-                return new string[] {   VirusXStrings.VirusCausedDiseaseH5N1,
-                                        VirusXStrings.VirusCausedDiseaseHepatitisB,
-                                        VirusXStrings.VirusCausedDiseaseHIV,
-                                        VirusXStrings.VirusCausedDiseaseEpsteinBarr,
-                                        VirusXStrings.VirusCausedDiseaseEbola,
-                                        VirusXStrings.VirusCausedDiseaseMarv,
-                                        VirusXStrings.VirusCausedDiseaseWestNile};
+                return new string[] {   VirusXStrings.Instance.VirusCausedDiseaseH5N1,
+                                        VirusXStrings.Instance.VirusCausedDiseaseHepatitisB,
+                                        VirusXStrings.Instance.VirusCausedDiseaseHIV,
+                                        VirusXStrings.Instance.VirusCausedDiseaseEpsteinBarr,
+                                        VirusXStrings.Instance.VirusCausedDiseaseEbola,
+                                        VirusXStrings.Instance.VirusCausedDiseaseMarv,
+                                        VirusXStrings.Instance.VirusCausedDiseaseWestNile};
             }
         }
 
@@ -173,7 +176,7 @@ namespace VirusX
         { get; private set; }
 
         public int HighestUsedParticleIndex
-        { get; private set; }
+        { get; private set; } = 0;
 
         #region spawning
 
@@ -193,12 +196,16 @@ namespace VirusX
         /// <summary>
         /// vertex for a particle spawn
         /// </summary>
+        [StructLayout(LayoutKind.Explicit)]
         public struct SpawnVertex : IVertexType
         {
+            [FieldOffset(0)]
             public Vector2 texturePosition;
+            [FieldOffset(8)]
             public Vector2 particlePosition;
+            [FieldOffset(16)]
             public Vector2 movement;
-            // public Vector2 damageSpeed;
+            [FieldOffset(24)]
             public float health;
 
             private static readonly VertexDeclaration vertexDeclaration = new VertexDeclaration(
@@ -315,7 +322,6 @@ namespace VirusX
             renderTargetBindings = new RenderTargetBinding[][] { new RenderTargetBinding[] { positionTargets[0], movementTexture[0], infoTargets[0] }, 
                                                                 new RenderTargetBinding[] { positionTargets[1], movementTexture[1], infoTargets[1] } };
             particleProcessing = content.Load<Effect>("shader/particleProcessing");
-            particleProcessing.Parameters["HalfPixelCorrection"].SetValue(new Vector2(-0.5f / MAX_PARTICLES_SQRT, 0.5f / MAX_PARTICLES_SQRT));
             particleProcessing.Parameters["RelativeCorMax"].SetValue(Level.RELATIVE_MAX);
 
             // clear targets
@@ -391,6 +397,7 @@ namespace VirusX
             device.Textures[3] = null;
 
             device.SetRenderTargets(renderTargetBindings[currentTargetIndex]);
+            device.Clear(Color.Black);
 
             #region PROCESS
 
@@ -414,11 +421,14 @@ namespace VirusX
             if(Settings.Instance.GameMode == InGame.GameMode.ARCADE)
                 particleProcessing.Parameters["GlobalDamage"].SetValue(ARCADE_GLOBAL_DAMAGE * timeInterval);
             else
-                particleProcessing.Parameters["GlobalDamage"].SetValue(0);
+                particleProcessing.Parameters["GlobalDamage"].SetValue(0.0f);
 
             device.BlendState = BlendState.Opaque;
             particleProcessing.CurrentTechnique = particleProcessing.Techniques[0];
             particleProcessing.CurrentTechnique.Passes[0].Apply();
+
+            device.SamplerStates[0] = SamplerState.PointClamp;
+
             ScreenTriangleRenderer.Instance.DrawScreenAlignedTriangle(device);
             #endregion
 
@@ -438,20 +448,61 @@ namespace VirusX
             currentTargetIndex = currentTextureIndex;
             currentTextureIndex = target;
 
-    /*
+    
 #if DEBUG
             // save particle textures on pressing space
-        if (Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Tab))
+            if (InputManager.Instance.ReleasedButton(Microsoft.Xna.Framework.Input.Keys.Tab))
             {
-                using (var file = new System.IO.FileStream("position target " + damageColorIndex + ".png", System.IO.FileMode.Create))
+
+#if WINDOWS_UWP
+                Windows.Storage.StorageFolder debugFolder = Windows.Storage.ApplicationData.Current.LocalCacheFolder;
+
+                debugFolder.CreateFileAsync("position target " + damageTextureValueIndex + ".png", Windows.Storage.CreationCollisionOption.ReplaceExisting).Completed =
+                    (IAsyncOperation<Windows.Storage.StorageFile> asyncInfo, AsyncStatus asyncStatus) =>
+                    {
+                        asyncInfo.GetResults().OpenStreamForWriteAsync().ContinueWith((task) =>
+                        {
+                            try {
+                                using (var stream = task.Result)
+                                    positionTargets[currentTargetIndex].SaveAsPng(stream, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
+                            } catch { }
+                        });
+                    };
+                debugFolder.CreateFileAsync("info target " + damageTextureValueIndex + ".png", Windows.Storage.CreationCollisionOption.ReplaceExisting).Completed =
+                (IAsyncOperation<Windows.Storage.StorageFile> asyncInfo, AsyncStatus asyncStatus) =>
+                    {
+                        asyncInfo.GetResults().OpenStreamForWriteAsync().ContinueWith((task) =>
+                        {
+                            try {
+                                using (var stream = task.Result)
+                                    infoTargets[currentTargetIndex].SaveAsPng(stream, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
+                            } catch { }
+                        });
+                    };
+
+                debugFolder.CreateFileAsync("movement target " + damageTextureValueIndex + ".png", Windows.Storage.CreationCollisionOption.ReplaceExisting).Completed =
+                    (IAsyncOperation<Windows.Storage.StorageFile> asyncInfo, AsyncStatus asyncStatus) =>
+                    {
+                        asyncInfo.GetResults().OpenStreamForWriteAsync().ContinueWith((task) =>
+                        {
+                            try {
+                                using (var stream = task.Result)
+                                    movementTexture[currentTargetIndex].SaveAsPng(stream, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
+                            } catch { }
+                        });
+                    };
+
+#else
+                using (var file = new System.IO.FileStream("position target " + VirusIndex + ".png", System.IO.FileMode.Create))
                     positionTargets[currentTargetIndex].SaveAsPng(file, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
-                using (var file = new System.IO.FileStream("info target " + damageColorIndex + ".png", System.IO.FileMode.Create))
+                using (var file = new System.IO.FileStream("info target " + VirusIndex + ".png", System.IO.FileMode.Create))
                     infoTargets[currentTargetIndex].SaveAsPng(file, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
-                using (var file = new System.IO.FileStream("movement target " + damageColorIndex + ".png", System.IO.FileMode.Create))
+                using (var file = new System.IO.FileStream("movement target " + VirusIndex + ".png", System.IO.FileMode.Create))
                     movementTexture[currentTargetIndex].SaveAsPng(file, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
+#endif
             }
-#endif 
- */
+#endif
+
         }
 
         public void ReadGPUResults()
@@ -515,7 +566,7 @@ namespace VirusX
                     float x = (float)(i % MAX_PARTICLES_SQRT) / MAX_PARTICLES_SQRT;
                     float y = (float)(i / MAX_PARTICLES_SQRT) / MAX_PARTICLES_SQRT;
 
-                    spawnVerticesRAMBuffer[numAlreadySpawned * 2].texturePosition = new Vector2(x * 2.0f - 1.0f - lineOffset, (1.0f - y) * 2.0f - 1.0f);
+                    spawnVerticesRAMBuffer[numAlreadySpawned * 2].texturePosition = new Vector2(x * 2.0f - 1.0f, (1.0f - y) * 2.0f - 1.0f - lineOffset);
                     spawnVerticesRAMBuffer[numAlreadySpawned * 2 + 1] = spawnVerticesRAMBuffer[numAlreadySpawned * 2]; // copytime!
                     spawnVerticesRAMBuffer[numAlreadySpawned * 2 + 1].texturePosition.X += lineOffset*2;
 

@@ -7,7 +7,6 @@ sampler2D sampScreen = sampler_state
     Mipfilter = POINT;
 };
 
-float2 HalfPixelCorrection;
 float2 InversePixelSize;
 
 /*
@@ -59,7 +58,7 @@ struct VertexShaderOutput
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
     VertexShaderOutput output;
-	output.Position.xy = input.Position + HalfPixelCorrection;
+	output.Position.xy = input.Position;
 	output.Position.zw = float2(0,1);
 	output.Texcoord.xy = input.Position * 0.5f + 0.5f;
 	output.Texcoord.y = 1.0f - output.Texcoord.y;
@@ -122,7 +121,7 @@ technique Normal
 {
     pass Pass1
     {
-        VertexShader = compile vs_3_0 VertexShaderFunction();
-        PixelShader = compile ps_3_0 PixelShaderFunction();
+        VertexShader = compile vs_4_0 VertexShaderFunction();
+        PixelShader = compile ps_4_0 PixelShaderFunction();
     }
 }

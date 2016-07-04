@@ -21,23 +21,23 @@ namespace VirusX.Menu
         {
             Interface.Add(new InterfaceImage("logoNew", new Vector2(350, -250 / 2), Alignment.CENTER_RIGHT));
 
-            Interface.Add(new InterfaceButton(VirusXStrings.CreditsGameBy, new Vector2(100, Settings.Instance.ResolutionY), true));
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.CreditsGameBy, new Vector2(100, Settings.Instance.ResolutionY), true));
 
             List<string> names = new List<string>() {
-                "Andreas Reich", VirusXStrings.CreditsAndreas,
-                "Enrico Gebert", VirusXStrings.CreditsEnrico,
-                "Sebastian Lay", VirusXStrings.CreditsSebastian,
-                "Maria Manneck", VirusXStrings.CreditsMaria
+                "Andreas Reich", VirusXStrings.Instance.CreditsAndreas,
+                "Enrico Gebert", VirusXStrings.Instance.CreditsEnrico,
+                "Sebastian Lay", VirusXStrings.Instance.CreditsSebastian,
+                "Maria Manneck", VirusXStrings.Instance.CreditsMaria
             };
             AddNames(names, Settings.Instance.ResolutionY + 200);
 
             names = new List<string>() {
-                VirusXStrings.CreditsThanks,
-                VirusXStrings.CreditsThanksNames
+                VirusXStrings.Instance.CreditsThanks,
+                VirusXStrings.Instance.CreditsThanksNames
             };
             AddNames(names, Settings.Instance.ResolutionY + 1100);
 
-            Interface.Add(new InterfaceButton(VirusXStrings.CreditsMusic, new Vector2(100, Settings.Instance.ResolutionY + 1500), true));
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.CreditsMusic, new Vector2(100, Settings.Instance.ResolutionY + 1500), true));
 
             names = new List<string>() {
                 "Beach - PaulFitzZaland", "soundcloud.com/paulfitzzaland",
@@ -49,7 +49,7 @@ namespace VirusX.Menu
 
             Interface.Add(new InterfaceImage("acagamicslogo", new Vector2(-500 / 2, Settings.Instance.ResolutionY + 2600), Alignment.TOP_CENTER));
 
-            Interface.Add(new InterfaceImage("Gruppe1", new Vector2(-768 / 2, Settings.Instance.ResolutionY + 9001), Alignment.TOP_CENTER));
+            //Interface.Add(new InterfaceImage("Gruppe1", new Vector2(-768 / 2, Settings.Instance.ResolutionY + 9001), Alignment.TOP_CENTER));
         }
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)

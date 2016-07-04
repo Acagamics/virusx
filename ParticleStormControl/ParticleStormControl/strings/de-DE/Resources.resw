@@ -1,0 +1,558 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="GameModeArcade" xml:space="preserve">
+    <value>Arcade</value>
+    <comment>The displayed name of the "Arcade Single Player" game mode</comment>
+  </data>
+  <data name="GameModeClassic" xml:space="preserve">
+    <value>Classic</value>
+    <comment>The displayed name of the "Classic" game mode</comment>
+  </data>
+  <data name="GameModeCTC" xml:space="preserve">
+    <value>Capture the Cell</value>
+    <comment>The displayed name of the "Capture the Cell" game mode</comment>
+  </data>
+  <data name="GameModeDescriptionArcade" xml:space="preserve">
+    <value>Überlebe solange wie möglich
+(1 Spieler)</value>
+    <comment>The help text for the "Arcade Single Player" game mode</comment>
+  </data>
+  <data name="GameModeDescriptionClassic" xml:space="preserve">
+    <value>Standard Deathmatch
+(2-4 Spieler)</value>
+    <comment>The help text for the "Classic" game mode</comment>
+  </data>
+  <data name="GameModeDescriptionCTC" xml:space="preserve">
+    <value>Ein spieler mit einer  riesigen Zelle
+gegen ein Team aus drei Spielern
+(4 Spieler)</value>
+    <comment>The help text for the "Capture the Cell" game mode</comment>
+  </data>
+  <data name="GameModeDescriptionDomination" xml:space="preserve">
+    <value>Kontrolliere eine Anzahl an
+Zellen für eine gewisse Zeit
+(2-4 Spieler)</value>
+    <comment>The help text for the "Domination" game mode</comment>
+  </data>
+  <data name="GameModeDescriptionFun" xml:space="preserve">
+    <value>Wie der Classic Modus
+aber mit  extra Änderungen
+(2-4 Spieler)</value>
+    <comment>The help text for the "Fun" game mode</comment>
+  </data>
+  <data name="GameModeDescriptionLvsR" xml:space="preserve">
+    <value>Zwei Teams mit jeweils
+ein oder zwei Spielern
+(2-4 Spieler)</value>
+    <comment>The help text for the "LvsR" game mode</comment>
+  </data>
+  <data name="GameModeDomination" xml:space="preserve">
+    <value>Domination</value>
+    <comment>The displayed name of the "Domination" game mode</comment>
+  </data>
+  <data name="GameModeFun" xml:space="preserve">
+    <value>Fun</value>
+    <comment>The displayed name of the "Fun" game mode</comment>
+  </data>
+  <data name="GameModeLvsR" xml:space="preserve">
+    <value>Left vs. Right</value>
+    <comment>The displayed name of the "Left versus Right" game mode</comment>
+  </data>
+  <data name="MainMenuExitGame" xml:space="preserve">
+    <value>Spiel beenden</value>
+    <comment>Text on the "Exit" button in the "Main Menu"</comment>
+  </data>
+  <data name="MainMenuHelp" xml:space="preserve">
+    <value>Hilfe</value>
+    <comment>Text on the "Help" button in the "Main Menu"</comment>
+  </data>
+  <data name="MainMenuHelpControls" xml:space="preserve">
+    <value>Steuerung</value>
+    <comment>Text on the "Controls" button in the "Help" sub menu</comment>
+  </data>
+  <data name="MainMenuHelpCredits" xml:space="preserve">
+    <value>Credits</value>
+    <comment>Text on the "Credits" button in the "Help" sub menu</comment>
+  </data>
+  <data name="MainMenuHelpGameplay" xml:space="preserve">
+    <value>Gameplay</value>
+    <comment>Text on the "Gamplay" button in the "Help" sub menu</comment>
+  </data>
+  <data name="MainMenuHelpViruses" xml:space="preserve">
+    <value>Viren</value>
+    <comment>Text on the "Viruses" button in the "Help" sub menu</comment>
+  </data>
+  <data name="MainMenuNewGame" xml:space="preserve">
+    <value>Neues Spiel</value>
+    <comment>Text on the "New Game " button in the "Main Menu"</comment>
+  </data>
+  <data name="MainMenuNewGameItems" xml:space="preserve">
+    <value>Items</value>
+    <comment>Text on the "Items" button in the "New Game" sub menu</comment>
+  </data>
+  <data name="MainMenuNewGameMode" xml:space="preserve">
+    <value>Spielmodus</value>
+    <comment>Text on the "Game Mode" button in the "New Game" sub menu</comment>
+  </data>
+  <data name="MainMenuNewGameStart" xml:space="preserve">
+    <value>Start</value>
+    <comment>Text on the "Start" button in the "New Game" sub menu</comment>
+  </data>
+  <data name="MainMenuOptions" xml:space="preserve">
+    <value>Optionen</value>
+    <comment>Text on the  "Options" button in the "Main Menu"</comment>
+  </data>
+  <data name="OFF" xml:space="preserve">
+    <value>◄ AUS ►</value>
+    <comment>Displayed whenever there is something turned off</comment>
+  </data>
+  <data name="ON" xml:space="preserve">
+    <value>◄ EIN ►</value>
+    <comment>Displayed whenever there is something turned on</comment>
+  </data>
+  <data name="VirusNameEbola" xml:space="preserve">
+    <value>Ebola</value>
+    <comment>The diesplayed name of Ebola Virus</comment>
+  </data>
+  <data name="VirusNameEpsteinBarr" xml:space="preserve">
+    <value>Epstein-Barr</value>
+    <comment>The displayed name of Epstein-Barr Virus</comment>
+  </data>
+  <data name="VirusNameH5N1" xml:space="preserve">
+    <value>Influenza</value>
+    <comment>The displayed name of Influenza Virus</comment>
+  </data>
+  <data name="VirusNameHepatitisB" xml:space="preserve">
+    <value>Hepatitis B</value>
+    <comment>The displayed name of Hepatitis B Virus</comment>
+  </data>
+  <data name="VirusNameHIV" xml:space="preserve">
+    <value>Human immunodeficiency</value>
+    <comment>The displayed name of HI Virus</comment>
+  </data>
+  <data name="VirusNameMarv" xml:space="preserve">
+    <value>Marburg</value>
+    <comment>The displayed name of Marburg Virus</comment>
+  </data>
+  <data name="VirusAdditionalInfoH5N1" xml:space="preserve">
+    <value>Hochansteckendes Virus mit potenzieller pandemischer Bedrohung.</value>
+    <comment>The info string of "Influenza"</comment>
+  </data>
+  <data name="VirusAdditionalInfoHIV" xml:space="preserve">
+    <value>Infektion mit HIV kommt bei Transfer von Blut, Samenflüssigkeit, Vaginalsekret oder Muttermilch vor.</value>
+    <comment>The info string of "HIV"</comment>
+  </data>
+  <data name="MainMenuHighscore" xml:space="preserve">
+    <value>Arcade Highscore</value>
+    <comment>Text on the "Highscore " button in the "Main Menu"</comment>
+  </data>
+  <data name="BackToMainMenu" xml:space="preserve">
+    <value>► Zurück zum Hauptmenu</value>
+    <comment>Return to MainMenu Button</comment>
+  </data>
+  <data name="CurrentLanguageName" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+  <data name="OptionsCancel" xml:space="preserve">
+    <value>► Abbrechen</value>
+  </data>
+  <data name="OptionsFullscreen" xml:space="preserve">
+    <value>Vollbild</value>
+  </data>
+  <data name="OptionsLanguage" xml:space="preserve">
+    <value>Sprache</value>
+  </data>
+  <data name="OptionsMusic" xml:space="preserve">
+    <value>Musik</value>
+  </data>
+  <data name="OptionsResolution" xml:space="preserve">
+    <value>Auflösung</value>
+  </data>
+  <data name="OptionsRumble" xml:space="preserve">
+    <value>Vibration</value>
+  </data>
+  <data name="OptionsSafeAndExit" xml:space="preserve">
+    <value>► Speichern und Zurück</value>
+  </data>
+  <data name="OptionsSound" xml:space="preserve">
+    <value>Sound</value>
+  </data>
+  <data name="VirusAdditionalInfoEbola" xml:space="preserve">
+    <value>Welt Gesundheitsorgainisation, Pathogen Risikogruppe 4
+(Biologische Sicherheitsstufe 4)</value>
+    <comment>The info string of "Ebola"</comment>
+  </data>
+  <data name="VirusAdditionalInfoHepatitisB" xml:space="preserve">
+    <value>Kann außerdem zu Leberzirrhose und Leberzellkarzinom führen.</value>
+    <comment>The info string of "Hepatites B"</comment>
+  </data>
+  <data name="VirusAdditionalInfoMarv" xml:space="preserve">
+    <value>Welt Gesundheitsorgainisation, Pathogen Risikogruppe 4
+(Biologische Sicherheitsstufe 4)</value>
+    <comment>The info string of "Marv"</comment>
+  </data>
+  <data name="VirusCausedDiseaseEbola" xml:space="preserve">
+    <value>Hämorrhagisches Fieber</value>
+  </data>
+  <data name="VirusCausedDiseaseEpsteinBarr" xml:space="preserve">
+    <value>Beteiligt an mehreren Krankheiten, die infektiöse Mononukleose gehören,
+Multiple Sklerose und Hodgkin-Lymphom.</value>
+  </data>
+  <data name="VirusCausedDiseaseH5N1" xml:space="preserve">
+    <value>Vogelgrippe</value>
+  </data>
+  <data name="VirusCausedDiseaseHepatitisB" xml:space="preserve">
+    <value>Hepatitis B</value>
+  </data>
+  <data name="VirusCausedDiseaseHIV" xml:space="preserve">
+    <value>Acquired Immunodeficiency Syndrome (AIDS)</value>
+  </data>
+  <data name="VirusCausedDiseaseMarv" xml:space="preserve">
+    <value>Marburgfieber</value>
+  </data>
+  <data name="VirusClassificationEbola" xml:space="preserve">
+    <value>Gruppe V; Genus Ebolavirus; Familie der Filoviridae</value>
+  </data>
+  <data name="VirusClassificationEpsteinBarr" xml:space="preserve">
+    <value>Gruppe I; Genus Lymphocryptovirus; Familie der Herpesviridae</value>
+  </data>
+  <data name="VirusClassificationH5N1" xml:space="preserve">
+    <value>Gruppe V; Genus A; Familie der Orthomyxoviridae</value>
+  </data>
+  <data name="VirusClassificationHepatitisB" xml:space="preserve">
+    <value>Gruppe VII; Genus Orthohepadnavirus; Familie der Hepadnaviridae</value>
+  </data>
+  <data name="VirusClassificationHIV" xml:space="preserve">
+    <value>Gruppe VI; Genus Lentivirus; Familie der Retroviridae</value>
+  </data>
+  <data name="VirusClassificationMarv" xml:space="preserve">
+    <value>Gruppe V; Genus Marburgvirus; Familie der Filoviridae</value>
+  </data>
+  <data name="VirusShortNameEbola" xml:space="preserve">
+    <value>EBOV</value>
+    <comment>The short name of Ebola Virus</comment>
+  </data>
+  <data name="VirusShortNameEpsteinBarr" xml:space="preserve">
+    <value>EBV</value>
+    <comment>The short name of Epstein-Barr Virus</comment>
+  </data>
+  <data name="VirusShortNameH5N1" xml:space="preserve">
+    <value>H5N1</value>
+    <comment>The short name of Influenza Virus</comment>
+  </data>
+  <data name="VirusShortNameHepatitisB" xml:space="preserve">
+    <value>HBV</value>
+    <comment>The short name of Hepatitis B Virus</comment>
+  </data>
+  <data name="VirusShortNameHIV" xml:space="preserve">
+    <value>HIV</value>
+    <comment>The short name of HI Virus</comment>
+  </data>
+  <data name="VirusShortNameMarv" xml:space="preserve">
+    <value>MARV</value>
+    <comment>The short name of Marburg Virus</comment>
+  </data>
+  <data name="ScoreEnterYourName" xml:space="preserve">
+    <value>Namen eingeben...</value>
+  </data>
+  <data name="ScoreNewHighScore" xml:space="preserve">
+    <value>Neuer Highscore!</value>
+  </data>
+  <data name="ScoreSubmitScore" xml:space="preserve">
+    <value>Bestätigen</value>
+  </data>
+  <data name="VirusAdditionalInfoEpsteinBarr" xml:space="preserve">
+    <value>Ist einer der häufigesten vorkommenden Viren beim Menschen.</value>
+    <comment>The info string of "Epstein Barr"</comment>
+  </data>
+  <data name="ControlActionUse" xml:space="preserve">
+    <value>Aktion / Item nutzen</value>
+  </data>
+  <data name="ControlArrowDown" xml:space="preserve">
+    <value>Pfeiltasten Runter</value>
+  </data>
+  <data name="ControlArrowLeft" xml:space="preserve">
+    <value>Pfeiltasten Links</value>
+  </data>
+  <data name="ControlArrowRight" xml:space="preserve">
+    <value>Pfeiltasten Rechts</value>
+  </data>
+  <data name="ControlArrowUp" xml:space="preserve">
+    <value>Pfeiltasten Hoch</value>
+  </data>
+  <data name="ControlBackHold" xml:space="preserve">
+    <value>Zurück / Halten</value>
+  </data>
+  <data name="ControlGamepad" xml:space="preserve">
+    <value>Gamepad</value>
+  </data>
+  <data name="ControlKeyboard1" xml:space="preserve">
+    <value>Tastatur 1</value>
+  </data>
+  <data name="ControlKeyboard2" xml:space="preserve">
+    <value>Tastatur 2</value>
+  </data>
+  <data name="ControlKeyboard3" xml:space="preserve">
+    <value>Tastatur 3</value>
+  </data>
+  <data name="ControlMoveDown" xml:space="preserve">
+    <value>Runter</value>
+  </data>
+  <data name="ControlMoveLeft" xml:space="preserve">
+    <value>Links</value>
+  </data>
+  <data name="ControlMoveRight" xml:space="preserve">
+    <value>Rechts</value>
+  </data>
+  <data name="ControlMoveUp" xml:space="preserve">
+    <value>Hoch</value>
+  </data>
+  <data name="ControlNumpad" xml:space="preserve">
+    <value>Ziffernblock</value>
+  </data>
+  <data name="InputControlNameArrows" xml:space="preserve">
+    <value>Pfeiltasten + ENTER</value>
+  </data>
+  <data name="InputControlNameComputer" xml:space="preserve">
+    <value>Computer</value>
+  </data>
+  <data name="InputControlNameGamepad1" xml:space="preserve">
+    <value>Gampad 1</value>
+  </data>
+  <data name="InputControlNameGamepad2" xml:space="preserve">
+    <value>Gampad 2</value>
+  </data>
+  <data name="InputControlNameGamepad3" xml:space="preserve">
+    <value>Gampad 3</value>
+  </data>
+  <data name="InputControlNameGamepad4" xml:space="preserve">
+    <value>Gampad 4</value>
+  </data>
+  <data name="InputControlNameNumpad" xml:space="preserve">
+    <value>Ziffernblock + 0</value>
+  </data>
+  <data name="InputControlNameWASD" xml:space="preserve">
+    <value>WASD + TAB</value>
+  </data>
+  <data name="MenuBack" xml:space="preserve">
+    <value>► Zurück</value>
+  </data>
+  <data name="NewGameAddComputer" xml:space="preserve">
+    <value>KI hinzufügen</value>
+  </data>
+  <data name="NewGameCTCHelpText" xml:space="preserve">
+    <value>     (vier Spieler für diesen Modus benötigt)</value>
+  </data>
+  <data name="NewGameJoinHelpText" xml:space="preserve">
+    <value>&lt; Aktionstaste drücken um Spiel beizutreten &gt;</value>
+  </data>
+  <data name="NewGameNotReady" xml:space="preserve">
+    <value>nicht bereit</value>
+  </data>
+  <data name="NewGameReady" xml:space="preserve">
+    <value>bereit!</value>
+  </data>
+  <data name="NewGameRemoveComputer" xml:space="preserve">
+    <value>KI entfernen</value>
+  </data>
+  <data name="NewGameShowControls" xml:space="preserve">
+    <value>Steuerung anzeigen</value>
+  </data>
+  <data name="NewGameStartsIn" xml:space="preserve">
+    <value>Spiel startet in </value>
+  </data>
+  <data name="PauseScreenCaption" xml:space="preserve">
+    <value>Spiel pausiert</value>
+  </data>
+  <data name="PauseScreenContinue" xml:space="preserve">
+    <value>► Weiter</value>
+  </data>
+  <data name="PauseScreenPlayerDisconnected_disconnected" xml:space="preserve">
+    <value>ist getrennt!</value>
+  </data>
+  <data name="PauseScreenPlayerDisconnected_player" xml:space="preserve">
+    <value>Spieler</value>
+  </data>
+  <data name="PauseScreenQuitToMenu" xml:space="preserve">
+    <value>► Beenden</value>
+  </data>
+  <data name="PlayAgain" xml:space="preserve">
+    <value>► Nochmal spielen</value>
+  </data>
+  <data name="TeamNameAttacker" xml:space="preserve">
+    <value>Angreifer</value>
+  </data>
+  <data name="TeamNameDefender" xml:space="preserve">
+    <value>Verteidiger</value>
+  </data>
+  <data name="TeamNameLeft" xml:space="preserve">
+    <value>Team Links</value>
+  </data>
+  <data name="TeamNameNone" xml:space="preserve">
+    <value>Kein Team</value>
+  </data>
+  <data name="TeamNameRight" xml:space="preserve">
+    <value>Team Rechts</value>
+  </data>
+  <data name="CreditsAndreas" xml:space="preserve">
+    <value>Programmierung - Gameplay, Grafik, UWP Portierung</value>
+  </data>
+  <data name="CreditsEnrico" xml:space="preserve">
+    <value>Programmierung - Gameplay, Balancing</value>
+  </data>
+  <data name="CreditsGameBy" xml:space="preserve">
+    <value>Ein Spiel von</value>
+  </data>
+  <data name="CreditsMaria" xml:space="preserve">
+    <value>2D Grafiken, Interface</value>
+  </data>
+  <data name="CreditsMusic" xml:space="preserve">
+    <value>Musik / Sounds</value>
+  </data>
+  <data name="CreditsSebastian" xml:space="preserve">
+    <value>Programmierung - Interface, Musik / Sounds</value>
+  </data>
+  <data name="CreditsThanks" xml:space="preserve">
+    <value>Besonderer Dank an</value>
+  </data>
+  <data name="CreditsThanksNames" xml:space="preserve">
+    <value>Tim Benedict Jagla, Fritz und alle unsere Tester</value>
+  </data>
+  <data name="VirusAdditionalInfoWestNile" xml:space="preserve">
+    <value>Die Inkubationszeit beträgt zwischen 2-15 Tagen. Übertragen wird WNV durch weibliche Moskitos.</value>
+  </data>
+  <data name="VirusCausedDiseaseWestNile" xml:space="preserve">
+    <value>West-Nil-Fieber, West-Nile-Meningitis und andere</value>
+  </data>
+  <data name="VirusClassificationWestNile" xml:space="preserve">
+    <value>Gruppe IV; Genus Flavivirus; Familie der Flaviviridae</value>
+  </data>
+  <data name="VirusNameWestNile" xml:space="preserve">
+    <value>West-Nil-Virus</value>
+    <comment>The displayed name of Wetst Nile Virus</comment>
+  </data>
+  <data name="VirusShortNameWestNile" xml:space="preserve">
+    <value>WNV</value>
+    <comment>The short name of West Nile Virus</comment>
+  </data>
+  <data name="LanguageName" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+</root>

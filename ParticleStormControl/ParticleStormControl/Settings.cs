@@ -27,7 +27,7 @@ namespace VirusX
 
         private bool fullscreen = false;
         public bool Fullscreen { get { return fullscreen; } set { fullscreen = value; } }
-        int resolutionX = -1, resolutionY = -1;
+        int resolutionX = MINIMUM_SCREEN_WIDTH, resolutionY = MINIMUM_SCREEN_HEIGHT;
         public int ResolutionX { get { return resolutionX; } set { Debug.Assert(value >= MINIMUM_SCREEN_WIDTH); resolutionX = value; } }
         public int ResolutionY { get { return resolutionY; } set { Debug.Assert(value >= MINIMUM_SCREEN_HEIGHT); resolutionY = value; } }
 
@@ -126,7 +126,7 @@ namespace VirusX
             Music = true;
             Fullscreen = true;
 
-            VirusXStrings.Culture = CultureInfo.CurrentCulture;
+            VirusXStrings.Instance.Culture = CultureInfo.CurrentCulture;
 
             ChooseStandardResolution();
         }
@@ -172,6 +172,7 @@ namespace VirusX
         /// </summary>
         public void ReadSettings()
         {
+#if !NETFX_CORE // TODO: port
             bool dirty = false;
             Reset();
             System.Xml.XmlTextReader xmlConfigReader = null;
@@ -209,7 +210,7 @@ namespace VirusX
 
                             case "misc":
                                 FirstStart = Convert.ToBoolean(xmlConfigReader.GetAttribute("firststart"));
-                                VirusXStrings.Culture = CultureInfo.CreateSpecificCulture(xmlConfigReader.GetAttribute("language"));
+                                VirusXStrings.Instance.Culture = CultureInfo.CreateSpecificCulture(xmlConfigReader.GetAttribute("language"));
                                 break;
                         }
                     }
@@ -234,18 +235,21 @@ namespace VirusX
             }
 
 #if DEBUG_LOCALIZATION_CULTURE_EN
-            VirusXStrings.Culture = CultureInfo.CreateSpecificCulture("en");
+            VirusXStrings.Instance.Culture = CultureInfo.CreateSpecificCulture("en");
 #endif
 #if DEBUG_LOCALIZATION_CULTURE_DE
-            VirusXStrings.Culture = CultureInfo.CreateSpecificCulture("de");
+            VirusXStrings.Instance.Culture = CultureInfo.CreateSpecificCulture("de");
 #endif
 
             if (dirty)
                 Save();
+#endif
         }
 
         public void Save()
         {
+
+#if !NETFX_CORE // TODO: port
             System.Xml.XmlTextWriter settingsXML = new System.Xml.XmlTextWriter("settings.xml", System.Text.Encoding.UTF8);
             settingsXML.WriteStartDocument();
             settingsXML.WriteStartElement("settings");
@@ -276,12 +280,13 @@ namespace VirusX
             settingsXML.WriteValue(FirstStart);
 
             settingsXML.WriteStartAttribute("language");
-            settingsXML.WriteValue(VirusXStrings.Culture.ToString());
+            settingsXML.WriteValue(VirusXStrings.Instance.Culture.ToString());
             settingsXML.WriteEndElement();
 
             settingsXML.WriteEndElement();
             settingsXML.WriteEndDocument();
             settingsXML.Close();
+#endif
         }
     }
 }

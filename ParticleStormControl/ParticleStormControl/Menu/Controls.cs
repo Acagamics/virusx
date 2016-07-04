@@ -16,13 +16,13 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceFiller(Vector2.Zero, Color.Black * 0.5f, () => { return origin == Menu.Page.INGAME || origin == Menu.Page.NEWGAME; }));
 
             string[,] data = {
-                                 { null,                 VirusXStrings.ControlKeyboard1,   VirusXStrings.ControlKeyboard2,  VirusXStrings.ControlKeyboard3,   VirusXStrings.ControlGamepad },
-                                 { VirusXStrings.ControlMoveUp,                 "W",           VirusXStrings.ControlArrowUp,    VirusXStrings.ControlNumpad + " 8",     null },
-                                 { VirusXStrings.ControlMoveLeft,               "A",           VirusXStrings.ControlArrowLeft,  VirusXStrings.ControlNumpad + " 4",     null },
-                                 { VirusXStrings.ControlMoveDown,               "S",           VirusXStrings.ControlArrowDown,   VirusXStrings.ControlNumpad + " 5/2",    null },
-                                 { VirusXStrings.ControlMoveRight,              "D",           VirusXStrings.ControlArrowRight,  VirusXStrings.ControlNumpad + " 6",    null },
-                                 { VirusXStrings.ControlActionUse,  "Tab",        "Enter",        VirusXStrings.ControlNumpad + " 0",    null },
-                                 { VirusXStrings.ControlBackHold, "L-Shift",       "R-Shift",        VirusXStrings.ControlNumpad + " 7/9",    null },
+                                 { null,                 VirusXStrings.Instance.ControlKeyboard1,   VirusXStrings.Instance.ControlKeyboard2,  VirusXStrings.Instance.ControlKeyboard3,   VirusXStrings.Instance.ControlGamepad },
+                                 { VirusXStrings.Instance.ControlMoveUp,                 "W",           VirusXStrings.Instance.ControlArrowUp,    VirusXStrings.Instance.ControlNumpad + " 8",     null },
+                                 { VirusXStrings.Instance.ControlMoveLeft,               "A",           VirusXStrings.Instance.ControlArrowLeft,  VirusXStrings.Instance.ControlNumpad + " 4",     null },
+                                 { VirusXStrings.Instance.ControlMoveDown,               "S",           VirusXStrings.Instance.ControlArrowDown,   VirusXStrings.Instance.ControlNumpad + " 5/2",    null },
+                                 { VirusXStrings.Instance.ControlMoveRight,              "D",           VirusXStrings.Instance.ControlArrowRight,  VirusXStrings.Instance.ControlNumpad + " 6",    null },
+                                 { VirusXStrings.Instance.ControlActionUse,  "Tab",        "Enter",        VirusXStrings.Instance.ControlNumpad + " 0",    null },
+                                 { VirusXStrings.Instance.ControlBackHold, "L-Shift",       "R-Shift",        VirusXStrings.Instance.ControlNumpad + " 7/9",    null },
                              };
 
             // big table
@@ -64,7 +64,7 @@ namespace VirusX.Menu
                 Alignment.TOP_CENTER));
 
             // back button
-            string label = VirusXStrings.MenuBack;
+            string label = VirusXStrings.Instance.MenuBack;
             Interface.Add(new InterfaceButton(label, new Vector2(-(int)(menu.Font.MeasureString(label).X / 2), 100), () => { return true; }, Alignment.BOTTOM_CENTER));
         }
 

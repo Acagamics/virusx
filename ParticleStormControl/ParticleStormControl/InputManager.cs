@@ -21,14 +21,14 @@ namespace VirusX
             {
                 return new String[]
                     {
-                        VirusXStrings.InputControlNameWASD,
-                        VirusXStrings.InputControlNameArrows,
-                        VirusXStrings.InputControlNameNumpad,
-                        VirusXStrings.InputControlNameGamepad1,
-                        VirusXStrings.InputControlNameGamepad2,
-                        VirusXStrings.InputControlNameGamepad3,
-                        VirusXStrings.InputControlNameGamepad4,
-                        VirusXStrings.InputControlNameComputer
+                        VirusXStrings.Instance.InputControlNameWASD,
+                        VirusXStrings.Instance.InputControlNameArrows,
+                        VirusXStrings.Instance.InputControlNameNumpad,
+                        VirusXStrings.Instance.InputControlNameGamepad1,
+                        VirusXStrings.Instance.InputControlNameGamepad2,
+                        VirusXStrings.Instance.InputControlNameGamepad3,
+                        VirusXStrings.Instance.InputControlNameGamepad4,
+                        VirusXStrings.Instance.InputControlNameComputer
                     };
             }
         }
@@ -576,7 +576,7 @@ namespace VirusX
         /// <returns>true for pressed/down, false otherwise</returns>
         public bool WasAnyActionPressed(ControlActions action, out ControlType typePressed, bool down = false)
         {
-            foreach (ControlType control in typeof(ControlType).GetEnumValues())
+            foreach (ControlType control in Enum.GetValues(typeof(ControlType)))
             {
                 if (SpecificActionButtonPressed(action, control, down))
                 {

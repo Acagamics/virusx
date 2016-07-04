@@ -15,12 +15,6 @@ namespace VirusX
             public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration
                         (new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0));
         };
-        struct vertex2dInstance
-        {
-            public float Index;
-            public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration
-                                    (new VertexElement(0, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 0));
-        };
 
         /// <summary>
         /// static vertexbuffer containing a single quad, used for all particles
@@ -30,15 +24,10 @@ namespace VirusX
         /// instanced primitives need an indexbuffer
         /// containing only 0,1,2,3 - <b>silly</b>, but needed for instancing
         /// </summary>
-        private IndexBuffer particleIndexBuffer;    
-        /// <summary>
-        /// vertexbuffer with instance data, one per player
-        /// </summary>
-        private VertexBuffer[] instanceVertexBuffer = new VertexBuffer[Settings.MAX_NUM_PLAYERS];
+        private IndexBuffer particleIndexBuffer;
 
         // bindings
         private VertexBufferBinding particleVertexBufferBinding;
-        private VertexBufferBinding[] instanceVertexBufferBinding = new VertexBufferBinding[Settings.MAX_NUM_PLAYERS];
 
         private Texture2D[] virusTextures = new Texture2D[(int)VirusSwarm.VirusType.NUM_VIRUSES];
 
@@ -50,7 +39,7 @@ namespace VirusX
         public ParticleRenderer(GraphicsDevice device, ContentManager content)
         {
             particleEffect = content.Load<Effect>("shader/particleRendering");
-            particleEffect.Parameters["TextureSize"].SetValue(VirusSwarm.MAX_PARTICLES_SQRT);
+            particleEffect.Parameters["TextureSize"].SetValue((float)VirusSwarm.MAX_PARTICLES_SQRT);
             particleEffect.Parameters["HealthToSizeScale"].SetValue(RENDERING_SIZE_CONSTANT);
             particleEffect.Parameters["MinHealth"].SetValue(minimumHealth);
             particleEffect.Parameters["RelativeMax"].SetValue(Level.RELATIVE_MAX);
@@ -63,22 +52,14 @@ namespace VirusX
             vertices[3].Position = new Vector2(0.5f, 0.5f);
             particleVertexBuffer.SetData(vertices);
 
-            particleIndexBuffer = new IndexBuffer(device, IndexElementSize.SixteenBits, 4, BufferUsage.WriteOnly);
-            particleIndexBuffer.SetData(new ushort[] { 0, 1, 2, 3 });
+            particleIndexBuffer = new IndexBuffer(device, IndexElementSize.SixteenBits, 6, BufferUsage.WriteOnly);
+            particleIndexBuffer.SetData(new ushort[] { 0, 1, 2, 2, 1, 3 });
 
             particleVertexBufferBinding = new VertexBufferBinding(particleVertexBuffer, 0, 0);
 
-            for (int i = 0; i < instanceVertexBuffer.Length; ++i)
-            {
-                instanceVertexBuffer[i] = new VertexBuffer(device, vertex2dInstance.VertexDeclaration, VirusSwarm.MAX_PARTICLES, BufferUsage.WriteOnly);
-                instanceVertexBufferBinding[i] = new VertexBufferBinding(instanceVertexBuffer[i], 0, 1);
-            }
-
             // load virus textures
-            for(int i=0; i<virusTextures.Length; ++i)
+            for (int i = 0; i < virusTextures.Length; ++i)
                 virusTextures[i] = content.Load<Texture2D>(GetVirusTextureName((VirusSwarm.VirusType)i));
-
-            UpdateVertexBuffers(instanceVertexBuffer.Length);
         }
 
         public static string GetVirusTextureName(VirusSwarm.VirusType type)
@@ -101,17 +82,6 @@ namespace VirusX
                     return "viruses//wnv";
                 default:
                     return "pix";
-            }
-        }
-
-        private void UpdateVertexBuffers(int numPlayers)
-        {
-            vertex2dInstance[] vertexStructBuffer = new vertex2dInstance[VirusSwarm.MAX_PARTICLES];
-            for (int playerIndex = 0; playerIndex < numPlayers; ++playerIndex)
-            {
-                for (int particleIndex = 0; particleIndex < VirusSwarm.MAX_PARTICLES; particleIndex++)
-                    vertexStructBuffer[particleIndex].Index = particleIndex;
-                instanceVertexBuffer[playerIndex].SetData<vertex2dInstance>(vertexStructBuffer);
             }
         }
 
@@ -165,16 +135,11 @@ namespace VirusX
 
             particleEffect.CurrentTechnique.Passes[0].Apply();
 
+            device.SamplerStates[0] = SamplerState.PointClamp;
+            device.SamplerStates[1] = SamplerState.LinearClamp;
 
-            // sometimes there are problems with using linear - the effects prohibts this, but does still happen
-            for (int i = 1; i < 8; ++i) // first please linear!
-            {
-                if (device.Textures[i] != null)
-                    device.SamplerStates[i] = SamplerState.PointClamp;
-            }
-
-            device.SetVertexBuffers(particleVertexBufferBinding, instanceVertexBufferBinding[player.Index]);
-            device.DrawInstancedPrimitives(PrimitiveType.TriangleStrip, 0, 0, 4, 0, 2, player.HighestUsedParticleIndex + 1);
+            device.SetVertexBuffers(particleVertexBufferBinding);
+            device.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, 4, 0, 2, player.HighestUsedParticleIndex + 1);
         }
     }
 }

@@ -157,8 +157,7 @@ namespace VirusX
             backgroundShader.Parameters["RelativeMax"].SetValue(Vector2.One);
             backgroundShader.Parameters["BackgroundTexture"].SetValue(backgroundTexture);
             backgroundShader.Parameters["CellColorTexture"].SetValue(cellColorTexture);
-            backgroundShader.Parameters["HalfPixelCorrection"].SetValue(new Vector2(-0.5f / backgroundTexture.Width, 0.5f / backgroundTexture.Height));
-            
+
             device.SetVertexBuffer(quadVertexBuffer);
             backgroundShader.CurrentTechnique.Passes[0].Apply();
             device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);

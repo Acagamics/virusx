@@ -38,11 +38,11 @@ namespace VirusX
             {
                 return new String[]
                 {
-                    VirusXStrings.TeamNameDefender,
-                    VirusXStrings.TeamNameAttacker,
-                    VirusXStrings.TeamNameLeft,
-                    VirusXStrings.TeamNameRight,
-                    VirusXStrings.TeamNameNone
+                    VirusXStrings.Instance.TeamNameDefender,
+                    VirusXStrings.Instance.TeamNameAttacker,
+                    VirusXStrings.Instance.TeamNameLeft,
+                    VirusXStrings.Instance.TeamNameRight,
+                    VirusXStrings.Instance.TeamNameNone
                 };
             }
         }

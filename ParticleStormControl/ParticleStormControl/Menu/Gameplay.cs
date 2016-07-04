@@ -22,7 +22,7 @@ namespace VirusX.Menu
         private int imageOffset = 4;
         private const int NUM_IMAGES = 6;
         private Texture2D[] imageTextures = new Texture2D[NUM_IMAGES]; 
-        private string DisplayedImagePath { get { return "gameplay/" + VirusXStrings.CurrentLanguageName + "/Folie" + (currentDisplayedImage + imageOffset); } }
+        private string DisplayedImagePath { get { return "gameplay/" + VirusXStrings.Instance.LanguageName + "/Folie" + (currentDisplayedImage + imageOffset); } }
 
 
         public Gameplay(Menu menu)
@@ -44,7 +44,7 @@ namespace VirusX.Menu
             Interface.Add(shownImage);
 
             // back button
-            string label = VirusXStrings.MenuBack;
+            string label = VirusXStrings.Instance.MenuBack;
             Interface.Add(new InterfaceButton(label, new Vector2(-(int)(menu.Font.MeasureString(label).X / 2), 50), () => { return true; }, Alignment.BOTTOM_CENTER));
 
             // arrows

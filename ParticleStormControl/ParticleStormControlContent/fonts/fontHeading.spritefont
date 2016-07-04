@@ -6,8 +6,7 @@ of the font in your game, and to change the characters which are available to dr
 with.
 -->
 <XnaContent xmlns:Graphics="Microsoft.Xna.Framework.Content.Pipeline.Graphics">
-  <!--<Asset Type="Graphics:FontDescription">-->
-  <Asset Type="VirusXLocalizationPipline.LocalizedFontDescription">
+  <Asset Type="Graphics:FontDescription">
 
    <!--
     Modify this string to change the font that will be imported.
@@ -59,14 +58,5 @@ with.
       </CharacterRegion>
     </CharacterRegions>
 
-    <!--
-    The Resource files which contains the localized strings.
-    It is available through the customized content processor
-    -->
-    <ResourceFiles>
-      <Resx>..\VirusXStrings.resx</Resx>
-      <Resx>..\VirusXStrings.de.resx</Resx>
-    </ResourceFiles>
-    
   </Asset>
 </XnaContent>

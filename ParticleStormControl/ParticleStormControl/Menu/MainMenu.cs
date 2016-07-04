@@ -4,6 +4,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+
 using Game = global::VirusX.InGame;
 
 namespace VirusX.Menu
@@ -57,44 +58,44 @@ namespace VirusX.Menu
         {
             Interface.Add(new InterfaceImage("logoNew", new Vector2(50, 50)));
 
-#if FRAUENHOFERLOGOS           
-            Interface.Add(new InterfaceImage("Logo_SSG", new Rectangle( 100, 700, 162, 137),Alignment.TOP_LEFT,true));
+//#if FRAUENHOFERLOGOS           
+//            Interface.Add(new InterfaceImage("Logo_SSG", new Rectangle( 100, 700, 162, 137),Alignment.TOP_LEFT,true));
 
-            Interface.Add(new InterfaceImage("LogoFrauenhofer", new Rectangle(310 + 2 * InterfaceElement.PADDING, /*85 +*/ 2 * InterfaceElement.PADDING, 305, 83), Alignment.TOP_RIGHT, true));
-            Interface.Add(new InterfaceImage("Logo_WiNgS", new Rectangle(133 + 2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING + 83, 128, 129), Alignment.TOP_RIGHT, true));
-            //1.0 Lange Nacht der Wissenschaft Leipzig 27.06.2014
-#else
-            Interface.Add(new InterfaceImage("Logo_SSG", new Rectangle(212, 118, 162, 137), Alignment.TOP_RIGHT, true));
-#endif
+//            Interface.Add(new InterfaceImage("LogoFrauenhofer", new Rectangle(310 + 2 * InterfaceElement.PADDING, /*85 +*/ 2 * InterfaceElement.PADDING, 305, 83), Alignment.TOP_RIGHT, true));
+//            Interface.Add(new InterfaceImage("Logo_WiNgS", new Rectangle(133 + 2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING + 83, 128, 129), Alignment.TOP_RIGHT, true));
+//            //1.0 Lange Nacht der Wissenschaft Leipzig 27.06.2014
+//#else
+//            Interface.Add(new InterfaceImage("Logo_SSG", new Rectangle(212, 118, 162, 137), Alignment.TOP_RIGHT, true));
+//#endif
 
-            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuNewGame, new Vector2(100, 370), () => { return selectedButton == Button.NEWGAME; }, true));
-            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuHighscore, new Vector2(100, 440), () => { return selectedButton == Button.HIGHSCORE; }));
-            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuHelp, new Vector2(100, 500), () => { return selectedButton == Button.HELP; }));
-            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuOptions, new Vector2(100, 560), () => { return selectedButton == Button.OPTIONS; }));
-            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuExitGame, new Vector2(100, 620), () => { return selectedButton == Button.END; }));
+            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.MainMenuNewGame, new Vector2(100, 370), () => { return selectedButton == Button.NEWGAME; }, true));
+            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.MainMenuHighscore, new Vector2(100, 440), () => { return selectedButton == Button.HIGHSCORE; }));
+            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.MainMenuHelp, new Vector2(100, 500), () => { return selectedButton == Button.HELP; }));
+            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.MainMenuOptions, new Vector2(100, 560), () => { return selectedButton == Button.OPTIONS; }));
+            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.MainMenuExitGame, new Vector2(100, 620), () => { return selectedButton == Button.END; }));
 
             //    Interface.Add(new InterfaceButton("How to Play", new Vector2(620, 100), Alignment.TOP_RIGHT));
             //    Interface.Add(new InterfaceImage("instructions", new Vector2(620, 100 + menu.GetFontHeight() + 2 * InterfaceElement.PADDING), Alignment.TOP_RIGHT));
 
             // submenu newgame
-            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuNewGameMode, new Vector2(320, 370), () => { return selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.MODE; }, () => submenuVisible == SubMenu.NEWGAME));
+            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.MainMenuNewGameMode, new Vector2(320, 370), () => { return selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.MODE; }, () => submenuVisible == SubMenu.NEWGAME));
             Interface.Add(new InterfaceButton(() => { return "◄ " + Game.GAMEMODE_NAME[(int)Settings.Instance.GameMode] + " ►"; }, new Vector2(480, 370), () => { return false; }, () => submenuVisible == SubMenu.NEWGAME));
-            Interface.Add(new InterfaceButton(VirusXStrings.MainMenuNewGameItems, new Vector2(320, 420), () => { return selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.ITEMS; },
+            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.MainMenuNewGameItems, new Vector2(320, 420), () => { return selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.ITEMS; },
                                           () => submenuVisible == SubMenu.NEWGAME && Settings.Instance.GameMode != Game.GameMode.ARCADE));
-            useItemsButton = new InterfaceButton(() => { return Settings.Instance.UseItems ? VirusXStrings.ON : VirusXStrings.OFF; },
+            useItemsButton = new InterfaceButton(() => { return Settings.Instance.UseItems ? (string)VirusXStrings.Instance.ON : (string)VirusXStrings.Instance.OFF; },
                                 new Vector2(480, 420), () => { return false; }, () => submenuVisible == SubMenu.NEWGAME && Settings.Instance.GameMode != Game.GameMode.ARCADE, Color.White, Settings.Instance.UseItems ? Color.Green : Color.Red);
             Interface.Add(useItemsButton);
-            Interface.Add(new InterfaceButton("► " + VirusXStrings.MainMenuNewGameStart, new Vector2(320, 470), () => { return selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.CONTINUE; }, () => submenuVisible == SubMenu.NEWGAME));
+            Interface.Add(new InterfaceButton("► " + (string)VirusXStrings.Instance.MainMenuNewGameStart, new Vector2(320, 470), () => { return selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.CONTINUE; }, () => submenuVisible == SubMenu.NEWGAME));
 
             Interface.Add(new InterfaceTooltip(() => { return global::VirusX.InGame.GAMEMODE_NAME[(int)Settings.Instance.GameMode]; }, () => { return global::VirusX.InGame.GAMEMODE_DESCRIPTION[(int)Settings.Instance.GameMode]; }, new Vector2(550, 350), () => submenuVisible == SubMenu.NEWGAME && selectedButton_NewGameSubmenu == ButtonNewGameSubmenu.MODE, 350, InterfaceTooltip.ArrowPosition.BOTTOM));
 
             // submenu 
-            Interface.Add(new InterfaceButton("► " + VirusXStrings.MainMenuHelpGameplay, new Vector2(320, 370), () => { return selectedButton_HelpSubmenu == ButtonHelpSubmenu.GAMEPLAY; }, () => submenuVisible == SubMenu.HELP));
-            Interface.Add(new InterfaceButton("► " + VirusXStrings.MainMenuHelpControls, new Vector2(320, 420), () => { return selectedButton_HelpSubmenu == ButtonHelpSubmenu.CONTROLS; }, () => submenuVisible == SubMenu.HELP));
-            Interface.Add(new InterfaceButton("► " + VirusXStrings.MainMenuHelpViruses, new Vector2(320, 470), () => { return selectedButton_HelpSubmenu == ButtonHelpSubmenu.VIRUSES; }, () => submenuVisible == SubMenu.HELP));
-            Interface.Add(new InterfaceButton("► " + VirusXStrings.MainMenuHelpCredits, new Vector2(320, 520), () => { return selectedButton_HelpSubmenu == ButtonHelpSubmenu.CREDITS; }, () => submenuVisible == SubMenu.HELP));
+            Interface.Add(new InterfaceButton("► " + (string)VirusXStrings.Instance.MainMenuHelpGameplay, new Vector2(320, 370), () => { return selectedButton_HelpSubmenu == ButtonHelpSubmenu.GAMEPLAY; }, () => submenuVisible == SubMenu.HELP));
+            Interface.Add(new InterfaceButton("► " + (string)VirusXStrings.Instance.MainMenuHelpControls, new Vector2(320, 420), () => { return selectedButton_HelpSubmenu == ButtonHelpSubmenu.CONTROLS; }, () => submenuVisible == SubMenu.HELP));
+            Interface.Add(new InterfaceButton("► " + (string)VirusXStrings.Instance.MainMenuHelpViruses, new Vector2(320, 470), () => { return selectedButton_HelpSubmenu == ButtonHelpSubmenu.VIRUSES; }, () => submenuVisible == SubMenu.HELP));
+            Interface.Add(new InterfaceButton("► " + (string)VirusXStrings.Instance.MainMenuHelpCredits, new Vector2(320, 520), () => { return selectedButton_HelpSubmenu == ButtonHelpSubmenu.CREDITS; }, () => submenuVisible == SubMenu.HELP));
 
-            Interface.Add(new InterfaceButton(VirusXStrings.VERSION, new Vector2(2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING) + menu.Font.MeasureString(VirusXStrings.VERSION), Alignment.BOTTOM_RIGHT));
+            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.VERSION, new Vector2(2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING) + menu.Font.MeasureString((string)VirusXStrings.Instance.VERSION), Alignment.BOTTOM_RIGHT));
         }
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)

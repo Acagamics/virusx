@@ -53,13 +53,13 @@ technique T0
 {
     pass PCircle
     {
-        VertexShader = compile vs_3_0 VertexShaderFunction();
-        PixelShader = compile ps_3_0 Circle();
+        VertexShader = compile vs_4_0_level_9_1 VertexShaderFunction();
+        PixelShader = compile ps_4_0_level_9_1 Circle();
     }
 
     pass PFilledCircle
     {
-        VertexShader = compile vs_3_0 VertexShaderFunction();
-        PixelShader = compile ps_3_0 FilledCircle();
+        VertexShader = compile vs_4_0_level_9_1 VertexShaderFunction();
+        PixelShader = compile ps_4_0_level_9_1 FilledCircle();
     }
 }

@@ -102,21 +102,29 @@ namespace VirusX
             AudioManager.Instance.Initialize(Content);
         }
 
-        void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
-        {
-           foreach (GraphicsAdapter adapter in GraphicsAdapter.Adapters)
-           {
-              if (adapter.Description.Contains("PerfHUD"))
-              {
-                 e.GraphicsDeviceInformation.Adapter = adapter;
-                 GraphicsAdapter.UseReferenceDevice = true;
-                 break;
-              }
-           }
-        }
+        //void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        //{
+        //   foreach (GraphicsAdapter adapter in GraphicsAdapter.Adapters)
+        //   {
+        //      if (adapter.Description.Contains("PerfHUD"))
+        //      {
+        //         e.GraphicsDeviceInformation.Adapter = adapter;
+        //         GraphicsAdapter.UseReferenceDevice = true;
+        //         break;
+        //      }
+        //   }
+        //}
 
         public void ApplyChangedGraphicsSettings()
         {
+
+#if WINDOWS_UWP
+            var currentView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
+            currentView.TryResizeView(new Windows.Foundation.Size { Width = Settings.Instance.ResolutionX, Height = Settings.Instance.ResolutionY });
+            if (graphics.IsFullScreen != Settings.Instance.Fullscreen)
+                currentView.TryEnterFullScreenMode();
+#endif
+
             if (graphics.IsFullScreen != Settings.Instance.Fullscreen)
                 graphics.ToggleFullScreen();
             graphics.PreferredBackBufferWidth = Settings.Instance.ResolutionX;

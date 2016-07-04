@@ -7,7 +7,7 @@ namespace VirusX
     /// <summary>
     /// class to collect game statistics
     /// </summary>
-    [Serializable]
+    //[Serializable] // todo: port
     class Statistics
     {
         #region used items
@@ -22,7 +22,7 @@ namespace VirusX
             NUM_STAT_ITEMS
         }
 
-        [Serializable]
+        //[Serializable] // todo: port
         public struct UsedItem 
         {
             public StatItems item;

@@ -63,12 +63,12 @@ namespace VirusX
             {
                 return new String[]
                 {
-                    VirusXStrings.GameModeClassic,
-                    VirusXStrings.GameModeCTC,
-                    VirusXStrings.GameModeLvsR,
-                    VirusXStrings.GameModeFun,
-                    VirusXStrings.GameModeDomination,
-                    VirusXStrings.GameModeArcade
+                    VirusXStrings.Instance.GameModeClassic,
+                    VirusXStrings.Instance.GameModeCTC,
+                    VirusXStrings.Instance.GameModeLvsR,
+                    VirusXStrings.Instance.GameModeFun,
+                    VirusXStrings.Instance.GameModeDomination,
+                    VirusXStrings.Instance.GameModeArcade
                 };
             }
         }
@@ -79,12 +79,12 @@ namespace VirusX
             {
                 return new String[]
                 {
-                    VirusXStrings.GameModeDescriptionClassic,
-                    VirusXStrings.GameModeDescriptionCTC,
-                    VirusXStrings.GameModeDescriptionLvsR,
-                    VirusXStrings.GameModeDescriptionFun,
-                    VirusXStrings.GameModeDescriptionDomination,
-                    VirusXStrings.GameModeDescriptionArcade
+                    VirusXStrings.Instance.GameModeDescriptionClassic,
+                    VirusXStrings.Instance.GameModeDescriptionCTC,
+                    VirusXStrings.Instance.GameModeDescriptionLvsR,
+                    VirusXStrings.Instance.GameModeDescriptionFun,
+                    VirusXStrings.Instance.GameModeDescriptionDomination,
+                    VirusXStrings.Instance.GameModeDescriptionArcade
                 };
             }
         }
@@ -360,7 +360,7 @@ namespace VirusX
                     }
                     catch(Exception exp)
                     {
-                        Console.WriteLine(exp);
+                        Debug.WriteLine(exp);
                         Debugger.Break();
                     }
                 });
