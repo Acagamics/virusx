@@ -1,6 +1,7 @@
 ﻿{
   "dependencies": {
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
+    "MonoGame.Framework.WindowsUniversal": "3.5.1.1679",
     "SharpDX.Direct2D1": "3.0.0",
     "SharpDX.Direct3D11": "3.0.0",
     "SharpDX.MediaFoundation": "3.0.0",

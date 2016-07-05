@@ -8,8 +8,8 @@
 /*.vspx
 
 /ParticleStormControl/ParticleStormControl/*.cachefile
-
-/ParticleStormControl/ParticleStormControl/ParticleStormControl.csproj.user
+/ParticleStormControl/ParticleStormControl/BundleArtifacts/
+/ParticleStormControl/ParticleStormControl/ParticleStormControl_UWP.csproj.user
 /ParticleStormControl/ParticleStormControl/ParticleStormControl_TemporaryKey.pfx
 /UnitTests/obj
 /UnitTests/bin
@@ -20,3 +20,4 @@
 /VirusXLocalizationPipline/bin
 /ParticleStormControl/ParticleStormControl/Content
 /.vs
+/ParticleStormControl/AppPackages
