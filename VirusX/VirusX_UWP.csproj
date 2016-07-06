@@ -95,8 +95,8 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <MonoGameContentReference Include="..\ParticleStormControlContent\Content_UWP.mgcb">
-      <Link>Content\Content_UWP.mgcb</Link>
+    <MonoGameContentReference Include="..\VirusXContent\MonoGameContent.mgcb">
+      <Link>Content\MonoGameContent.mgcb</Link>
     </MonoGameContentReference>
     <None Include="project.json" />
   </ItemGroup>
@@ -188,12 +188,12 @@
     <None Include="..\ParticleStormControlContent\shader\postprocess.fx">
       <Link>Content\Shader\postprocess.fx</Link>
     </None>
-    <Content Include="..\ParticleStormControlContent\particleblur.fx">
+    <None Include="..\ParticleStormControlContent\particleblur.fx">
       <Link>Content\Shader\particleblur.fx</Link>
-    </Content>
-    <Content Include="..\ParticleStormControlContent\particlemotionblurblend.fx">
+    </None>
+    <None Include="..\ParticleStormControlContent\particlemotionblurblend.fx">
       <Link>Content\Shader\particlemotionblurblend.fx</Link>
-    </Content>
+    </None>
     <Content Include="Assets_UWP\LockScreenLogo.scale-200.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets_UWP\SplashScreen.scale-200.png" />

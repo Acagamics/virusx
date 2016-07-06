@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirusXStatistics", "VirusXStatistics\VirusXStatistics.csproj", "{94B74295-6CFE-437B-A75D-13FBEBBE859D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParticleStormControl_UWP", "ParticleStormControl\ParticleStormControl\ParticleStormControl_UWP.csproj", "{D5DB6E14-6132-4482-86A2-1149389582A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirusX_UWP", "VirusX\VirusX_UWP.csproj", "{D5DB6E14-6132-4482-86A2-1149389582A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

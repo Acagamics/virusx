@@ -1,23 +1,13 @@
-/ParticleStormControl/ParticleStormControl/bin
-/ParticleStormControl/ParticleStormControl/ParticleStormControl.csproj.Release.cachefile
-/ParticleStormControl/ParticleStormControl/obj
-/ParticleStormControl/ParticleStormControlContent/obj
-/ParticleStormControl/ParticleStormControlContent/bin
 /*.psess
 /*.suo
 /*.vspx
+/*.user
 
-/ParticleStormControl/ParticleStormControl/*.cachefile
-/ParticleStormControl/ParticleStormControl/BundleArtifacts/
-/ParticleStormControl/ParticleStormControl/ParticleStormControl_UWP.csproj.user
-/ParticleStormControl/ParticleStormControl/ParticleStormControl_TemporaryKey.pfx
-/UnitTests/obj
-/UnitTests/bin
-/VirusXStatistics/bin
-/VirusXStatistics/obj
+project.lock.json
 
-/VirusXLocalizationPipline/obj
-/VirusXLocalizationPipline/bin
-/ParticleStormControl/ParticleStormControl/Content
 /.vs
-/ParticleStormControl/AppPackages
+/VirusX/obj
+/VirusX/bin
+/VirusX/Content
+/VirusX/AppPackages
+/VirusXStatistics/bin
