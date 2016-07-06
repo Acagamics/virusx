@@ -47,9 +47,9 @@ namespace VirusX.Menu
             };
             AddNames(names, Settings.Instance.ResolutionY + 1700);
 
-            Interface.Add(new InterfaceImage("acagamicslogo", new Vector2(-500 / 2, Settings.Instance.ResolutionY + 2600), Alignment.TOP_CENTER));
+            Interface.Add(new InterfaceImage("credits/acagamicslogo", new Vector2(-500 / 2, Settings.Instance.ResolutionY + 2600), Alignment.TOP_CENTER));
 
-            Interface.Add(new InterfaceImage("Gruppe1", new Vector2(-768 / 2, Settings.Instance.ResolutionY + 9001), Alignment.TOP_CENTER));
+            Interface.Add(new InterfaceImage("credits/Gruppe1", new Vector2(-768 / 2, Settings.Instance.ResolutionY + 9001), Alignment.TOP_CENTER));
         }
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)

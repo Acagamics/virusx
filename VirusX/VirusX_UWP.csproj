@@ -173,26 +173,20 @@
     <None Include="VirusX_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\ParticleStormControlContent\shader\backgroundCells.fx">
+    <None Include="..\VirusXContent\shader\backgroundCells.fx">
       <Link>Content\Shader\backgroundCells.fx</Link>
     </None>
-    <None Include="..\ParticleStormControlContent\shader\backgroundParticles.fx">
+    <None Include="..\VirusXContent\shader\backgroundParticles.fx">
       <Link>Content\Shader\backgroundParticles.fx</Link>
     </None>
-    <None Include="..\ParticleStormControlContent\shader\particleProcessing.fx">
+    <None Include="..\VirusXContent\shader\particleProcessing.fx">
       <Link>Content\Shader\particleProcessing.fx</Link>
     </None>
-    <None Include="..\ParticleStormControlContent\shader\particleRendering.fx">
+    <None Include="..\VirusXContent\shader\particleRendering.fx">
       <Link>Content\Shader\particleRendering.fx</Link>
     </None>
-    <None Include="..\ParticleStormControlContent\shader\postprocess.fx">
+    <None Include="..\VirusXContent\shader\postprocess.fx">
       <Link>Content\Shader\postprocess.fx</Link>
-    </None>
-    <None Include="..\ParticleStormControlContent\particleblur.fx">
-      <Link>Content\Shader\particleblur.fx</Link>
-    </None>
-    <None Include="..\ParticleStormControlContent\particlemotionblurblend.fx">
-      <Link>Content\Shader\particlemotionblurblend.fx</Link>
     </None>
     <Content Include="Assets_UWP\LockScreenLogo.scale-200.png" />
     <Content Include="Properties\Default.rd.xml" />

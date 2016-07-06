@@ -379,18 +379,6 @@
 /processorParam:TextureFormat=Color
 /build:items/wipeout.png
 
-#begin acagamicslogo.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=True
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:acagamicslogo.png
-
 #begin arrows.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -582,18 +570,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:nucleus_outer_uncaptureable.png
-
-#begin particleblur.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:particleblur.fx
-
-#begin particlemotionblurblend.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:particlemotionblurblend.fx
 
 #begin percentagebar.png
 /importer:TextureImporter
@@ -817,7 +793,7 @@
 /processorParam:TextureFormat=Color
 /build:gameplay/English/Folie9.PNG
 
-#begin Gruppe1.jpg
+#begin credits/acagamicslogo.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -827,5 +803,29 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Gruppe1.jpg
+/build:credits/acagamicslogo.png
+
+#begin credits/Gruppe1.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:credits/Gruppe1.jpg
+
+#begin credits/silverseeds.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:credits/silverseeds.png
 
