@@ -50,9 +50,9 @@ struct PixelShaderOutput
 PixelShaderOutput Process(VertexShaderOutput input)
 {
   PixelShaderOutput output;
-  output.position = Positions.SampleLevel(PointSampler, input.Texcoord, 0.0f);
-  output.movement = Movements.SampleLevel(PointSampler, input.Texcoord, 0.0f);
-  output.health = min(MaxHealth, Health.SampleLevel(PointSampler, input.Texcoord, 0.0f));
+  output.position = Positions.SampleLevel(PointSampler, input.Texcoord, 0.0f).xy;
+  output.movement = Movements.SampleLevel(PointSampler, input.Texcoord, 0.0f).xy;
+  output.health = min(MaxHealth, Health.SampleLevel(PointSampler, input.Texcoord, 0.0f).x);
   output.health.x -= GlobalDamage;
 
   // movement
