@@ -6,8 +6,9 @@
 project.lock.json
 
 /.vs
-/VirusX/obj
-/VirusX/bin
-/VirusX/Content
-/VirusX/AppPackages
+/VirusX_uwp/obj
+/VirusX_uwp/bin
+/VirusX_uwp/Content
+/VirusX_uwp/AppPackages
 /VirusXStatistics/bin
+/VirusXStatistics/obj

@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>adfa7702-5142-4d50-9471-c35bf13d13ea</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>VirusX_shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AudioManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InputManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ParticleStormControl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PrimitiveBatch.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Program.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Settings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tutorial.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VirusXStrings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)background\Background.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)background\BackgroundParticles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Crosshair.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\DamageMap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\InGame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\InGameInterface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Level\CapturableObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Level\DamageArea.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Level\Debuff.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Level\Item.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Level\Level.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Level\MapGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Level\MapObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Level\MovingSpawnPoints.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Level\SpawnPoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\NoiseTexture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\ParticleRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\PercentageBar.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Player\AIPlayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Player\HumanPlayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Player\Player.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Player\VirusSwarm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\PostProcessing.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Random.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\ScreenTriangleRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InGame\Statistics.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\ArcadeHighscore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Controls.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Credits.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Gameplay.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\InGame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Interface\InterfaceButton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Interface\InterfaceElement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Interface\InterfaceFiller.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Interface\InterfaceImage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Interface\InterfaceImageButton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Interface\InterfaceTooltip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\MainMenu.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Menu.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\MenuPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\ModeDiscription.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\NewGame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Options.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Paused.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Statistics.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Menu\Viruses.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="$(MSBuildThisFileDirectory)strings\de-DE\Resources.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)strings\en-US\Resources.resw" />
+  </ItemGroup>
+</Project>
