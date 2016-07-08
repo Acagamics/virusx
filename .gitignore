@@ -10,5 +10,9 @@ project.lock.json
 /VirusX_uwp/bin
 /VirusX_uwp/Content
 /VirusX_uwp/AppPackages
+/VirusX_Desktop/obj
+/VirusX_Desktop/bin
+/VirusX_Desktop/Content
 /VirusXStatistics/bin
 /VirusXStatistics/obj
+/packages

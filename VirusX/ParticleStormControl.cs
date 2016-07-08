@@ -117,6 +117,14 @@ namespace VirusX
 
         public void ApplyChangedGraphicsSettings()
         {
+            // No change? Return. Important since graphics.ApplyChanges might lead to another call to this function [..]
+            if (graphics.IsFullScreen == Settings.Instance.Fullscreen &&
+                graphics.PreferredBackBufferWidth == Settings.Instance.ResolutionX &&
+                graphics.PreferredBackBufferHeight== Settings.Instance.ResolutionY)
+            {
+                return;
+            }
+
 
 #if WINDOWS_UWP
             var currentView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
@@ -273,6 +281,7 @@ namespace VirusX
             base.Draw(gameTime);
 
             // screenshots
+            /*
 #if WINDOWS
             if (InputManager.Instance.IsButtonPressed(Keys.PrintScreen))
             {
@@ -305,6 +314,7 @@ namespace VirusX
                 }
             }
 #endif
+            */
         }
     }
 }

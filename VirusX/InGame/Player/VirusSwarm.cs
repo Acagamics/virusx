@@ -3,9 +3,13 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+
+#if WINDOWS_UWP
 using Windows.Foundation;
 using System.IO;
-using System.Runtime.InteropServices;
+#endif
+
 
 namespace VirusX
 {
@@ -15,7 +19,7 @@ namespace VirusX
     /// </summary>
     class VirusSwarm
     {
-        #region Virus Definitions
+#region Virus Definitions
 
         public enum VirusType
         {
@@ -143,9 +147,9 @@ namespace VirusX
         // attacking constant
         private const float ATTACKING_PER_SECOND = 30.0f * 255;
 
-        #endregion
+#endregion
 
-        #region Particles
+#region Particles
 
         /// <summary>
         /// size of particle-data rendertargets and textures
@@ -178,7 +182,7 @@ namespace VirusX
         public int HighestUsedParticleIndex
         { get; private set; } = 0;
 
-        #region spawning
+#region spawning
 
         /// <summary>
         /// maximum number of particles spawned in a single frame
@@ -231,11 +235,11 @@ namespace VirusX
         /// </summary>
         private SpawnVertex[] spawnVerticesRAMBuffer = new SpawnVertex[MAX_SPAWNS_PER_FRAME * 2];
 
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
-        #region Particle Color
+#region Particle Color
 
         public readonly static Color[] ParticleColors = { new Color(240, 80, 70), 
                                                             new Color(60, 70, 240),
@@ -279,9 +283,9 @@ namespace VirusX
         /// </summary>
         private readonly int damageTextureValueIndex = 0;
 
-        #endregion
+#endregion
 
-        #region Basic Swarm Properties
+#region Basic Swarm Properties
 
         private readonly VirusType virus;
         public int VirusIndex
@@ -297,7 +301,7 @@ namespace VirusX
 
         private const float ARCADE_GLOBAL_DAMAGE = 2f;
 
-        #endregion
+#endregion
 
         public VirusSwarm(VirusSwarm.VirusType virusIndex, int playerIndex, IEnumerable<int> friendlyPlayerIndices, GraphicsDevice device, ContentManager content, Texture2D noiseTexture)
         {
@@ -399,7 +403,7 @@ namespace VirusX
             device.SetRenderTargets(renderTargetBindings[currentTargetIndex]);
             device.Clear(Color.Black);
 
-            #region PROCESS
+#region PROCESS
 
             particleProcessing.Parameters["Positions"].SetValue(PositionTexture);
             particleProcessing.Parameters["Movements"].SetValue(MovementTexture);
@@ -430,9 +434,9 @@ namespace VirusX
             device.SamplerStates[0] = SamplerState.PointClamp;
 
             ScreenTriangleRenderer.Instance.DrawScreenAlignedTriangle(device);
-            #endregion
+#endregion
 
-            #region spawn
+#region spawn
 
             if (currentSpawnNumber > 0)
             {
@@ -442,7 +446,7 @@ namespace VirusX
                 device.DrawPrimitives(PrimitiveType.LineList, 0, currentSpawnNumber);
             }
 
-            #endregion
+#endregion
 
             int target = currentTargetIndex;
             currentTargetIndex = currentTextureIndex;
@@ -453,7 +457,6 @@ namespace VirusX
             // save particle textures on pressing space
             if (InputManager.Instance.ReleasedButton(Microsoft.Xna.Framework.Input.Keys.Tab))
             {
-
 #if WINDOWS_UWP
                 Windows.Storage.StorageFolder debugFolder = Windows.Storage.ApplicationData.Current.LocalCacheFolder;
 

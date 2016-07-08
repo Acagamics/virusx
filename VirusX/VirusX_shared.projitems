@@ -13,7 +13,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)InputManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ParticleStormControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PrimitiveBatch.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Program.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tutorial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
@@ -64,12 +63,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)Menu\Paused.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Menu\Statistics.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Menu\Viruses.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)logo.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="$(MSBuildThisFileDirectory)strings\de-DE\Resources.resw" />
-    <PRIResource Include="$(MSBuildThisFileDirectory)strings\en-US\Resources.resw" />
   </ItemGroup>
 </Project>

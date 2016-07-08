@@ -99,6 +99,12 @@
     <MonoGameContentReference Include="..\VirusXContent\MonoGameContent.mgcb">
       <Link>MonoGameContent.mgcb</Link>
     </MonoGameContentReference>
+    <PRIResource Include="..\VirusX\strings\de-DE\Resources.resw">
+      <Link>strings\de-DE\Resources.resw</Link>
+    </PRIResource>
+    <PRIResource Include="..\VirusX\strings\en-US\Resources.resw">
+      <Link>strings\en-US\Resources.resw</Link>
+    </PRIResource>
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>

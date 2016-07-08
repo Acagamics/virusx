@@ -134,24 +134,22 @@ namespace VirusX.Menu
             }
 
             switch (selectedButton)
-	        {
+            {
+#if !WINDOWS_UWP
                 case Button.LANGUAGE:
                     if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT) ||
                         InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT) ||
                         InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.ACTION))
                     {
-                        var cultureEn = new CultureInfo("en");
-                        var cultureDe = new CultureInfo("de");
-                        if (cultureEn.Equals(VirusXStrings.Instance.Culture))
-                            VirusXStrings.Instance.Culture = cultureDe;
-                        else
-                            VirusXStrings.Instance.Culture = cultureEn;
+                        // Only two languages to choose from right now.
+                        VirusXStrings.Instance.Language = (VirusXStrings.Instance.Language == VirusXStrings.Languages.English) ? VirusXStrings.Languages.German : VirusXStrings.Languages.English;
 
                         menu.ReloadMenus();
                         menu.LoadContent(menu.Game.Content);
                     }
                     break;
-		        case Button.RESOLUTION:
+#endif
+                case Button.RESOLUTION:
                     activeResolution = Menu.Loop(activeResolution, availableResolutions.Count, InputManager.ControlType.NONE, true);
                     break;
                 case Button.FULLSCREEN:
@@ -166,7 +164,7 @@ namespace VirusX.Menu
                 case Button.FORCEFEEDBACK:
                     forceFeedback = Menu.Toggle(forceFeedback);
                  break;
-	        }
+            }
 
             // update background colors
             fullscreenButton.BackgroundColor = fullscreen ? Color.Green : Color.Red;

@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Globalization;
 
 namespace VirusX
 {
@@ -126,7 +125,16 @@ namespace VirusX
             Music = true;
             Fullscreen = true;
 
-            VirusXStrings.Instance.Culture = CultureInfo.CurrentCulture;
+#if !WINDOWS_UWP
+            if (System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "de")
+            {
+                VirusXStrings.Instance.Language = VirusXStrings.Languages.German;
+            }
+            else
+            {
+                VirusXStrings.Instance.Language = VirusXStrings.Languages.English;
+            }
+#endif
 
             ChooseStandardResolution();
         }
@@ -209,8 +217,7 @@ namespace VirusX
                                 break;
 
                             case "misc":
-                                FirstStart = Convert.ToBoolean(xmlConfigReader.GetAttribute("firststart"));
-                                VirusXStrings.Instance.Culture = CultureInfo.CreateSpecificCulture(xmlConfigReader.GetAttribute("language"));
+                                VirusXStrings.Instance.Language = (VirusXStrings.Languages)Enum.Parse(typeof(VirusXStrings.Languages), xmlConfigReader.GetAttribute("language"), true);
                                 break;
                         }
                     }
@@ -233,13 +240,6 @@ namespace VirusX
                 if(xmlConfigReader != null)
                     xmlConfigReader.Close();
             }
-
-#if DEBUG_LOCALIZATION_CULTURE_EN
-            VirusXStrings.Instance.Culture = CultureInfo.CreateSpecificCulture("en");
-#endif
-#if DEBUG_LOCALIZATION_CULTURE_DE
-            VirusXStrings.Instance.Culture = CultureInfo.CreateSpecificCulture("de");
-#endif
 
             if (dirty)
                 Save();
@@ -280,7 +280,7 @@ namespace VirusX
             settingsXML.WriteValue(FirstStart);
 
             settingsXML.WriteStartAttribute("language");
-            settingsXML.WriteValue(VirusXStrings.Instance.Culture.ToString());
+            settingsXML.WriteValue(VirusXStrings.Instance.Language.ToString());
             settingsXML.WriteEndElement();
 
             settingsXML.WriteEndElement();
