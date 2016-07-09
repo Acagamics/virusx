@@ -14,6 +14,7 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		VirusX\VirusX_shared.projitems*{5924f8e9-5924-4f12-8ec1-399f38f349c3}*SharedItemsImports = 4
+		VirusX\VirusX_shared.projitems*{94b74295-6cfe-437b-a75d-13fbebbe859d}*SharedItemsImports = 4
 		VirusX\VirusX_shared.projitems*{adfa7702-5142-4d50-9471-c35bf13d13ea}*SharedItemsImports = 13
 		VirusX\VirusX_shared.projitems*{d5db6e14-6132-4482-86a2-1149389582a5}*SharedItemsImports = 4
 	EndGlobalSection

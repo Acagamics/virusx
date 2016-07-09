@@ -7,7 +7,9 @@ namespace VirusX
     /// <summary>
     /// class to collect game statistics
     /// </summary>
-    //[Serializable] // todo: port
+#if !WINDOWS_UWP
+    [Serializable]
+#endif
     class Statistics
     {
         #region used items
@@ -22,7 +24,9 @@ namespace VirusX
             NUM_STAT_ITEMS
         }
 
-        //[Serializable] // todo: port
+#if !WINDOWS_UWP
+        [Serializable]
+#endif
         public struct UsedItem 
         {
             public StatItems item;
