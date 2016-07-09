@@ -2,37 +2,28 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
-using System.IO;
-#if !NETFX_CORE // TODO: port to .net core
-using System.Security.Cryptography;
-#endif
-using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
 using System.Linq;
+using System.IO;
 
 namespace VirusX.Menu
 {
-#if !NETFX_CORE // TODO: port to .net core
-    [System.Serializable]
-#endif
     class ArcadeHighscore : MenuPage
     {
-#if !NETFX_CORE // TODO: port to .net core
-    [System.Serializable]
-#endif
         public struct HighScoreEntry
         {
             public string PlayerName;
             public float Time;
         };
 
-        List<HighScoreEntry> highScoreEntries = new List<HighScoreEntry>();
-
         const int MAX_NUM_DISPLAYED_SCORED = 10;
-        const string highscoreFileLocation = "Content/arcadescores";
+        private List<HighScoreEntry> highScoreEntries = new List<HighScoreEntry>();
+
+#if WINDOWS_UWP
+        const string highscoreFilename = "arcadescores";
+#else
+        const string highscoreFilename = "Content/arcadescores";
+#endif
 
         bool enterNewHighScore = false;
 
@@ -49,15 +40,6 @@ namespace VirusX.Menu
 
         private bool cameFromGame = false;
 
-#if !NETFX_CORE // TODO: port to .net core
-        // encryption stuff
-        const int keySize = 256;
-        const string encryptionKey = "1234567890123456"; //"don't even think of it!F9LG@pxd2_7BCc4gff+]@-FG5ugZir#479-/{U>W§D)Fp-_-§_";
-        static readonly byte[] key = ASCIIEncoding.UTF8.GetBytes(encryptionKey);
-        static readonly PasswordDeriveBytes password = new PasswordDeriveBytes(encryptionKey, null);
-        static readonly byte[] keyBytes = password.GetBytes(keySize / 8);
-        static readonly byte[] initVectorBytes = Encoding.UTF8.GetBytes(encryptionKey);
-#endif
 
         // buttons
         enum Button
@@ -86,9 +68,9 @@ namespace VirusX.Menu
             for (int i = 0; i < MAX_NUM_DISPLAYED_SCORED; ++i)
             {
                 int index = i;
-                Interface.Add(new InterfaceButton(() => highScoreEntries.Count > index ? highScoreEntries[index].PlayerName : "",
+                Interface.Add(new InterfaceButton(() => highScoreEntries.Count > index ? highScoreEntries[index].PlayerName : " - ",
                                 new Vector2(-300, height + i * 40), false, Alignment.CENTER_CENTER));
-                Interface.Add(new InterfaceButton(() => highScoreEntries.Count > index ? Utils.GenerateTimeString(highScoreEntries[index].Time) : "",
+                Interface.Add(new InterfaceButton(() => Utils.GenerateTimeString(highScoreEntries.Count > index ? highScoreEntries[index].Time : 0.0f),
                                 new Vector2(250, height + i * 40), false, Alignment.CENTER_CENTER));
             }
 
@@ -130,86 +112,69 @@ namespace VirusX.Menu
         }
 
 
-        public void ReadHighScore()
+        public async void ReadHighScore()
         {
-#if !NETFX_CORE // TODO: port to .net core
+            int readscores = 0;
             try
             {
-                byte[] encryptedBytes = File.ReadAllBytes(highscoreFileLocation);
-
-                var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC };
-                ICryptoTransform decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
-                byte[] plainTextBytes;
-                using (var memoryStream = new MemoryStream(encryptedBytes))
-                using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+#if WINDOWS_UWP
+                Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+                using (Stream readStream = await localFolder.OpenStreamForReadAsync(highscoreFilename))
+#else
+                using (Stream readStream = new FileStream(highscoreFilename, FileMode.Open, FileAccess.Read))
+#endif
                 {
-                    plainTextBytes = new byte[encryptedBytes.Length];
-                    cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-                }
-                string xml = Encoding.UTF8.GetString(plainTextBytes);
-
-
-                // read xml
-                XmlReader xmlReader = XmlReader.Create(new StringReader(xml));
-                while (xmlReader.Read())
-                {
-                    if (xmlReader.NodeType == System.Xml.XmlNodeType.Element)
+                    using (BinaryReader reader = new BinaryReader(readStream))
                     {
-                        HighScoreEntry entry;
-                        entry.PlayerName = xmlReader.GetAttribute("name");
-                        entry.Time = float.Parse(xmlReader.GetAttribute("time"));
-                        highScoreEntries.Add(entry);
+                        readscores = reader.ReadInt32();
+                        for(int i=0; i<readscores; ++i)
+                        {
+                            highScoreEntries.Add(new HighScoreEntry
+                            {
+                                PlayerName = reader.ReadString(),
+                                Time = reader.ReadSingle()
+                            });
+                        }
                     }
                 }
             }
             catch
             {
+                // Failed to read the highscore. Ignore error.
             }
 
-            bool dirty = false;
-            while (highScoreEntries.Count < 10)
-            {
-                highScoreEntries.Add(new HighScoreEntry() { PlayerName = " ", Time = 0.0f });
-                dirty = true;
-            }
             highScoreEntries.OrderByDescending(x => x.Time);
-            if(dirty)
-                SafeHighScore();
-#endif
+            SaveHighScore();
         }
 
-        public void SafeHighScore()
+        public async void SaveHighScore()
         {
-#if !NETFX_CORE // TODO: port to .net core
-            // write to string
-            using (var stringWriter = new StringWriter())
+            // We used to use encryption with the key saved in this very file which was pretty silly but gave us unreadability for normal users.
+            // However, there were some porting problems with that approach. Instead the data is now written binary which should have more or less same effect.
+            try
             {
-                using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter))
+#if WINDOWS_UWP
+                Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+                using (Stream writeStream = await localFolder.OpenStreamForWriteAsync(highscoreFilename, Windows.Storage.CreationCollisionOption.ReplaceExisting))
+#else
+                using (Stream writeStream = new FileStream(highscoreFilename, FileMode.Create, FileAccess.Write))
+#endif
                 {
-                    xmlWriter.WriteStartDocument();
-                    for(int i=0; i<highScoreEntries.Count; ++i)
+                    using (BinaryWriter writer = new BinaryWriter(writeStream))
                     {
-                        xmlWriter.WriteStartElement("elem" + i.ToString());
-                        xmlWriter.WriteStartAttribute("name");
-                        xmlWriter.WriteValue(highScoreEntries[i].PlayerName);
-                        xmlWriter.WriteStartAttribute("time");
-                        xmlWriter.WriteValue(highScoreEntries[i].Time.ToString());
+                        writer.Write(highScoreEntries.Count);
+                        for (int i = 0; i < highScoreEntries.Count; ++i)
+                        {
+                            writer.Write(highScoreEntries[i].PlayerName);
+                            writer.Write(highScoreEntries[i].Time);
+                        }
                     }
-                    xmlWriter.WriteEndDocument();
-                }
-
-                // encrypt
-                byte[] plainTextBytes = Encoding.UTF8.GetBytes(stringWriter.ToString());
-                var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC };
-                ICryptoTransform encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes);
-                using(FileStream filestream = new FileStream(highscoreFileLocation, FileMode.Create, FileAccess.Write))
-                using (CryptoStream cryptoStream = new CryptoStream(filestream, encryptor, CryptoStreamMode.Write))
-                {
-                    cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
-                    cryptoStream.FlushFinalBlock();
                 }
             }
-#endif
+            catch
+            {
+                // Failed to write the highscore. Ignore error.
+            }
         }
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)
@@ -285,7 +250,7 @@ namespace VirusX.Menu
                         highScoreEntries.Add(new HighScoreEntry() { Time = NewHighScoreTime, PlayerName = newHighScoreName });
                         highScoreEntries = highScoreEntries.OrderByDescending(x => x.Time).ToList();
                         enterNewHighScore = false;
-                        SafeHighScore();
+                        SaveHighScore();
                     }
                 }
                 // otherwise

@@ -192,7 +192,7 @@ namespace VirusX
                 Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
                 using (System.IO.Stream readStream = await localFolder.OpenStreamForReadAsync("settings.xml"))
 #else
-                using (System.IO.Stream readStream = new System.IO.FileStream("settings.xml", FileMode.Open))
+                using (System.IO.Stream readStream = new System.IO.FileStream("settings.xml", FileMode.Open, FileAccess.Read))
 #endif
                 {
                     System.Xml.XmlReader xmlConfigReader = System.Xml.XmlReader.Create(readStream);
@@ -259,7 +259,7 @@ namespace VirusX
                 Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
                 using (System.IO.Stream writeStream = await localFolder.OpenStreamForWriteAsync("settings.xml", Windows.Storage.CreationCollisionOption.ReplaceExisting))
 #else
-                using (System.IO.Stream writeStream = new System.IO.FileStream("settings.xml", FileMode.Create))
+                using (System.IO.Stream writeStream = new System.IO.FileStream("settings.xml", FileMode.Create, FileAccess.Write))
 #endif
                 {
                     System.Xml.XmlWriter settingsXML = System.Xml.XmlWriter.Create(writeStream);
