@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 
 namespace VirusX
 {
@@ -178,115 +179,134 @@ namespace VirusX
         /// <summary>
         /// loads a configuration from a xml-file - if there isn't one, use default settings
         /// </summary>
-        public void ReadSettings()
+        public async void ReadSettings()
         {
-#if !NETFX_CORE // TODO: port
             bool dirty = false;
-            Reset();
-            System.Xml.XmlTextReader xmlConfigReader = null;
+            Reset(); // Reset to fill out potentially missing settings.
+
             try
             {
-                xmlConfigReader = new System.Xml.XmlTextReader("settings.xml");
-                while (xmlConfigReader.Read())
+#if WINDOWS_UWP
+                // It would be more appropriate to use the local settings folder, but then it is harder to store the xml cross platform.
+                //Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+                using (System.IO.Stream readStream = await localFolder.OpenStreamForReadAsync("settings.xml"))
+#else
+                using (System.IO.Stream readStream = new System.IO.FileStream("settings.xml", FileMode.Open))
+#endif
                 {
-                    if (xmlConfigReader.NodeType == System.Xml.XmlNodeType.Element)
+                    System.Xml.XmlReader xmlConfigReader = System.Xml.XmlReader.Create(readStream);
+
+                    while (xmlConfigReader.Read())
                     {
-                        switch (xmlConfigReader.Name)
+                        if (xmlConfigReader.NodeType == System.Xml.XmlNodeType.Element)
                         {
-                            case "display":
-                                fullscreen = Convert.ToBoolean(xmlConfigReader.GetAttribute("fullscreen"));
-                                resolutionX = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionX"));
-                                resolutionY = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionY"));
+                            switch (xmlConfigReader.Name)
+                            {
+                                case "display":
+                                    fullscreen = Convert.ToBoolean(xmlConfigReader.GetAttribute("fullscreen"));
+                                    resolutionX = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionX"));
+                                    resolutionY = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionY"));
 
-                                // validate resolution
-                                if (!GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Any(x => x.Format == SurfaceFormat.Color &&
-                                                                                                x.Height == resolutionY && x.Width == resolutionX))
-                                {
-                                    ChooseStandardResolution();
-                                    dirty = true;
-                                }
-                                break;
+                                    // validate resolution
+                                    if (!GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Any(x => x.Format == SurfaceFormat.Color &&
+                                                                                                    x.Height == resolutionY && x.Width == resolutionX))
+                                    {
+                                        ChooseStandardResolution();
+                                        dirty = true;
+                                    }
+                                    break;
 
-                            case "sound":
-                                Sound = Convert.ToBoolean(xmlConfigReader.GetAttribute("sound_on"));
-                                Music = Convert.ToBoolean(xmlConfigReader.GetAttribute("music_on"));
-                                break;
+                                case "sound":
+                                    Sound = Convert.ToBoolean(xmlConfigReader.GetAttribute("sound_on"));
+                                    Music = Convert.ToBoolean(xmlConfigReader.GetAttribute("music_on"));
+                                    break;
 
-                            case "input":
-                                ForceFeedback = Convert.ToBoolean(xmlConfigReader.GetAttribute("forcefeedback"));
-                                break;
-
-                            case "misc":
-                                VirusXStrings.Instance.Language = (VirusXStrings.Languages)Enum.Parse(typeof(VirusXStrings.Languages), xmlConfigReader.GetAttribute("language"), true);
-                                break;
+                                case "input":
+                                    ForceFeedback = Convert.ToBoolean(xmlConfigReader.GetAttribute("forcefeedback"));
+                                    break;
+#if !WINDOWS_UWP
+                                case "misc":
+                                    VirusXStrings.Instance.Language = (VirusXStrings.Languages)Enum.Parse(typeof(VirusXStrings.Languages), xmlConfigReader.GetAttribute("language"), true);
+                                    break;
+#endif
+                            }
                         }
                     }
                 }
             }
+
+            // Error in reading or opening of the xml document - write a new one with standard values.
             catch
             {
-                // error in xml document - write a new one with standard values
-                try
-                {
-                    Reset();
-                    dirty = true;
-                }
-                catch
-                {
-                }
+                Reset();
+                dirty = true;
             }
             finally
             {
-                if(xmlConfigReader != null)
-                    xmlConfigReader.Close();
+                if (dirty)
+                    Save();
             }
-
-            if (dirty)
-                Save();
-#endif
         }
 
-        public void Save()
+        public async void Save()
         {
-
-#if !NETFX_CORE // TODO: port
-            System.Xml.XmlTextWriter settingsXML = new System.Xml.XmlTextWriter("settings.xml", System.Text.Encoding.UTF8);
-            settingsXML.WriteStartDocument();
-            settingsXML.WriteStartElement("settings");
-
-            settingsXML.WriteStartElement("display");
-            settingsXML.WriteStartAttribute("fullscreen");
-            settingsXML.WriteValue(fullscreen);
-            settingsXML.WriteStartAttribute("resolutionX");
-            settingsXML.WriteValue(resolutionX);
-            settingsXML.WriteStartAttribute("resolutionY");
-            settingsXML.WriteValue(resolutionY);
-            settingsXML.WriteEndElement();
-
-            settingsXML.WriteStartElement("sound");
-            settingsXML.WriteStartAttribute("sound_on");
-            settingsXML.WriteValue(Sound);
-            settingsXML.WriteStartAttribute("music_on");
-            settingsXML.WriteValue(Music);
-            settingsXML.WriteEndElement();
-
-            settingsXML.WriteStartElement("input");
-            settingsXML.WriteStartAttribute("forcefeedback");
-            settingsXML.WriteValue(ForceFeedback);
-            settingsXML.WriteEndElement();
-
-            settingsXML.WriteStartElement("misc");
-            settingsXML.WriteStartAttribute("firststart");
-            settingsXML.WriteValue(FirstStart);
-
-            settingsXML.WriteStartAttribute("language");
-            settingsXML.WriteValue(VirusXStrings.Instance.Language.ToString());
-            settingsXML.WriteEndElement();
-
-            settingsXML.WriteEndElement();
-            settingsXML.WriteEndDocument();
-            settingsXML.Close();
+            try
+            {
+#if WINDOWS_UWP
+                // It would be more appropriate to use the local settings folder, but then it is harder to store the xml cross platform.
+                //Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+                using (System.IO.Stream writeStream = await localFolder.OpenStreamForWriteAsync("settings.xml", Windows.Storage.CreationCollisionOption.ReplaceExisting))
+#else
+                using (System.IO.Stream writeStream = new System.IO.FileStream("settings.xml", FileMode.Create))
 #endif
+                {
+                    System.Xml.XmlWriter settingsXML = System.Xml.XmlWriter.Create(writeStream);
+
+                    settingsXML.WriteStartDocument();
+                    settingsXML.WriteStartElement("settings");
+
+                    settingsXML.WriteStartElement("display");
+                    settingsXML.WriteStartAttribute("fullscreen");
+                    settingsXML.WriteValue(fullscreen);
+                    settingsXML.WriteStartAttribute("resolutionX");
+                    settingsXML.WriteValue(resolutionX);
+                    settingsXML.WriteStartAttribute("resolutionY");
+                    settingsXML.WriteValue(resolutionY);
+                    settingsXML.WriteEndElement();
+
+                    settingsXML.WriteStartElement("sound");
+                    settingsXML.WriteStartAttribute("sound_on");
+                    settingsXML.WriteValue(Sound);
+                    settingsXML.WriteStartAttribute("music_on");
+                    settingsXML.WriteValue(Music);
+                    settingsXML.WriteEndElement();
+
+                    settingsXML.WriteStartElement("input");
+                    settingsXML.WriteStartAttribute("forcefeedback");
+                    settingsXML.WriteValue(ForceFeedback);
+                    settingsXML.WriteEndElement();
+
+                    settingsXML.WriteStartElement("misc");
+                    settingsXML.WriteStartAttribute("firststart");
+                    settingsXML.WriteValue(FirstStart);
+
+#if !WINDOWS_UWP
+                    settingsXML.WriteStartAttribute("language");
+                    settingsXML.WriteValue(VirusXStrings.Instance.Language.ToString());
+                    settingsXML.WriteEndElement();
+#endif
+                    settingsXML.WriteEndElement();
+                    settingsXML.WriteEndDocument();
+
+                    settingsXML.Flush();
+                }
+            }
+            catch
+            {
+                // Writing failed! That is unfortunate, but what should we do? Certainly not crash.
+            }
         }
     }
 }
