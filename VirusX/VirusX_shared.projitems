@@ -11,7 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)AudioManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InputManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ParticleStormControl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VirusX.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PrimitiveBatch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tutorial.cs" />

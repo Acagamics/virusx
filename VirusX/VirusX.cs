@@ -1,13 +1,7 @@
-//#define NVIDIAPERFHUD_POSSIBLE
-//#define DAMAGEMAP_DEBUGGING
-//#define DEBUG_LOCALIZATION_CULTURE_EN
-//#define DEBUG_LOCALIZATION_CULTURE_DE
-
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Globalization;
 
 namespace CustomExtensions
 {
@@ -61,24 +55,10 @@ namespace VirusX
 
         private bool firstUpdate = true;
 
-        public InGame InGame // haaaack alert!
-        {
-            get { return inGame; }
-        }
-        
-        public Menu.Menu Menu
-        {
-            get { return menu; }
-        }
-
         public VirusX()
         {
             graphics = new GraphicsDeviceManager(this);
-#if NVIDIAPERFHUD_POSSIBLE
-            graphics.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
-#endif
-
-            graphics.SynchronizeWithVerticalRetrace = true;
+            graphics.SynchronizeWithVerticalRetrace = true; // V-Sync always on.
 
             Random.InitRandom((uint)DateTime.Now.Ticks);
 
@@ -101,19 +81,6 @@ namespace VirusX
 
             AudioManager.Instance.Initialize(Content);
         }
-
-        //void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
-        //{
-        //   foreach (GraphicsAdapter adapter in GraphicsAdapter.Adapters)
-        //   {
-        //      if (adapter.Description.Contains("PerfHUD"))
-        //      {
-        //         e.GraphicsDeviceInformation.Adapter = adapter;
-        //         GraphicsAdapter.UseReferenceDevice = true;
-        //         break;
-        //      }
-        //   }
-        //}
 
         public void ApplyChangedGraphicsSettings()
         {
@@ -279,42 +246,6 @@ namespace VirusX
             }
 
             base.Draw(gameTime);
-
-            // screenshots
-            /*
-#if WINDOWS
-            if (InputManager.Instance.IsButtonPressed(Keys.PrintScreen))
-            {
-                int w = GraphicsDevice.PresentationParameters.BackBufferWidth;
-                int h = GraphicsDevice.PresentationParameters.BackBufferHeight;
-
-                // pull the picture from the buffer
-                int[] backBuffer = new int[w * h];
-                GraphicsDevice.GetBackBufferData(backBuffer);
-
-                // copy into a texture
-                using (Texture2D texture = new Texture2D(GraphicsDevice, w, h, false, GraphicsDevice.PresentationParameters.BackBufferFormat))
-                {
-                    // yeah this sucks.. but is the official solution
-                    texture.SetData(backBuffer);
-
-                    // find
-                    string filename;
-                    int screenshot = 0;
-                    do
-                    {
-                        ++screenshot;
-                        filename = "Screenshot" + screenshot + ".png";
-                    } while (System.IO.File.Exists(filename));
-
-                    // save to disk
-                    var stream = System.IO.File.OpenWrite(filename);
-                    texture.SaveAsPng(stream, w, h);
-                    stream.Close();
-                }
-            }
-#endif
-            */
         }
     }
 }
