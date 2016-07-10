@@ -13,17 +13,53 @@ namespace VirusX
     {
         public static dynamic Instance { get; private set; } = new VirusXStrings();
 
-#if !WINDOWS_UWP
         public enum Languages
         {
             English,
             German,
         }
-        public Languages Language { get; set; } = Languages.English;
+        public Languages Language
+        {
+            get
+            {
+                return language;
+            }
+            set
+            {
+                language = value;
+#if WINDOWS_UWP
+                Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = value == Languages.English ? "en" : "de";
+#endif
+            }
+        }
+        Languages language = Languages.English;
 
+        public void ResetLanguageToDefault()
+        {
+            string currentTwoLetterLang = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+
+            // UWP saves an override value in another place. We should treat that as the default if it's there.
+#if WINDOWS_UWP
+            if (!string.IsNullOrEmpty(Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride))
+                currentTwoLetterLang = Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride;
+#endif
+
+            language = (currentTwoLetterLang == "de" ? Languages.German : Languages.English);
+        }
+
+        // String storage.
+#if WINDOWS_UWP
+        private static Windows.ApplicationModel.Resources.ResourceLoader loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+#else
         private static Dictionary<string, string>[] strings;
+#endif
+
         public VirusXStrings()
         {
+            ResetLanguageToDefault();
+
+            // String loading
+#if !WINDOWS_UWP
             int numLanguages = System.Enum.GetValues(typeof(Languages)).Length;
             string[] languageResourceFilenames = new[]
             {
@@ -43,11 +79,8 @@ namespace VirusX
                         strings[language].Add((string)d.Key, (string)d.Value);
                 }
             }
-        }
-
-#elif WINDOWS_UWP
-        private static Windows.ApplicationModel.Resources.ResourceLoader loader = new Windows.ApplicationModel.Resources.ResourceLoader();
 #endif
+        }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {

@@ -126,16 +126,7 @@ namespace VirusX
             Music = true;
             Fullscreen = true;
 
-#if !WINDOWS_UWP
-            if (System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "de")
-            {
-                VirusXStrings.Instance.Language = VirusXStrings.Languages.German;
-            }
-            else
-            {
-                VirusXStrings.Instance.Language = VirusXStrings.Languages.English;
-            }
-#endif
+            VirusXStrings.Instance.ResetLanguageToDefault();
 
             ChooseStandardResolution();
         }
@@ -225,11 +216,9 @@ namespace VirusX
                                 case "input":
                                     ForceFeedback = Convert.ToBoolean(xmlConfigReader.GetAttribute("forcefeedback"));
                                     break;
-#if !WINDOWS_UWP
                                 case "misc":
                                     VirusXStrings.Instance.Language = (VirusXStrings.Languages)Enum.Parse(typeof(VirusXStrings.Languages), xmlConfigReader.GetAttribute("language"), true);
                                     break;
-#endif
                             }
                         }
                     }
@@ -292,11 +281,10 @@ namespace VirusX
                     settingsXML.WriteStartAttribute("firststart");
                     settingsXML.WriteValue(FirstStart);
 
-#if !WINDOWS_UWP
                     settingsXML.WriteStartAttribute("language");
                     settingsXML.WriteValue(VirusXStrings.Instance.Language.ToString());
                     settingsXML.WriteEndElement();
-#endif
+
                     settingsXML.WriteEndElement();
                     settingsXML.WriteEndDocument();
 

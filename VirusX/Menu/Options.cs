@@ -135,7 +135,6 @@ namespace VirusX.Menu
 
             switch (selectedButton)
             {
-#if !WINDOWS_UWP
                 case Button.LANGUAGE:
                     if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.LEFT) ||
                         InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.RIGHT) ||
@@ -148,7 +147,6 @@ namespace VirusX.Menu
                         menu.LoadContent(menu.Game.Content);
                     }
                     break;
-#endif
                 case Button.RESOLUTION:
                     activeResolution = Menu.Loop(activeResolution, availableResolutions.Count, InputManager.ControlType.NONE, true);
                     break;
