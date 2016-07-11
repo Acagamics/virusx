@@ -20,7 +20,10 @@ namespace VirusX.Menu
             public int width, height;
         };
         List<Resolution> availableResolutions = new List<Resolution>();
-        int activeResolution;
+        /// <summary>
+        /// -1 means that the current resolution none of the officially available resolutions.
+        /// </summary>
+        int activeResolution = -1;
 
         enum Button
         {
@@ -45,22 +48,13 @@ namespace VirusX.Menu
         public Options(Menu menu)
             : base(menu)
         {
-            // search.. ehrm.. nearest resolution
             availableResolutions.AddRange(from dispMode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes
                                           where dispMode.Format == SurfaceFormat.Color && dispMode.Width >= Settings.MINIMUM_SCREEN_WIDTH &&
                                                                                           dispMode.Height >= Settings.MINIMUM_SCREEN_HEIGHT &&
                                                                                           dispMode.Width > dispMode.Height
                                           orderby dispMode.Width, dispMode.Height
                                           select new Resolution() { width = dispMode.Width, height = dispMode.Height });
-            for (int i = 0; i < availableResolutions.Count; ++i)
-            {
-                if (availableResolutions[i].width >= Settings.Instance.ResolutionX &&
-                    availableResolutions[i].height >= Settings.Instance.ResolutionY)
-                {
-                    activeResolution = i;
-                    break;
-                }
-            }
+
 
             Interface.Add(new InterfaceButton(VirusXStrings.Instance.MainMenuOptions, new Vector2(100, 100), true));
 
@@ -68,7 +62,14 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceButton("◄ " + VirusXStrings.Instance.CurrentLanguageName + " ►", new Vector2(450, 220)));
 
             Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.OptionsResolution, new Vector2(100, 280), () => { return selectedButton == Button.RESOLUTION; }));
-            Interface.Add(new InterfaceButton(() => { return "◄ " + availableResolutions[activeResolution].width + " x " + availableResolutions[activeResolution].height + " ►"; }, new Vector2(450, 280)));
+
+            Interface.Add(new InterfaceButton(() =>
+            {
+                if(activeResolution >= 0)
+                    return "◄ " + availableResolutions[activeResolution].width + " x " + availableResolutions[activeResolution].height + " ►";
+                else
+                    return "◄ " + Settings.Instance.ResolutionX + " x " + Settings.Instance.ResolutionY + " ►";
+            }, new Vector2(450, 280)));
 
             Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.OptionsFullscreen, new Vector2(100, 340), () => { return selectedButton == Button.FULLSCREEN; }));
             fullscreenButton = new InterfaceButton(() => { return fullscreen ? VirusXStrings.Instance.ON : VirusXStrings.Instance.OFF; }, new Vector2(450, 340), () => { return false; }, Color.White, fullscreen ? Color.Green : Color.Red);
@@ -96,6 +97,7 @@ namespace VirusX.Menu
             fullscreen = Settings.Instance.Fullscreen;
             sound = Settings.Instance.Sound;
             music = Settings.Instance.Music;
+            activeResolution = -1;
 
             selectedButton = Button.BACK;
             base.Update(gameTime);  // reduces flicker
@@ -126,8 +128,11 @@ namespace VirusX.Menu
                 Settings.Instance.Sound = sound;
                 Settings.Instance.Music = music;
                 Settings.Instance.ForceFeedback = forceFeedback;
-                Settings.Instance.ResolutionX = availableResolutions[activeResolution].width;
-                Settings.Instance.ResolutionY = availableResolutions[activeResolution].height;
+                if (activeResolution >= 0)
+                {
+                    Settings.Instance.ResolutionX = availableResolutions[activeResolution].width;
+                    Settings.Instance.ResolutionY = availableResolutions[activeResolution].height;
+                }
                 Settings.Instance.Save();
                 menu.ApplyChangedGraphicsSettings();
                 menu.ChangePage(Menu.Page.MAINMENU, gameTime);
@@ -148,7 +153,22 @@ namespace VirusX.Menu
                     }
                     break;
                 case Button.RESOLUTION:
-                    activeResolution = Menu.Loop(activeResolution, availableResolutions.Count, InputManager.ControlType.NONE, true);
+                    if (activeResolution == -1)
+                    {
+                        // Get "closest resolution".
+                        activeResolution = availableResolutions.Count - 1;
+                        for (int i = 0; i < availableResolutions.Count - 1; ++i)
+                        {
+                            if (availableResolutions[i].width >= Settings.Instance.ResolutionX &&
+                                availableResolutions[i].height >= Settings.Instance.ResolutionY)
+                            {
+                                activeResolution = i;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                        activeResolution = Menu.Loop(activeResolution, availableResolutions.Count, InputManager.ControlType.NONE, true);
                     break;
                 case Button.FULLSCREEN:
                     fullscreen = Menu.Toggle(fullscreen);

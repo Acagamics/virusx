@@ -19,6 +19,9 @@ namespace VirusX
         private const int SPAWNS_GRID_NORMAL_X = 6;
         private const int SPAWNS_GRID_NORMAL_Y = 3;
 
+        private const int SPAWNS_GRID_MAX_X = 8;
+        private const int SPAWNS_GRID_MAX_Y = 4;
+
         static private int MaxSkips (int numPlayers) { return 7 - numPlayers; }
 
         /// <summary>
@@ -62,6 +65,9 @@ namespace VirusX
 
         static public List<Vector2> GenerateCellPositionGrid(int numX, int numY, float positionJitter, Vector2 border, Vector2 valueRange)
         {
+            numX = MathHelper.Clamp(numX, 1, SPAWNS_GRID_MAX_X);
+            numY = MathHelper.Clamp(numY, 1, SPAWNS_GRID_MAX_Y);
+
             // equilateral triangles!
             List<Vector2> spawnPositions = new List<Vector2>();
             for (int x = 0; x < numX; ++x)
@@ -142,7 +148,11 @@ namespace VirusX
                 // choose random positions for player spawns
                 for (int player = 0; player < numPlayers; ++player)
                 {
-                    int playerSpawnPos = Random.Next(spawnPositions.Count);
+                    int count = spawnPositions.Count;
+                    if (count == 0)
+                        break;
+
+                    int playerSpawnPos = Random.Next(count);
                     spawnPoints.Add(new SpawnPoint(spawnPositions[playerSpawnPos], NORMAL_PLAYER_CELL_STRENGTH, player, content));
                     spawnPositions.RemoveAt(playerSpawnPos);
                 }

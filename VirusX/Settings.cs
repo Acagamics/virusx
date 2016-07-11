@@ -28,8 +28,8 @@ namespace VirusX
         private bool fullscreen = false;
         public bool Fullscreen { get { return fullscreen; } set { fullscreen = value; } }
         int resolutionX = MINIMUM_SCREEN_WIDTH, resolutionY = MINIMUM_SCREEN_HEIGHT;
-        public int ResolutionX { get { return resolutionX; } set { Debug.Assert(value >= MINIMUM_SCREEN_WIDTH); resolutionX = value; } }
-        public int ResolutionY { get { return resolutionY; } set { Debug.Assert(value >= MINIMUM_SCREEN_HEIGHT); resolutionY = value; } }
+        public int ResolutionX { get { return resolutionX; } set { resolutionX = Math.Max(value, MINIMUM_SCREEN_WIDTH); } }
+        public int ResolutionY { get { return resolutionY; } set { resolutionY = Math.Max(value, MINIMUM_SCREEN_HEIGHT); } }
 
         #endregion
 
@@ -199,12 +199,15 @@ namespace VirusX
                                     resolutionX = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionX"));
                                     resolutionY = Convert.ToInt32(xmlConfigReader.GetAttribute("resolutionY"));
 
-                                    // validate resolution
-                                    if (!GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Any(x => x.Format == SurfaceFormat.Color &&
-                                                                                                    x.Height == resolutionY && x.Width == resolutionX))
+                                    // Validate resolution if in fullscreen. Doesn't really matter in windowed.
+                                    if (fullscreen)
                                     {
-                                        ChooseStandardResolution();
-                                        dirty = true;
+                                        if (!GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Any(x => x.Format == SurfaceFormat.Color &&
+                                                                                                        x.Height == resolutionY && x.Width == resolutionX))
+                                        {
+                                            ChooseStandardResolution();
+                                            dirty = true;
+                                        }
                                     }
                                     break;
 

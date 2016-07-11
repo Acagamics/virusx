@@ -54,6 +54,7 @@ namespace VirusX
         private Background background;
 
         private bool firstUpdate = true;
+        private bool isResizing = false;
 
         public VirusX()
         {
@@ -65,11 +66,8 @@ namespace VirusX
             // read start settings
             Settings.Instance.ReadSettings();
 
-            // apply settings
-            if (graphics.IsFullScreen != Settings.Instance.Fullscreen)
-                graphics.ToggleFullScreen();
-            graphics.PreferredBackBufferWidth = Settings.Instance.ResolutionX;
-            graphics.PreferredBackBufferHeight = Settings.Instance.ResolutionY;
+            // Apply settings.
+            ApplyChangedGraphicsSettings();
 
             TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0);
             IsFixedTimeStep = false;
@@ -78,27 +76,17 @@ namespace VirusX
             Window.AllowUserResizing = false;
             Window.ClientSizeChanged += new EventHandler<EventArgs>(WindowClientSizeChanged);
             Window.Title = "Virus X";
+            Window.AllowUserResizing = true; // Is true on UWP anyway, so activate it always.
 
             AudioManager.Instance.Initialize(Content);
         }
 
         public void ApplyChangedGraphicsSettings()
         {
-            // No change? Return. Important since graphics.ApplyChanges might lead to another call to this function [..]
-            if (graphics.IsFullScreen == Settings.Instance.Fullscreen &&
-                graphics.PreferredBackBufferWidth == Settings.Instance.ResolutionX &&
-                graphics.PreferredBackBufferHeight== Settings.Instance.ResolutionY)
-            {
-                return;
-            }
-
-
-#if WINDOWS_UWP
-            var currentView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
-            currentView.TryResizeView(new Windows.Foundation.Size { Width = Settings.Instance.ResolutionX, Height = Settings.Instance.ResolutionY });
-            if (graphics.IsFullScreen != Settings.Instance.Fullscreen)
-                currentView.TryEnterFullScreenMode();
-#endif
+            // Depending on the platform graphics.PreferredBackBufferWidth/Height might already been set, but the rest of this call is still necessary.
+            // However, ApplyChanges might lead to implicit recursive calls. Therefore the following low-tec solution:
+            if (isResizing) return;
+            isResizing = true;
 
             if (graphics.IsFullScreen != Settings.Instance.Fullscreen)
                 graphics.ToggleFullScreen();
@@ -106,19 +94,25 @@ namespace VirusX
             graphics.PreferredBackBufferHeight = Settings.Instance.ResolutionY;
             graphics.ApplyChanges();
 
-            GraphicsDevice.Viewport = new Viewport(0, 0, 
-                GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+            // If we are in the init phase the GraphicsDevice might not yet be up.
+            if (GraphicsDevice != null)
+            {
+                GraphicsDevice.Viewport = new Viewport(0, 0,
+                    GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+            }
+            // Same applies to the game.
+            if (inGame != null)
+            {
+                inGame.Resize(GraphicsDevice);
+            }
 
-            inGame.Resize(GraphicsDevice);
+            isResizing = false;
         }
 
         void WindowClientSizeChanged(object sender, EventArgs e)
         {
-           /* graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
-            graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
-            graphics.ApplyChanges();
-            inGame.Resize(GraphicsDevice);
-             */
+            Settings.Instance.ResolutionX = Window.ClientBounds.Width;
+            Settings.Instance.ResolutionY = Window.ClientBounds.Height;
             ApplyChangedGraphicsSettings();
         }
 
@@ -152,7 +146,6 @@ namespace VirusX
 			tutorial.LoadContent(Content);
 
             background = new Background(GraphicsDevice, Content);
-            //RegenerateBackground();
         }
 
         /// <summary>
