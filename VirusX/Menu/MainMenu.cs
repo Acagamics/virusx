@@ -58,16 +58,6 @@ namespace VirusX.Menu
         {
             Interface.Add(new InterfaceImage("logoNew", new Vector2(50, 50)));
 
-//#if FRAUENHOFERLOGOS           
-//            Interface.Add(new InterfaceImage("Logo_SSG", new Rectangle( 100, 700, 162, 137),Alignment.TOP_LEFT,true));
-
-//            Interface.Add(new InterfaceImage("LogoFrauenhofer", new Rectangle(310 + 2 * InterfaceElement.PADDING, /*85 +*/ 2 * InterfaceElement.PADDING, 305, 83), Alignment.TOP_RIGHT, true));
-//            Interface.Add(new InterfaceImage("Logo_WiNgS", new Rectangle(133 + 2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING + 83, 128, 129), Alignment.TOP_RIGHT, true));
-//            //1.0 Lange Nacht der Wissenschaft Leipzig 27.06.2014
-//#else
-//            Interface.Add(new InterfaceImage("Logo_SSG", new Rectangle(212, 118, 162, 137), Alignment.TOP_RIGHT, true));
-//#endif
-
             Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("MainMenuNewGame"), new Vector2(100, 370), () => { return selectedButton == Button.NEWGAME; }, true));
             Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("MainMenuHighscore"), new Vector2(100, 440), () => { return selectedButton == Button.HIGHSCORE; }));
             Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("MainMenuHelp"), new Vector2(100, 500), () => { return selectedButton == Button.HELP; }));
@@ -95,7 +85,16 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceButton("► " + VirusXStrings.Instance.Get("MainMenuHelpViruses"), new Vector2(320, 470), () => { return selectedButton_HelpSubmenu == ButtonHelpSubmenu.VIRUSES; }, () => submenuVisible == SubMenu.HELP));
             Interface.Add(new InterfaceButton("► " + VirusXStrings.Instance.Get("MainMenuHelpCredits"), new Vector2(320, 520), () => { return selectedButton_HelpSubmenu == ButtonHelpSubmenu.CREDITS; }, () => submenuVisible == SubMenu.HELP));
 
-            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("VERSION"), new Vector2(2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING) + menu.Font.MeasureString(VirusXStrings.Instance.Get("VERSION")), Alignment.BOTTOM_RIGHT));
+            string versionString = VirusXStrings.Instance.Get("VERSION");
+#if WINDOWS_UWP
+            versionString += " - uwp";
+#else
+            versionString += " - desktop";
+#endif
+#if DEBUG
+            versionString += " - debug";
+#endif
+            Interface.Add(new InterfaceButton(versionString, new Vector2(2 * InterfaceElement.PADDING, 2 * InterfaceElement.PADDING) + menu.Font.MeasureString(versionString), Alignment.BOTTOM_RIGHT));
         }
 
         public override void OnActivated(Menu.Page oldPage, GameTime gameTime)

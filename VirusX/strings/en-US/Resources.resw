@@ -222,7 +222,7 @@ players each (2-4 players)</value>
     <comment>Displayed whenever there is something turned on</comment>
   </data>
   <data name="VERSION" xml:space="preserve">
-    <value>0.8 - Alpha</value>
+    <value>1.0</value>
     <comment>The version string which will be displayed in the main menu.</comment>
   </data>
   <data name="VirusNameEbola" xml:space="preserve">
