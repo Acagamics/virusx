@@ -183,8 +183,10 @@ namespace VirusX
             if (InputManager.Instance.IsButtonPressed(Keys.F12))
                 showStatistics = !showStatistics;
             // toggle automatic item deletion
+#if DEBUG
             if (InputManager.Instance.IsButtonPressed(Keys.F11))
                 Settings.Instance.AutomaticItemDeletion = !Settings.Instance.AutomaticItemDeletion;
+#endif
         }
 
         /// <summary>
@@ -234,7 +236,9 @@ namespace VirusX
                     statistic += "\nTotalParticles: " + totalParticleCount;
                 }
 
+#if DEBUG
                 statistic += "\nAutomaticItemDeletion: " + Settings.Instance.AutomaticItemDeletion;
+#endif
 
                 spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
                 spriteBatch.DrawString(menu.Font, statistic, new Vector2(5, 5), Color.White);

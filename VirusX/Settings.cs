@@ -87,10 +87,14 @@ namespace VirusX
         /// <summary>
         /// If true the item will be removed after a given amount of time
         /// </summary>
+#if DEBUG
         public bool AutomaticItemDeletion { get { return automaticItemDeletion; } set { automaticItemDeletion = value; } }
         private bool automaticItemDeletion = false;
-
-
+#else
+        public bool AutomaticItemDeletion { get { return automaticItemDeletion; } }
+        private const bool automaticItemDeletion = false;
+#endif
+        
         #endregion
 
         #region Misc
@@ -117,7 +121,7 @@ namespace VirusX
         public bool FirstStart { get { return firstStart; } set { firstStart = value; } }
         private bool firstStart = true;
 
-        #endregion
+#endregion
 
         public void Reset()
         {
