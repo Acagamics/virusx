@@ -88,10 +88,10 @@ namespace VirusX
             if (isResizing) return;
             isResizing = true;
 
-            if (graphics.IsFullScreen != Settings.Instance.Fullscreen)
-                graphics.ToggleFullScreen();
             graphics.PreferredBackBufferWidth = Settings.Instance.ResolutionX;
             graphics.PreferredBackBufferHeight = Settings.Instance.ResolutionY;
+            if (graphics.IsFullScreen != Settings.Instance.Fullscreen)
+                graphics.ToggleFullScreen();
             graphics.ApplyChanges();
 
             // If we are in the init phase the GraphicsDevice might not yet be up.
@@ -111,9 +111,12 @@ namespace VirusX
 
         void WindowClientSizeChanged(object sender, EventArgs e)
         {
-            Settings.Instance.ResolutionX = Window.ClientBounds.Width;
-            Settings.Instance.ResolutionY = Window.ClientBounds.Height;
-            ApplyChangedGraphicsSettings();
+            if (!isResizing)
+            {
+                Settings.Instance.ResolutionX = Window.ClientBounds.Width;
+                Settings.Instance.ResolutionY = Window.ClientBounds.Height;
+                ApplyChangedGraphicsSettings();
+            }
         }
 
         /// <summary>
