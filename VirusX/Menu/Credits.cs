@@ -21,23 +21,23 @@ namespace VirusX.Menu
         {
             Interface.Add(new InterfaceImage("logoNew", new Vector2(350, -250 / 2), Alignment.CENTER_RIGHT));
 
-            Interface.Add(new InterfaceButton(VirusXStrings.Instance.CreditsGameBy, new Vector2(100, Settings.Instance.ResolutionY), true));
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("CreditsGameBy"), new Vector2(100, Settings.Instance.ResolutionY), true));
 
             List<string> names = new List<string>() {
-                "Andreas Reich", VirusXStrings.Instance.CreditsAndreas,
-                "Enrico Gebert", VirusXStrings.Instance.CreditsEnrico,
-                "Sebastian Lay", VirusXStrings.Instance.CreditsSebastian,
-                "Maria Manneck", VirusXStrings.Instance.CreditsMaria
+                "Andreas Reich", VirusXStrings.Instance.Get("CreditsAndreas"),
+                "Enrico Gebert", VirusXStrings.Instance.Get("CreditsEnrico"),
+                "Sebastian Lay", VirusXStrings.Instance.Get("CreditsSebastian"),
+                "Maria Manneck", VirusXStrings.Instance.Get("CreditsMaria")
             };
             AddNames(names, Settings.Instance.ResolutionY + 200);
 
             names = new List<string>() {
-                VirusXStrings.Instance.CreditsThanks,
-                VirusXStrings.Instance.CreditsThanksNames
+                VirusXStrings.Instance.Get("CreditsThanks"),
+                VirusXStrings.Instance.Get("CreditsThanksNames")
             };
             AddNames(names, Settings.Instance.ResolutionY + 1100);
 
-            Interface.Add(new InterfaceButton(VirusXStrings.Instance.CreditsMusic, new Vector2(100, Settings.Instance.ResolutionY + 1500), true));
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("CreditsMusic"), new Vector2(100, Settings.Instance.ResolutionY + 1500), true));
 
             names = new List<string>() {
                 "Beach - PaulFitzZaland", "soundcloud.com/paulfitzzaland",

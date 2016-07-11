@@ -63,12 +63,12 @@ namespace VirusX
             {
                 return new String[]
                 {
-                    VirusXStrings.Instance.GameModeClassic,
-                    VirusXStrings.Instance.GameModeCTC,
-                    VirusXStrings.Instance.GameModeLvsR,
-                    VirusXStrings.Instance.GameModeFun,
-                    VirusXStrings.Instance.GameModeDomination,
-                    VirusXStrings.Instance.GameModeArcade
+                    VirusXStrings.Instance.Get("GameModeClassic"),
+                    VirusXStrings.Instance.Get("GameModeCTC"),
+                    VirusXStrings.Instance.Get("GameModeLvsR"),
+                    VirusXStrings.Instance.Get("GameModeFun"),
+                    VirusXStrings.Instance.Get("GameModeDomination"),
+                    VirusXStrings.Instance.Get("GameModeArcade")
                 };
             }
         }
@@ -79,12 +79,12 @@ namespace VirusX
             {
                 return new String[]
                 {
-                    VirusXStrings.Instance.GameModeDescriptionClassic,
-                    VirusXStrings.Instance.GameModeDescriptionCTC,
-                    VirusXStrings.Instance.GameModeDescriptionLvsR,
-                    VirusXStrings.Instance.GameModeDescriptionFun,
-                    VirusXStrings.Instance.GameModeDescriptionDomination,
-                    VirusXStrings.Instance.GameModeDescriptionArcade
+                    VirusXStrings.Instance.Get("GameModeDescriptionClassic"),
+                    VirusXStrings.Instance.Get("GameModeDescriptionCTC"),
+                    VirusXStrings.Instance.Get("GameModeDescriptionLvsR"),
+                    VirusXStrings.Instance.Get("GameModeDescriptionFun"),
+                    VirusXStrings.Instance.Get("GameModeDescriptionDomination"),
+                    VirusXStrings.Instance.Get("GameModeDescriptionArcade")
                 };
             }
         }

@@ -16,13 +16,13 @@ namespace VirusX.Menu
             Interface.Add(new InterfaceFiller(Vector2.Zero, Color.Black * 0.5f, () => { return origin == Menu.Page.INGAME || origin == Menu.Page.NEWGAME; }));
 
             string[,] data = {
-                                 { null,                 VirusXStrings.Instance.ControlKeyboard1,   VirusXStrings.Instance.ControlKeyboard2,  VirusXStrings.Instance.ControlKeyboard3,   VirusXStrings.Instance.ControlGamepad },
-                                 { VirusXStrings.Instance.ControlMoveUp,                 "W",           VirusXStrings.Instance.ControlArrowUp,    VirusXStrings.Instance.ControlNumpad + " 8",     null },
-                                 { VirusXStrings.Instance.ControlMoveLeft,               "A",           VirusXStrings.Instance.ControlArrowLeft,  VirusXStrings.Instance.ControlNumpad + " 4",     null },
-                                 { VirusXStrings.Instance.ControlMoveDown,               "S",           VirusXStrings.Instance.ControlArrowDown,   VirusXStrings.Instance.ControlNumpad + " 5/2",    null },
-                                 { VirusXStrings.Instance.ControlMoveRight,              "D",           VirusXStrings.Instance.ControlArrowRight,  VirusXStrings.Instance.ControlNumpad + " 6",    null },
-                                 { VirusXStrings.Instance.ControlActionUse,  "Tab",        "Enter",        VirusXStrings.Instance.ControlNumpad + " 0",    null },
-                                 { VirusXStrings.Instance.ControlBackHold, "L-Shift",       "R-Shift",        VirusXStrings.Instance.ControlNumpad + " 7/9",    null },
+                                 { null,                 VirusXStrings.Instance.Get("ControlKeyboard1"),   VirusXStrings.Instance.Get("ControlKeyboard2"),  VirusXStrings.Instance.Get("ControlKeyboard3"),   VirusXStrings.Instance.Get("ControlGamepad") },
+                                 { VirusXStrings.Instance.Get("ControlMoveUp"),                 "W",           VirusXStrings.Instance.Get("ControlArrowUp"),    VirusXStrings.Instance.Get("ControlNumpad") + " 8",     null },
+                                 { VirusXStrings.Instance.Get("ControlMoveLeft"),               "A",           VirusXStrings.Instance.Get("ControlArrowLeft"),  VirusXStrings.Instance.Get("ControlNumpad") + " 4",     null },
+                                 { VirusXStrings.Instance.Get("ControlMoveDown"),               "S",           VirusXStrings.Instance.Get("ControlArrowDown"),   VirusXStrings.Instance.Get("ControlNumpad") + " 5/2",    null },
+                                 { VirusXStrings.Instance.Get("ControlMoveRight"),              "D",           VirusXStrings.Instance.Get("ControlArrowRight"),  VirusXStrings.Instance.Get("ControlNumpad") + " 6",    null },
+                                 { VirusXStrings.Instance.Get("ControlActionUse"),  "Tab",        "Enter",        VirusXStrings.Instance.Get("ControlNumpad") + " 0",    null },
+                                 { VirusXStrings.Instance.Get("ControlBackHold"), "L-Shift",       "R-Shift",        VirusXStrings.Instance.Get("ControlNumpad") + " 7/9",    null },
                              };
 
             // big table
@@ -64,7 +64,7 @@ namespace VirusX.Menu
                 Alignment.TOP_CENTER));
 
             // back button
-            string label = VirusXStrings.Instance.MenuBack;
+            string label = VirusXStrings.Instance.Get("MenuBack");
             Interface.Add(new InterfaceButton(label, new Vector2(-(int)(menu.Font.MeasureString(label).X / 2), 100), () => { return true; }, Alignment.BOTTOM_CENTER));
         }
 

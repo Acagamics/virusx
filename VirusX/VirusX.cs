@@ -90,9 +90,10 @@ namespace VirusX
 
             graphics.PreferredBackBufferWidth = Settings.Instance.ResolutionX;
             graphics.PreferredBackBufferHeight = Settings.Instance.ResolutionY;
+            graphics.ApplyChanges();
+
             if (graphics.IsFullScreen != Settings.Instance.Fullscreen)
                 graphics.ToggleFullScreen();
-            graphics.ApplyChanges();
 
             // If we are in the init phase the GraphicsDevice might not yet be up.
             if (GraphicsDevice != null)

@@ -4,7 +4,7 @@
   <mp:PhoneIdentity PhoneProductId="5154e14f-d822-4881-993b-6a859212e80c" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Virus X</DisplayName>
-    <PublisherDisplayName>Andreas Reich</PublisherDisplayName>
+    <PublisherDisplayName>Acagamics</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>

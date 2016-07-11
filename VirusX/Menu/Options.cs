@@ -56,12 +56,12 @@ namespace VirusX.Menu
                                           select new Resolution() { width = dispMode.Width, height = dispMode.Height });
 
 
-            Interface.Add(new InterfaceButton(VirusXStrings.Instance.MainMenuOptions, new Vector2(100, 100), true));
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("MainMenuOptions"), new Vector2(100, 100), true));
 
-            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.OptionsLanguage, new Vector2(100, 220), () => { return selectedButton == Button.LANGUAGE; }));
-            Interface.Add(new InterfaceButton("◄ " + VirusXStrings.Instance.CurrentLanguageName + " ►", new Vector2(450, 220)));
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("OptionsLanguage"), new Vector2(100, 220), () => { return selectedButton == Button.LANGUAGE; }));
+            Interface.Add(new InterfaceButton("◄ " + VirusXStrings.Instance.Get("CurrentLanguageName") + " ►", new Vector2(450, 220)));
 
-            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.OptionsResolution, new Vector2(100, 280), () => { return selectedButton == Button.RESOLUTION; }));
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("OptionsResolution"), new Vector2(100, 280), () => { return selectedButton == Button.RESOLUTION; }));
 
             Interface.Add(new InterfaceButton(() =>
             {
@@ -71,24 +71,24 @@ namespace VirusX.Menu
                     return "◄ " + Settings.Instance.ResolutionX + " x " + Settings.Instance.ResolutionY + " ►";
             }, new Vector2(450, 280)));
 
-            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.OptionsFullscreen, new Vector2(100, 340), () => { return selectedButton == Button.FULLSCREEN; }));
-            fullscreenButton = new InterfaceButton(() => { return fullscreen ? VirusXStrings.Instance.ON : VirusXStrings.Instance.OFF; }, new Vector2(450, 340), () => { return false; }, Color.White, fullscreen ? Color.Green : Color.Red);
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("OptionsFullscreen"), new Vector2(100, 340), () => { return selectedButton == Button.FULLSCREEN; }));
+            fullscreenButton = new InterfaceButton(() => { return fullscreen ? VirusXStrings.Instance.Get("ON") : VirusXStrings.Instance.Get("OFF"); }, new Vector2(450, 340), () => { return false; }, Color.White, fullscreen ? Color.Green : Color.Red);
             Interface.Add(fullscreenButton);
 
-            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.OptionsSound, new Vector2(100, 400), () => { return selectedButton == Button.SOUND; }));
-            soundButton = new InterfaceButton(() => { return sound ? VirusXStrings.Instance.ON : VirusXStrings.Instance.OFF; }, new Vector2(450, 400), () => { return false; }, Color.White, sound ? Color.Green : Color.Red);
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("OptionsSound"), new Vector2(100, 400), () => { return selectedButton == Button.SOUND; }));
+            soundButton = new InterfaceButton(() => { return sound ? VirusXStrings.Instance.Get("ON") : VirusXStrings.Instance.Get("OFF"); }, new Vector2(450, 400), () => { return false; }, Color.White, sound ? Color.Green : Color.Red);
             Interface.Add(soundButton);
 
-            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.OptionsMusic, new Vector2(100, 460), () => { return selectedButton == Button.MUSIC; }));
-            musicButton = new InterfaceButton(() => { return music ? VirusXStrings.Instance.ON : VirusXStrings.Instance.OFF; }, new Vector2(450, 460), () => { return false; }, Color.White, music ? Color.Green : Color.Red);
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("OptionsMusic"), new Vector2(100, 460), () => { return selectedButton == Button.MUSIC; }));
+            musicButton = new InterfaceButton(() => { return music ? VirusXStrings.Instance.Get("ON") : VirusXStrings.Instance.Get("OFF"); }, new Vector2(450, 460), () => { return false; }, Color.White, music ? Color.Green : Color.Red);
             Interface.Add(musicButton);
 
-            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.OptionsRumble, new Vector2(100, 520), () => { return selectedButton == Button.FORCEFEEDBACK; }));
-            forceFeedbackButton = new InterfaceButton(() => { return forceFeedback ? VirusXStrings.Instance.ON : VirusXStrings.Instance.OFF; }, new Vector2(450, 520), () => { return false; }, Color.White, forceFeedback ? Color.Green : Color.Red);
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("OptionsRumble"), new Vector2(100, 520), () => { return selectedButton == Button.FORCEFEEDBACK; }));
+            forceFeedbackButton = new InterfaceButton(() => { return forceFeedback ? VirusXStrings.Instance.Get("ON") : VirusXStrings.Instance.Get("OFF"); }, new Vector2(450, 520), () => { return false; }, Color.White, forceFeedback ? Color.Green : Color.Red);
             Interface.Add(forceFeedbackButton);
 
-            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.OptionsSafeAndExit, new Vector2(100, 620), () => { return selectedButton == Button.BACK; }));
-            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.OptionsCancel, new Vector2(100, 680), () => { return selectedButton == Button.EXIT; }));
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("OptionsSafeAndExit"), new Vector2(100, 620), () => { return selectedButton == Button.BACK; }));
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("OptionsCancel"), new Vector2(100, 680), () => { return selectedButton == Button.EXIT; }));
         }
 
         // if changed to main menu without saving

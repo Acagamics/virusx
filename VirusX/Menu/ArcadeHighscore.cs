@@ -57,7 +57,7 @@ namespace VirusX.Menu
             // load highscore or generate generic
             ReadHighScore();
 
-            string text = VirusXStrings.Instance.MainMenuHighscore;
+            string text = VirusXStrings.Instance.Get("MainMenuHighscore");
             int width = (int)menu.FontHeading.MeasureString(text).X;
 
             int height = -300;
@@ -75,7 +75,7 @@ namespace VirusX.Menu
             }
 
             // play again button
-            text = VirusXStrings.Instance.PlayAgain;
+            text = VirusXStrings.Instance.Get("PlayAgain");
             width = (int)menu.Font.MeasureString(text).X;
             Interface.Add(new InterfaceButton(text,
                 new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() * 2 + InterfaceImageButton.PADDING * 7),
@@ -84,7 +84,7 @@ namespace VirusX.Menu
                 Alignment.BOTTOM_CENTER));
 
             // main menu button
-            text = VirusXStrings.Instance.BackToMainMenu;
+            text = VirusXStrings.Instance.Get("BackToMainMenu");
             width = (int)menu.Font.MeasureString(text).X;
             Interface.Add(new InterfaceButton(text,
                 new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() + InterfaceImageButton.PADDING * 4),
@@ -95,20 +95,20 @@ namespace VirusX.Menu
             // enter highscore stuff
             Interface.Add(new InterfaceFiller(Vector2.Zero, Color.Black * 0.8f, () => enterNewHighScore));
 
-            Vector2 stringSize = menu.FontHeading.MeasureString(VirusXStrings.Instance.ScoreNewHighScore);
-            Interface.Add(new InterfaceButton(() => (string)VirusXStrings.Instance.ScoreNewHighScore, new Vector2(-stringSize.X / 2, -stringSize.Y * 4.5f), () => false, () => enterNewHighScore, true, Alignment.CENTER_CENTER));
+            Vector2 stringSize = menu.FontHeading.MeasureString(VirusXStrings.Instance.Get("ScoreNewHighScore"));
+            Interface.Add(new InterfaceButton(() => VirusXStrings.Instance.Get("ScoreNewHighScore"), new Vector2(-stringSize.X / 2, -stringSize.Y * 4.5f), () => false, () => enterNewHighScore, true, Alignment.CENTER_CENTER));
 
             Interface.Add(new InterfaceButton(() => Utils.GenerateTimeString(NewHighScoreTime), new Vector2(-30, -stringSize.Y * 3.0f), () => false, () => enterNewHighScore, 60, Alignment.CENTER_CENTER));
 
             const int enterNameWidth = 400;
-            stringSize = menu.Font.MeasureString(VirusXStrings.Instance.ScoreEnterYourName);
+            stringSize = menu.Font.MeasureString(VirusXStrings.Instance.Get("ScoreEnterYourName"));
             Interface.Add(new InterfaceButton(() => newHighScoreName, new Vector2(-enterNameWidth / 2, -stringSize.Y / 2), () => false, () => enterNewHighScore, enterNameWidth, Alignment.CENTER_CENTER));
 
-            stringSize = menu.Font.MeasureString(VirusXStrings.Instance.ScoreSubmitScore);
-            Interface.Add(new InterfaceButton((string)VirusXStrings.Instance.ScoreSubmitScore, new Vector2(-stringSize.X / 2, stringSize.Y * 3), () => true, () => enterNewHighScore, Alignment.CENTER_CENTER));
+            stringSize = menu.Font.MeasureString(VirusXStrings.Instance.Get("ScoreSubmitScore"));
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("ScoreSubmitScore"), new Vector2(-stringSize.X / 2, stringSize.Y * 3), () => true, () => enterNewHighScore, Alignment.CENTER_CENTER));
 
 
-            newHighScoreName = VirusXStrings.Instance.ScoreEnterYourName;
+            newHighScoreName = VirusXStrings.Instance.Get("ScoreEnterYourName");
         }
 
 

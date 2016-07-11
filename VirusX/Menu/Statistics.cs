@@ -128,19 +128,19 @@ namespace VirusX.Menu
                                     switch(Statistics.getVirusType(index))
                                     {
                                         case VirusSwarm.VirusType.EBOLA:
-                                            return VirusXStrings.Instance.VirusShortNameEbola;
+                                            return VirusXStrings.Instance.Get("VirusShortNameEbola");
                                         case VirusSwarm.VirusType.EPSTEINBARR:
-                                            return VirusXStrings.Instance.VirusShortNameEpsteinBarr;
+                                            return VirusXStrings.Instance.Get("VirusShortNameEpsteinBarr");
                                         case VirusSwarm.VirusType.H5N1:
-                                            return VirusXStrings.Instance.VirusShortNameH5N1;
+                                            return VirusXStrings.Instance.Get("VirusShortNameH5N1");
                                         case VirusSwarm.VirusType.HEPATITISB:
-                                            return VirusXStrings.Instance.VirusShortNameHepatitisB;
+                                            return VirusXStrings.Instance.Get("VirusShortNameHepatitisB");
                                         case VirusSwarm.VirusType.HIV:
-                                            return VirusXStrings.Instance.VirusShortNameHIV;
+                                            return VirusXStrings.Instance.Get("VirusShortNameHIV");
                                         case VirusSwarm.VirusType.MARV:
-                                            return VirusXStrings.Instance.VirusShortNameMarv;
+                                            return VirusXStrings.Instance.Get("VirusShortNameMarv");
                                         case VirusSwarm.VirusType.WNV:
-                                            return VirusXStrings.Instance.VirusShortNameWestNile;
+                                            return VirusXStrings.Instance.Get("VirusShortNameWestNile");
                                         default:
                                             throw new NotImplementedException("Unknown Virus Type - can't generate virus name!");
                                     }
@@ -164,7 +164,7 @@ namespace VirusX.Menu
             Interface.Add(diagramDescription);
 
             // play again button
-            string text = VirusXStrings.Instance.PlayAgain;
+            string text = VirusXStrings.Instance.Get("PlayAgain");
             int width = (int)menu.Font.MeasureString(text).X;
             Interface.Add(new InterfaceButton(text,
                 new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() * 2 + InterfaceImageButton.PADDING * 7),
@@ -173,7 +173,7 @@ namespace VirusX.Menu
                 Alignment.BOTTOM_CENTER));
 
             // main menu button
-            text = VirusXStrings.Instance.BackToMainMenu;
+            text = VirusXStrings.Instance.Get("BackToMainMenu");
             width = (int)menu.Font.MeasureString(text).X;
             Interface.Add(new InterfaceButton(text,
                 new Vector2(-(int)(menu.Font.MeasureString(text).X / 2) - InterfaceImageButton.PADDING, menu.GetFontHeight() + InterfaceImageButton.PADDING * 4),

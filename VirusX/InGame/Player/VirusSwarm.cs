@@ -38,13 +38,13 @@ namespace VirusX
         {
             get
             {
-                return new string[] {   VirusXStrings.Instance.VirusNameH5N1,
-                                        VirusXStrings.Instance.VirusNameHepatitisB,
-                                        VirusXStrings.Instance.VirusNameHIV,
-                                        VirusXStrings.Instance.VirusNameEpsteinBarr,
-                                        VirusXStrings.Instance.VirusNameEbola,
-                                        VirusXStrings.Instance.VirusNameMarv,
-                                        VirusXStrings.Instance.VirusNameWestNile};
+                return new string[] {   VirusXStrings.Instance.Get("VirusNameH5N1"),
+                                        VirusXStrings.Instance.Get("VirusNameHepatitisB"),
+                                        VirusXStrings.Instance.Get("VirusNameHIV"),
+                                        VirusXStrings.Instance.Get("VirusNameEpsteinBarr"),
+                                        VirusXStrings.Instance.Get("VirusNameEbola"),
+                                        VirusXStrings.Instance.Get("VirusNameMarv"),
+                                        VirusXStrings.Instance.Get("VirusNameWestNile")};
             }
         }
      
@@ -52,13 +52,13 @@ namespace VirusX
         {
             get
             {
-                return new string[]   { VirusXStrings.Instance.VirusAdditionalInfoH5N1,
-                                        VirusXStrings.Instance.VirusAdditionalInfoHepatitisB,
-                                        VirusXStrings.Instance.VirusAdditionalInfoHIV,
-                                        VirusXStrings.Instance.VirusAdditionalInfoEpsteinBarr,
-                                        VirusXStrings.Instance.VirusAdditionalInfoEbola,
-                                        VirusXStrings.Instance.VirusAdditionalInfoMarv,
-                                        VirusXStrings.Instance.VirusAdditionalInfoWestNile};
+                return new string[]   { VirusXStrings.Instance.Get("VirusAdditionalInfoH5N1"),
+                                        VirusXStrings.Instance.Get("VirusAdditionalInfoHepatitisB"),
+                                        VirusXStrings.Instance.Get("VirusAdditionalInfoHIV"),
+                                        VirusXStrings.Instance.Get("VirusAdditionalInfoEpsteinBarr"),
+                                        VirusXStrings.Instance.Get("VirusAdditionalInfoEbola"),
+                                        VirusXStrings.Instance.Get("VirusAdditionalInfoMarv"),
+                                        VirusXStrings.Instance.Get("VirusAdditionalInfoWestNile")};
             }
         }
 
@@ -66,13 +66,13 @@ namespace VirusX
         {
             get
             {
-                return new string[] {   VirusXStrings.Instance.VirusClassificationH5N1,
-                                        VirusXStrings.Instance.VirusClassificationHepatitisB,
-                                        VirusXStrings.Instance.VirusClassificationHIV,
-                                        VirusXStrings.Instance.VirusClassificationEpsteinBarr,
-                                        VirusXStrings.Instance.VirusClassificationEbola,
-                                        VirusXStrings.Instance.VirusClassificationMarv,
-                                        VirusXStrings.Instance.VirusClassificationWestNile};
+                return new string[] {   VirusXStrings.Instance.Get("VirusClassificationH5N1"),
+                                        VirusXStrings.Instance.Get("VirusClassificationHepatitisB"),
+                                        VirusXStrings.Instance.Get("VirusClassificationHIV"),
+                                        VirusXStrings.Instance.Get("VirusClassificationEpsteinBarr"),
+                                        VirusXStrings.Instance.Get("VirusClassificationEbola"),
+                                        VirusXStrings.Instance.Get("VirusClassificationMarv"),
+                                        VirusXStrings.Instance.Get("VirusClassificationWestNile")};
             }
         }
         
@@ -80,26 +80,26 @@ namespace VirusX
         {
             get
             {
-                return new string[] {   VirusXStrings.Instance.VirusShortNameH5N1,
-                                        VirusXStrings.Instance.VirusShortNameHepatitisB,
-                                        VirusXStrings.Instance.VirusShortNameHIV,
-                                        VirusXStrings.Instance.VirusShortNameEpsteinBarr,
-                                        VirusXStrings.Instance.VirusShortNameEbola,
-                                        VirusXStrings.Instance.VirusShortNameMarv,
-                                        VirusXStrings.Instance.VirusShortNameWestNile};
+                return new string[] {   VirusXStrings.Instance.Get("VirusShortNameH5N1"),
+                                        VirusXStrings.Instance.Get("VirusShortNameHepatitisB"),
+                                        VirusXStrings.Instance.Get("VirusShortNameHIV"),
+                                        VirusXStrings.Instance.Get("VirusShortNameEpsteinBarr"),
+                                        VirusXStrings.Instance.Get("VirusShortNameEbola"),
+                                        VirusXStrings.Instance.Get("VirusShortNameMarv"),
+                                        VirusXStrings.Instance.Get("VirusShortNameWestNile")};
             }
         }
         public static string[] VirusCausedDisease
         {
             get
             {
-                return new string[] {   VirusXStrings.Instance.VirusCausedDiseaseH5N1,
-                                        VirusXStrings.Instance.VirusCausedDiseaseHepatitisB,
-                                        VirusXStrings.Instance.VirusCausedDiseaseHIV,
-                                        VirusXStrings.Instance.VirusCausedDiseaseEpsteinBarr,
-                                        VirusXStrings.Instance.VirusCausedDiseaseEbola,
-                                        VirusXStrings.Instance.VirusCausedDiseaseMarv,
-                                        VirusXStrings.Instance.VirusCausedDiseaseWestNile};
+                return new string[] {   VirusXStrings.Instance.Get("VirusCausedDiseaseH5N1"),
+                                        VirusXStrings.Instance.Get("VirusCausedDiseaseHepatitisB"),
+                                        VirusXStrings.Instance.Get("VirusCausedDiseaseHIV"),
+                                        VirusXStrings.Instance.Get("VirusCausedDiseaseEpsteinBarr"),
+                                        VirusXStrings.Instance.Get("VirusCausedDiseaseEbola"),
+                                        VirusXStrings.Instance.Get("VirusCausedDiseaseMarv"),
+                                        VirusXStrings.Instance.Get("VirusCausedDiseaseWestNile")};
             }
         }
 

@@ -9,9 +9,9 @@ namespace VirusX
     /// Now that we also want to support UWP this is no longer an option.
     /// This class ports the previous functionality.
     /// </summary>
-    class VirusXStrings : DynamicObject
+    class VirusXStrings
     {
-        public static dynamic Instance { get; private set; } = new VirusXStrings();
+        public static VirusXStrings Instance { get; private set; } = new VirusXStrings();
 
         public enum Languages
         {
@@ -82,29 +82,23 @@ namespace VirusX
 #endif
         }
 
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        public string Get(string name)
         {
 #if WINDOWS_UWP
-            string loadedString = loader.GetString(binder.Name);
-            result = loadedString;
-            return !string.IsNullOrEmpty(loadedString);
+            string foundString = loader.GetString(name);
 #else
-            string resultString;
+            string foundString;
             int currentLanguageIndex = (int)Language;
-            bool found = strings[currentLanguageIndex].TryGetValue(binder.Name, out resultString);
+            bool found = strings[currentLanguageIndex].TryGetValue(name, out foundString);
 
             // First language is fallback.
             if (!found && currentLanguageIndex != 0)
-                found = strings[0].TryGetValue(binder.Name, out resultString);
-
-            result = resultString;
-            return found;
+                found = strings[0].TryGetValue(name, out foundString);
 #endif
-        }
 
-        public override bool TrySetMember(SetMemberBinder binder, object value)
-        {
-            return false;
+            System.Diagnostics.Debug.Assert(!string.IsNullOrEmpty(foundString));
+
+            return foundString;
         }
     }
 }

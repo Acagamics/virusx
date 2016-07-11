@@ -21,14 +21,14 @@ namespace VirusX
             {
                 return new String[]
                     {
-                        VirusXStrings.Instance.InputControlNameWASD,
-                        VirusXStrings.Instance.InputControlNameArrows,
-                        VirusXStrings.Instance.InputControlNameNumpad,
-                        VirusXStrings.Instance.InputControlNameGamepad1,
-                        VirusXStrings.Instance.InputControlNameGamepad2,
-                        VirusXStrings.Instance.InputControlNameGamepad3,
-                        VirusXStrings.Instance.InputControlNameGamepad4,
-                        VirusXStrings.Instance.InputControlNameComputer
+                        VirusXStrings.Instance.Get("InputControlNameWASD"),
+                        VirusXStrings.Instance.Get("InputControlNameArrows"),
+                        VirusXStrings.Instance.Get("InputControlNameNumpad"),
+                        VirusXStrings.Instance.Get("InputControlNameGamepad1"),
+                        VirusXStrings.Instance.Get("InputControlNameGamepad2"),
+                        VirusXStrings.Instance.Get("InputControlNameGamepad3"),
+                        VirusXStrings.Instance.Get("InputControlNameGamepad4"),
+                        VirusXStrings.Instance.Get("InputControlNameComputer")
                     };
             }
         }
