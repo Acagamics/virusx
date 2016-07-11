@@ -144,7 +144,7 @@ namespace VirusX
         /// </summary>
         private static readonly float itemSpawnTime = 2.8f;
         /// <summary>
-        /// a probarbility which determines how often the weakest player will get items near is territory center and 
+        /// a probability which determines how often the weakest player will get items near is territory center and 
         /// the strongest player gets antibodies. This is used to give weaker players a chance to come back into the game
         /// </summary>
         private static readonly float itemWinLoseRubberBand = 0.27f;

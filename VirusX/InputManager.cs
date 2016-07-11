@@ -33,19 +33,6 @@ namespace VirusX
             }
         }
 
-        static public readonly String[] ACTION_BUTTON_NAME = new String[]
-        {
-            "TAB",
-            "ENTER",
-            "NUMPAD 0",
-            "Gamepad A",
-            "Gamepad A",
-            "Gamepad A",
-            "Gamepad A",
-            "Computer"
-        };
-
-
         /// <summary>
         /// Contains all possible control types of the game.
         /// </summary>

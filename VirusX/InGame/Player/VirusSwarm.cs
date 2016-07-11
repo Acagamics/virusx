@@ -457,55 +457,14 @@ namespace VirusX
             // save particle textures on pressing space
             if (InputManager.Instance.ReleasedButton(Microsoft.Xna.Framework.Input.Keys.Tab))
             {
-#if WINDOWS_UWP
-                Windows.Storage.StorageFolder debugFolder = Windows.Storage.ApplicationData.Current.LocalCacheFolder;
-
-                debugFolder.CreateFileAsync("position target " + damageTextureValueIndex + ".png", Windows.Storage.CreationCollisionOption.ReplaceExisting).Completed =
-                    (IAsyncOperation<Windows.Storage.StorageFile> asyncInfo, AsyncStatus asyncStatus) =>
-                    {
-                        asyncInfo.GetResults().OpenStreamForWriteAsync().ContinueWith((task) =>
-                        {
-                            try {
-                                using (var stream = task.Result)
-                                    positionTargets[currentTargetIndex].SaveAsPng(stream, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
-                            } catch { }
-                        });
-                    };
-                debugFolder.CreateFileAsync("info target " + damageTextureValueIndex + ".png", Windows.Storage.CreationCollisionOption.ReplaceExisting).Completed =
-                (IAsyncOperation<Windows.Storage.StorageFile> asyncInfo, AsyncStatus asyncStatus) =>
-                    {
-                        asyncInfo.GetResults().OpenStreamForWriteAsync().ContinueWith((task) =>
-                        {
-                            try {
-                                using (var stream = task.Result)
-                                    infoTargets[currentTargetIndex].SaveAsPng(stream, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
-                            } catch { }
-                        });
-                    };
-
-                debugFolder.CreateFileAsync("movement target " + damageTextureValueIndex + ".png", Windows.Storage.CreationCollisionOption.ReplaceExisting).Completed =
-                    (IAsyncOperation<Windows.Storage.StorageFile> asyncInfo, AsyncStatus asyncStatus) =>
-                    {
-                        asyncInfo.GetResults().OpenStreamForWriteAsync().ContinueWith((task) =>
-                        {
-                            try {
-                                using (var stream = task.Result)
-                                    movementTexture[currentTargetIndex].SaveAsPng(stream, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
-                            } catch { }
-                        });
-                    };
-
-#else
                 using (var file = new System.IO.FileStream("position target " + VirusIndex + ".png", System.IO.FileMode.Create))
                     positionTargets[currentTargetIndex].SaveAsPng(file, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
                 using (var file = new System.IO.FileStream("info target " + VirusIndex + ".png", System.IO.FileMode.Create))
                     infoTargets[currentTargetIndex].SaveAsPng(file, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
                 using (var file = new System.IO.FileStream("movement target " + VirusIndex + ".png", System.IO.FileMode.Create))
                     movementTexture[currentTargetIndex].SaveAsPng(file, MAX_PARTICLES_SQRT, MAX_PARTICLES_SQRT);
-#endif
             }
 #endif
-
         }
 
         public void ReadGPUResults()
