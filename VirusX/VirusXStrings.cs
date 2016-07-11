@@ -28,7 +28,9 @@ namespace VirusX
             {
                 language = value;
 #if WINDOWS_UWP
-                Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = value == Languages.English ? "en" : "de";
+                Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = (value == Languages.English ? "en" : "de");
+                if (System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName == Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride)
+                    Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "";
 #endif
             }
         }

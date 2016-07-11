@@ -21,7 +21,7 @@ namespace VirusX.Menu
         {
             Interface.Add(new InterfaceImage("logoNew", new Vector2(350, -250 / 2), Alignment.CENTER_RIGHT));
 
-            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("CreditsGameBy"), new Vector2(100, Settings.Instance.ResolutionY), true));
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("CreditsGameBy"), new Vector2(100, Settings.Instance.ResolutionY - 100), true));
 
             List<string> names = new List<string>() {
                 "Andreas Reich", VirusXStrings.Instance.Get("CreditsAndreas"),
@@ -29,15 +29,15 @@ namespace VirusX.Menu
                 "Sebastian Lay", VirusXStrings.Instance.Get("CreditsSebastian"),
                 "Maria Manneck", VirusXStrings.Instance.Get("CreditsMaria")
             };
-            AddNames(names, Settings.Instance.ResolutionY + 200);
+            AddNames(names, Settings.Instance.ResolutionY + 100);
 
             names = new List<string>() {
                 VirusXStrings.Instance.Get("CreditsThanks"),
                 VirusXStrings.Instance.Get("CreditsThanksNames")
             };
-            AddNames(names, Settings.Instance.ResolutionY + 1100);
+            AddNames(names, Settings.Instance.ResolutionY + 900);
 
-            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("CreditsMusic"), new Vector2(100, Settings.Instance.ResolutionY + 1500), true));
+            Interface.Add(new InterfaceButton(VirusXStrings.Instance.Get("CreditsMusic"), new Vector2(100, Settings.Instance.ResolutionY + 1250), true));
 
             names = new List<string>() {
                 "Beach - PaulFitzZaland", "soundcloud.com/paulfitzzaland",
@@ -45,9 +45,11 @@ namespace VirusX.Menu
                 "snare - switchy - room", "freesound.org/people/room",
                 "Woosh.01 - Andromadax24", "freesound.org/people/Andromadax24"
             };
-            AddNames(names, Settings.Instance.ResolutionY + 1700);
+            AddNames(names, Settings.Instance.ResolutionY + 1350);
 
-            Interface.Add(new InterfaceImage("credits/acagamicslogo", new Vector2(-500 / 2, Settings.Instance.ResolutionY + 2600), Alignment.TOP_CENTER));
+            Interface.Add(new InterfaceImage("credits/acagamicslogo", new Vector2(-500 / 2, Settings.Instance.ResolutionY + 2150), Alignment.TOP_CENTER));
+
+            Interface.Add(new InterfaceImage("credits/silverseeds", new Vector2(-400 / 2, Settings.Instance.ResolutionY + 2700), Alignment.TOP_CENTER));
 
             Interface.Add(new InterfaceImage("credits/Gruppe1", new Vector2(-768 / 2, Settings.Instance.ResolutionY + 9001), Alignment.TOP_CENTER));
         }
@@ -97,7 +99,7 @@ namespace VirusX.Menu
             for (int i = 0; i < names.Count; i++)
             {
                 int alternate = i % 2 == 1 ? 60 : 0;
-                Interface.Add(new InterfaceButton(names[i], new Vector2(100, (int)(i / 2) * 200 + offset + alternate), i % 2 == 0));
+                Interface.Add(new InterfaceButton(names[i], new Vector2(100, (int)(i / 2) * 150 + offset + alternate), i % 2 == 0));
             }
         }
     }
