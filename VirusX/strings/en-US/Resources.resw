@@ -553,4 +553,7 @@ multiple sclerosis and Hodgkin lymphoma.</value>
   <data name="LanguageName" xml:space="preserve">
     <value>English</value>
   </data>
+  <data name="DxLevelInsufficient" xml:space="preserve">
+    <value>To play Virus X your Computer needs to support at least DirectX 10.</value>
+  </data>
 </root>

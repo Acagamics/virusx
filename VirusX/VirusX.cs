@@ -55,6 +55,7 @@ namespace VirusX
 
         private bool firstUpdate = true;
         private bool isResizing = false;
+        private bool insufficientDxLevel = false;
 
         public VirusX()
         {
@@ -90,10 +91,12 @@ namespace VirusX
 
             graphics.PreferredBackBufferWidth = Settings.Instance.ResolutionX;
             graphics.PreferredBackBufferHeight = Settings.Instance.ResolutionY;
-            graphics.ApplyChanges();
-
             if (graphics.IsFullScreen != Settings.Instance.Fullscreen)
                 graphics.ToggleFullScreen();
+            graphics.ApplyChanges();
+
+            // Entering fullscreen may fail!
+            Settings.Instance.Fullscreen = graphics.IsFullScreen;
 
             // If we are in the init phase the GraphicsDevice might not yet be up.
             if (GraphicsDevice != null)
@@ -128,13 +131,27 @@ namespace VirusX
         /// </summary>
         protected override void Initialize()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            menu = new Menu.Menu(this);
-            inGame = new InGame(menu);
-            tutorial = new Tutorial(this);
+            // Equivalent with SM4 or higher http://community.monogame.net/t/how-can-i-check-for-shader-modell-support-on-the-users-computer/7539
+            if(graphics.GraphicsDevice.GraphicsProfile != GraphicsProfile.HiDef)
+                insufficientDxLevel = true;
 
-            menu.PageChangingEvent += inGame.OnMenuPageChanged;
-            menu.PageChangingEvent += tutorial.OnMenuPageChanged;
+            // For some reason that was not enough to go through the windows compliance test.
+#if WINDOWS_UWP
+            if (SharpDX.Direct3D11.Device.GetSupportedFeatureLevel() < SharpDX.Direct3D.FeatureLevel.Level_10_0)
+                insufficientDxLevel = true;
+#endif
+
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            if (!insufficientDxLevel)
+            {
+                menu = new Menu.Menu(this);
+                inGame = new InGame(menu);
+                tutorial = new Tutorial(this);
+
+                menu.PageChangingEvent += inGame.OnMenuPageChanged;
+                menu.PageChangingEvent += tutorial.OnMenuPageChanged;
+            }
 
             base.Initialize();
         }
@@ -145,9 +162,12 @@ namespace VirusX
         /// </summary>
         protected override void LoadContent()
         {
+            if (insufficientDxLevel)
+                return;
+
             inGame.LoadContent(GraphicsDevice, Content);
             menu.LoadContent(Content);
-			tutorial.LoadContent(Content);
+            tutorial.LoadContent(Content);
 
             background = new Background(GraphicsDevice, Content);
         }
@@ -168,8 +188,17 @@ namespace VirusX
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            AudioManager.Instance.PlaySongsRandom();
+            base.Update(gameTime);
             InputManager.Instance.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+
+            if (insufficientDxLevel)
+            {
+                if (InputManager.Instance.WasAnyActionPressed(InputManager.ControlActions.EXIT))
+                    Exit();
+                return;
+            }
+
+            AudioManager.Instance.PlaySongsRandom();
 
             if (firstUpdate)
             {
@@ -196,8 +225,23 @@ namespace VirusX
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            base.Draw(gameTime);
+
             if (spriteBatch.IsDisposed)
                 return;
+
+            if (insufficientDxLevel)
+            {
+                // display message and kill on pressing escape.
+                string s = VirusXStrings.Instance.Get("DxLevelInsufficient");
+                var font = Content.Load<SpriteFont>("fonts/fontHeading");
+                Vector2 stringSize = font.MeasureString(s);
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
+                spriteBatch.DrawString(font, s, (new Vector2(GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight) - stringSize) / 2, Color.White);
+                spriteBatch.End();
+
+                return;
+            }
 
             // offsite stuff
             inGame.Draw_OffsiteBuffers(gameTime, GraphicsDevice);
@@ -245,8 +289,6 @@ namespace VirusX
                 spriteBatch.DrawString(menu.Font, statistic, new Vector2(5, 5), Color.White);
                 spriteBatch.End();
             }
-
-            base.Draw(gameTime);
         }
     }
 }
