@@ -48,8 +48,12 @@ namespace VirusX
         {
             System.Diagnostics.Debug.Assert(soundEffects.ContainsKey(sound));
 
-            if (Settings.Instance.Sound)
-                soundEffects[sound].Play();
+            try
+            {
+                if (Settings.Instance.Sound)
+                    soundEffects[sound].Play();
+            }
+            catch { }
         }
 
         /// <summary>
@@ -58,15 +62,10 @@ namespace VirusX
         /// <param name="sound">click, capture, switch, explosion, danger, wipeout, collect</param>
         public void PlaySoundeffect(string sound, float volume)
         {
-            System.Diagnostics.Debug.Assert(soundEffects.ContainsKey(sound));
-
-            if (Settings.Instance.Sound)
-            {
-                float currentVolume = MediaPlayer.Volume;
-                MediaPlayer.Volume = volume;
-                soundEffects[sound].Play();
-                MediaPlayer.Volume = currentVolume;
-            }
+            float currentVolume = MediaPlayer.Volume;
+            MediaPlayer.Volume = volume;
+            PlaySoundeffect(sound);
+            MediaPlayer.Volume = currentVolume;
         }
 
         /// <summary>
