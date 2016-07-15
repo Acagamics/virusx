@@ -1,7 +1,7 @@
-/*.psess
-/*.suo
-/*.vspx
-/*.user
+*.psess
+*.suo
+*.vspx
+*.user
 
 project.lock.json
 
@@ -16,3 +16,8 @@ project.lock.json
 /VirusXStatistics/bin
 /VirusXStatistics/obj
 /packages
+/VirusX_uwp/VirusX_UWP_StoreKey.pfx
+/VirusX_uwp/_language-de.appx
+/VirusX_uwp/_pkginfo.txt
+/VirusX_uwp/BundleArtifacts
+/VirusX_uwp/Package.StoreAssociation.xml

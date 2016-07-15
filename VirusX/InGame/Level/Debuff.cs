@@ -49,7 +49,7 @@ namespace VirusX
 
         protected override void OnPossessingChanged()
         {
-            AudioManager.Instance.PlaySoundeffect("explosion", 1.0f);
+            AudioManager.Instance.PlaySoundeffect("explosion");
             explosionTimer.Start();
             explosionRotation = (float)(Random.NextDouble()*MathHelper.TwoPi);
         }

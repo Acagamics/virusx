@@ -78,8 +78,6 @@ namespace VirusX
             Window.ClientSizeChanged += new EventHandler<EventArgs>(WindowClientSizeChanged);
             Window.Title = "Virus X";
             Window.AllowUserResizing = true; // Is true on UWP anyway, so activate it always.
-
-            AudioManager.Instance.Initialize(Content);
         }
 
         public void ApplyChangedGraphicsSettings()
@@ -165,6 +163,7 @@ namespace VirusX
             if (insufficientDxLevel)
                 return;
 
+            AudioManager.Instance.LoadContent(Content);
             inGame.LoadContent(GraphicsDevice, Content);
             menu.LoadContent(Content);
             tutorial.LoadContent(Content);

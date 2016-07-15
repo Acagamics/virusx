@@ -52,12 +52,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <MonoGameContentReference Include="..\VirusXContent\MonoGameContent_desktop.mgcb">
+      <Link>MonoGameContent_desktop.mgcb</Link>
+    </MonoGameContentReference>
+    <None Include="..\VirusXContent\shader\backgroundCells.fx">
+      <Link>shader\backgroundCells.fx</Link>
+    </None>
+    <None Include="..\VirusXContent\shader\backgroundParticles.fx">
+      <Link>shader\backgroundParticles.fx</Link>
+    </None>
+    <None Include="..\VirusXContent\shader\particleProcessing.fx">
+      <Link>shader\particleProcessing.fx</Link>
+    </None>
+    <None Include="..\VirusXContent\shader\particleRendering.fx">
+      <Link>shader\particleRendering.fx</Link>
+    </None>
+    <None Include="..\VirusXContent\shader\postprocess.fx">
+      <Link>shader\postprocess.fx</Link>
+    </None>
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <MonoGameContentReference Include="..\VirusXContent\MonoGameContent.mgcb">
-      <Link>MonoGameContent.mgcb</Link>
-    </MonoGameContentReference>
     <None Include="..\VirusX\strings\de-DE\Resources.resw">
       <Link>strings\de-DE\Resources.resw</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
