@@ -26,6 +26,8 @@ namespace VirusX
         /// <param name="content"></param>
         public virtual void LoadContent(ContentManager content)
         {
+            System.Diagnostics.Debug.WriteLine("Tutorial.LoadContent");
+
             foreach (InterfaceElement element in Interface)
             {
                 element.LoadContent(content);

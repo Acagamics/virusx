@@ -33,6 +33,8 @@ namespace VirusX
 
         public void LoadContent(ContentManager content)
         {
+            System.Diagnostics.Debug.WriteLine("AudioManager.LoadContent");
+
             this.content = content;
 
 #if WINDOWS_UWP

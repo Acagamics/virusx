@@ -78,10 +78,15 @@ namespace VirusX
             Window.ClientSizeChanged += new EventHandler<EventArgs>(WindowClientSizeChanged);
             Window.Title = "Virus X";
             Window.AllowUserResizing = true; // Is true on UWP anyway, so activate it always.
+
+            System.Diagnostics.Debug.WriteLine("VirusX constructed.");
         }
 
         public void ApplyChangedGraphicsSettings()
         {
+            System.Diagnostics.Debug.WriteLine("Applying new graphics settings: x {0} y {1} fullscreen {2}", 
+                Settings.Instance.ResolutionX, Settings.Instance.ResolutionY, Settings.Instance.Fullscreen);
+
             // Depending on the platform graphics.PreferredBackBufferWidth/Height might already been set, but the rest of this call is still necessary.
             // However, ApplyChanges might lead to implicit recursive calls. Therefore the following low-tec solution:
             if (isResizing) return;
@@ -129,8 +134,10 @@ namespace VirusX
         /// </summary>
         protected override void Initialize()
         {
+            System.Diagnostics.Debug.WriteLine("Initialize...");
+
             // Equivalent with SM4 or higher http://community.monogame.net/t/how-can-i-check-for-shader-modell-support-on-the-users-computer/7539
-            if(graphics.GraphicsDevice.GraphicsProfile != GraphicsProfile.HiDef)
+            if (graphics.GraphicsDevice.GraphicsProfile != GraphicsProfile.HiDef)
                 insufficientDxLevel = true;
 
             // For some reason that was not enough to go through the windows compliance test.
@@ -150,6 +157,8 @@ namespace VirusX
                 menu.PageChangingEvent += inGame.OnMenuPageChanged;
                 menu.PageChangingEvent += tutorial.OnMenuPageChanged;
             }
+            else
+                System.Diagnostics.Debug.WriteLine("DX level not sufficient!");
 
             base.Initialize();
         }
@@ -160,6 +169,8 @@ namespace VirusX
         /// </summary>
         protected override void LoadContent()
         {
+            System.Diagnostics.Debug.WriteLine("LoadContent...");
+
             if (insufficientDxLevel)
                 return;
 
@@ -169,6 +180,8 @@ namespace VirusX
             tutorial.LoadContent(Content);
 
             background = new Background(GraphicsDevice, Content);
+
+            System.Diagnostics.Debug.WriteLine("LoadContent done.");
         }
 
         /// <summary>

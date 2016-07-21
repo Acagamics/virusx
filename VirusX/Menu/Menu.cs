@@ -89,6 +89,8 @@ namespace VirusX.Menu
 
         public void LoadContent(ContentManager content)
         {
+            System.Diagnostics.Debug.WriteLine("Menu.LoadContent");
+
             texPixel = content.Load<Texture2D>("pix");
 
             foreach (MenuPage page in pages)

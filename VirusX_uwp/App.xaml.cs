@@ -19,6 +19,8 @@ namespace VirusX
         /// </summary>
         public App()
         {
+            System.Diagnostics.Debug.WriteLine("Starting VirusX UWP...");
+
             this.InitializeComponent();
         }
 

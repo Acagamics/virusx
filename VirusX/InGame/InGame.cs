@@ -311,6 +311,8 @@ namespace VirusX
         /// </summary>
         public void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
         {
+            System.Diagnostics.Debug.WriteLine("InGame.LoadContent");
+
             this.graphicsDevice = graphicsDevice;
             this.content = content;
 

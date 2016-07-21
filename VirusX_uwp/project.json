@@ -2,9 +2,9 @@
   "dependencies": {
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "MonoGame.Framework.WindowsUniversal": "3.5.1.1679",
-    "SharpDX.Direct2D1": "3.0.0",
-    "SharpDX.Direct3D11": "3.0.0",
-    "SharpDX.XAudio2": "3.0.0"
+    "SharpDX.Direct2D1": "3.0.2",
+    "SharpDX.Direct3D11": "3.0.2",
+    "SharpDX.XAudio2": "3.0.2"
   },
   "frameworks": {
     "uap10.0": {}

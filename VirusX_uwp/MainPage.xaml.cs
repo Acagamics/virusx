@@ -23,6 +23,7 @@ namespace VirusX
             currentView.SetPreferredMinSize(new Size(Settings.MINIMUM_SCREEN_WIDTH, Settings.MINIMUM_SCREEN_HEIGHT));
 
             // Create the game.
+            System.Diagnostics.Debug.WriteLine("Launching game...");
             var launchArguments = string.Empty;
             game = MonoGame.Framework.XamlGame<VirusX>.Create(launchArguments, Window.Current.CoreWindow, swapChainPanel);
         }
