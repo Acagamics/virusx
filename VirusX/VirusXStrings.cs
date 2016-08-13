@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
+using System.Globalization;
 using System.Resources;
 
 namespace VirusX
@@ -28,10 +29,13 @@ namespace VirusX
             {
                 language = value;
 #if WINDOWS_UWP
-                Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = (value == Languages.English ? "en" : "de");
-                if (System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName == Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride)
-                    Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "";
-                loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+                var culture = new CultureInfo(value == Languages.English ? "en-US" : "de-DE");
+                Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
+                CultureInfo.DefaultThreadCurrentCulture = culture;
+                CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+                Windows.ApplicationModel.Resources.Core.ResourceContext.ResetGlobalQualifierValues();
+                var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
 #endif
             }
         }
