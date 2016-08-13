@@ -6,12 +6,12 @@ namespace VirusX
 {
     abstract class CapturableObject : MapObject
     {
-        private readonly Stopwatch lifeTimer = new Stopwatch();
+        private float lifeTimer = 0.0f;
         protected readonly float lifeTime;  // -1 means infinite
 
-        public float RemainingLifeTime { get { return lifeTime - (float)lifeTimer.Elapsed.TotalSeconds; } }
+        public float RemainingLifeTime { get { return lifeTime - lifeTimer; } }
 
-        public bool Timeouted { get { return lifeTime > 0 && lifeTimer.Elapsed.TotalSeconds > lifeTime; } }
+        public bool Timeouted { get { return lifeTime > 0 && lifeTimer > lifeTime; } }
 
         public int PossessingPlayer { get; protected set; }
         public float PossessingPercentage { get; protected set; }
@@ -51,7 +51,6 @@ namespace VirusX
             CapturingPlayer = -1;
             this.damageFactor = damageFactor;
 
-            lifeTimer.Start();
 
             UpdateDamageMapZoneFromPosition();
         }
@@ -70,21 +69,23 @@ namespace VirusX
 
         public override void Update(GameTime gameTime)
         {
+            lifeTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             // fade out
             if (lifeTime > 0)
             {
-                if (lifeTimer.Elapsed.TotalSeconds > lifeTime * 0.75f)
+                if (lifeTimer > lifeTime * 0.75f)
                 {
                     opacity = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10.0f) * 0.4f + 0.5f;
-                    opacity *= Math.Min(1.0f, (lifeTime - (float)lifeTimer.Elapsed.TotalSeconds) * 5.0f);
+                    opacity *= Math.Min(1.0f, (lifeTime - (float)lifeTimer) * 5.0f);
                 }
                 else
                     opacity = 1f;            
             }
             else
-                opacity = MathHelper.Clamp((float)lifeTimer.Elapsed.TotalSeconds * 2, 0, 1); // fade in
+                opacity = MathHelper.Clamp((float)lifeTimer * 2, 0, 1); // fade in
             
-            if (lifeTime > 0 && lifeTimer.Elapsed.TotalSeconds > lifeTime)
+            if (lifeTime > 0 && lifeTimer > lifeTime)
                 Alive = false;
         }
 
