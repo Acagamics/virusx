@@ -1,4 +1,4 @@
-[![Virus X Youtube Video](https://img.youtube.com/vi/YK2IQK-q4g8/0.jpg)](https://www.youtube.com/watch?=YK2IQK-q4g8)
+[![Virus X Youtube Video](https://img.youtube.com/vi/YK2IQK-q4g8/0.jpg)](https://www.youtube.com/watch?v=YK2IQK-q4g8)
 
 Virus X is a local PC multiplayer game with up to four players. You take control over one of multiple virus types and try to capture all cells.
 
@@ -8,7 +8,8 @@ The concept is simple and easy to learn but it is hard to master the full contro
 
 # Download
 
-_Download as standalone zip and as Windows 10 store app coming soon!_
+* [Windows 10 Store](https://www.microsoft.com/en-us/store/p/virus-x/9nblggh4sjv1)
+* [Windows Desktop Standalone](latest_windesktop.zip)
 
 # Hardware Requirements
 
