@@ -107,10 +107,25 @@ namespace VirusX
         public Player[] Players { get { return players;  } }
         private Player[] players = new Player[0];
 
-        // for Game Mode INSERT_MODE_NAME
-        private Stopwatch[] winTimer;
-        public Stopwatch[] WinTimer { get { return winTimer; } }
-        public static float ModeWinTime = 25f;
+
+        public struct DominationWinTimer
+        {
+            public void Update(GameTime time)
+            {
+                if (Active)
+                    TimeSeconds += (float)time.ElapsedGameTime.TotalSeconds;
+            }
+            
+            public bool HasWon { get { return TimeSeconds > DominationWinTime; } }
+
+            public float TimeSeconds { get; set; }
+            public bool Active { get; set; }
+
+            public const float DominationWinTime = 25f;
+        }
+        // for Game Mode Domination
+        private DominationWinTimer[] winTimer;
+        
 
         /// <summary>
         /// noise texture needed for players, generated only once!
@@ -236,14 +251,12 @@ namespace VirusX
             level.NewGame(mapType, Settings.Instance.GameMode, Settings.Instance.UseItems, graphicsDevice, players);
             postPro.UpdateVignettingSettings(true, level.FieldPixelSize.ToVector2(), level.FieldPixelOffset.ToVector2());
 
-            // for Game Mode INSERT_MODE_NAME
-            //if (Settings.Instance.GameMode == GameMode.INSERT_MODE_NAME)
-            //{
-                winTimer = new Stopwatch[players.Length];
+            if (Settings.Instance.GameMode == GameMode.DOMINATION)
+            {
+                winTimer = new DominationWinTimer[players.Length];
                 for (int index = 0; index < players.Length; ++index)
-                    winTimer[index] = new Stopwatch();
-            //}
-
+                    winTimer[index] = new DominationWinTimer() { Active =false, TimeSeconds = 0.0f };
+            }
 
             // run gc now!
             //System.GC.Collect();
@@ -455,24 +468,19 @@ namespace VirusX
                 case GameMode.DOMINATION:
                     for (int index = 0; index < winTimer.Length; ++index)
                     {
-                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count() - players.Length) / players.Length)
-                            winTimer[index].Start();
-                        else
-                            winTimer[index].Stop();
-                    }
+                        winTimer[index].Update(gameTime);
 
-                    for(int index=0;index<winTimer.Length;++index)
-                        if (winTimer[index].Elapsed.TotalSeconds > ModeWinTime)
+                        if (level.SpawnPoints.Where(x => x.PossessingPlayer == index).Count() > (level.SpawnPoints.Count() - players.Length) / players.Length)
+                            winTimer[index].Active = true;
+                        else
+                            winTimer[index].Active = false;
+
+                        if (winTimer[index].HasWon)
                         {
                             winPlayerIndex = index;
                             break;
                         }
-                    if(winPlayerIndex != -1)
-                        for (int index = 0; index < winTimer.Length; ++index)
-                            if (winTimer[index].Elapsed.TotalSeconds > ModeWinTime)
-                            {
-                                winTimer[index].Stop();
-                            }
+                    }
                     break;
                 default:
                     throw new NotImplementedException("Unknown GameType - can't evaluate win condition");

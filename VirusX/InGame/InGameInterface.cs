@@ -97,12 +97,14 @@ namespace VirusX
         /// </summary>
         /// <param name="players">player array</param>
         /// <param name="spriteBatch">spritebatch that is NOT already started</param>
-        public void DrawInterface(Player[] players, SpriteBatch spriteBatch, Point levelPixelSize, Point levelPixelOffset, GameTime gameTime, System.Diagnostics.Stopwatch[] winTimer )
+        public void DrawInterface(Player[] players, SpriteBatch spriteBatch, Point levelPixelSize, Point levelPixelOffset, GameTime gameTime, InGame.DominationWinTimer[] winTimer)
         {
             Point[] corners;
             Rectangle[] itemDisplayRectangles;
             SpriteEffects[] flips;
             ComputeRectangles(out corners, out itemDisplayRectangles, out flips, levelPixelSize, levelPixelOffset);
+
+            System.Diagnostics.Debug.Assert(winTimer.Length == players.Length);
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
             for (int playerIndex = 0; playerIndex < players.Length; ++playerIndex)
@@ -119,7 +121,7 @@ namespace VirusX
 
                     DrawItem(spriteBatch, players[playerIndex].ItemSlot, itemDisplayRectangles[slot], corners[slot], color, Item.ROTATION_SPEED * (float)gameTime.TotalGameTime.TotalSeconds, players[playerIndex].ItemAlphaValue);
                     
-                    string countdownString = (InGame.ModeWinTime - winTimer[playerIndex].Elapsed.TotalSeconds).ToString("N0");
+                    string countdownString = (InGame.DominationWinTimer.DominationWinTime - winTimer[playerIndex].TimeSeconds).ToString("N0");
 
                     Vector2 dragToCorner = new Vector2(itemDisplayRectangles[slot].Width / 5 * Math.Sign(corners[slot].X - itemDisplayRectangles[slot].Center.X),
                                                        itemDisplayRectangles[slot].Height / 5 * Math.Sign(corners[slot].Y - itemDisplayRectangles[slot].Center.Y));
